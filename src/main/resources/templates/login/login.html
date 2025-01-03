@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div th:replace="~{layout/header::header}"></div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar">
+            <div th:replace="~{layout/sidebar::sidebar}"></div>
+        </div>
+        <div class="col-md-10 content">
+            <div class="login-form">
+                <h2>Login</h2>
+                <div th:if="${param.error}" class="form-group">
+                    <span th:text="${exception}?: '잘못된 아이디나 암호입니다'" class="alert alert-danger"></span>
+                </div>
+                <form th:action="@{/login}" method="post">
+                    <input type="hidden" th:value="'wHlFMltmbMCxR63/G1xueQl5DwtYwUBXXcmeYcSE8ril2FpMqT2VTVPzCJiK7zXY24MlWwWpVfgspISEQdKpnw=='" name="secret_key" />
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="footer" th:replace="~{layout/footer::footer}"></div>
+</body>
+</html>
