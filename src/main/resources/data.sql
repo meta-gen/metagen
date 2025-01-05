@@ -37,31 +37,34 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (5, '*', 0, '/*/icon-*','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (6, '*', 0, '/signup','url', 'SYSTEM', 'SYSTEM')
+VALUES (6, '*', 0, '/fonts/**','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (7, '*', 0, '/login','url', 'SYSTEM', 'SYSTEM')
+VALUES (7, '*', 0, '/signup','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (8, '*', 0, '/logout','url', 'SYSTEM', 'SYSTEM')
+VALUES (8, '*', 0, '/login','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (9, '*', 0, '/denied','url', 'SYSTEM', 'SYSTEM')
+VALUES (9, '*', 0, '/logout','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (10, '*', 0, '/error','url', 'SYSTEM', 'SYSTEM')
+VALUES (10, '*', 0, '/denied','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (11, '*', 0, '/account','url', 'SYSTEM', 'SYSTEM')
+VALUES (11, '*', 0, '/error','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (12, '*', 0, '/updatePwd','url', 'SYSTEM', 'SYSTEM')
+VALUES (12, '*', 0, '/account','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (13, '*', 0, '/meta','url', 'SYSTEM', 'SYSTEM')
+VALUES (13, '*', 0, '/updatePwd','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (14, '*', 0, '/updateName','url', 'SYSTEM', 'SYSTEM')
+VALUES (14, '*', 0, '/meta','url', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
+VALUES (15, '*', 0, '/updateName','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 
 insert into role_resources(resource_id, role_id) values (0,5) on CONFLICT (resource_id, role_id) DO NOTHING;
@@ -72,13 +75,15 @@ insert into role_resources(resource_id, role_id) values (4,5) on CONFLICT (resou
 insert into role_resources(resource_id, role_id) values (5,5) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (6,5) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (7,5) on CONFLICT (resource_id, role_id) DO NOTHING;
-insert into role_resources(resource_id, role_id) values (8,4) on CONFLICT (resource_id, role_id) DO NOTHING;
-insert into role_resources(resource_id, role_id) values (9,5) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (8,5) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (9,4) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (10,5) on CONFLICT (resource_id, role_id) DO NOTHING;
-insert into role_resources(resource_id, role_id) values (11,4) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (11,5) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (12,4) on CONFLICT (resource_id, role_id) DO NOTHING;
-insert into role_resources(resource_id, role_id) values (13,3) on CONFLICT (resource_id, role_id) DO NOTHING;
-insert into role_resources(resource_id, role_id) values (14,4) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (13,4) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (14,3) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (15,4) on CONFLICT (resource_id, role_id) DO NOTHING;
+
 
 /* 유저 정보 생성 */
 insert into account(id, password, username, name, created_by, updated_by) values(0, '{bcrypt}$2a$10$GN1YfMyJLcWhDuslP6P/UuqRwIfJk2VF5tl9mXsRjLJ18ivQfIAoW', 'admin', '관리자','SYSTEM', 'SYSTEM') ON CONFLICT (id) DO NOTHING;

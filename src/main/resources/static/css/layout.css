@@ -1,0 +1,50 @@
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    display: flex;
+    flex: 1;
+    padding-bottom: 20px; /* Footer와 content 사이 여백 */
+}
+
+.sidebar {
+    flex: 0 0 200px; /* 고정된 너비 */
+    background-color: #f8f9fa;
+    height: 100vh; /* 화면 높이 전체 */
+    position: sticky;
+    top: 0;
+}
+
+.content {
+    flex: 1;
+    padding: 20px; /* 콘텐츠 내부 여백 */
+    overflow-y: auto; /* 스크롤 가능 */
+}
+
+footer {
+    padding-top: 10px; /* Footer 위쪽 여백 */
+    background-color: #343a40;
+    color: #fff;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+h1 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500; /* Medium weight */
+}
+
+p {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300; /* Light weight */
+}

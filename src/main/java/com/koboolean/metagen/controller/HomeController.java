@@ -8,11 +8,11 @@ public class HomeController {
 
     @GetMapping(value="/")
     public String dashboard() {
-        return "dashboard";
+        return "pages/dashboard";
     }
 
     @GetMapping("/meta")
     public String meta() {
-        return "content/meta";
+        return "pages/meta";
     }
 }

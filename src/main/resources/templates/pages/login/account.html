@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+>
+<head>
+    <script type="module" th:src="@{/js/login/account.js}"></script>
+</head>
+<body>
+<section layout:fragment="content">
+    <h2>내정보</h2>
+    <hr/>
+    <div>
+        ID : <span th:text="${account.username}"></span>
+    </div>
+    <hr/>
+    <div>
+        권한 : <span th:text="${account.roleName}"></span>
+    </div>
+    <hr/>
+    <form id="chnageNameForm" th:action="@{/updateName}" method="post">
+        <div class="form-group">
+            <label for="name">사용자명</label>
+            <input type="text" class="form-control" id="name" name="name" th:value="${account.name}">
+        </div>
+        <button id="changeNameBtn" type="button" class="btn btn-primary">사용자명 변경</button>
+    </form>
+    <hr/>
+    <form id="changedPasswdForm" th:action="@{/updatePwd}" method="post">
+        <div class="form-group">
+            <label for="password">현재 비밀번호</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div class="form-group">
+            <label for="changedPasswd">변경 비밀번호</label>
+            <input type="password" class="form-control" id="changedPasswd" name="changedPasswd">
+        </div>
+        <div class="form-group">
+            <label for="changedPasswd2">변경 비밀번호 확인</label>
+            <input type="password" class="form-control" id="changedPasswd2" name="changedPasswd2">
+        </div>
+        <button id="changePasswdBtn" type="button" class="btn btn-primary">비밀번호 변경</button>
+    </form>
+</section>
+</body>
+</html>

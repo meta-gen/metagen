@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <title>MetaGen</title>
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <script type="module" th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    <script type="module" th:src="@{/js/bootstrap.js}"></script>
+
+    <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet">
+</head>
+<body>
+<div class="page-container">
+    <!-- Header -->
+    <div th:replace="~{fragments/header::header}"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Sidebar -->
+        <aside class="sidebar" th:replace="~{fragments/sidebar::sidebar}"></aside>
+
+        <!-- Main Section -->
+        <div class="content">
+            <section layout:fragment="content"></section>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer::footer}"></footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+>
+<body>
+<section layout:fragment="content">
+    <div class="row">
+        <div class="col-md-2 sidebar">
+            <div th:replace="~{fragments/sidebar::sidebar}"></div>
+        </div>
+        <div class="col-md-10 content">
+            <div>
+                <h3 th:text="${exception}"></h3>
+                <br/>
+                <span th:text="${name} != null ? ${name} + ' 님은 접근 권한이 없습니다. 관리자에게 접근권한을 신청하시기 바랍니다.' : '비 정상적인 접근입니다'"></span>
+            </div>
+        </div>
+    </div>
+</section>
+</body>
+</html>

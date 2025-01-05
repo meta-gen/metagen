@@ -41,12 +41,12 @@ public class LoginController {
                         @RequestParam(value = "exception", required = false) String exception, Model model){
         model.addAttribute("error",error);
         model.addAttribute("exception",exception);
-        return "login/login";
+        return "pages/login/login";
     }
 
     @GetMapping(value="/signup")
     public String signup() {
-        return "login/signup";
+        return "pages/login/signup";
     }
 
     /**
@@ -78,7 +78,7 @@ public class LoginController {
         model.addAttribute("name", accountDto.getName());
         model.addAttribute("exception", exception);
 
-        return "login/denied";
+        return "pages/login/denied";
     }
 
     @GetMapping(value = "/account")
@@ -92,7 +92,7 @@ public class LoginController {
         accountDto.setRoleName(userService.getRoleName(authentication));
 
         model.addAttribute("account", accountDto);
-        return "login/account";
+        return "pages/login/account";
     }
 
     /**
