@@ -15,4 +15,29 @@ public class HomeController {
     public String meta() {
         return "pages/meta";
     }
+
+    @GetMapping("/codeRule")
+    public String codeRule() {
+        return "pages/code_rule";
+    }
+
+    @GetMapping("/designTestManage")
+    public String designTestManage() {
+        return "pages/design_test_manage";
+    }
+
+    @GetMapping("/manage")
+    public String manage() {
+        return "pages/manage";
+    }
+
+    @GetMapping("/systemLog")
+    public String systemLog() {
+        return "pages/system_log";
+    }
+
+    @GetMapping("/help")
+    public String help() {
+        return "pages/help";
+    }
 }
