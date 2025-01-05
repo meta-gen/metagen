@@ -26,6 +26,9 @@ public class Account extends BaseEntity implements Serializable {
     @Column
     private String password;
 
+    @Column
+    private String name;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade={CascadeType.MERGE})
     @JoinTable(name = "account_roles", joinColumns = { @JoinColumn(name = "account_id") }, inverseJoinColumns = {
             @JoinColumn(name = "role_id") })

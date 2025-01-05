@@ -7,7 +7,7 @@ spring:
     password: meta-gen
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     generate-ddl: true
     defer-datasource-initialization: true
     properties:
@@ -38,6 +38,11 @@ logging:
     org.springframework.security: DEBUG
 
 server:
+  servlet:
+    session:
+      cookie:
+        same-site: Strict
+
   port: 9940
 
 secret:

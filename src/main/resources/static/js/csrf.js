@@ -5,25 +5,24 @@
  * @param {string} name - 쿠키 이름 (기본값: XSRF-TOKEN)
  * @returns {string} - CSRF 토큰 값
  */
-export function getCsrfToken(name = 'XSRF-TOKEN') {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-        return parts.pop().split(';').shift();
-    }
-    return '';
+export function getCsrfToken(cookieName = 'XSRF-TOKEN') {
+    const csrfCookie = document.cookie
+        .split('; ')
+        .find(row => row.startsWith(`${cookieName}=`));
+    return csrfCookie ? decodeURIComponent(csrfCookie.split('=')[1]) : null;
 }
 
 /**
  * CSRF 헤더와 토큰을 추가하는 AJAX 설정
  */
 export function setupAjaxCsrf() {
-    debugger
     const csrfToken = getCsrfToken();
+
     if (csrfToken) {
         $.ajaxSetup({
             beforeSend: function (xhr) {
-                xhr.setRequestHeader('X-XSRF-TOKEN', csrfToken);
+                xhr.setRequestHeader('X-XSRF-TOKEN', csrfToken); // CSRF 토큰 헤더 추가
+                xhr.setRequestHeader('Content-Type', 'application/json'); // Content-Type 설정
             }
         });
     } else {

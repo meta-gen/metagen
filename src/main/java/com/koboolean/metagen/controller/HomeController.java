@@ -11,4 +11,8 @@ public class HomeController {
         return "dashboard";
     }
 
+    @GetMapping("/meta")
+    public String meta() {
+        return "content/meta";
+    }
 }

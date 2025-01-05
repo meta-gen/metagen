@@ -10,21 +10,49 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
     <script type="module">
-        import {getCsrfToken} from "/js/csrf.js";
+        import {setupAjaxCsrf} from "/js/csrf.js";
 
         $(document).ready(function () {
+            setupAjaxCsrf();
+
+            // 사용자명 변경 클릭 시
+            $('#changeNameBtn').on('click', function (event) {
+                event.preventDefault();
+
+                const name = $('#name').val();
+                if (name === "") {
+                    alert('사용자명을 입력해주세요.');
+                    return;
+                }
+
+                $.ajax({
+                    url: '/updateName', // 사용자명 변경 URL
+                    type: 'POST',
+                    data: JSON.stringify({ name }),
+                    success: function (response) {
+                        if (response === 'success') {
+                            alert('사용자명이 성공적으로 변경되었습니다.');
+                            location.reload(); // 새로고침
+                        }
+                    },
+                    error: function (xhr) {
+                        const errorMessage = xhr.responseJSON?.message || '사용자명 변경 중 문제가 발생했습니다.';
+                        alert(errorMessage);
+                    }
+                });
+            });
 
             // 비밀번호 변경 클릭 시
             $('#changePasswdBtn').on('click', function (event) {
                 event.preventDefault();
 
                 // 폼 요소 선택
-                const password = $('#changedPasswd').val(); // 변경 비밀번호
+                const currentPassword = $('#changedPasswd').val(); // 변경 비밀번호
                 const confirmPassword = $('#changedPasswd2').val(); // 비밀번호 확인
-                const currentPassword = $('#password').val(); // 현재 비밀번호
+                const password = $('#password').val(); // 현재 비밀번호
 
                 // 비밀번호 확인 로직
-                if (password !== confirmPassword) {
+                if (currentPassword !== confirmPassword) {
                     alert('비밀번호가 일치하지 않습니다.');
                     return;
                 }
@@ -39,30 +67,20 @@
                     return;
                 }
 
-                const csrfToken = getCsrfToken();
-                console.log(csrfToken);
-
-                // AJAX 요청
                 $.ajax({
-                    url: '/updatePasswd', // 서버 URL (Spring Controller와 매핑된 URL)
+                    url: '/updatePwd', // 비밀번호 변경 URL
                     type: 'POST',
-                    headers: {
-                        'X-XSRF-TOKEN': getCsrfToken() // 쿠키에서 토큰 읽기
-                    },
-                    data: {
-                        password: currentPassword,
-                        changedPasswd: password,
-                        changedPasswd2: confirmPassword
-                    },
+                    data: JSON.stringify({
+                        password,
+                        currentPassword
+                    }),
                     success: function (response) {
-                        // 성공적으로 처리된 경우
-                        if(response === "success"){
+                        if (response === 'success') {
                             alert('비밀번호가 성공적으로 변경되었습니다.');
                             window.location.href = '/logout';
                         }
                     },
                     error: function (xhr) {
-                        // 서버에서 반환된 에러 메시지 처리
                         const errorMessage = xhr.responseJSON?.message || '비밀번호 변경 중 문제가 발생했습니다.';
                         alert(errorMessage);
                     }
@@ -80,27 +98,38 @@
         </div>
         <div class="col-md-10 content">
             <div class="account">
-                <h2>Account</h2>
+                <h2>내정보</h2>
+                <hr/>
                 <div>
                     ID : <span th:text="${account.username}"></span>
                 </div>
+                <hr/>
                 <div>
-                    권한 : <span th:text="${account.role}"></span>
+                    권한 : <span th:text="${account.roleName}"></span>
                 </div>
-                <form id="changedPasswdForm" th:action="@{/updatePasswd}" method="post">
+                <hr/>
+                <form id="chnageNameForm" th:action="@{/updateName}" method="post">
+                    <div class="form-group">
+                        <label for="name">사용자명</label>
+                        <input type="text" class="form-control" id="name" name="name" th:value="${account.name}">
+                    </div>
+                    <button id="changeNameBtn" type="button" class="btn btn-primary">사용자명 변경</button>
+                </form>
+                <hr/>
+                <form id="changedPasswdForm" th:action="@{/updatePwd}" method="post">
                     <div class="form-group">
                         <label for="password">현재 비밀번호</label>
-                        <input type="password" class="form-control" id="password" name="password" required>
+                        <input type="password" class="form-control" id="password" name="password">
                     </div>
                     <div class="form-group">
                         <label for="changedPasswd">변경 비밀번호</label>
-                        <input type="password" class="form-control" id="changedPasswd" name="changedPasswd" required>
+                        <input type="password" class="form-control" id="changedPasswd" name="changedPasswd">
                     </div>
                     <div class="form-group">
                         <label for="changedPasswd2">변경 비밀번호 확인</label>
-                        <input type="password" class="form-control" id="changedPasswd2" name="changedPasswd2" required>
+                        <input type="password" class="form-control" id="changedPasswd2" name="changedPasswd2">
                     </div>
-                    <button id="changePasswdBtn" type="button" class="btn btn-primary">변경</button>
+                    <button id="changePasswdBtn" type="button" class="btn btn-primary">비밀번호 변경</button>
                 </form>
             </div>
         </div>

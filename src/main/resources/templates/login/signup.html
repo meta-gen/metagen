@@ -18,25 +18,23 @@
         </div>
         <div class="col-md-10 content">
             <div class="signup-form">
-                <h2>Sign Up</h2>
+                <h2>회원가입</h2>
+                <!-- Global error message -->
+                <div th:if="${errorMessage}" style="color:red;">
+                    <p th:text="${errorMessage}"></p>
+                </div>
                 <form th:action="@{/signup}" method="post">
                     <div class="form-group">
-                        <label for="username">Username</label>
+                        <label for="username">아이디</label>
                         <input type="text" class="form-control" id="username" name="username" required>
                     </div>
                     <div class="form-group">
-                        <label for="password">Password</label>
+                        <label for="password">패스워드</label>
                         <input type="password" class="form-control" id="password" name="password" required>
                     </div>
                     <div class="form-group">
-                        <label for="age">Age</label>
-                        <input type="number" class="form-control" id="age" name="age" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="roles">Authority</label>
-                        <select class="form-control" id="roles" name="roles">
-                            <option>ROLE_USER</option>
-                        </select>
+                        <label for="name">사용자명</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Sign Up</button>
                 </form>

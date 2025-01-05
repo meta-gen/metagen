@@ -2,11 +2,14 @@ package com.koboolean.metagen.user.controller;
 
 import com.koboolean.metagen.domain.dto.AccountDto;
 import com.koboolean.metagen.user.service.LoginService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -14,10 +17,18 @@ public class LoginRestController {
 
     private final LoginService loginService;
 
-    @PostMapping(value="/updatePasswd")
-    public String updatePasswd(@AuthenticationPrincipal AccountDto accountDto, HttpServletRequest request) {
+    @PostMapping(value="/updatePwd")
+    public String updatePwd(@AuthenticationPrincipal AccountDto accountDto, @RequestBody AccountDto accountData) {
 
-        loginService.updatePasswd(accountDto, request);
+        loginService.updatePwd(accountDto, accountData);
+
+        return "success";
+    }
+
+    @PostMapping(value="/updateName")
+    public String updateName(@AuthenticationPrincipal AccountDto accountDto, @RequestBody Map<String,String> nameMap) {
+
+        loginService.updateName(accountDto, nameMap.get("name"));
 
         return "success";
     }
