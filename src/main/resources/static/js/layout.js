@@ -73,3 +73,24 @@ window.restoreMenuState = function () {
 
 // 페이지 로드 후 상태 복구
 document.addEventListener('DOMContentLoaded', window.restoreMenuState);
+
+document.addEventListener('DOMContentLoaded', function () {
+    // 현재 URL의 경로를 가져옵니다.
+    const currentPath = window.location.pathname;
+
+    // 포커스를 제거할 경로 목록
+    const excludedPaths = ['/login', '/signup', '/account'];
+
+    // 포커스를 제거할 조건
+    if (excludedPaths.includes(currentPath)) {
+        // 사이드바에서 active 클래스 제거
+        document.querySelectorAll('.list-group a').forEach(item => {
+            item.classList.remove('active');
+        });
+
+        // 모든 열려 있는 메뉴를 닫습니다.
+        document.querySelectorAll('.list-group .collapse').forEach(item => {
+            item.classList.remove('show');
+        });
+    }
+});

@@ -143,18 +143,34 @@ p {
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 헤더 하단 그림자 */
 }
 
-.navbar-custom .navbar-brand {
-    color: #ffffff; /* 흰색 글자 */
-    font-weight: bold;
-    font-size: 1.5rem;
-}
-
+/* Navbar 링크 스타일 */
 .navbar-custom .nav-link {
     color: #ffffff; /* 흰색 글자 */
     margin-left: 15px; /* 간격 추가 */
     transition: color 0.3s ease; /* 부드러운 색상 전환 */
 }
 
+/* Navbar 링크 hover 상태 스타일 */
 .navbar-custom .nav-link:hover {
-    color: #d4d4d4; /* 연한 회색 글자 */
+    color: #d4d4d4 !important; /* 연한 회색 글자 */
+}
+
+/* Bootstrap 기본 링크 스타일 덮어쓰기 */
+.navbar-custom .nav-link:focus,
+.navbar-custom .nav-link:active{
+    color: #d4d4d4 !important; /* 연한 회색 글자 */
+}
+
+/* Navbar 브랜드 스타일 */
+.navbar-custom .navbar-brand {
+    color: #ffffff; /* 기본 흰색 */
+    font-weight: bold;
+    font-size: 1.5rem;
+    transition: color 0.3s ease; /* 부드러운 색상 전환 */
+}
+
+/* Navbar 브랜드 hover 상태 스타일 */
+.navbar-custom .navbar-brand:hover,
+.navbar-custom .navbar-brand:focus {
+    color: #d4d4d4; /* 연한 회색 */
 }
