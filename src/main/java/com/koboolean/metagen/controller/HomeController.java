@@ -21,9 +21,14 @@ public class HomeController {
         return "pages/code_rule";
     }
 
-    @GetMapping("/designTestManage")
+    @GetMapping("/designManage")
     public String designTestManage() {
-        return "pages/design_test_manage";
+        return "pages/design_manage";
+    }
+
+    @GetMapping("/testManage")
+    public String testManage() {
+        return "pages/test_manage";
     }
 
     @GetMapping("/manage")
@@ -34,6 +39,16 @@ public class HomeController {
     @GetMapping("/systemLog")
     public String systemLog() {
         return "pages/system_log";
+    }
+
+    @GetMapping("/dataDictionary")
+    public String dataDictionary() {
+        return "pages/data_dictionary";
+    }
+
+    @GetMapping("/accessControl")
+    public String accessControl() {
+        return "pages/access_control";
     }
 
     @GetMapping("/help")

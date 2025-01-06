@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<body>
+<section layout:fragment="content">
+    <h2>2. 인가 관리</h2>
+    <p>• 설명: Spring Security 기반의 인가 시스템을 관리하는 화면. 관리자는 역할(Role)과 권한(Permission)을 정의하고, 사용자별 역할 할당 및 리소스 접근 정책을 설정할 수 있습니다.</p>
+    <p>• 기능:</p>
+    <ul>
+        <li>역할 관리
+            <ul>
+                <li>새로운 역할 생성</li>
+                <li>역할 이름 및 설명 수정</li>
+                <li>불필요한 역할 삭제</li>
+            </ul>
+        </li>
+        <li>권한 관리
+            <ul>
+                <li>리소스(URL, API, 파일 등)별 권한 정의</li>
+                <li>역할에 권한 추가 또는 제거</li>
+                <li>권한별 승인/거절 정책 관리</li>
+            </ul>
+        </li>
+        <li>사용자-역할 매핑
+            <ul>
+                <li>특정 사용자에게 역할 할당</li>
+                <li>역할 제거 및 수정</li>
+                <li>역할 기반 권한 자동 설정</li>
+            </ul>
+        </li>
+        <li>리소스 관리
+            <ul>
+                <li>시스템 내 주요 리소스(API, 페이지, 파일 등)를 등록 및 관리</li>
+                <li>리소스와 역할 간의 매핑 관계 설정</li>
+            </ul>
+        </li>
+        <li>인가 정책 시각화
+            <ul>
+                <li>역할과 권한의 관계를 시각적으로 확인</li>
+                <li>리소스별 접근 제어 상태를 한눈에 파악</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h3>논의 사항</h3>
+    <ul>
+        <li>**동적 정책 변경**:
+            <ul>
+                <li>시스템 운영 중 실시간으로 역할 및 권한 변경 가능 여부</li>
+                <li>변경된 정책의 즉각적 반영 방식</li>
+            </ul>
+        </li>
+        <li>**사용자별 정책 예외 처리**:
+            <ul>
+                <li>특정 사용자를 위한 개별 접근 정책 설정</li>
+                <li>역할과 무관한 사용자별 권한 추가 기능</li>
+            </ul>
+        </li>
+        <li>**관리자 인터페이스**:
+            <ul>
+                <li>직관적인 UI/UX를 통한 접근성 강화</li>
+                <li>역할, 권한, 리소스 간의 관계를 쉽게 설정할 수 있는 드래그 앤 드롭 기능</li>
+            </ul>
+        </li>
+    </ul>
+</section>
+</body>
+</html>

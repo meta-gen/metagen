@@ -1,6 +1,8 @@
 body, html {
     height: 100%;
     margin: 0;
+    padding: 0; /* body와 html의 기본 여백 제거 */
+    box-sizing: border-box; /* 전체 요소에 박스 크기 설정 */
 }
 
 .page-container {
@@ -9,42 +11,150 @@ body, html {
     min-height: 100vh;
 }
 
+header {
+    width: 100%; /* 헤더가 화면 너비 전체를 차지 */
+    position: relative; /* 레이아웃에 포함되도록 설정 */
+    z-index: 10; /* 다른 요소 위에 배치 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 헤더 하단 그림자 */
+}
+
+.navbar-custom {
+    background-color: #007bff; /* MetaGen 브랜드 색상 */
+    padding: 10px 15px; /* 내부 여백 추가 */
+}
+
+.navbar-custom .navbar-brand {
+    color: white;
+    font-weight: bold;
+}
+
+.navbar-custom .nav-link {
+    color: #ffffff;
+    transition: color 0.3s ease; /* 부드러운 색상 전환 */
+}
+
+.navbar-custom .nav-link:hover {
+    color: #d4d4d4; /* 살짝 밝은 회색 */
+}
+
 .main-content {
     display: flex;
     flex: 1;
-    padding-bottom: 20px; /* Footer와 content 사이 여백 */
+    padding: 20px; /* 콘텐츠와 사이드바 사이의 여백 */
+    margin-top: 20px; /* 헤더와의 간격 */
 }
 
 .sidebar {
-    flex: 0 0 200px; /* 고정된 너비 */
+    flex: 0 0 200px;
     background-color: #f8f9fa;
-    height: 100vh; /* 화면 높이 전체 */
+    height: calc(100vh - 56px); /* 화면 전체 높이에서 헤더 높이 제외 */
     position: sticky;
-    top: 0;
+    top: 56px; /* 헤더 높이만큼 아래로 배치 */
+    border-right: 1px solid #dee2e6; /* 사이드바 분리선 */
 }
 
 .content {
     flex: 1;
-    padding: 20px; /* 콘텐츠 내부 여백 */
-    overflow-y: auto; /* 스크롤 가능 */
+    padding: 20px;
+    overflow-y: auto;
 }
 
 footer {
-    padding-top: 10px; /* Footer 위쪽 여백 */
     background-color: #343a40;
-    color: #fff;
-}
-
-body {
-    font-family: 'Roboto', sans-serif;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
 }
 
 h1 {
     font-family: 'Roboto', sans-serif;
-    font-weight: 500; /* Medium weight */
+    font-weight: 500;
 }
 
 p {
     font-family: 'Roboto', sans-serif;
-    font-weight: 300; /* Light weight */
+    font-weight: 300;
+}
+
+/* 1-depth 활성화된 메뉴 스타일 */
+.list-group a.active {
+    font-weight: bold;
+    color: #0056b3; /* 진한 파란색 글자 */
+    background-color: #f8f9fa; /* 연한 회색 배경 */
+    border: none; /* 테두리 제거 */
+    border-radius: 8px; /* 부드러운 라운드 처리 */
+    margin: 5px 0; /* 메뉴 간격 */
+    padding: 10px 15px; /* 메뉴 내부 여백 */
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1); /* 어두운 회색 그림자 */
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out; /* 부드러운 애니메이션 */
+}
+
+/* 2-depth 메뉴 스타일 */
+.list-group .collapse .list-group-item {
+    font-weight: normal;
+    background-color: #f8f9fa; /* 연한 회색 배경 */
+    color: #495057; /* 짙은 회색 글자 */
+    border-radius: 6px; /* 라운드 처리 */
+    margin: 2px 0; /* 간격 */
+    padding: 8px 20px; /* 들여쓰기 포함 여백 */
+    transition: background-color 0.3s ease, color 0.3s ease; /* 부드러운 애니메이션 */
+}
+
+/* 2-depth 메뉴 활성화 상태 */
+.list-group .collapse .list-group-item.active {
+    background-color: #e9ecef; /* 조금 더 진한 회색 배경 */
+    color: #0056b3; /* 진한 파란색 글자 */
+    font-weight: bold;
+    border: none; /* 테두리 제거 */
+    border-radius: 6px; /* 라운드 처리 */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 어두운 회색 그림자 */
+}
+
+/* 열려 있는 메뉴의 하위 항목 표시 */
+.collapse.show {
+    display: block !important;
+}
+
+/* 2-depth 메뉴와 연결되는 라인 */
+.list-group .collapse {
+    border-left: 2px solid #dee2e6; /* 더 연한 회색 라인 */
+    padding-left: 15px; /* 추가 들여쓰기 */
+    margin-left: 5px; /* 1-depth와의 간격 */
+}
+
+/* 호버 시 스타일 */
+.list-group-item:hover {
+    background-color: #e9ecef; /* 살짝 더 진한 회색 */
+    color: #0056b3; /* 진한 파란색 글자 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* 가벼운 어두운 그림자 */
+    border: none; /* 테두리 제거 */
+}
+
+/* 애니메이션 효과 */
+.list-group a,
+.list-group .collapse .list-group-item {
+    transition: all 0.3s ease; /* 부드러운 전환 효과 */
+}
+
+/* Custom Navbar Styles */
+.navbar-custom {
+    background-color: #0056b3; /* 어두운 파란색 */
+    padding: 10px 15px; /* 내부 여백 */
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 헤더 하단 그림자 */
+}
+
+.navbar-custom .navbar-brand {
+    color: #ffffff; /* 흰색 글자 */
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.navbar-custom .nav-link {
+    color: #ffffff; /* 흰색 글자 */
+    margin-left: 15px; /* 간격 추가 */
+    transition: color 0.3s ease; /* 부드러운 색상 전환 */
+}
+
+.navbar-custom .nav-link:hover {
+    color: #d4d4d4; /* 연한 회색 글자 */
 }

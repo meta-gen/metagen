@@ -1,11 +1,84 @@
 <aside th:fragment="sidebar">
     <div class="list-group list-group-flush" style="height: 100%; background-color: #f8f9fa;">
-        <a href="/" class="list-group-item list-group-item-action">대시보드</a>
-        <a href="/meta" class="list-group-item list-group-item-action">메타데이터</a>
-        <a href="/codeRule" class="list-group-item list-group-item-action">코드규칙</a>
-        <a href="/designTestManage" class="list-group-item list-group-item-action">설계서/시나리오</a>
-        <a href="/manage" class="list-group-item list-group-item-action">사용자관리</a>
-        <a href="/systemLog" class="list-group-item list-group-item-action">시스템로그</a>
-        <a href="/help" class="list-group-item list-group-item-action">도움말</a>
+        <!-- 1뎁스: 대시보드 -->
+        <a href="/" class="list-group-item list-group-item-action"
+           onclick="setActiveMenu(event, 'dashboard')"
+           data-menu-id="dashboard">
+            대시보드
+        </a>
+
+        <!-- 1뎁스: 데이터 관리 -->
+        <a href="#data-management" class="list-group-item list-group-item-action"
+           onclick="toggleMenu(event, 'data-management', this)"
+           data-menu-id="data-management">
+            데이터 관리
+        </a>
+        <div id="data-management" class="collapse">
+            <a href="/dataDictionary" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'data-dictionary')"
+               data-submenu-id="data-dictionary">
+                데이터사전
+            </a>
+            <a href="/meta" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'meta')"
+               data-submenu-id="meta">
+                메타데이터
+            </a>
+        </div>
+
+        <!-- 1뎁스: 설계 및 테스트 -->
+        <a href="#design-test" class="list-group-item list-group-item-action"
+           onclick="toggleMenu(event, 'design-test', this)"
+           data-menu-id="design-test">
+            설계 및 테스트
+        </a>
+        <div id="design-test" class="collapse">
+            <a href="/codeRule" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'code-rule')"
+               data-submenu-id="code-rule">
+                코드규칙
+            </a>
+            <a href="/designManage" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'design-manage')"
+               data-submenu-id="design-manage">
+                설계서
+            </a>
+            <a href="/testManage" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'test-manage')"
+               data-submenu-id="test-manage">
+                시나리오
+            </a>
+        </div>
+
+        <!-- 1뎁스: 시스템 관리 -->
+        <a href="#system-management" class="list-group-item list-group-item-action"
+           onclick="toggleMenu(event, 'system-management', this)"
+           data-menu-id="system-management">
+            시스템 관리
+        </a>
+        <div id="system-management" class="collapse">
+            <a href="/manage" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'manage')"
+               data-submenu-id="manage">
+                사용자관리
+            </a>
+            <a href="/accessControl" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'access-control')"
+               data-submenu-id="access-control">
+                인가관리
+            </a>
+            <a href="/systemLog" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'system-log')"
+               data-submenu-id="system-log">
+                시스템로그
+            </a>
+        </div>
+
+        <!-- 1뎁스: 도움말 -->
+        <a href="/help" class="list-group-item list-group-item-action"
+           onclick="setActiveMenu(event, 'help')"
+           data-menu-id="help">
+            도움말
+        </a>
     </div>
 </aside>

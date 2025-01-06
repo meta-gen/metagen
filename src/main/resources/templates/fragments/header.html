@@ -5,34 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MetaGen</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <style>
-        /* Custom Navbar Styles */
-        .navbar-custom {
-            background-color: #007bff; /* Blue color */
-        }
-        .navbar-custom .navbar-brand,
-        .navbar-custom .nav-link {
-            color: #fff;
-        }
-        .navbar-custom .nav-link:hover {
-            color: #d4d4d4;
-        }
-    </style>
 </head>
-<body>
-<header th:fragment="header">
+<header>
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="container">
             <a class="navbar-brand" href="/">MetaGen</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                     aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon" style="color: #fff;">☰</span>
             </button>
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav ms-auto"> <!-- 오른쪽 정렬 -->
                     <!-- For anonymous users -->
                     <li class="nav-item" sec:authorize="isAnonymous()">
                         <a class="nav-link" href="/login">로그인</a>
@@ -53,5 +37,4 @@
         </div>
     </nav>
 </header>
-</body>
 </html>
