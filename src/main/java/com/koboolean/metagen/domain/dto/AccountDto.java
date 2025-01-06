@@ -1,13 +1,12 @@
 package com.koboolean.metagen.domain.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
 @Data
+@Accessors(chain = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,4 +18,6 @@ public class AccountDto {
     private String currentPassword;
     private List<String> roles;
     private String roleName;
+    private boolean isPasswdCheck;
+
 }

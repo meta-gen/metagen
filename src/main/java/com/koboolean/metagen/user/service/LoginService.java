@@ -32,6 +32,9 @@ public class LoginService {
 
         if(passwordEncoder.matches(accountData.getPassword(), byUsername.getPassword())) {
             byUsername.setPassword(passwordEncoder.encode(accountData.getCurrentPassword()));
+            if(!byUsername.isPasswdCheck()){
+                byUsername.setPasswdCheck(true);
+            }
         }else{
             throw new CustomException(ErrorCode.PASSWORD_NOT_MATCHED);
         }

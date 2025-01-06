@@ -105,5 +105,5 @@ insert into role_resources(resource_id, role_id) values (19,0) on CONFLICT (reso
 insert into role_resources(resource_id, role_id) values (20,5) on CONFLICT (resource_id, role_id) DO NOTHING;
 
 /* 유저 정보 생성 */
-insert into account(id, password, username, name, created_by, updated_by) values(0, '{bcrypt}$2a$10$GN1YfMyJLcWhDuslP6P/UuqRwIfJk2VF5tl9mXsRjLJ18ivQfIAoW', 'admin', '관리자','SYSTEM', 'SYSTEM') ON CONFLICT (id) DO NOTHING;
+insert into account(id, password, username, name, is_password_check,created_by, updated_by) values(0, '{bcrypt}$2a$10$GN1YfMyJLcWhDuslP6P/UuqRwIfJk2VF5tl9mXsRjLJ18ivQfIAoW', 'admin', '관리자', false, 'SYSTEM', 'SYSTEM') ON CONFLICT (id) DO NOTHING;
 insert into account_roles(account_id, role_id) values(0,0) on CONFLICT (account_id, role_id) DO NOTHING;

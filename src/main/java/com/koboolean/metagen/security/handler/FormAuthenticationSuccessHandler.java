@@ -1,8 +1,10 @@
 package com.koboolean.metagen.security.handler;
 
+import com.koboolean.metagen.domain.dto.AccountDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -20,17 +22,23 @@ public class FormAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
 
     @Override
     public void onAuthenticationSuccess(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws IOException {
-
         setDefaultTargetUrl("/");
+
+        boolean passwdCheck = ((AccountDto) authentication.getPrincipal()).isPasswdCheck();
 
         SavedRequest savedRequest = requestCache.getRequest(request, response);
 
-        if(savedRequest!=null) {
-            String targetUrl = savedRequest.getRedirectUrl();
-            redirectStrategy.sendRedirect(request, response, targetUrl);
-        }
-        else {
+        if(!passwdCheck){
+            setDefaultTargetUrl("/account");
             redirectStrategy.sendRedirect(request, response, getDefaultTargetUrl());
+        }else{
+            if(savedRequest!=null) {
+                String targetUrl = savedRequest.getRedirectUrl();
+                redirectStrategy.sendRedirect(request, response, targetUrl);
+            }
+            else {
+                redirectStrategy.sendRedirect(request, response, getDefaultTargetUrl());
+            }
         }
     }
 }

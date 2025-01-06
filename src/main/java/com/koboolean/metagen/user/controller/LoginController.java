@@ -41,6 +41,7 @@ public class LoginController {
                         @RequestParam(value = "exception", required = false) String exception, Model model){
         model.addAttribute("error",error);
         model.addAttribute("exception",exception);
+
         return "pages/login/login";
     }
 
@@ -121,6 +122,7 @@ public class LoginController {
         ModelMapper mapper = new ModelMapper();
         Account account = mapper.map(accountDto, Account.class);
         account.setPassword(passwordEncoder.encode(accountDto.getPassword()));
+        account.setPasswdCheck(true);
 
         try {
             userService.createUser(account);
