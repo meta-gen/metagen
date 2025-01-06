@@ -131,6 +131,13 @@ cd metagen
 
 ---
 
+## MetaGen ERD
+
+### ERD-CLOUD URL
+[ERD Cloud - METAGEN](https://www.erdcloud.com/d/KE8576rcrNDyCve2h)
+
+---
+
 ## 라이선스
 
 이 프로젝트는 [MIT 라이선스](LICENSE)를 따릅니다.
