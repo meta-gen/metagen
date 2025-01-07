@@ -10,7 +10,7 @@
 
         <input type="hidden" id="errorMessage" th:value="${exception} ?: '잘못된 아이디나 암호입니다'">
 
-        <div th:if="${param.error}" class="form-group">
+        <div th:if="${param.error}">
             <script>
                 const errorMessage = document.getElementById('errorMessage')?.value || '잘못된 아이디나 암호입니다.';
                 openAlert(errorMessage, () => {window.location.href = "/login"});

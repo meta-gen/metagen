@@ -9,7 +9,7 @@
     <!-- Global error message -->
     <input id="errorMessage" type="hidden" th:value="${errorMessage}"/>
 
-    <div th:if="${errorMessage}" style="color:red;">
+    <div th:if="${errorMessage}">
         <script>
             const errorMessage = document.getElementById('errorMessage')?.value;
             openAlert(errorMessage);
