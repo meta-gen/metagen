@@ -2,6 +2,13 @@
     <div class="list-group list-group-flush" style="height: 100%; background-color: #f8f9fa;">
 
 
+        <!-- 1뎁스: 대시보드 -->
+        <a href="/" class="list-group-item list-group-item-action"
+           onclick="setActiveMenu(event, 'dashboard')"
+           data-menu-id="dashboard">
+            대시보드
+        </a>
+
         <!-- 1뎁스: 데이터 관리 -->
         <a href="#operation-management" class="list-group-item list-group-item-action"
            onclick="toggleMenu(event, 'operation-management', this)"
@@ -9,12 +16,6 @@
             운영 관리
         </a>
         <div id="operation-management" class="collapse">
-            <!-- 1뎁스: 대시보드 -->
-            <a href="/" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'dashboard')"
-               data-submenu-id="dashboard">
-                대시보드
-            </a>
             <!-- 1뎁스: 공지사항 -->
             <a href="/notice" class="list-group-item list-group-item-action ps-4"
                onclick="setActiveSubmenu(event, 'notice')"
