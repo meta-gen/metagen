@@ -90,6 +90,9 @@ ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
 VALUES (23, '*', 0, '/testManage','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
+VALUES (24, '*', 0, '/notice','url', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
 
 insert into role_resources(resource_id, role_id) values (0,5) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (1,5) on CONFLICT (resource_id, role_id) DO NOTHING;
@@ -115,6 +118,7 @@ insert into role_resources(resource_id, role_id) values (20,5) on CONFLICT (reso
 insert into role_resources(resource_id, role_id) values (21,3) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (22,0) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (23,3) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (24,5) on CONFLICT (resource_id, role_id) DO NOTHING;
 
 /* 유저 정보 생성 */
 insert into account(id, password, username, name, is_password_check,created_by, updated_by) values(0, '{bcrypt}$2a$10$GN1YfMyJLcWhDuslP6P/UuqRwIfJk2VF5tl9mXsRjLJ18ivQfIAoW', 'admin', '관리자', false, 'SYSTEM', 'SYSTEM') ON CONFLICT (id) DO NOTHING;

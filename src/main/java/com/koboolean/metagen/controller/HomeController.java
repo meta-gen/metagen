@@ -11,6 +11,11 @@ public class HomeController {
         return "pages/dashboard";
     }
 
+    @GetMapping(value="/notice")
+    public String notice() {
+        return "pages/notice";
+    }
+
     @GetMapping("/meta")
     public String meta() {
         return "pages/meta";
