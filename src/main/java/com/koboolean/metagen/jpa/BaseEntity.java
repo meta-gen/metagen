@@ -23,10 +23,11 @@ public class BaseEntity {
     private LocalDateTime updated;
 
     @CreatedBy
-    @Column(updatable = false)
+    @Column(updatable = false, name = "CREATED_BY")
     private String createdBy;
 
     @LastModifiedBy
+    @Column(name = "UPDATED_BY")
     private String updatedBy;
 
 }
