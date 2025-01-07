@@ -94,3 +94,46 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+
+function callableFunction() {
+}
+
+function openAlert(message, callableFunc){
+    openDialog("alert", message, callableFunc);
+}
+
+function openConfirm(message, callableFunc){
+    openDialog("confirm", message, callableFunc);
+}
+
+
+// 다이얼로그 열기
+function openDialog(type, message, callableFunc) {
+    const dialog = document.getElementById("alert" === type ? 'myAlert' : "myConfirm");
+    const content = document.getElementById("alert" === type ? 'alertContent' : "confirmContent");
+
+    if (content) {
+        content.textContent = message; // 다이얼로그에 메시지 삽입
+    }
+
+    if (dialog) {
+        dialog.showModal(); // 다이얼로그 열기
+    }
+
+    if(callableFunc){
+        callableFunction = callableFunc;
+        isCallback = true;
+    }
+}
+
+// 다이얼로그 닫기
+function closeDialog(type, isCallableStart) {
+    const dialog = document.getElementById(type === "alert" ? 'myAlert' : 'myConfirm');
+    dialog.close(); // 다이얼로그 닫기
+
+    if(isCallableStart) callableFunction(); // 닫은 이후 추가 함수 호출
+
+    // callable Function Clear
+    callableFunction = () => {}
+}
+

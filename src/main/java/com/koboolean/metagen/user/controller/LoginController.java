@@ -128,7 +128,7 @@ public class LoginController {
             userService.createUser(account);
         }catch(CustomFormException e){
             model.addAttribute("errorMessage", e.getErrorCode().getMessage());
-            return "login/signup";
+            return "pages/login/signup";
         }
 
         return "redirect:/";

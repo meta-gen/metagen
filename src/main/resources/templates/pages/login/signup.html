@@ -7,8 +7,13 @@
 <section layout:fragment="content">
     <h2>회원가입</h2>
     <!-- Global error message -->
+    <input id="errorMessage" type="hidden" th:value="${errorMessage}"/>
+
     <div th:if="${errorMessage}" style="color:red;">
-        <p th:text="${errorMessage}"></p>
+        <script>
+            const errorMessage = document.getElementById('errorMessage')?.value;
+            openAlert(errorMessage);
+        </script>
     </div>
     <form th:action="@{/signup}" method="post">
         <div class="form-group">
@@ -23,6 +28,7 @@
             <label for="name">사용자명</label>
             <input type="text" class="form-control" id="name" name="name" required>
         </div>
+        <br/>
         <button type="submit" class="btn btn-primary">Sign Up</button>
     </form>
 </section>

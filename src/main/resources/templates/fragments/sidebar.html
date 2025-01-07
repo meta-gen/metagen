@@ -16,11 +16,17 @@
             운영 관리
         </a>
         <div id="operation-management" class="collapse">
-            <!-- 1뎁스: 공지사항 -->
+            <!-- 2뎁스: 공지사항 -->
             <a href="/notice" class="list-group-item list-group-item-action ps-4"
                onclick="setActiveSubmenu(event, 'notice')"
                data-submenu-id="notice">
                 공지사항
+            </a>
+            <!-- 2뎁스: 시스템로그 -->
+            <a href="/systemLog" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'system-log')"
+               data-submenu-id="system-log">
+                시스템로그
             </a>
         </div>
 
@@ -83,11 +89,6 @@
                onclick="setActiveSubmenu(event, 'access-control')"
                data-submenu-id="access-control">
                 인가관리
-            </a>
-            <a href="/systemLog" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'system-log')"
-               data-submenu-id="system-log">
-                시스템로그
             </a>
         </div>
 

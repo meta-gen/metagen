@@ -7,8 +7,14 @@
 <section layout:fragment="content">
     <div class="login-form">
         <h2>로그인</h2>
+
+        <input type="hidden" id="errorMessage" th:value="${exception} ?: '잘못된 아이디나 암호입니다'">
+
         <div th:if="${param.error}" class="form-group">
-            <span th:text="${exception}?: '잘못된 아이디나 암호입니다'" class="alert alert-danger"></span>
+            <script>
+                const errorMessage = document.getElementById('errorMessage')?.value || '잘못된 아이디나 암호입니다.';
+                openAlert(errorMessage, () => {window.location.href = "/login"});
+            </script>
         </div>
         <form th:action="@{/login}" method="post">
             <input type="hidden"
@@ -22,6 +28,7 @@
                 <label for="password">패스워드</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
+            <br/>
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
     </div>

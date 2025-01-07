@@ -23,6 +23,23 @@
         <!-- Sidebar -->
         <aside class="sidebar" th:replace="~{fragments/sidebar::sidebar}"></aside>
 
+        <dialog id="myAlert">
+            <h3>알림</h3>
+            <p id="alertContent">여기에 내용이 표시됩니다.</p>
+            <div class="button-container">
+                <button onclick="closeDialog('alert', true)" class="close">닫기</button>
+            </div>
+        </dialog>
+
+        <dialog id="myConfirm">
+            <h3>알림</h3>
+            <p id="confirmContent">여기에 내용이 표시됩니다.</p>
+            <div class="button-container">
+                <button onclick="closeDialog('confirm', true)" class="confirm">확인</button>
+                <button onclick="closeDialog('confirm', false)" class="close">닫기</button>
+            </div>
+        </dialog>
+
         <!-- Main Section -->
         <div class="content">
             <section layout:fragment="content"></section>
