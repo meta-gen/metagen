@@ -9,7 +9,7 @@ $(document).ready(function () {
 
         const name = $('#name').val();
         if (name === "") {
-            alert('사용자명을 입력해주세요.');
+            openAlert('사용자명을 입력해주세요.');
             return;
         }
 
@@ -19,13 +19,15 @@ $(document).ready(function () {
             data: JSON.stringify({name}),
             success: function (response) {
                 if (response === 'success') {
-                    alert('사용자명이 성공적으로 변경되었습니다.');
-                    location.reload(); // 새로고침
+                    openAlert('사용자명이 성공적으로 변경되었습니다.', () => {
+                        location.reload(); // 새로고침
+                    });
+
                 }
             },
             error: function (xhr) {
                 const errorMessage = xhr.responseJSON?.message || '사용자명 변경 중 문제가 발생했습니다.';
-                alert(errorMessage);
+                openAlert(errorMessage);
             }
         });
     });
@@ -41,17 +43,17 @@ $(document).ready(function () {
 
         // 비밀번호 확인 로직
         if (currentPassword !== confirmPassword) {
-            alert('비밀번호가 일치하지 않습니다.');
+            openAlert('비밀번호가 일치하지 않습니다.');
             return;
         }
 
         if (currentPassword === password) {
-            alert('동일한 비밀번호로 변경은 불가능합니다.');
+            openAlert('동일한 비밀번호로 변경은 불가능합니다.');
             return;
         }
 
         if (password.trim() === '') {
-            alert('비밀번호를 입력해주세요.');
+            openAlert('비밀번호를 입력해주세요.');
             return;
         }
 
@@ -64,13 +66,14 @@ $(document).ready(function () {
             }),
             success: function (response) {
                 if (response === 'success') {
-                    alert('비밀번호가 성공적으로 변경되었습니다.');
-                    window.location.href = '/logout';
+                    openAlert('비밀번호가 성공적으로 변경되었습니다.', () => {
+                        window.location.href = '/logout';
+                    });
                 }
             },
             error: function (xhr) {
                 const errorMessage = xhr.responseJSON?.message || '비밀번호 변경 중 문제가 발생했습니다.';
-                alert(errorMessage);
+                openAlert(errorMessage);
             }
         });
     });
