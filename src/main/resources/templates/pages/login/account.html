@@ -11,7 +11,7 @@
 
     <h2>내정보</h2>
 
-    <div th:if="${!account.isPasswdCheck()}" style="color:red;">
+    <div th:if="${!account.isPasswdCheck()}">
         <script>
             const errorMessage = "ADMIN계정으로 접속하였습니다. 패스워드를 변경해주세요.";
             openAlert(errorMessage);
