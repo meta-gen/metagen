@@ -79,6 +79,31 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
    docker-compose -p metagen up -d
    ```
 
+> 만약 프로젝트를 받지 않고 작업을 수행하려고 할 경우 postgres는 다음과 같이 실행할 수 있습니다.
+
+1. volume을 생성합니다.
+    ```shell
+    docker volume create metagen
+    ```
+
+2. network를 생성합니다.
+    ```shell
+    docker network create meta-network
+    ```
+
+3. PostgreSQL을 실행합니다.
+    ```shell
+    docker run -d \
+      --name meta-gen-postgres \
+      --network meta-network \
+      -e POSTGRES_PASSWORD=meta-gen \
+      -e POSTGRES_DB=meta-gen \
+      -e POSTGRES_USER=meta-gen \
+      -p 15439:5432 \
+      -v metagen:/var/lib/postgresql/data \
+      postgres:16.3
+    ```
+
 ---
 
 ### 설치 이후 설정
@@ -114,18 +139,21 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 - Docker (선택)
 
 ### 프로젝트 클론 및 설정
+
 ```bash
 git clone https://github.com/username/metagen.git
 cd metagen
 ```
 
 ### 애플리케이션 빌드 및 실행
+
 ```bash
 ./gradlew clean build
 ./gradlew bootRun
 ```
 
 ### 애플리케이션 접속
+
 - 브라우저에서 [http://localhost:9940](http://localhost:9940)로 접속합니다.
 
 
@@ -143,32 +171,31 @@ MetaGen의 주요 엔티티와 관계를 시각적으로 확인할 수 있습니
 1. docker run 명령어로 실행하기
 1) 네트워크 생성
 ```bash
-  docker network create meta-network
+docker network create meta-network
 ```
 2) 도커 컨테이너 실행
 ```bash
-    
-    docker run -d \
-      --name meta-gen-postgres \
-      --network meta-network \
-      -e POSTGRES_PASSWORD=meta-gen \
-      -e POSTGRES_DB=meta-gen \
-      -e POSTGRES_USER=meta-gen \
-      -p 15439:5432 \
-      -v ./volume/metagen:/var/lib/postgresql/data \
-      postgres:16.3
-    docker run -d \
-      --name meta-gen-app \
-      --network meta-network \
-      -e SPRING_DATASOURCE_URL=jdbc:postgresql://meta-gen-postgres:5432/meta-gen \
-      -p 9940:9940 \
-      koboolean/metagen
+docker run -d \
+  --name meta-gen-postgres \
+  --network meta-network \
+  -e POSTGRES_PASSWORD=meta-gen \
+  -e POSTGRES_DB=meta-gen \
+  -e POSTGRES_USER=meta-gen \
+  -p 15439:5432 \
+  -v ./volume/metagen:/var/lib/postgresql/data \
+  postgres:16.3
+docker run -d \
+  --name meta-gen-app \
+  --network meta-network \
+  -e SPRING_DATASOURCE_URL=jdbc:postgresql://meta-gen-postgres:5432/meta-gen \
+  -p 9940:9940 \
+  koboolean/metagen
 ```
 
 2. docker compose를 사용하여 한번에 postgersql, metagen 관리
 ```bash
-    cd /docker/metagen
-    docker compose up -d
+cd /docker/metagen
+docker compose up -d
 ```
 
 ---
