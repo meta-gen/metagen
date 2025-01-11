@@ -1,0 +1,33 @@
+services:
+  meta-gen-postgres:
+    image: postgres:16.3
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: meta-gen
+      POSTGRES_DB: meta-gen
+      POSTGRES_USER: meta-gen
+    ports:
+      - 15439:5432
+    volumes:
+      - ../volume/metagen:/var/lib/postgresql/data
+    container_name: meta-gen-postgres
+    networks:
+      - meta-network
+
+  meta-gen-app:
+    image: koboolean/metagen
+    container_name: meta-gen-app
+    depends_on:
+      - meta-gen-postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://meta-gen-postgres:5432/meta-gen
+      SPRING_DATASOURCE_USERNAME: meta-gen
+      SPRING_DATASOURCE_PASSWORD: meta-gen
+    ports:
+      - 9940:9940
+    networks:
+      - meta-network
+
+networks:
+  meta-network:
+    driver: bridge

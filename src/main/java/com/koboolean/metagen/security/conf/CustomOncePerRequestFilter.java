@@ -31,7 +31,7 @@ public class CustomOncePerRequestFilter extends OncePerRequestFilter {
          * JSESSIONID 갱신 - 요청마다 JSESSIONID를 갱신하여 세션 만료 시간을 연장할 수 있음.
          * 하지만, 서버 부하(stress)가 증가할 가능성이 있으므로 현재는 비활성화 처리.
          * 필요 시 아래 코드를 활성화하여 사용 가능.
-         * 활성화 시 기본 default max-age 30분을 위해 application.yml 내 max-age: 1800 주석 해제 필요
+         * 활성화 시 기본 default max-age 30분을 위해 application-local.yml 내 max-age: 1800 주석 해제 필요
          */
         // if (request.getSession(false) != null) {
         //     String sessionId = request.getSession().getId();

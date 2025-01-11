@@ -36,4 +36,5 @@ out/
 .vscode/
 
 /docker/volume/**
+/docker/volume/metagen/**
 /.metadata/

@@ -6,4 +6,4 @@ COPY . .
 
 RUN ./gradlew clean build -x test --no-daemon
 
-CMD ["./gradlew", "bootRun"]
+CMD ["./gradlew", "bootRun", "--args=--spring.profiles.active=docker"]

@@ -1,8 +1,8 @@
 
 # 🤘MetaGen
 
-MetaGen은 데이터 사전 또는 규칙 기반 명명법을 활용하여 메소드와 함수명을 자동으로 생성하고, 이를 기반으로 설계서 및 테스트 시나리오 작성을 지원하는 웹 애플리케이션입니다.
-MetaGen은 특히 대규모 시스템 개발에서 일관된 명명 규칙 준수와 문서화의 생산성을 극대화하도록 설계되었습니다.
+MetaGen은 데이터 사전 또는 규칙 기반 명명법을 활용하여 메소드와 함수명을 자동으로 생성하고, 이를 기반으로 설계서 및 테스트 시나리오 작성을 지원하는 웹 애플리케이션입니다.  
+MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하고, 문서화 작업을 자동화하여 개발 생산성을 극대화합니다.
 
 ---
 
@@ -39,11 +39,11 @@ MetaGen은 특히 대규모 시스템 개발에서 일관된 명명 규칙 준�
 
 ## 기술 스택
 
-- **Backend**: Spring Boot, Java 17
+- **Backend**: Spring Boot 3.4.1, Java 17, JPA, Hibernate
 - **Frontend**: Thymeleaf
-- **Database**: PostgreSQL
+- **Database**: PostgreSQL 16.3
 - **Security**: Spring Security
-- **Containerization**: Docker
+- **DevOps**: Docker, Docker Compose
 
 ---
 
@@ -76,7 +76,7 @@ MetaGen은 특히 대규모 시스템 개발에서 일관된 명명 규칙 준�
 2. 프로젝트 `root` 디렉토리에서 `docker` 디렉토리로 이동한 후 다음 명령어를 실행합니다:
    ```shell
    cd docker
-   docker compose up -d
+   docker-compose -p metagen up -d
    ```
 
 ---
@@ -131,13 +131,49 @@ cd metagen
 
 ---
 
-## MetaGen ERD
+### ERD 구조
+MetaGen의 주요 엔티티와 관계를 시각적으로 확인할 수 있습니다.
+- 사용자(User), 명명 규칙(Rule), 메소드(Method), 테스트 시나리오(Scenario) 등으로 구성되어 있습니다.
 
-### ERD-CLOUD URL
-[ERD Cloud - METAGEN](https://www.erdcloud.com/d/KE8576rcrNDyCve2h)
+🔗 [ERD Cloud - METAGEN](https://www.erdcloud.com/d/KE8576rcrNDyCve2h)
+
+---
+
+## Dokcer Hub에 올라간 이미지 사용하여 빌드하기
+1. docker run 명령어로 실행하기
+1) 네트워크 생성
+```bash
+  docker network create meta-network
+```
+2) 도커 컨테이너 실행
+```bash
+    
+    docker run -d \
+      --name meta-gen-postgres \
+      --network meta-network \
+      -e POSTGRES_PASSWORD=meta-gen \
+      -e POSTGRES_DB=meta-gen \
+      -e POSTGRES_USER=meta-gen \
+      -p 15439:5432 \
+      -v ./volume/metagen:/var/lib/postgresql/data \
+      postgres:16.3
+    docker run -d \
+      --name meta-gen-app \
+      --network meta-network \
+      -e SPRING_DATASOURCE_URL=jdbc:postgresql://meta-gen-postgres:5432/meta-gen \
+      -p 9940:9940 \
+      koboolean/metagen
+```
+
+2. docker compose를 사용하여 한번에 postgersql, metagen 관리
+```bash
+    cd /docker/metagen
+    docker compose up -d
+```
 
 ---
 
 ## 라이선스
 
-이 프로젝트는 [MIT 라이선스](LICENSE)를 따릅니다.
+이 프로젝트는 [MIT 라이선스](LICENSE)를 따릅니다.  
+자유롭게 수정 및 배포할 수 있으나, 저작권 및 라이선스 명시가 필요합니다.

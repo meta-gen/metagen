@@ -9,5 +9,11 @@ services:
     ports:
       - 15439:5432
     volumes:
-      - ./volume/db:/var/lib/postgresql/data
+      - ./volume/metagen:/var/lib/postgresql/data
     container_name: meta-gen-postgres
+    networks:
+      - meta-network
+
+networks:
+  meta-network:
+    driver: bridge
