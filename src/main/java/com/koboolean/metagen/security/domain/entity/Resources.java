@@ -1,6 +1,6 @@
 package com.koboolean.metagen.security.domain.entity;
 
-import com.koboolean.metagen.jpa.BaseEntity;
+import com.koboolean.metagen.home.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

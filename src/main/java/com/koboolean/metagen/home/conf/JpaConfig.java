@@ -1,4 +1,4 @@
-package com.koboolean.metagen.conf;
+package com.koboolean.metagen.home.conf;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

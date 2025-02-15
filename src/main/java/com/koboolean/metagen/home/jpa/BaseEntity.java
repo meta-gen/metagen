@@ -1,4 +1,4 @@
-package com.koboolean.metagen.jpa;
+package com.koboolean.metagen.home.jpa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
