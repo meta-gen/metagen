@@ -1,9 +1,9 @@
 package com.koboolean.metagen.security.service;
 
-import com.koboolean.metagen.domain.dto.AccountContext;
-import com.koboolean.metagen.domain.dto.AccountDto;
-import com.koboolean.metagen.domain.entity.Account;
-import com.koboolean.metagen.domain.entity.Role;
+import com.koboolean.metagen.security.domain.dto.AccountContext;
+import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.security.domain.entity.Account;
+import com.koboolean.metagen.security.domain.entity.Role;
 import com.koboolean.metagen.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

@@ -1,6 +1,6 @@
-package com.koboolean.metagen.domain.dto;
+package com.koboolean.metagen.security.domain.dto;
 
-import com.koboolean.metagen.domain.entity.Role;
+import com.koboolean.metagen.security.domain.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.koboolean.metagen.security.service.impl;
 
-import com.koboolean.metagen.domain.entity.RoleHierarchy;
+import com.koboolean.metagen.security.domain.entity.RoleHierarchy;
 import com.koboolean.metagen.security.repository.RoleHierarchyRepository;
 import com.koboolean.metagen.security.service.RoleHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;

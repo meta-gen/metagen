@@ -1,4 +1,4 @@
-package com.koboolean.metagen.domain.entity;
+package com.koboolean.metagen.security.domain.entity;
 
 import com.koboolean.metagen.jpa.BaseEntity;
 import jakarta.persistence.*;

@@ -1,4 +1,4 @@
-package com.koboolean.metagen.domain.dto;
+package com.koboolean.metagen.security.domain.dto;
 
 import lombok.*;
 import lombok.experimental.Accessors;

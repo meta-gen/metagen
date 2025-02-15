@@ -1,6 +1,6 @@
 package com.koboolean.metagen.security.repository;
 
-import com.koboolean.metagen.domain.entity.Resources;
+import com.koboolean.metagen.security.domain.entity.Resources;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

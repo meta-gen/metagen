@@ -1,12 +1,11 @@
 package com.koboolean.metagen.user.controller;
 
-import com.koboolean.metagen.domain.dto.AccountDto;
+import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.user.service.LoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;

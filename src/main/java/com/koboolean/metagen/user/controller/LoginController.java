@@ -1,7 +1,7 @@
 package com.koboolean.metagen.user.controller;
 
-import com.koboolean.metagen.domain.dto.AccountDto;
-import com.koboolean.metagen.domain.entity.Account;
+import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.security.exception.CustomFormException;
 import com.koboolean.metagen.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +19,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Controller
 @RequiredArgsConstructor

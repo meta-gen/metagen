@@ -1,6 +1,6 @@
 package com.koboolean.metagen.security.provider;
 
-import com.koboolean.metagen.domain.dto.AccountContext;
+import com.koboolean.metagen.security.domain.dto.AccountContext;
 import com.koboolean.metagen.security.details.FormWebAuthenticationDetails;
 import com.koboolean.metagen.security.exception.SecretException;
 import lombok.RequiredArgsConstructor;

@@ -1,5 +1,6 @@
 package com.koboolean.metagen.security.service;
 
+import com.koboolean.metagen.security.domain.entity.RoleHierarchy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,17 +18,17 @@ public class RoleService {
     @Transactional
     public String findAllHierarchy() {
 
-        List<com.koboolean.metagen.domain.entity.RoleHierarchy> hierarchyDtos = roleHierarchyRepository.findAll();
+        List<RoleHierarchy> hierarchyDtos = roleHierarchyRepository.findAll();
 
 
         StringBuilder hierarchyRole = new StringBuilder();
 
         if(!hierarchyDtos.isEmpty()){
 
-            Iterator<com.koboolean.metagen.domain.entity.RoleHierarchy> itr = hierarchyDtos.iterator();
+            Iterator<RoleHierarchy> itr = hierarchyDtos.iterator();
 
             while (itr.hasNext()) {
-                com.koboolean.metagen.domain.entity.RoleHierarchy roleHierarchy = itr.next();
+                RoleHierarchy roleHierarchy = itr.next();
                 if (roleHierarchy.getParent() != null) {
                     hierarchyRole.append(roleHierarchy.getParent().getRoleName());
                     hierarchyRole.append(" > ");

@@ -1,6 +1,6 @@
 package com.koboolean.metagen.security.mapper;
 
-import com.koboolean.metagen.domain.entity.Resources;
+import com.koboolean.metagen.security.domain.entity.Resources;
 import com.koboolean.metagen.security.repository.ResourcesRepository;
 
 import java.util.LinkedHashMap;
