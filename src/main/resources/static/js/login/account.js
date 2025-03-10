@@ -14,7 +14,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: '/updateName', // 사용자명 변경 URL
+            url: '/api/updateName', // 사용자명 변경 URL
             type: 'POST',
             data: JSON.stringify({name}),
             success: function (response) {
@@ -58,7 +58,7 @@ $(document).ready(function () {
         }
 
         $.ajax({
-            url: '/updatePwd', // 비밀번호 변경 URL
+            url: '/api/updatePwd', // 비밀번호 변경 URL
             type: 'POST',
             data: JSON.stringify({
                 password,

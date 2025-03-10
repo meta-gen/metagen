@@ -58,13 +58,13 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (12, '*', 0, '/account','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (13, '*', 0, '/updatePwd','url', 'SYSTEM', 'SYSTEM')
+VALUES (13, '*', 0, '/api/updatePwd','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
 VALUES (14, '*', 0, '/meta','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (15, '*', 0, '/updateName','url', 'SYSTEM', 'SYSTEM')
+VALUES (15, '*', 0, '/api/updateName','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
 VALUES (16, '*', 0, '/codeRule','url', 'SYSTEM', 'SYSTEM')

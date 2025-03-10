@@ -26,7 +26,7 @@
         권한 : <span th:text="${account.roleName}"></span>
     </div>
     <hr/>
-    <form id="chnageNameForm" th:action="@{/updateName}" method="post">
+    <form id="chnageNameForm" th:action="@{/api/updateName}" method="post">
         <div class="form-group">
             <label for="name">사용자명</label>
             <input type="text" class="form-control" id="name" name="name" th:value="${account.name}">
@@ -35,7 +35,7 @@
         <button id="changeNameBtn" type="button" class="btn btn-primary">사용자명 변경</button>
     </form>
     <hr/>
-    <form id="changedPasswdForm" th:action="@{/updatePwd}" method="post">
+    <form id="changedPasswdForm" th:action="@{/api/updatePwd}" method="post">
         <div class="form-group">
             <label for="password">현재 비밀번호</label>
             <input type="password" class="form-control" id="password" name="password">
