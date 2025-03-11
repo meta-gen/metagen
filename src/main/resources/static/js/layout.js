@@ -137,3 +137,13 @@ function closeDialog(type, isCallableStart) {
     callableFunction = () => {}
 }
 
+/**
+ * 크롬 #top-layer 생성에 따른 먹통현상 방지 반영
+ */
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll("dialog").forEach(dialog => {
+        if (!document.body.contains(dialog)) {
+            document.body.appendChild(dialog); // body 아래로 이동
+        }
+    });
+});
