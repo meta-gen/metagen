@@ -18,6 +18,12 @@ public enum ErrorCode {
      */
     PASSWORD_NOT_MATCHED(HttpStatus.NOT_FOUND, "PASSWORD-NOT-MATCHED", "패스워드가 일치하지 않습니다."),
 
+
+    /**
+     * 엑셀 생성이 실패하였습니다.
+     */
+    CREATE_EXCEL_FAIL_EXCEPTION(HttpStatus.NOT_FOUND, "CREATE_EXCEL_FAIL_EXCEPTION", "엑셀 생성이 실패하였습니다."),
+
     /**
      * 등록된 아이디가 존재합니다.
      */

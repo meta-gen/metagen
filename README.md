@@ -6,6 +6,32 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 
 [Docker Hub](https://hub.docker.com/repository/docker/koboolean/metagen)
 
+
+---
+## 사용기술
+
+### 백엔드
+- Spring Boot, Spring Security
+- JPA, QueryDSL
+- Lombok, Rest API
+
+### 프론트엔드
+- Thymeleaf
+- jQuery, ajax  
+- Bootstrap
+- JavaScript ES6+
+
+### Database
+- Postgresql
+
+### DevOps
+- Docker
+- CI/CD (GitHub Actions, Jenkins 등)
+
+### 프로젝트 관리
+- Jira
+- GitHub
+
 ---
 
 ## 프로젝트 목표

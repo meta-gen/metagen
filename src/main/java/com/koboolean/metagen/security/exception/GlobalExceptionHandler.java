@@ -3,9 +3,10 @@ package com.koboolean.metagen.security.exception;
 import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice
+@RestControllerAdvice(annotations = {RestController.class}, basePackages = {"com.example.yourproject.controller"})
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(CustomException.class)

@@ -97,6 +97,7 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (25, '*', 0, '/updateRole','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 
+
 insert into role_resources(resource_id, role_id) values (0,5) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (1,5) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (2,5) on CONFLICT (resource_id, role_id) DO NOTHING;

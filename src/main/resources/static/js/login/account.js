@@ -18,7 +18,7 @@ $(document).ready(function () {
             type: 'POST',
             data: JSON.stringify({name}),
             success: function (response) {
-                if (response === 'success') {
+                if (response.result === 'success') {
                     openAlert('사용자명이 성공적으로 변경되었습니다.', () => {
                         location.reload(); // 새로고침
                     });
@@ -65,7 +65,7 @@ $(document).ready(function () {
                 currentPassword
             }),
             success: function (response) {
-                if (response === 'success') {
+                if (response.result === 'success') {
                     openAlert('비밀번호가 성공적으로 변경되었습니다.', () => {
                         window.location.href = '/logout';
                     });

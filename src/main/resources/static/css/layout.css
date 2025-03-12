@@ -207,7 +207,7 @@ dialog p {
 }
 
 /* 버튼 컨테이너 */
-dialog .button-container {
+.button-container {
     display: flex;
     justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
     gap: 10px; /* 버튼 간격 띄우기 */
