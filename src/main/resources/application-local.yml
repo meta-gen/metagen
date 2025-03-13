@@ -20,6 +20,11 @@ spring:
             lob:
               non_contextual_creation: true
     mapping-resources: META-INF/orm.xml
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
   thymeleaf:
     cache: false
     prefix: classpath:/templates/

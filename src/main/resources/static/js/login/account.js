@@ -1,4 +1,4 @@
-import {setupAjaxCsrf} from "../csrf.js";
+import {setupAjaxCsrf} from "../common/csrf.js";
 
 $(document).ready(function () {
     setupAjaxCsrf();
