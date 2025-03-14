@@ -286,3 +286,12 @@ dialog::backdrop {
     display: inline-block;
     color: white;
 }
+
+dialog .btn-primary {
+    display: flex;
+    flex-direction: column; /* 세로 방향 정렬 */
+    gap: 10px; /* 버튼 사이 간격 */
+    align-items: center; /* 버튼을 중앙 정렬 */
+    width: 100%;
+    margin: 3px;
+}

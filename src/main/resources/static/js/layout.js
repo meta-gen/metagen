@@ -109,10 +109,23 @@ function openConfirm(message, callableFunc){
 
 // 다이얼로그 열기
 function openDialog(type, message, callableFunc) {
-    const dialog = document.getElementById("alert" === type ? 'myAlert' : "myConfirm");
-    const content = document.getElementById("alert" === type ? 'alertContent' : "confirmContent");
+    const dialog = document.getElementById("alert" === type ? 'myAlert' : "div" ? "mainConfirm" : "myConfirm");
+    const content = document.getElementById("alert" === type ? 'alertContent' : "div" ? "mainDialogTitle" : "confirmContent");
 
-    if (content) {
+    if(type === "div"){
+        content.textContent = message.title;
+
+        // 기존 내용 초기화
+        const dialogContent = document.getElementById("mainDialogContent");
+        dialogContent.innerHTML = ''; // 기존 내용 삭제
+
+        // `message.content`가 DOM 요소라면 appendChild() 사용
+        if (message.content instanceof HTMLElement) {
+            dialogContent.appendChild(message.content);
+        } else {
+            dialogContent.insertAdjacentHTML("beforeend", message.content.toString());
+        }
+    } else if (content) {
         content.textContent = message; // 다이얼로그에 메시지 삽입
     }
 
@@ -122,13 +135,12 @@ function openDialog(type, message, callableFunc) {
 
     if(callableFunc){
         callableFunction = callableFunc;
-        isCallback = true;
     }
 }
 
 // 다이얼로그 닫기
 function closeDialog(type, isCallableStart) {
-    const dialog = document.getElementById(type === "alert" ? 'myAlert' : 'myConfirm');
+    const dialog = document.getElementById(type === "alert" ? 'myAlert' : "div" ? "mainConfirm" : 'myConfirm');
     dialog.close(); // 다이얼로그 닫기
 
     if(isCallableStart) callableFunction(); // 닫은 이후 추가 함수 호출
@@ -147,3 +159,5 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+window.closeDialog = closeDialog;

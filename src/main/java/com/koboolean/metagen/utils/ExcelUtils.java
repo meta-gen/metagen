@@ -56,19 +56,14 @@ public class ExcelUtils {
      * @return
      */
     public static Resource downloadExcelFile(String fileName) throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource("static/excel/" + fileName + ".xlsx");
+        InputStream inputStream = ExcelUtils.class.getClassLoader().getResourceAsStream("static/excel/" + fileName + ".xlsx");
 
         // 파일이 존재하는지 확인
-        if (!classPathResource.exists()) {
+        if (inputStream == null) {
             throw new FileNotFoundException("파일을 찾을 수 없습니다: " + fileName);
         }
 
-        // ✅ InputStream을 사용하여 파일을 읽기
-        InputStream inputStream = classPathResource.getInputStream();
-        InputStreamResource resource = new InputStreamResource(inputStream);
-
-
-        return resource;
+        return new InputStreamResource(inputStream);
     }
 
 }
