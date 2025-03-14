@@ -1,7 +1,7 @@
 package com.koboolean.metagen.logs.interceptor;
 
 import com.koboolean.metagen.logs.domain.entity.Logs;
-import com.koboolean.metagen.logs.repository.LogsRepository;
+import com.koboolean.metagen.logs.service.LogsService;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,11 +17,16 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Restful API 형식으로 들어오는 HTTP 요청단위별 동작을 위해 Interceptor에 로깅 기능 추가
+ * - HTTP 요청(Request) 및 응답(Response) 로깅에 Interceptor 적용
+ * - 모든 메서드 기반 로깅이 필요할 경우 AOP를 사용하여 적용
+ */
 @RequiredArgsConstructor
 public class LogsInterceptor implements HandlerInterceptor {
 
     private static final Logger logger = LoggerFactory.getLogger(LogsInterceptor.class);
-    private final LogsRepository logsRepository;
+    private final LogsService logsService;
 
     // 요청 정보를 저장할 ThreadLocal 변수 (각 요청마다 독립적인 데이터 저장)
     private final ThreadLocal<RequestDetails> requestDetailsThreadLocal = new ThreadLocal<>();
@@ -98,7 +103,7 @@ public class LogsInterceptor implements HandlerInterceptor {
                 log.setTimestamp();
 
                 logger.debug("Saved Log Data: " + log);
-                logsRepository.save(log);
+                logsService.saveLogs(log);
             }
         } catch (Exception e) {
             logger.error("Error saving request log", e);

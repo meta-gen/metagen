@@ -6,6 +6,55 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 
 [Docker Hub](https://hub.docker.com/repository/docker/koboolean/metagen)
 
+
+---
+## 기술 스택
+
+### **Backend** (비즈니스 로직, 인증/인가, 데이터 처리)
+- **Spring Boot** 3.4.1 → 백엔드 프레임워크, REST API 개발 및 전반적인 서버 관리
+- **Java** 17 → 주요 백엔드 프로그래밍 언어
+- **Spring Security** 6.2.1 → 사용자 인증 및 권한 관리
+- **JPA (Hibernate 포함)** 6.4.0.Final → 객체-관계 매핑(ORM)으로 DB와 상호작용
+- **QueryDSL** 5.0.0 → 동적 SQL 작성 및 타입 안정성 제공
+- **Lombok** 1.18.30 → 코드 간결화(Boilerplate 코드 제거)
+- **Rest API (Spring Web)** 6.2.1 → RESTful API 엔드포인트 제공
+- **ModelMapper** 3.1.0 → DTO와 엔티티 간 변환 자동화
+
+### **Frontend** (UI 렌더링, 사용자 인터페이스, 동적 콘텐츠 처리)
+- **Thymeleaf** 3.1.2 → 서버 사이드 템플릿 엔진, HTML 기반 화면 렌더링
+- **Thymeleaf Layout Dialect** 3.2.1 → 레이아웃 관리, 템플릿 구성 효율화
+- **jQuery** 3.6.0 → DOM 조작, AJAX 요청 및 UI 인터랙션 처리
+- **Ajax** (jQuery 기반) → 비동기 데이터 요청 및 UI 업데이트
+- **Bootstrap** 5.3.2 → 반응형 UI 디자인 및 스타일링
+- **JavaScript** ES6+ → 클라이언트 사이드 로직 처리 및 이벤트 핸들링
+- **Thymeleaf Spring Security Extras** 3.1.2 → Thymeleaf에서 인증/권한 제어 지원
+
+### **Database** (데이터 저장 및 관리)
+- **PostgreSQL** 16.3 → 관계형 데이터베이스 관리 시스템(RDBMS)
+- **PostgreSQL JDBC Driver** 42.6.0 → Java 애플리케이션에서 PostgreSQL과 연결
+
+### **DevOps** (서버 관리, 배포 자동화, CI/CD)
+- **Docker** 24.0.7 → 애플리케이션 컨테이너화 및 환경 일관성 유지
+- **Docker Compose** 2.20.2 → 다중 컨테이너 애플리케이션 설정 및 실행
+- **CI/CD (GitHub Actions, Jenkins 2.440.1)** → 코드 배포 자동화 및 지속적 통합
+
+### **프로젝트 관리** (협업 및 버전 관리)
+- **Jira** (Cloud) → 이슈 트래킹 및 애자일 프로젝트 관리
+- **GitHub** (GitHub Actions 포함) → 코드 버전 관리 및 CI/CD 연계
+
+### **문서화** (API 명세 및 개발 가이드 제공)
+- **Springdoc OpenAPI (Swagger)** 2.8.5 → API 문서 자동 생성 및 UI 제공
+
+### **유틸리티 및 기타 라이브러리** (부가 기능 및 성능 최적화)
+- **Apache POI (Excel 처리)** 5.3.0 → 엑셀 파일 읽기/쓰기 기능 제공
+    - **POI-Ooxml** 5.3.0 → XLSX 파일 지원
+    - **XmlBeans** 5.1.1 → XML 데이터 파싱 지원
+    - **POI-Ooxml-Schemas** 4.1.2 → Excel 문서의 XML 구조 처리
+- **Apache Commons Collections** 4.4 → 데이터 구조 및 컬렉션 유틸리티 제공
+
+### **반영 고민 중** (추가 기능 개발 검토)
+- **Redis Pub/Sub** → 승인관리 시스템 비동기 메시징 처리
+
 ---
 
 ## 프로젝트 목표
@@ -36,16 +85,6 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 
 4. **엑셀 기반 테스트 시나리오 생성**
     - 엑셀 템플릿을 통해 테스트 시나리오를 자동으로 생성하고, 다양한 테스트 케이스를 관리할 수 있도록 지원합니다.
-
----
-
-## 기술 스택
-
-- **Backend**: Spring Boot 3.4.1, Java 17, JPA, Hibernate
-- **Frontend**: Thymeleaf
-- **Database**: PostgreSQL 16.3
-- **Security**: Spring Security
-- **DevOps**: Docker, Docker Compose
 
 ---
 
