@@ -1,4 +1,4 @@
-package com.koboolean.metagen.dictionary.controller;
+package com.koboolean.metagen.data.dictionary.controller;
 
 import com.koboolean.metagen.utils.ExcelUtils;
 import io.swagger.v3.oas.annotations.Operation;
