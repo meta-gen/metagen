@@ -19,7 +19,8 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 - **Lombok** 1.18.30 → 코드 간결화(Boilerplate 코드 제거)
 - **Rest API (Spring Web)** 6.2.1 → RESTful API 엔드포인트 제공
 - **ModelMapper** 3.1.0 → DTO와 엔티티 간 변환 자동화
-
+- **Spring Batch** 5.2.1 → 시간이 소요되는 Backend 로직 수행
+- 
 ### **Frontend** (UI 렌더링, 사용자 인터페이스, 동적 콘텐츠 처리)
 - **Thymeleaf** 3.1.2 → 서버 사이드 템플릿 엔진, HTML 기반 화면 렌더링
 - **Thymeleaf Layout Dialect** 3.2.1 → 레이아웃 관리, 템플릿 구성 효율화

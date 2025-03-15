@@ -77,7 +77,10 @@ public class LogsInterceptor implements HandlerInterceptor {
             String requestBody = getRequestBody(details.wrappedRequest);
             logger.debug("Captured Request Body: " + requestBody);
 
-            String responseBody = getResponseBody(details.wrappedResponse);
+            String header = response.getHeader("Content-Disposition");
+
+            // fileData 데이터 저장 시 크기 문제로 인한 File Data 출력
+            String responseBody = header != null && (header.contains("attachment") || header.contains("filename=")) ? "File Data" : getResponseBody(details.wrappedResponse);
             logger.debug("Captured Response Body: " + responseBody);
 
             int statusCode = response.getStatus(); // 응답 상태 코드
