@@ -46,10 +46,9 @@ public class FormAuthenticationProvider implements AuthenticationProvider {
         // Project ID 저장
         AccountDto accountDto = accountContext.getAccountDto();
         String projectId = details.getProjectId();
+        accountDto.setProjectId(Long.parseLong(projectId));
 
-        accountContext.setAccountDto(accountDto.setProjectId(Long.parseLong(projectId)));
-
-        return new UsernamePasswordAuthenticationToken(accountContext.getAccountDto(), null, accountContext.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(accountDto, null, accountContext.getAuthorities());
     }
 
     @Override

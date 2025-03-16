@@ -104,6 +104,8 @@ public class LoginController {
         UsernamePasswordAuthenticationToken authentication =
                 (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 
+        accountDto.setProjectId(((AccountDto)authentication.getPrincipal()).getProjectId());
+
         // 새로운 AccountDto로 Principal 교체
         UsernamePasswordAuthenticationToken newAuthentication =
                 new UsernamePasswordAuthenticationToken(
