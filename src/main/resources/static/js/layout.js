@@ -109,8 +109,8 @@ function openConfirm(message, callableFunc){
 
 // 다이얼로그 열기
 function openDialog(type, message, callableFunc) {
-    const dialog = document.getElementById("alert" === type ? 'myAlert' : "div" ? "mainConfirm" : "myConfirm");
-    const content = document.getElementById("alert" === type ? 'alertContent' : "div" ? "mainDialogTitle" : "confirmContent");
+    const dialog = document.getElementById("alert" === type ? 'myAlert' : "div" === type ? "mainConfirm" : "myConfirm");
+    const content = document.getElementById("alert" === type ? 'alertContent' : "div" === type ? "mainDialogTitle" : "confirmContent");
 
     if(type === "div"){
         content.textContent = message.title;
@@ -140,7 +140,7 @@ function openDialog(type, message, callableFunc) {
 
 // 다이얼로그 닫기
 function closeDialog(type, isCallableStart) {
-    const dialog = document.getElementById(type === "alert" ? 'myAlert' : "div" ? "mainConfirm" : 'myConfirm');
+    const dialog = document.getElementById(type === "alert" ? 'myAlert' : "div" === type ? "mainConfirm" : 'myConfirm');
     dialog.close(); // 다이얼로그 닫기
 
     if(isCallableStart) callableFunction(); // 닫은 이후 추가 함수 호출

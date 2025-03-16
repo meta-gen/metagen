@@ -5,7 +5,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -41,5 +43,9 @@ public class Account extends BaseEntity implements Serializable {
             @JoinColumn(name = "role_id") })
     @ToString.Exclude
     private Set<Role> userRoles = new HashSet<>();
+
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private List<ProjectMember> projectMember =  new ArrayList<>();
 }
 

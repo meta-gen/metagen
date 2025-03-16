@@ -18,6 +18,7 @@ public class AccountDto {
     private String currentPassword;
     private List<String> roles;
     private String roleName;
+    private Long projectId;
     private boolean isPasswdCheck;
 
 }

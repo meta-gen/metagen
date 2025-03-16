@@ -8,9 +8,11 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 public class FormWebAuthenticationDetails extends WebAuthenticationDetails {
 
     private final String secretKey;
+    private final String projectId;
 
     public FormWebAuthenticationDetails(HttpServletRequest request) {
         super(request);
         secretKey = request.getParameter("secret_key");
+        projectId = request.getParameter("project_id");
     }
 }

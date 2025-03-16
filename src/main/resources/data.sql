@@ -63,6 +63,12 @@ ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
 VALUES (15, '*', 0, '/api/downloadTemplate/**','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
+VALUES (16, '*', 0, '/projectManage','url', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
+VALUES (17, '*', 0, '/api/checkProjectList/**','url', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
 
 insert into role_resources(resource_id, role_id) values (1,4) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (2,4) on CONFLICT (resource_id, role_id) DO NOTHING;
@@ -79,7 +85,13 @@ insert into role_resources(resource_id, role_id) values (12,3) on CONFLICT (reso
 insert into role_resources(resource_id, role_id) values (13,4) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (14,0) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (15,4) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (16,0) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (17,5) on CONFLICT (resource_id, role_id) DO NOTHING;
 
 /* 유저 정보 생성 */
 insert into account(id, password, username, name, is_password_check,created_by, updated_by) values(0, '{bcrypt}$2a$10$GN1YfMyJLcWhDuslP6P/UuqRwIfJk2VF5tl9mXsRjLJ18ivQfIAoW', 'admin', '관리자', false, 'SYSTEM', 'SYSTEM') ON CONFLICT (id) DO NOTHING;
 insert into account_roles(account_id, role_id) values(0,0) on CONFLICT (account_id, role_id) DO NOTHING;
+
+insert into project(is_active, id, created_by, project_name, updated_by) values(true, 0, 'SYSTEM', 'MAIN', 'SYSTEM') ON CONFLICT (ID) DO NOTHING;
+
+insert into project_member(account_id, id, project_id, created_by, updated_by) values (0, 0, 0, 'SYSTEM', 'SYSTEM') on CONFLICT (id) do nothing;
