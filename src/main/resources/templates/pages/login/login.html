@@ -3,6 +3,10 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}"
 >
+<head>
+    <script type="module" th:src="@{/js/login/login.js}"></script>
+</head>
+
 <body>
 <section layout:fragment="content">
     <div class="login-form">
@@ -16,22 +20,31 @@
                 openAlert(errorMessage, () => {window.location.href = "/login"});
             </script>
         </div>
-        <form th:action="@{/login}" method="post">
+
+        <form id="loginForm" th:action="@{/login}" method="post" onsubmit="return beforeLogin()">
             <input type="hidden"
                    th:value="'wHlFMltmbMCxR63/G1xueQl5DwtYwUBXXcmeYcSE8ril2FpMqT2VTVPzCJiK7zXY24MlWwWpVfgspISEQdKpnw=='"
                    name="secret_key"/>
+
             <div class="form-group">
                 <label for="username">아이디</label>
                 <input type="text" class="form-control" id="username" name="username" required>
             </div>
+
+            <!-- 프로젝트 ID를 저장할 hidden 필드 -->
+            <input type="hidden" id="project_id" name="project_id" value="">
+
             <div class="form-group">
                 <label for="password">패스워드</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
+
             <br/>
-            <button type="submit" class="btn btn-primary">Login</button>
+            <button type="button" id="project-btn" class="btn btn-secondary" onclick="openProjectDialog()">프로젝트 선택</button>
+            <button type="submit" id="login-btn" class="btn btn-primary" style="visibility: hidden">로그인</button>
         </form>
     </div>
 </section>
+
 </body>
 </html>

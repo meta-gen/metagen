@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,11 +19,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Map;
+
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
 
-    private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
     /**
@@ -44,7 +44,8 @@ public class LoginController {
     }
 
     @GetMapping(value="/signup")
-    public String signup() {
+    public String signup(Model model) {
+        model.addAttribute("projects", userService.selectAllProjects());
         return "pages/login/signup";
     }
 
@@ -83,47 +84,16 @@ public class LoginController {
     @GetMapping(value = "/account")
     public String account(@AuthenticationPrincipal AccountDto accountDto, Authentication authentication, Model model) {
 
-        accountDto = userService.updateAccount(accountDto);
-        accountDto.setPassword(null);
-
-        updateNewAccount(accountDto);
-
-        accountDto.setRoleName(userService.getRoleName(authentication));
+        accountDto = userService.setName(accountDto);
 
         model.addAttribute("account", accountDto);
         return "pages/login/account";
     }
 
-    /**
-     * AccountDTO 변경사항 적용하기
-     * */
-    private void updateNewAccount(AccountDto accountDto) {
-        // 현재 SecurityContext에서 Authentication 가져오기
-        UsernamePasswordAuthenticationToken authentication =
-                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-
-        // 새로운 AccountDto로 Principal 교체
-        UsernamePasswordAuthenticationToken newAuthentication =
-                new UsernamePasswordAuthenticationToken(
-                        accountDto, // 변경된 계정 정보
-                        authentication.getCredentials(), // 기존 인증 정보
-                        authentication.getAuthorities() // 기존 권한 정보
-                );
-
-        // SecurityContext에 새 Authentication 설정
-        SecurityContextHolder.getContext().setAuthentication(newAuthentication);
-    }
-
     @PostMapping(value="/signup")
     public String signup(AccountDto accountDto, Model model) {
-
-        ModelMapper mapper = new ModelMapper();
-        Account account = mapper.map(accountDto, Account.class);
-        account.setPassword(passwordEncoder.encode(accountDto.getPassword()));
-        account.setPasswdCheck(true);
-
         try {
-            userService.createUser(account);
+            userService.createUser(accountDto);
         }catch(CustomFormException e){
             model.addAttribute("errorMessage", e.getErrorCode().getMessage());
             return "pages/login/signup";

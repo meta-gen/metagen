@@ -1,7 +1,9 @@
 package com.koboolean.metagen.user.controller;
 
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.security.domain.dto.ProjectDto;
 import com.koboolean.metagen.user.service.LoginService;
+import com.koboolean.metagen.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -19,6 +22,7 @@ import java.util.Map;
 public class LoginRestController {
 
     private final LoginService loginService;
+    private final UserService userService;
 
     @Operation(summary = "비밀번호 변경", description = "현재 로그인된 사용자의 비밀번호를 변경합니다.")
     @ApiResponses({
@@ -56,5 +60,17 @@ public class LoginRestController {
 
         loginService.updateName(accountDto, nameMap.get("name"));
         return ResponseEntity.ok(Map.of("result", "success"));
+    }
+
+    @Operation(summary = "접근가능 프로젝트 조회", description = "접근 가능 프로젝트를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "이름 변경 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
+    @GetMapping(value="/checkProjectList/{username}")
+    public ResponseEntity<List<ProjectDto>> checkProjectList(@PathVariable String username) {
+        return ResponseEntity.ok(userService.selectProject(username));
     }
 }
