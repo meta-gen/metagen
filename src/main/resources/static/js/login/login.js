@@ -1,4 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
+
+    const loginForm = document.getElementById("loginForm");
+    const loginBtn = document.getElementById("login-btn");
+
+    // 로그인 버튼이 보일 때만 submit 허용
+    loginForm.addEventListener("submit", function (event) {
+        if (loginBtn.style.visibility === "hidden") {
+            event.preventDefault(); // 폼 제출 막기
+            openProjectDialog(); // 프로젝트 선택 다이얼로그 열기
+        }
+    });
+
     function fetchProjects(username) {
         if (!username) {
             console.warn("사용자 아이디가 입력되지 않았습니다.");
@@ -73,6 +85,9 @@ document.addEventListener("DOMContentLoaded", function () {
     window.openProjectDialog = openProjectDialog;
 
     function beforeLogin() {
+
+        if(!$("#project_id").val()) return;
+
         const username = document.getElementById("username").value.trim();
         const projectId = document.getElementById("project_id").value.trim();
 

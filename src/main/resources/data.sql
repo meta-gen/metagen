@@ -94,4 +94,4 @@ insert into account_roles(account_id, role_id) values(0,0) on CONFLICT (account_
 
 insert into project(is_active, id, created_by, project_name, updated_by) values(true, 0, 'SYSTEM', 'MAIN', 'SYSTEM') ON CONFLICT (ID) DO NOTHING;
 
-insert into project_member(account_id, id, project_id, created_by, updated_by) values (0, 0, 0, 'SYSTEM', 'SYSTEM') on CONFLICT (id) do nothing;
+insert into project_member(account_id, id, project_id, created_by, updated_by, is_active) values (0, 0, 0, 'SYSTEM', 'SYSTEM', true) on CONFLICT (id) do nothing;

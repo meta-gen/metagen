@@ -3,16 +3,17 @@ package com.koboolean.metagen.user.service;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.domain.dto.ProjectDto;
 import com.koboolean.metagen.security.domain.entity.Account;
-import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
 public interface UserService {
-    AccountDto updateAccount(AccountDto accountDto);
+    AccountDto setName(AccountDto accountDto);
 
-    String getRoleName(Authentication authentication);
+    String getRoleName(String authentication);
 
-    void createUser(Account account);
+    void createUser(AccountDto accountDto);
 
     List<ProjectDto> selectProject(String username);
+
+    List<ProjectDto> selectAllProjects();
 }

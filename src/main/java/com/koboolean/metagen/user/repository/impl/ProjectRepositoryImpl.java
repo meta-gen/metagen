@@ -27,6 +27,7 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
                 .join(projectMember).on(project.id.eq(projectMember.projectId))
                 .where(projectMember.account.username.eq(username))
                 .where(project.isActive.eq(true))
+                .where(projectMember.isActive.eq(true))
                 .fetch();
     }
 }

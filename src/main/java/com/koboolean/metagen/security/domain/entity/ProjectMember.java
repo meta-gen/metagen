@@ -22,4 +22,7 @@ public class ProjectMember extends BaseEntity {
     @JoinColumn(name = "account_id")
     private Account account;
 
+    @Column(name = "is_active")
+    private Boolean isActive;
+
 }

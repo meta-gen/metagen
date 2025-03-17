@@ -4,6 +4,7 @@ import com.koboolean.metagen.security.domain.dto.AccountContext;
 import com.koboolean.metagen.security.details.FormWebAuthenticationDetails;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.exception.SecretException;
+import com.koboolean.metagen.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -15,12 +16,16 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component("authenticationProvider")
 @RequiredArgsConstructor
 public class FormAuthenticationProvider implements AuthenticationProvider {
 
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     @Value("${secret.key}")
     private String secretYmlKey;
@@ -45,8 +50,13 @@ public class FormAuthenticationProvider implements AuthenticationProvider {
 
         // Project ID 저장
         AccountDto accountDto = accountContext.getAccountDto();
-        String projectId = details.getProjectId();
-        accountDto.setProjectId(Long.parseLong(projectId));
+
+        accountDto.setProjectId(details.getProjectId());
+
+        List<Object> authorities = (ArrayList) accountContext.getAuthorities();
+
+        accountDto.setRoleName(userService.getRoleName(authorities.get(0).toString()));
+        accountDto.setPassword(null);
 
         return new UsernamePasswordAuthenticationToken(accountDto, null, accountContext.getAuthorities());
     }
