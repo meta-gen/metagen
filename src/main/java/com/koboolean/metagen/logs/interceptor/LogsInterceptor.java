@@ -95,6 +95,7 @@ public class LogsInterceptor implements HandlerInterceptor {
                         .logUrl(details.logUrl)
                         .method(details.method)
                         .ip(details.ip)
+                        .projectId(accountDto.getProjectId())
                         .username(accountDto.getUsername())
                         .roleName(accountDto.getRoleName())
                         .statusCode(statusCode)

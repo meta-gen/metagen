@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if(projects.length === 1){
                 openConfirm(`${projects[0].projectName} 프로젝트로 로그인됩니다.`, () => {
                     $("#project_id").val(projects[0].id);
-                    $("#loginForm").submit(); // ✅ 자동 로그인 (폼 제출)
+                    $("#loginForm").submit(); // 자동 로그인 (폼 제출)
                 });
                 return
             }

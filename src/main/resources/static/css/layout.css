@@ -40,7 +40,7 @@ header {
 
 /* 오른쪽 정렬 */
 .navbar-nav {
-    margin-left: auto; /* ✅ 네비게이션 메뉴를 오른쪽으로 정렬 */
+    margin-left: auto; /* 네비게이션 메뉴를 오른쪽으로 정렬 */
 }
 
 /* 네비게이션 링크 스타일 */
