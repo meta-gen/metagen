@@ -3,43 +3,7 @@
       layout:decorate="~{layout}">
 <body>
 <section layout:fragment="content">
-    <h2>시스템 로그 확인</h2>
-    <p>• 설명: MetaGen 시스템의 동작 로그와 사용자 활동 로그를 확인할 수 있는 관리자 화면.</p>
-
-    <p>• 기능:</p>
-    <ul>
-        <li>로그 조회
-            <ul>
-                <li>시스템 이벤트 로그 (예: 서버 상태, 오류 메시지 등)</li>
-                <li>사용자 활동 로그 (예: 로그인/로그아웃, 데이터 수정 내역)</li>
-            </ul>
-        </li>
-        <li>필터링 및 검색
-            <ul>
-                <li>시간별, 사용자별, IP별 로그 필터링</li>
-                <li>키워드 검색 기능 제공</li>
-            </ul>
-        </li>
-        <li>로그 다운로드
-            <ul>
-                <li>필터링된 로그를 CSV, Excel 포맷으로 다운로드</li>
-            </ul>
-        </li>
-    </ul>
-
-    <p>• 추가 요구사항:</p>
-    <ul>
-        <li>관리자 전용 메뉴로 접근 제한</li>
-        <li>로그 데이터는 최신순으로 정렬</li>
-        <li>로그 저장 주기와 보관 기간 설정 가능</li>
-    </ul>
-
-    <p>• 논의사항:</p>
-    <ul>
-        <li>로그 데이터 저장소(파일 기반, DB 기반) 선택 여부</li>
-        <li>로그 데이터 암호화 및 보안 강화 필요성</li>
-        <li>대량 로그 처리 시 성능 최적화 방안</li>
-    </ul>
+    <div th:replace="~{fragments/grid :: grid('logTable', '/api/getSystemLog')}"></div>
 </section>
 </body>
 </html>
