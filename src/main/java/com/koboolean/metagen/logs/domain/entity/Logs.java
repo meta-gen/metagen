@@ -29,6 +29,9 @@ public class Logs {
     @Column(nullable = false)
     private String ip; // 요청한 클라이언트 IP
 
+    @Column(name = "project_id")
+    private Long projectId;
+
     @Column(name = "username")
     private String username; // 사용자 아이디 (로그인 사용자)
 

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetaGen</title>
+</head>
+
+<!-- 공통 Grid Fragment -->
+<div th:fragment="grid(tableId, dataUrl)">
+    <button class="btn btn-primary mb-3" onclick="reloadTable()">데이터 새로고침</button>
+
+    <table th:id="${tableId}" class="table table-striped table-bordered">
+        <thead>
+        <tr id="tableHeader">
+        </tr>
+        </thead>
+    </table>
+
+    <script th:inline="javascript">
+        /* Thymeleaf 변수를 JavaScript로 변환 */
+        let tableId = /*[[${tableId}]]*/ '';
+        let dataUrl = /*[[${dataUrl}]]*/ '';
+
+        /* DataTables AJAX 기반 초기화 */
+        let table;
+
+        $(document).ready(function () {
+            $.ajax({
+                url: `${dataUrl}/column`, // 컬럼과 데이터를 함께 가져오는 API
+                type: "GET",
+                success: function (response) {
+                    console.log("서버 응답 데이터:", response);
+
+                    const columns = response; // 데이터 키
+
+                    // 테이블 헤더 동적 생성
+                    let headerRow = $("#tableHeader");
+                    headerRow.empty();
+                    columns.forEach(col => {
+                        headerRow.append(`<th>${col.columnName}</th>`); // 화면에 표시할 헤더 이름 사용
+                    });
+
+                    // DataTables 초기화
+                    table = $('#' + tableId).DataTable({
+                        "processing": true,
+                        "serverSide": true, // Lazy Loading을 통한 페이징 처리
+                        "searching": false, // 조회창 숨김
+                        "info": false,
+                        "language": {
+                            "lengthMenu": "페이지당 _MENU_ 행 표시",
+                            "zeroRecords": "검색된 데이터가 없습니다.",
+                            "info": "총 _TOTAL_ 개의 항목",
+                            "infoEmpty": "표시할 데이터가 없습니다.",
+                            "emptyTable": "조회된 데이터가 없습니다.",
+                            "infoFiltered": "(전체 _MAX_ 개의 항목 중 필터링됨)",
+                            "paginate": {
+                                "first": "처음",
+                                "last": "마지막",
+                                "next": "다음",
+                                "previous": "이전"
+                            }
+                        },
+                        "ajax": {
+                            "url": `${dataUrl}/data`, // 실제 데이터 요청
+                            "type": "GET",
+                            "data": function (d) {
+                                return {
+                                    page: d.start / d.length, // 현재 페이지 번호
+                                    size: d.length, // 한 페이지에 표시할 데이터 개수
+                                    sort: d.order
+                                        .filter(order => columns[order.column]) // undefined 방지
+                                        .map(order => {
+                                            let columnName = columns[order.column].column || "timestamp"; // 기본값 설정
+                                            let direction = order.dir === "asc" ? "asc" : "desc";
+                                            return columnName + "," + direction; // "id,asc" 형식으로 변환
+                                        })
+                                        .join(";") // 문자열 리스트 형태로 변환
+                                };
+                            }
+                        },
+                        "columns": columns.map(col => ({
+                            "data": col.column,
+                            "render": function (data, type, row) {
+                                // 타입에 따라 동적 UI 생성
+                                switch (col.type) {
+                                    case "TEXT":
+                                        return `<p>${data}</p>`;
+                                    case "INPUT":
+                                        return `<input type="text" class="form-control edit-input" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
+                                    case "BUTTON":
+                                        return `<button class="btn btn-sm ${col.class || 'btn-primary'} action-btn" data-id="${row.id}" data-field="${col.column}">${col.buttonText}</button>`;
+                                    case "SELECT":
+                                        let options = col.options.map(option =>
+                                            `<option value="${option}" ${data === option ? 'selected' : ''}>${option}</option>`
+                                        ).join("");
+                                        return `<select class="form-control edit-select" data-id="${row.id}" data-field="${col.column}">${options}</select>`;
+                                    case "DATE":
+                                        return `<input type="text" class="form-control datepicker" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
+                                    case "CHECKBOX":
+                                        return `<input type="checkbox" class="row-checkbox" data-id="${row.id}">`;
+                                    default:
+                                        return data || "";
+                                }
+
+                            }
+                        })),
+                        "initComplete": function () {
+                            // 캘린더(DatePicker) 활성화
+                            $(".datepicker").datepicker({
+                                dateFormat: "yy-mm-dd",
+                                changeMonth: true,
+                                changeYear: true
+                            });
+                        }
+                    });
+                },
+                error: function (error) {
+                    console.error("데이터 불러오기 실패:", error);
+                }
+            });
+        });
+
+        /* 버튼 클릭 시 데이터 새로고침 */
+        function reloadTable() {
+            table.ajax.reload();
+        }
+    </script>
+</div>
+</html>
