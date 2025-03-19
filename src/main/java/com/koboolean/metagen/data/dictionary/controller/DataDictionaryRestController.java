@@ -15,12 +15,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Map;
 
 @Tag(name = "Excel Template API", description = "엑셀 템플릿 다운로드 API")
 @RestController
 @RequestMapping("/api")
-public class DataDictionaryController {
+public class DataDictionaryRestController {
 
     @Operation(
             summary = "Excel 템플릿 다운로드",
