@@ -96,6 +96,6 @@ insert into role_resources(resource_id, role_id) values (18,4) on CONFLICT (reso
 insert into account(id, password, username, name, is_password_check,created_by, updated_by) values(0, '{bcrypt}$2a$10$GN1YfMyJLcWhDuslP6P/UuqRwIfJk2VF5tl9mXsRjLJ18ivQfIAoW', 'admin', '관리자', false, 'SYSTEM', 'SYSTEM') ON CONFLICT (id) DO NOTHING;
 insert into account_roles(account_id, role_id) values(0,0) on CONFLICT (account_id, role_id) DO NOTHING;
 
-insert into project(is_active, id, created_by, project_name, updated_by) values(true, 0, 'SYSTEM', 'MAIN', 'SYSTEM') ON CONFLICT (ID) DO NOTHING;
+insert into project(is_active, project_id, created_by, project_name, updated_by) values(true, 0, 'SYSTEM', 'MAIN', 'SYSTEM') ON CONFLICT (project_id) DO NOTHING;
 
-insert into project_member(account_id, id, project_id, created_by, updated_by, is_active) values (0, 0, 0, 'SYSTEM', 'SYSTEM', true) on CONFLICT (id) do nothing;
+insert into project_member(account_id, id, project_id, created_by, updated_by, is_active) values (0, 0, 0, 'SYSTEM', 'SYSTEM', true) on CONFLICT (ID) do nothing;

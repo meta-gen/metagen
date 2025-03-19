@@ -20,6 +20,7 @@ import java.io.Serializable;
 public class Project extends BaseEntity implements Serializable {
 
     @Id @GeneratedValue
+    @Column(name = "project_id")
     private Long id;
 
     @Column(name = "project_name")
