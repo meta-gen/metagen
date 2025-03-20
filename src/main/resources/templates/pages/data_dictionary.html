@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
-      layout:decorate="~{layout}">
-
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+>
 <head>
     <script type="module" th:src="@{/js/dictionary/data_dictionary.js}"></script>
 </head>
@@ -14,81 +15,26 @@
         <button id="excel-upload" class="btn btn-primary">엑셀 업로드</button>
     </div>
 
-    <p>• 설명: 데이터베이스 테이블과 컬럼 구조를 정의하고 관리할 수 있는 화면. 엑셀 파일을 통해 데이터 사전을 업로드하거나 다운로드하여 대량의 데이터를 효율적으로 관리할 수 있습니다.</p>
-    <p>• 기능:</p>
-    <ul>
-        <li>테이블 및 컬럼 정의
-            <ul>
-                <li>테이블 이름, 설명 추가</li>
-                <li>컬럼 이름, 데이터 타입, 길이, 제약 조건 추가</li>
-            </ul>
+    <!-- 탭 네비게이션 -->
+    <ul class="nav nav-tabs mt-3">
+        <li class="nav-item">
+            <a class="nav-link active" id="standard-terms-tab" data-bs-toggle="tab" data-bs-target="#standard-terms">표준 용어</a>
         </li>
-        <li>명명 규칙 관리
-            <ul>
-                <li>축약어 규칙 (예: "Global → glb")</li>
-                <li>컬럼 이름 컨벤션 관리</li>
-            </ul>
+        <li class="nav-item">
+            <a class="nav-link" id="standard-words-tab" data-bs-toggle="tab" data-bs-target="#standard-words">표준 단어</a>
         </li>
-        <li>참조 관계 시각화
-            <ul>
-                <li>테이블 간 관계 시각화 (ERD 생성)</li>
-                <li>외래 키 관계 표시</li>
-            </ul>
-        </li>
-        <li>설계 문서 출력
-            <ul>
-                <li>PDF 또는 Excel로 설계 문서 다운로드</li>
-            </ul>
-        </li>
-        <li>엑셀 업로드 및 다운로드
-            <ul>
-                <li>엑셀 템플릿을 다운로드하여 데이터 사전을 대량 작성</li>
-                <li>작성된 엑셀 파일을 업로드하여 데이터 사전 자동 생성 및 업데이트</li>
-                <li>엑셀 업로드 시 필수값 검증, 데이터 타입 일치 여부 등 유효성 검사</li>
-            </ul>
-        </li>
-        <li>검색 및 필터링
-            <ul>
-                <li>테이블 이름, 컬럼 이름, 데이터 타입 기준 검색</li>
-                <li>특정 키워드로 필터링</li>
-            </ul>
-        </li>
-        <li>데이터베이스 역설계 : 설계를 거치지 않았거나, 관리 부실로 인해 정보가 사라진 관리안되는 프로젝트의 경우 대비
-            <ul>
-                <li>기존 데이터베이스의 테이블과 컬럼 정보에서 데이터 사전 자동 생성</li>
-                <li>컬럼 주석(comment) 및 데이터 타입 정보를 CSV 형식으로 업로드하여 역설계된 데이터 사전을 엑셀로 다운로드 하거나 바로 서비스에 업데이트 할 수 있는 기능 제공</li>
-            </ul>
+        <li class="nav-item">
+            <a class="nav-link" id="standard-domains-tab" data-bs-toggle="tab" data-bs-target="#standard-domains">표준 도메인</a>
         </li>
     </ul>
 
-    <h3>논의 사항</h3>
-    <ul>
-        <li>**명명 규칙 자동화**:
-            <ul>
-                <li>축약어 규칙을 자동으로 컬럼 이름에 적용</li>
-                <li>일관성 검사 기능 추가</li>
-            </ul>
-        </li>
-        <li>**데이터베이스 연동**:
-            <ul>
-                <li>실제 데이터베이스 스키마와 동기화</li>
-                <li>데이터베이스 변경사항 추적 및 업데이트</li>
-            </ul>
-        </li>
-        <li>**ERD 생성 방식**:
-            <ul>
-                <li>ERD 시각화를 위한 라이브러리 선택 (예: PlantUML, Mermaid.js)</li>
-                <li>테이블 간 관계를 직관적으로 표현</li>
-            </ul>
-        </li>
-        <li>**엑셀 업로드/다운로드 추가 사항**:
-            <ul>
-                <li>역설계 데이터를 수정한 엑셀 파일 업로드를 통한 업데이트 기능</li>
-                <li>엑셀 업로드 시 유효성 검사: 필수값 누락, 데이터 타입 불일치 등</li>
-                <li>다운로드 시 읽기 쉽게 정렬 및 스타일 적용</li>
-            </ul>
-        </li>
-    </ul>
+    <!-- 탭 콘텐츠 -->
+    <div class="tab-content mt-3">
+        <div class="tab-pane fade show active" id="standard-terms" th:include="fragments/standard_terms"></div>
+        <div class="tab-pane fade" id="standard-words" th:include="fragments/standard_words"></div>
+        <div class="tab-pane fade" id="standard-domains" th:include="fragments/standard_domains"></div>
+    </div>
+
 </section>
 </body>
 </html>

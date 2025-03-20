@@ -3,7 +3,7 @@
       layout:decorate="~{layout}">
 <body>
 <section layout:fragment="content">
-    <div th:replace="~{fragments/grid :: grid('logTable', '/api/getSystemLog')}"></div>
+    <div th:replace="~{fragments/grid :: grid('logTable', '/api/getSystemLog', '')}"></div>
 </section>
 </body>
 </html>
