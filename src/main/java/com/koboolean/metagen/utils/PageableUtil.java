@@ -8,10 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.springframework.data.domain.Sort.by;
 
@@ -25,15 +22,14 @@ public class PageableUtil {
      * @return
      */
     public static Pageable getGridPageable(int page, int size, String sort) {
-        List<Sort.Order> orderList = Arrays.stream(sort.split(";")) // 여러 정렬 조건 지원
-                .map(s -> s.split(",")) // 쉼표(`,`) 기준으로 나누기
-                .filter(arr -> arr.length > 1) // 잘못된 데이터 필터링
-                .map(arr -> {
-                    String field = arr[0].trim();
-                    String direction = arr[1].trim();
-                    return new Sort.Order(Sort.Direction.fromString(direction), field);
-                })
-                .toList();
+        List<Sort.Order> orderList = Optional.ofNullable(sort)
+                .filter(s -> !s.isBlank()) // 빈 문자열 방지
+                .map(s -> Arrays.stream(s.split(";")) // 여러 정렬 조건 지원
+                        .map(arr -> arr.split(","))
+                        .filter(arr -> arr.length > 1) // 올바른 데이터만 변환
+                        .map(arr -> new Sort.Order(Sort.Direction.fromString(arr[1].trim()), arr[0].trim()))
+                        .toList())
+                .orElse(List.of(new Sort.Order(Sort.Direction.DESC, "id"))); // 기본 정렬 추가
 
         return PageRequest.of(page, size, by(orderList));
     }

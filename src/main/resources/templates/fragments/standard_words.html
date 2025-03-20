@@ -1,0 +1,9 @@
+<div th:fragment="standard_words">
+    <!--<p>표준 단어를 정의하고 관리할 수 있는 화면입니다.</p>
+    <ul>
+        <li>공통 표준 단어명, 영문명 관리</li>
+        <li>금칙어 및 이음동의어 설정</li>
+        <li>표준 단어의 규칙 정의</li>
+    </ul>-->
+    <div th:replace="~{fragments/grid :: grid('standardWords', '/api/getStandardWords', '')}"></div>
+</div>
