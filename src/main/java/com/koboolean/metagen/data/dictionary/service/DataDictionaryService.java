@@ -8,7 +8,9 @@ import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface DataDictionaryService {
@@ -19,5 +21,7 @@ public interface DataDictionaryService {
     Page<StandardTermDto> getStandardTermsData(Pageable pageable, AccountDto accountDto);
     Page<StandardWordDto> getStandardWordsData(Pageable pageable, AccountDto accountDto);
     Page<StandardDomainDto> getStandardDomainsData(Pageable pageable, AccountDto accountDto);
+
+    void uploadDictionaryExcelFile(MultipartFile file, AccountDto accountDto) throws IOException;
 
 }

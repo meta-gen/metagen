@@ -1,5 +1,6 @@
-package com.koboolean.metagen.data.dictionary.controller;
+package com.koboolean.metagen.excel.controller;
 
+import com.koboolean.metagen.excel.service.ExcelService;
 import com.koboolean.metagen.utils.ExcelUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -11,20 +12,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Tag(name = "Excel API", description = "Excel 관련 API")
 public class ExcelRestController {
+
+    private final ExcelService excelService;
 
     @Operation(
             summary = "Excel 템플릿 다운로드",
@@ -38,17 +41,12 @@ public class ExcelRestController {
     @GetMapping("/downloadTemplate/{templateName}")
     public ResponseEntity<Resource> downloadTemplate(@PathVariable String templateName) {
         try {
-            Resource resource = ExcelUtils.downloadExcelFile(templateName);
-            String encodedFileName = java.net.URLEncoder.encode(templateName, "UTF-8").replaceAll("\\+", "%20");
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + encodedFileName + ".xlsx\"")
-                    .body(resource);
+            return excelService.getExcelFile(templateName);
         } catch (MalformedURLException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 경로가 잘못되었습니다.", e);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 읽을 수 없습니다.", e);
         }
     }
+
 }

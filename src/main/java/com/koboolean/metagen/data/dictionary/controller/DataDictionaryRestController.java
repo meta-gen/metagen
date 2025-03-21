@@ -4,6 +4,7 @@ import com.koboolean.metagen.data.dictionary.domain.dto.StandardDomainDto;
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardWordDto;
 import com.koboolean.metagen.data.dictionary.service.DataDictionaryService;
+import com.koboolean.metagen.excel.service.ExcelService;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
@@ -24,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
@@ -106,6 +108,19 @@ public class DataDictionaryRestController {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<StandardDomainDto> standardDomainsDataPage = dataDictionaryService.getStandardDomainsData(pageable, accountDto);
         return PageableUtil.getGridPageableMap(standardDomainsDataPage);
+    }
+
+    @Operation(summary = "데이터사전 엑셀 업로드", description = "업로드한 엑셀 데이터를 파싱하여 데이터사전 테이블에 저장한다.")
+    @PostMapping(value = "/uploadDataDictionaryExcelFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, String>> uploadDataDictionaryExcelFile(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal AccountDto accountDto) throws IOException {
+
+        try {
+            dataDictionaryService.uploadDictionaryExcelFile(file, accountDto);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 읽을 수 없습니다.", e);
+        }
+
+        return ResponseEntity.ok(Map.of("result", "success"));
     }
 
 }

@@ -102,13 +102,13 @@ function openAlert(message, callableFunc){
     openDialog("alert", message, callableFunc);
 }
 
-function openConfirm(message, callableFunc){
-    openDialog("confirm", message, callableFunc);
+function openConfirm(message, callableFunc, falseCallbackFunc){
+    openDialog("confirm", message, callableFunc, falseCallbackFunc);
 }
 
 
 // 다이얼로그 열기
-function openDialog(type, message, callableFunc) {
+function openDialog(type, message, callableFunc, falseCallbackFunc) {
     const dialog = document.getElementById("alert" === type ? 'myAlert' : "div" === type ? "mainConfirm" : "myConfirm");
     const content = document.getElementById("alert" === type ? 'alertContent' : "div" === type ? "mainDialogTitle" : "confirmContent");
 

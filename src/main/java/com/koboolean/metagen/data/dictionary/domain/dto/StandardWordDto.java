@@ -3,6 +3,9 @@ package com.koboolean.metagen.data.dictionary.domain.dto;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
 import lombok.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,8 +19,10 @@ public class StandardWordDto {
     private String commonStandardWordAbbreviation; // 표준단어영문약어명
     private String commonStandardWordEnglishName; // 표준단어 영문명
     private String commonStandardWordDescription; // 표준단어 설명
-    private boolean isFormatWord; // 형식단어 여부
+    private String isFormatWord; // 형식단어 여부
     private String commonStandardDomainCategory; // 표준도메인분류명
+    private String synonyms;
+    private String restrictedWords;
 
     public static StandardWordDto fromEntity(StandardWord entity) {
         return StandardWordDto.builder()
@@ -28,8 +33,14 @@ public class StandardWordDto {
                 .commonStandardWordAbbreviation(entity.getCommonStandardWordAbbreviation())
                 .commonStandardWordEnglishName(entity.getCommonStandardWordEnglishName())
                 .commonStandardWordDescription(entity.getCommonStandardWordDescription())
-                .isFormatWord(entity.isFormatWord())
+                .isFormatWord(entity.isFormatWord() ? "Y" : "N")
                 .commonStandardDomainCategory(entity.getCommonStandardDomainCategory())
+                .synonyms(convertListToString(entity.getSynonymList()))
+                .restrictedWords(convertListToString(entity.getRestrictedWords()))
                 .build();
+    }
+
+    private static String convertListToString(List<String> list) {
+        return (list == null || list.isEmpty()) ? "" : list.stream().collect(Collectors.joining(","));
     }
 }

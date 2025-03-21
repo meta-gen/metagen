@@ -126,6 +126,14 @@
         };
 
         $(".grd-select").on("click", () => {
+            reloadGrid();
+        });
+
+
+        /**
+         * Grid 데이터를 reload한다.
+         */
+        function reloadGrid(){
             if (Object.keys(window.tableInstances).length === 0) {
                 console.warn("테이블 인스턴스가 없습니다.");
                 return;
@@ -136,7 +144,9 @@
                     instance.ajax.reload();
                 }
             });
-        });
+        }
+
+        window.reloadGrid = reloadGrid;
 
         $(document).ready(() => {
             let tableId = /*[[${tableId}]]*/ '';

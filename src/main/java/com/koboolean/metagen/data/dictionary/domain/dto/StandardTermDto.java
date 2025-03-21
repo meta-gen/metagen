@@ -2,6 +2,9 @@ package com.koboolean.metagen.data.dictionary.domain.dto;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
 import lombok.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -20,6 +23,7 @@ public class StandardTermDto {
     private String displayFormat; // 표현 형식
     private String administrativeStandardCodeName; // 행정표준코드명
     private String responsibleOrganization; // 소관기관명
+    private String synonyms;
 
     public static StandardTermDto fromEntity(StandardTerm entity) {
         return StandardTermDto.builder()
@@ -35,6 +39,11 @@ public class StandardTermDto {
                 .displayFormat(entity.getDisplayFormat())
                 .administrativeStandardCodeName(entity.getAdministrativeStandardCodeName())
                 .responsibleOrganization(entity.getResponsibleOrganization())
+                .synonyms(convertListToString(entity.getSynonymList()))
                 .build();
+    }
+
+    private static String convertListToString(List<String> list) {
+        return (list == null || list.isEmpty()) ? "" : list.stream().collect(Collectors.joining(","));
     }
 }
