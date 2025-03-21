@@ -57,7 +57,7 @@ public class DataDictionaryRestController {
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "timestamp,desc")
             @RequestParam(required = false) String sort
     ) {
-        Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
+        Pageable pageable = PageableUtil.getGridPageable(page, size, sort, "id");
         Page<StandardTermDto> standardTermDataPage = dataDictionaryService.getStandardTermsData(pageable, accountDto);
         return PageableUtil.getGridPageableMap(standardTermDataPage);
     }
@@ -80,7 +80,7 @@ public class DataDictionaryRestController {
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "timestamp,desc")
             @RequestParam(required = false) String sort
     ) {
-        Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
+        Pageable pageable = PageableUtil.getGridPageable(page, size, sort, "id");
         Page<StandardWordDto> standardWordsDataPage = dataDictionaryService.getStandardWordsData(pageable, accountDto);
         return PageableUtil.getGridPageableMap(standardWordsDataPage);
     }
@@ -103,7 +103,7 @@ public class DataDictionaryRestController {
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "timestamp,desc")
             @RequestParam(required = false) String sort
     ) {
-        Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
+        Pageable pageable = PageableUtil.getGridPageable(page, size, sort, "id");
         Page<StandardDomainDto> standardDomainsDataPage = dataDictionaryService.getStandardDomainsData(pageable, accountDto);
         return PageableUtil.getGridPageableMap(standardDomainsDataPage);
     }
