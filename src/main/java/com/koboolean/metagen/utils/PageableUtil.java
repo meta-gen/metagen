@@ -36,13 +36,14 @@ public class PageableUtil {
 
     /**
      * 페이징 처리를 위한 Pageable을 생성한다.
+     * Pageable의 default를 "id"로 지정한다.
      * @param page
      * @param size
      * @param sort
      * @return
      */
     public static Pageable getGridPageable(int page, int size, String sort) {
-        return getGridPageable(page, size, sort, "timestamp");
+        return getGridPageable(page, size, sort, "id");
     }
 
     /**

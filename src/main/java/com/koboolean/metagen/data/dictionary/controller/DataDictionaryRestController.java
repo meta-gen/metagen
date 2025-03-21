@@ -54,10 +54,10 @@ public class DataDictionaryRestController {
             @RequestParam int page,
             @Parameter(description = "페이지 크기", example = "10")
             @RequestParam int size,
-            @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "timestamp,desc")
+            @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
             @RequestParam(required = false) String sort
     ) {
-        Pageable pageable = PageableUtil.getGridPageable(page, size, sort, "id");
+        Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<StandardTermDto> standardTermDataPage = dataDictionaryService.getStandardTermsData(pageable, accountDto);
         return PageableUtil.getGridPageableMap(standardTermDataPage);
     }
@@ -77,10 +77,10 @@ public class DataDictionaryRestController {
             @RequestParam int page,
             @Parameter(description = "페이지 크기", example = "10")
             @RequestParam int size,
-            @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "timestamp,desc")
+            @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
             @RequestParam(required = false) String sort
     ) {
-        Pageable pageable = PageableUtil.getGridPageable(page, size, sort, "id");
+        Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<StandardWordDto> standardWordsDataPage = dataDictionaryService.getStandardWordsData(pageable, accountDto);
         return PageableUtil.getGridPageableMap(standardWordsDataPage);
     }
@@ -100,10 +100,10 @@ public class DataDictionaryRestController {
             @RequestParam int page,
             @Parameter(description = "페이지 크기", example = "10")
             @RequestParam int size,
-            @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "timestamp,desc")
+            @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
             @RequestParam(required = false) String sort
     ) {
-        Pageable pageable = PageableUtil.getGridPageable(page, size, sort, "id");
+        Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<StandardDomainDto> standardDomainsDataPage = dataDictionaryService.getStandardDomainsData(pageable, accountDto);
         return PageableUtil.getGridPageableMap(standardDomainsDataPage);
     }
