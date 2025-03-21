@@ -21,7 +21,7 @@ public class PageableUtil {
      * @param sort
      * @return
      */
-    public static Pageable getGridPageable(int page, int size, String sort) {
+    public static Pageable getGridPageable(int page, int size, String sort, String order) {
         List<Sort.Order> orderList = Optional.ofNullable(sort)
                 .filter(s -> !s.isBlank()) // 빈 문자열 방지
                 .map(s -> Arrays.stream(s.split(";")) // 여러 정렬 조건 지원
@@ -29,9 +29,20 @@ public class PageableUtil {
                         .filter(arr -> arr.length > 1) // 올바른 데이터만 변환
                         .map(arr -> new Sort.Order(Sort.Direction.fromString(arr[1].trim()), arr[0].trim()))
                         .toList())
-                .orElse(List.of(new Sort.Order(Sort.Direction.DESC, "id"))); // 기본 정렬 추가
+                .orElse(List.of(new Sort.Order(Sort.Direction.DESC, order))); // 기본 정렬 추가
 
         return PageRequest.of(page, size, by(orderList));
+    }
+
+    /**
+     * 페이징 처리를 위한 Pageable을 생성한다.
+     * @param page
+     * @param size
+     * @param sort
+     * @return
+     */
+    public static Pageable getGridPageable(int page, int size, String sort) {
+        return getGridPageable(page, size, sort, "timestamp");
     }
 
     /**

@@ -74,8 +74,6 @@
                             headerRow.append(`<th>${col.columnName}</th>`);
                         });
 
-                        let defaultSortField = columns.some(col => col.column === "timestamp") ? "timestamp" : "id";
-
                         window.tableInstances[tableId] = $("#" + tableId).DataTable({
                             "processing": true,
                             "serverSide": true,
@@ -102,13 +100,21 @@
                                 "data": function (d) {
                                     return {
                                         page: d.start / d.length,
-                                        size: d.length
+                                        size: d.length,
+                                        sort: d.order
+                                            .filter(order => columns[order.column]) // undefined 방지
+                                            .map(order => {
+                                                let columnName = columns[order.column].column || "timestamp"; // 기본값 설정
+                                                let direction = order.dir === "asc" ? "asc" : "desc";
+                                                return columnName + "," + direction; // "id,asc" 형식으로 변환
+                                            })
+                                            .join(";") // 문자열 리스트 형태로 변환
                                     };
                                 }
                             },
                             "columns": columns.map(col => ({
-                                "data": col.column,
-                                "title": col.columnName
+                                "data" : col.column,
+                                "title" : col.columnName
                             }))
                         });
                     },
