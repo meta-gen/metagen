@@ -44,4 +44,6 @@ public class StandardTerm {
 
     @ElementCollection
     private List<String> synonymList; // 용어 이음동의어 목록
+
+    private Boolean isApproval;
 }

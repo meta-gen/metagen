@@ -23,6 +23,7 @@ public class StandardDomainDto {
     private String displayFormat; // 표현 형식
     private String unit; // 단위
     private String allowedValues; // 허용값
+    private String isApprovalYn;
 
     public static StandardDomainDto fromEntity(StandardDomain entity) {
         return StandardDomainDto.builder()
@@ -40,6 +41,7 @@ public class StandardDomainDto {
                 .displayFormat(entity.getDisplayFormat())
                 .unit(entity.getUnit())
                 .allowedValues(entity.getAllowedValues())
+                .isApprovalYn(entity.getIsApproval() ? "Y" : "N")
                 .build();
     }
 }

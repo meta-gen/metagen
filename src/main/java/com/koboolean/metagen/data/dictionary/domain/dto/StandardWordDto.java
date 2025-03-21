@@ -23,6 +23,7 @@ public class StandardWordDto {
     private String commonStandardDomainCategory; // 표준도메인분류명
     private String synonyms;
     private String restrictedWords;
+    private String isApprovalYn;
 
     public static StandardWordDto fromEntity(StandardWord entity) {
         return StandardWordDto.builder()
@@ -37,6 +38,7 @@ public class StandardWordDto {
                 .commonStandardDomainCategory(entity.getCommonStandardDomainCategory())
                 .synonyms(convertListToString(entity.getSynonymList()))
                 .restrictedWords(convertListToString(entity.getRestrictedWords()))
+                .isApprovalYn(entity.getIsApproval() ? "Y" : "N")
                 .build();
     }
 

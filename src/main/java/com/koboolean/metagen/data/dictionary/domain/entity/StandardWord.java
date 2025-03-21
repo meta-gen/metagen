@@ -41,4 +41,6 @@ public class StandardWord {
 
     @ElementCollection
     private List<String> restrictedWords; // 금칙어 목록
+
+    private Boolean isApproval;
 }

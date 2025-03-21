@@ -11,6 +11,7 @@
     <!-- CRUD 버튼 컨테이너 -->
     <div class="button-container mb-3">
         <button class="btn btn-primary grd-select" data-table-id="${tableId}" id="grd-select">조회</button>
+        <button class="btn btn-primary grd-active" th:data-table-id="${tableId}" th:id="'grd-active-' + ${tableId}" style="display: none;">승인</button>
         <button class="btn btn-primary grd-add" th:data-table-id="${tableId}" th:id="'grd-add-' + ${tableId}" style="display: none;">추가</button>
         <button class="btn btn-primary grd-save" th:data-table-id="${tableId}" th:id="'grd-save-' + ${tableId}" style="display: none;">저장</button>
         <button class="btn btn-secondary grd-delete" th:data-table-id="${tableId}" th:id="'grd-delete-' + ${tableId}" style="display: none;">삭제</button>
@@ -32,7 +33,8 @@
             window.crudActionMap = {
                 "C": "add",
                 "U": "save",
-                "D": "delete"
+                "D": "delete",
+                "A": "active"
             };
         }
 
@@ -48,7 +50,19 @@
                     if (mappedAction) {
                         let button = document.querySelector(`.grd-${mappedAction}[data-table-id="${tableId}"]`);
                         if (button) {
-                            button.style.display = "inline-block";
+                            if(mappedAction === "active"){
+                                $.ajax({
+                                    url: `/isApprovalAvailable`,
+                                    type: "GET",
+                                    success: function (response) {
+                                        if(response.result){
+                                            button.style.display = "inline-block";
+                                        }
+                                    }
+                                })
+                            }else{
+                                button.style.display = "inline-block";
+                            }
                         }
                     }
                 });

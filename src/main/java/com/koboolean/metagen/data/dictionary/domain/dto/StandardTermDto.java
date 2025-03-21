@@ -24,6 +24,7 @@ public class StandardTermDto {
     private String administrativeStandardCodeName; // 행정표준코드명
     private String responsibleOrganization; // 소관기관명
     private String synonyms;
+    private String isApprovalYn;
 
     public static StandardTermDto fromEntity(StandardTerm entity) {
         return StandardTermDto.builder()
@@ -40,6 +41,7 @@ public class StandardTermDto {
                 .administrativeStandardCodeName(entity.getAdministrativeStandardCodeName())
                 .responsibleOrganization(entity.getResponsibleOrganization())
                 .synonyms(convertListToString(entity.getSynonymList()))
+                .isApprovalYn(entity.getIsApproval() ? "Y" : "N")
                 .build();
     }
 

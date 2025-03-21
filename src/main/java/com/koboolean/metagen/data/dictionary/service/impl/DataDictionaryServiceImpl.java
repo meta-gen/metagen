@@ -12,6 +12,7 @@ import com.koboolean.metagen.data.dictionary.repository.StandardWordRepository;
 import com.koboolean.metagen.data.dictionary.service.DataDictionaryService;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.utils.AuthUtil;
 import com.koboolean.metagen.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -48,7 +49,8 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                 new ColumnDto("표현 형식", "displayFormat"),
                 new ColumnDto("행정표준코드명", "administrativeStandardCodeName"),
                 new ColumnDto("소관기관명", "responsibleOrganization"),
-                new ColumnDto("용어 이음동의어 목록", "synonyms")
+                new ColumnDto("용어 이음동의어 목록", "synonyms"),
+                new ColumnDto("승인여부", "isApprovalYn")
         );
     }
 
@@ -67,7 +69,8 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                 new ColumnDto("저장 형식", "storageFormat"),
                 new ColumnDto("표현 형식", "displayFormat"),
                 new ColumnDto("단위", "unit"),
-                new ColumnDto("허용값", "allowedValues")
+                new ColumnDto("허용값", "allowedValues"),
+                new ColumnDto("승인여부", "isApprovalYn")
         );
     }
 
@@ -83,7 +86,8 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                 new ColumnDto("형식단어 여부", "isFormatWord"),
                 new ColumnDto("표준도메인분류명", "commonStandardDomainCategory"),
                 new ColumnDto("이음동의어 목록", "synonyms"),
-                new ColumnDto("금칙어 목록", "restrictedWords")
+                new ColumnDto("금칙어 목록", "restrictedWords"),
+                new ColumnDto("승인여부", "isApprovalYn")
         );
     }
 
@@ -110,13 +114,16 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
 
         Long projectId = accountDto.getProjectId();
 
-        setStandardTerm(file, projectId);
-        setStandardWord(file, projectId);
-        setStandardDomain(file, projectId);
+        // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
+        boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
+
+        setStandardTerm(file, projectId, isApprovalAvailable);
+        setStandardWord(file, projectId, isApprovalAvailable);
+        setStandardDomain(file, projectId, isApprovalAvailable);
     }
 
     @Transactional
-    protected void setStandardDomain(MultipartFile file, Long projectId) throws IOException {
+    protected void setStandardDomain(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
         List<String> standardDomainHeaders = List.of(
                 "id",
                 "revisionNumber",
@@ -150,6 +157,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                     .unit(standardDomainEntry.get("unit"))
                     .allowedValues(standardDomainEntry.get("allowedValues"))
                     .projectId(projectId)
+                    .isApproval(isApprovalAvailable)
                     .build();
 
             standardDomainRepository.save(standardDomain);
@@ -157,7 +165,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     }
 
     @Transactional
-    protected void setStandardWord(MultipartFile file, Long projectId) throws IOException {
+    protected void setStandardWord(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
         List<String> standardWordHeaders = List.of(
                 "id",
                 "revisionNumber",
@@ -184,6 +192,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                     .synonymList(List.of(standardWordEntry.get("synonyms").split(",")))
                     .restrictedWords(List.of(standardWordEntry.get("prohibitedWords").split(",")))
                     .projectId(projectId)
+                    .isApproval(isApprovalAvailable)
                     .build();
 
             standardWordRepository.save(standardWord);
@@ -191,7 +200,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     }
 
     @Transactional
-    protected void setStandardTerm(MultipartFile file, Long projectId) throws IOException {
+    protected void setStandardTerm(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
         List<String> standardTermHeaders = List.of(
                 "id",
                 "revisionNumber",
@@ -222,6 +231,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                    .responsibleOrganization(standardTermEntry.get("responsibleOrganization"))
                    .synonymList(List.of(standardTermEntry.get("synonyms").split(",")))
                    .projectId(projectId)
+                   .isApproval(isApprovalAvailable)
                    .build();
 
            standardTermRepository.save(standardTerm);
