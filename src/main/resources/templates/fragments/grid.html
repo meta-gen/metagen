@@ -15,10 +15,10 @@
 
         <!-- 승인, 추가, 저장, 삭제 버튼 -->
         <div class="button-container">
-            <button class="grd-active" th:data-table-id="${tableId}" th:id="'grd-active-' + ${tableId}">승인</button>
-            <button class="grd-add" th:data-table-id="${tableId}" th:id="'grd-add-' + ${tableId}">추가</button>
-            <button class="grd-save" th:data-table-id="${tableId}" th:id="'grd-save-' + ${tableId}">저장</button>
-            <button class="grd-delete" th:data-table-id="${tableId}" th:id="'grd-delete-' + ${tableId}">삭제</button>
+            <button class="grd-active" th:data-table-id="${tableId}" th:id="'grd-active-' + ${tableId}" style="display: none;">승인</button>
+            <button class="grd-add" th:data-table-id="${tableId}" th:id="'grd-add-' + ${tableId}" style="display: none;">추가</button>
+            <button class="grd-save" th:data-table-id="${tableId}" th:id="'grd-save-' + ${tableId}" style="display: none;">저장</button>
+            <button class="grd-delete" th:data-table-id="${tableId}" th:id="'grd-delete-' + ${tableId}" style="display: none;">삭제</button>
         </div>
     </div>
 
@@ -35,10 +35,46 @@
             window.tableInstances = {};  // 여러 개의 DataTable을 저장할 객체
         }
 
+        // CRUD 코드 매핑 (C = Create(Add), U = Update(Save), D = Delete)
+        if (!window.crudActionMap) {
+            window.crudActionMap = {
+                "C": "add",
+                "U": "save",
+                "D": "delete",
+                "A": "active"
+            };
+        }
+
         window.grid = function (tableId, dataUrl, crudActions = '') {
             if (!tableId || !dataUrl) {
                 console.error("tableId 또는 dataUrl이 없습니다.");
                 return;
+            }
+
+            /* CRUD 버튼 표시 여부 처리 */
+            if (crudActions.trim() !== '') {
+                let actionsArray = crudActions.split("");
+                actionsArray.forEach(action => {
+                    let mappedAction = window.crudActionMap[action.trim().toUpperCase()]; // C → add, U → save, D → delete
+                    if (mappedAction) {
+                        let button = document.querySelector(`.grd-${mappedAction}[data-table-id="${tableId}"]`);
+                        if (button) {
+                            if(mappedAction === "active"){
+                                $.ajax({
+                                    url: `/isApprovalAvailable`,
+                                    type: "GET",
+                                    success: function (response) {
+                                        if(response.result){
+                                            button.style.display = "inline-block";
+                                        }
+                                    }
+                                })
+                            }else{
+                                button.style.display = "inline-block";
+                            }
+                        }
+                    }
+                });
             }
 
             if (window.tableInstances[tableId]) {
