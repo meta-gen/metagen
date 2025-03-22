@@ -90,10 +90,15 @@
                     let $select = $(`#search-column-${tableId}`);
                     $select.empty();
 
+                    let hasSearchableColumn = false;
+
                     columns.forEach(col => {
                         headerRow.append(`<th>${col.columnName}</th>`);
-                        let optionHtml = `<option value="${col.column}" data-type="${col.columnType}">${col.columnName}</option>`;
-                        $select.append(optionHtml);
+                        if(col.isSearch){
+                            let optionHtml = `<option value="${col.column}" data-type="${col.columnType}">${col.columnName}</option>`;
+                            $select.append(optionHtml);
+                            hasSearchableColumn = true;
+                        }
                     });
 
                     // 검색 컬럼 변경 시, 입력 타입 변경 (숫자/문자 필드 전환)
@@ -110,6 +115,18 @@
                             $textInput.show().val("");
                         }
                     });
+
+                    // 검색 컬럼이 없는 경우 검색어 입력 필드 & 조회 버튼 숨김
+                    if (!hasSearchableColumn) {
+                        $select.hide();
+                        $(`#search-input-text-${tableId}`).hide();
+                        $(`#search-input-number-${tableId}`).hide();
+                        $(`#search-column-${tableId}`).hide();
+                    } else {
+                        $select.show();
+                        $(`#grd-select-${tableId}`).show();
+                        $select.trigger("change"); // 기본 컬럼 선택 적용
+                    }
 
                     // DataTables 초기화
                     window.tableInstances[tableId] = $("#" + tableId).DataTable({
@@ -186,7 +203,7 @@
                     });
 
                     // 초기에 선택된 컬럼 타입 반영 (기본값)
-                    $select.trigger("change");
+                    if(hasSearchableColumn) $select.trigger("change");
                 },
                 error: function (error) {
                     console.error("데이터 불러오기 실패:", error);
