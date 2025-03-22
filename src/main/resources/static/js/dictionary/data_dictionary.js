@@ -86,7 +86,10 @@ $(document).ready(function () {
                 success: function (response) {
                     if(response.result === "success"){
                         window.openAlert("업로드가 완료되었습니다.");
-                        window.reloadGrid();
+                        ["standardDomains","standardTerms","standardWords"].forEach(e => {
+                            $(`.search-input[data-table-id="${e}"]`).val('');
+                            window.searchGrid(e);
+                        })
                         $("#upload-file").val('');
                     }
                 },

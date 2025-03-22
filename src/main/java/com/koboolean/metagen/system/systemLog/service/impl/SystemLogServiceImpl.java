@@ -2,18 +2,15 @@ package com.koboolean.metagen.system.systemLog.service.impl;
 
 import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.logs.domain.dto.LogsDto;
-import com.koboolean.metagen.logs.domain.entity.Logs;
 import com.koboolean.metagen.logs.repository.LogsRepository;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.system.systemLog.service.SystemLogService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -25,18 +22,18 @@ public class SystemLogServiceImpl implements SystemLogService {
     @Override
     public List<ColumnDto> getSystemLogColumn() {
         return List.of(
-                new ColumnDto("id","id")
-                , new ColumnDto("요청 URL","logUrl")
-                , new ColumnDto("메소드","method")
-                , new ColumnDto("IP","ip")
-                , new ColumnDto("사용자 ID","username")
-                , new ColumnDto("권한","roleName")
-                , new ColumnDto("응답 HTTP 상태코드","statusCode")
-                , new ColumnDto("요청 데이터","requestBody")
-                , new ColumnDto("응답 데이터","responseBody")
-                , new ColumnDto("에러 메시지","errorMessage")
-                , new ColumnDto("브라우저 정보","userAgent")
-                , new ColumnDto("요청 발생시간","timestamp")
+                new ColumnDto("id","id", ColumnType.NUMBER)
+                , new ColumnDto("요청 URL","logUrl", ColumnType.STRING)
+                , new ColumnDto("메소드","method", ColumnType.STRING)
+                , new ColumnDto("IP","ip", ColumnType.STRING)
+                , new ColumnDto("사용자 ID","username", ColumnType.STRING)
+                , new ColumnDto("권한","roleName", ColumnType.STRING)
+                , new ColumnDto("응답 HTTP 상태코드","statusCode", ColumnType.STRING)
+                , new ColumnDto("요청 데이터","requestBody", ColumnType.STRING)
+                , new ColumnDto("응답 데이터","responseBody", ColumnType.STRING)
+                , new ColumnDto("에러 메시지","errorMessage", ColumnType.STRING)
+                , new ColumnDto("브라우저 정보","userAgent", ColumnType.STRING)
+                , new ColumnDto("요청 발생시간","timestamp", ColumnType.STRING)
         );
     }
 

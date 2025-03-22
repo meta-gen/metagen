@@ -18,9 +18,9 @@ public interface DataDictionaryService {
     List<ColumnDto> getStandardWordsColumn();
     List<ColumnDto> getStandardDomainsColumn();
 
-    Page<StandardTermDto> getStandardTermsData(Pageable pageable, AccountDto accountDto);
-    Page<StandardWordDto> getStandardWordsData(Pageable pageable, AccountDto accountDto);
-    Page<StandardDomainDto> getStandardDomainsData(Pageable pageable, AccountDto accountDto);
+    Page<StandardTermDto> getStandardTermsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery);
+    Page<StandardWordDto> getStandardWordsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery);
+    Page<StandardDomainDto> getStandardDomainsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery);
 
     void uploadDictionaryExcelFile(MultipartFile file, AccountDto accountDto) throws IOException;
 

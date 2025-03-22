@@ -10,4 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public interface StandardWordRepository extends JpaRepository<StandardWord, Long> {
     Page<StandardWord> findAllByProjectId(Long projectId, Pageable pageable);
+    Page<StandardWord> findByRevisionNumberContainingAndProjectId(int revisionNumber, Long projectId, Pageable pageable);
+    Page<StandardWord> findByCommonStandardWordNameContainingAndProjectId(String commonStandardWordName, Long projectId, Pageable pageable);
+    Page<StandardWord> findByCommonStandardWordAbbreviationContainingAndProjectId(String commonStandardWordAbbreviation, Long projectId, Pageable pageable);
+    Page<StandardWord> findByCommonStandardWordEnglishNameContainingAndProjectId(String commonStandardWordEnglishName, Long projectId, Pageable pageable);
+    Page<StandardWord> findByCommonStandardWordDescriptionContainingAndProjectId(String commonStandardWordDescription, Long projectId, Pageable pageable);
+    Page<StandardWord> findByIsFormatWordAndProjectId(boolean isFormatWord, Long projectId, Pageable pageable);
+    Page<StandardWord> findByCommonStandardDomainCategoryContainingAndProjectId(String commonStandardDomainCategory, Long projectId, Pageable pageable);
+    Page<StandardWord> findBySynonymListContainingAndProjectId(String synonym, Long projectId, Pageable pageable);
+    Page<StandardWord> findByRestrictedWordsContainingAndProjectId(String restrictedWord, Long projectId, Pageable pageable);
+    Page<StandardWord> findByIsApprovalAndProjectId(Boolean isApproval, Long projectId, Pageable pageable);
+    Page<StandardWord> findAllByIdAndProjectId(Long searchQuery, Long projectId, Pageable pageable);
 }

@@ -14,6 +14,22 @@ services:
     networks:
       - meta-network
 
+  meta-gen-elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    container_name: meta-gen-elasticsearch
+    restart: always
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m  # 메모리 설정 (필요 시 조정)
+      - xpack.security.enabled=false  # 기본 인증 비활성화 (무료 버전)
+    ports:
+      - 19200:9200  # HTTP API 포트
+      - 19300:9300  # 내부 노드 통신 포트
+    volumes:
+      - ./volume/elasticsearch:/usr/share/elasticsearch/data
+    networks:
+      - meta-network
+
 networks:
   meta-network:
     driver: bridge

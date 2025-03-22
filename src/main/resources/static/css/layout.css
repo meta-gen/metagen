@@ -230,14 +230,6 @@ dialog p {
     text-align: left; /* 내용 왼쪽 정렬 */
 }
 
-/* 버튼 컨테이너 */
-.button-container {
-    display: flex;
-    justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
-    gap: 10px; /* 버튼 간격 띄우기 */
-    margin-top: 20px; /* 버튼과 내용 간격 추가 */
-}
-
 /* 확인 버튼 스타일 (파란색) */
 dialog button.confirm {
     padding: 10px 20px;
@@ -322,6 +314,167 @@ dialog .btn-primary {
 
 /* 회전 애니메이션 */
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.grid-divider {
+    border: none;
+    height: 1px;
+    background-color: rgba(33, 37, 41, 0.25); /* 연한 회색 */
+    margin: 12px 0;
+}
+
+.search-input-group {
+    display: flex;
+    align-items: center;
+    justify-content: start; /* 검색어 입력창과 조회 버튼을 왼쪽 정렬 */
+    flex-grow: 1; /* 남는 공간을 채우도록 설정 */
+}
+
+/* 검색 및 버튼 컨테이너 */
+.grid-header {
+    display: flex;
+    align-items: center; /* 높이 통일 */
+    justify-content: space-between; /* 검색창 + 조회 버튼은 왼쪽, 나머지 버튼은 오른쪽 */
+    width: 100%;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+/* 검색 입력창 및 조회 버튼 컨테이너 */
+.search-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 검색창과 조회 버튼 사이 간격 */
+}
+
+/* 검색 입력 필드 */
+.search-input {
+    width: 250px;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+/* 조회 버튼 */
+.grd-select {
+    padding: 10px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    background-color: #007bff;
+}
+
+/* 버튼 컨테이너 (승인, 추가, 저장, 삭제 버튼) */
+.button-container {
+    display: table;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto; /* 오른쪽 정렬 */
+}
+
+/* 버튼 공통 */
+.button-container button {
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    min-width: 70px;
+    text-align: center;
+    margin-left: 3px;
+}
+
+/* 버튼 색상 */
+.grd-active, .grd-add, .grd-save {
+    background-color: #007bff;
+}
+
+.grd-delete {
+    background-color: #6c757d;
+    opacity: 0.8;
+}
+
+.grd-delete:hover {
+    opacity: 1;
+}
+
+/* 반응형 레이아웃 */
+@media (max-width: 1200px) {
+    .grid-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-bar-container {
+        width: 100%;
+    }
+
+    .button-container {
+        width: 100%;
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 768px) {
+    .grid-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .button-container {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .search-input, .search-column-select, .grd-select {
+        width: 100%; /* 전체 너비 사용 */
+    }
+}
+
+/* 검색 컬럼 선택 (Select) 스타일 */
+.search-column-select {
+    height: 38px; /* 검색창과 동일한 높이 */
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: pointer;
+    min-width: 150px;
+    max-width: 200px;
+    appearance: none; /* 기본 select 스타일 제거 */
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* 드롭다운 화살표 아이콘 추가 */
+.search-column-select {
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='gray'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+}
+
+/* select 포커스 효과 */
+.search-column-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+/* 검색 입력 필드와 정렬 */
+.search-container {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* 입력창, select, 조회 버튼 간격 */
 }
