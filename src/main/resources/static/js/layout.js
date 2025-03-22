@@ -102,28 +102,33 @@ function openAlert(message, callableFunc){
     openDialog("alert", message, callableFunc);
 }
 
-function openConfirm(message, callableFunc, falseCallbackFunc){
-    openDialog("confirm", message, callableFunc, falseCallbackFunc);
+function openConfirm(message, callableFunc){
+    openDialog("confirm", message, callableFunc);
 }
 
 
 // 다이얼로그 열기
-function openDialog(type, message, callableFunc, falseCallbackFunc) {
+function openDialog(type, message, callableFunc) {
     const dialog = document.getElementById("alert" === type ? 'myAlert' : "div" === type ? "mainConfirm" : "myConfirm");
     const content = document.getElementById("alert" === type ? 'alertContent' : "div" === type ? "mainDialogTitle" : "confirmContent");
 
-    if(type === "div"){
+    if (type === "div") {
         content.textContent = message.title;
 
         // 기존 내용 초기화
         const dialogContent = document.getElementById("mainDialogContent");
         dialogContent.innerHTML = ''; // 기존 내용 삭제
 
-        // `message.content`가 DOM 요소라면 appendChild() 사용
-        if (message.content instanceof HTMLElement) {
-            dialogContent.appendChild(message.content);
-        } else {
-            dialogContent.insertAdjacentHTML("beforeend", message.content.toString());
+        if (message.content) {
+            if (message.content instanceof jQuery) {
+                dialogContent.appendChild(message.content.get(0)); // jQuery 객체 → DOM 요소 변환
+            } else if (message.content instanceof HTMLElement) {
+                dialogContent.appendChild(message.content); // DOM 요소면 그대로 추가
+            } else if (typeof message.content === "string") {
+                dialogContent.insertAdjacentHTML("beforeend", message.content); // 문자열이면 HTML 삽입
+            } else {
+                console.error("Invalid content type:", message.content);
+            }
         }
     } else if (content) {
         content.textContent = message; // 다이얼로그에 메시지 삽입
@@ -133,20 +138,35 @@ function openDialog(type, message, callableFunc, falseCallbackFunc) {
         dialog.showModal(); // 다이얼로그 열기
     }
 
-    if(callableFunc){
+    if (callableFunc) {
         callableFunction = callableFunc;
     }
 }
 
 // 다이얼로그 닫기
 function closeDialog(type, isCallableStart) {
-    const dialog = document.getElementById(type === "alert" ? 'myAlert' : "div" === type ? "mainConfirm" : 'myConfirm');
-    dialog.close(); // 다이얼로그 닫기
+    const dialog = document.getElementById(
+        type === "alert" ? "myAlert" : type === "div" ? "mainConfirm" : "myConfirm"
+    );
 
-    if(isCallableStart) callableFunction(); // 닫은 이후 추가 함수 호출
+    if (!dialog) {
+        console.error(`Dialog not found for type: ${type}`);
+        return;
+    }
 
-    // callable Function Clear
-    callableFunction = () => {}
+    // `open` 속성 확인 후 닫기
+    if (dialog.open) {
+        dialog.close();
+    } else {
+        console.warn("Dialog is already closed.");
+    }
+
+    if (isCallableStart && typeof callableFunction === "function") {
+        callableFunction(); // 닫은 이후 추가 함수 호출
+    }
+
+    // callableFunction 초기화
+    callableFunction = () => {};
 }
 
 /**

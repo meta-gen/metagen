@@ -102,6 +102,7 @@ $(document).ready(function () {
     });
 
     /**
+     *
      * 템플릿 다운로드 모달 열기
      */
     window.openCustomDialog = function () {
