@@ -1,4 +1,4 @@
-import {setupAjaxCsrf} from "../common/csrf.js";
+import {getCsrfToken, setupAjaxCsrf} from "../common/csrf.js";
 import {downloadFile} from "../common/common.js";
 
 $(document).ready(function () {
@@ -49,64 +49,99 @@ $(document).ready(function () {
     /**
      * 엑셀업로드 버튼 클릭 이벤트
      */
-    $("#excel-upload").on("click", () => {
-        debugger;
+    $("#excel-upload").on("click", function () {
+        $("#upload-file").click();
     });
-});
 
-document.addEventListener("DOMContentLoaded", function () {
+    /**
+     * 엑셀 파일이 업로드 된 이후 서버에 전송 및 파싱처리
+     */
+    $("#upload-file").on("change", () => {
+        window.openConfirm("업로드 하시겠습니까?", () => {
+            const file = $("#upload-file")[0].files[0]; // 선택한 파일 가져오기
+            if (!file) {
+                alert("업로드할 파일을 선택해주세요.");
+                return;
+            }
+
+            // FormData 생성 후 파일 추가
+            const formData = new FormData();
+            formData.append("file", file);
+
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ', ' + pair[1]);
+            }
+
+            $.ajax({
+                url: "/api/uploadDataDictionaryExcelFile",
+                type: "POST",
+                data: formData,
+                processData: false,  // FormData를 쿼리 스트링으로 변환하지 않음
+                contentType: false,  // `multipart/form-data`가 자동 설정되도록 false로 설정
+                beforeSend: function (xhr) {  // setupAjaxCsrf() 영향 방지
+                    xhr.setRequestHeader('X-XSRF-TOKEN', getCsrfToken()); // CSRF 토큰만 추가
+                    // AJAX 요청이 시작될 때 로딩 바 표시
+                    $("#loading-bar").show();
+                },
+                success: function (response) {
+                    if(response.result === "success"){
+                        window.openAlert("업로드가 완료되었습니다.");
+                        ["standardDomains","standardTerms","standardWords"].forEach(e => {
+                            $(`.search-input[data-table-id="${e}"]`).val('');
+                            window.searchGrid(e);
+                        })
+                        $("#upload-file").val('');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("파일 업로드 중 오류가 발생했습니다.");
+                    console.error("업로드 실패:", status, error);
+                }
+            });
+        });
+    });
+
+    /**
+     * 템플릿 다운로드 모달 열기
+     */
     window.openCustomDialog = function () {
-        const dialogContent = document.createElement("div");
+        const dialogContent = $("<div></div>");
 
-        const btn1 = document.createElement("button");
-        btn1.id = "download-data-portal";
-        btn1.classList.add("btn", "btn-primary");
-        btn1.textContent = "공통표준용어 다운로드";
+        const btn1 = $("<button></button>", {
+            id: "download-data-portal",
+            class: "btn btn-primary",
+            text: "공통표준용어 다운로드"
+        });
 
-        const btn2 = document.createElement("button");
-        btn2.id = "download-template";
-        btn2.classList.add("btn", "btn-primary");
-        btn2.textContent = "템플릿 다운로드";
+        const btn2 = $("<button></button>", {
+            id: "download-template",
+            class: "btn btn-primary",
+            text: "템플릿 다운로드"
+        });
 
-        dialogContent.appendChild(btn1);
-        dialogContent.appendChild(btn2);
-
-        openDialog("div", { title: "템플릿 다운로드", content: dialogContent });
+        dialogContent.append(btn1, btn2);
+        openDialog("div", {title: "템플릿 다운로드", content: dialogContent});
     };
-});
 
-document.addEventListener("DOMContentLoaded", function () {
+    /**
+     * DataTable 전역 객체 초기화
+     */
     if (!window.tableInstances) {
         window.tableInstances = {};  // 여러 개의 DataTable을 저장할 객체
     }
 
-    // 표준 용어 이벤트
-    document.getElementById("addStandardTerm")?.addEventListener("click", addStandardTerm);
-    document.getElementById("saveStandardTerms")?.addEventListener("click", saveStandardTerms);
-    document.getElementById("deleteStandardTerm")?.addEventListener("click", deleteStandardTerm);
+    /**
+     * 탭 클릭 시 해당 탭의 데이터 로드
+     */
+    $(".nav-link").on("click", function () {
+        let target = $(this).attr("data-bs-target");
 
-    // 표준 단어 이벤트
-    document.getElementById("addStandardWord")?.addEventListener("click", addStandardWord);
-    document.getElementById("saveStandardWords")?.addEventListener("click", saveStandardWords);
-    document.getElementById("deleteStandardWord")?.addEventListener("click", deleteStandardWord);
-
-    // 표준 도메인 이벤트
-    document.getElementById("addStandardDomain")?.addEventListener("click", addStandardDomain);
-    document.getElementById("saveStandardDomains")?.addEventListener("click", saveStandardDomains);
-    document.getElementById("deleteStandardDomain")?.addEventListener("click", deleteStandardDomain);
-
-    // 탭 클릭 시 데이터 로드
-    document.querySelectorAll('.nav-link').forEach(tab => {
-        tab.addEventListener('click', function () {
-            let target = this.getAttribute('data-bs-target');
-
-            if (target === "#standard-terms") {
-                window.grid("standardTerms", "/api/getStandardTerms", '');
-            } else if (target === "#standard-words") {
-                window.grid("standardWords", "/api/getStandardWords", '');
-            } else if (target === "#standard-domains") {
-                window.grid("standardDomains", "/api/getStandardDomains", '');
-            }
-        });
+        if (target === "#standard-terms") {
+            window.grid("standardTerms", "/api/getStandardTerms", '');
+        } else if (target === "#standard-words") {
+            window.grid("standardWords", "/api/getStandardWords", '');
+        } else if (target === "#standard-domains") {
+            window.grid("standardDomains", "/api/getStandardDomains", '');
+        }
     });
 });

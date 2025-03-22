@@ -1,20 +1,28 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MetaGen</title>
-</head>
-
-<!-- 공통 Grid Fragment -->
 <div th:fragment="grid(tableId, dataUrl, crudActions)">
-    <!-- CRUD 버튼 컨테이너 -->
-    <div class="button-container mb-3">
-        <button class="btn btn-primary grd-select" data-table-id="${tableId}" id="grd-select">조회</button>
-        <button class="btn btn-primary grd-add" th:data-table-id="${tableId}" th:id="'grd-add-' + ${tableId}" style="display: none;">추가</button>
-        <button class="btn btn-primary grd-save" th:data-table-id="${tableId}" th:id="'grd-save-' + ${tableId}" style="display: none;">저장</button>
-        <button class="btn btn-secondary grd-delete" th:data-table-id="${tableId}" th:id="'grd-delete-' + ${tableId}" style="display: none;">삭제</button>
+    <div class="grid-header">
+        <!-- 검색창 + 컬럼 선택 + 조회 버튼 -->
+        <div class="search-container">
+            <!-- 검색 컬럼 선택 드롭다운 -->
+            <select class="search-column-select" th:data-table-id="${tableId}" th:id="'search-column-' + ${tableId}">
+            </select>
+
+            <!-- 검색 입력 필드 (초기 기본값: STRING 타입) -->
+            <input type="text" class="search-input-text search-input" th:data-table-id="${tableId}" th:id="'search-input-text-' + ${tableId}" placeholder="검색어 입력">
+            <input type="number" class="search-input-number search-input" th:data-table-id="${tableId}" th:id="'search-input-number-' + ${tableId}" placeholder="숫자만 입력하세요" style="display: none;">
+
+            <button class="grd-select" th:data-table-id="${tableId}" th:id="'grd-select-' + ${tableId}">조회</button>
+        </div>
+
+        <!-- 승인, 추가, 저장, 삭제 버튼 -->
+        <div class="button-container">
+            <button class="grd-active" th:data-table-id="${tableId}" th:id="'grd-active-' + ${tableId}" style="display: none;">승인</button>
+            <button class="grd-add" th:data-table-id="${tableId}" th:id="'grd-add-' + ${tableId}" style="display: none;">추가</button>
+            <button class="grd-save" th:data-table-id="${tableId}" th:id="'grd-save-' + ${tableId}" style="display: none;">저장</button>
+            <button class="grd-delete" th:data-table-id="${tableId}" th:id="'grd-delete-' + ${tableId}" style="display: none;">삭제</button>
+        </div>
     </div>
+
+    <hr class="grid-divider">
 
     <table th:id="${tableId}" class="table table-striped table-bordered">
         <thead>
@@ -32,13 +40,16 @@
             window.crudActionMap = {
                 "C": "add",
                 "U": "save",
-                "D": "delete"
+                "D": "delete",
+                "A": "active"
             };
         }
 
-        // `grid()` 함수 전역으로 선언하여 `dataDictionary.js`에서 호출 가능
         window.grid = function (tableId, dataUrl, crudActions = '') {
-            console.log(` grid() 호출됨: tableId=${tableId}, dataUrl=${dataUrl}, crudActions=${crudActions}`);
+            if (!tableId || !dataUrl) {
+                console.error("tableId 또는 dataUrl이 없습니다.");
+                return;
+            }
 
             /* CRUD 버튼 표시 여부 처리 */
             if (crudActions.trim() !== '') {
@@ -48,95 +59,155 @@
                     if (mappedAction) {
                         let button = document.querySelector(`.grd-${mappedAction}[data-table-id="${tableId}"]`);
                         if (button) {
-                            button.style.display = "inline-block";
+                            if(mappedAction === "active"){
+                                $.ajax({
+                                    url: `/isApprovalAvailable`,
+                                    type: "GET",
+                                    success: function (response) {
+                                        if(response.result){
+                                            button.style.display = "inline-block";
+                                        }
+                                    }
+                                })
+                            }else{
+                                button.style.display = "inline-block";
+                            }
                         }
                     }
                 });
             }
 
-            $(document).ready(function () {
-                if (!tableId || !dataUrl) {
-                    console.error("tableId 또는 dataUrl이 없습니다.");
-                    return;
-                }
-
-                if (window.tableInstances[tableId]) {
-                    return;
-                }
-
-                $.ajax({
-                    url: `${dataUrl}/column`,
-                    type: "GET",
-                    success: function (columns) {
-                        let headerRow = $("#" + tableId + " thead tr");
-                        headerRow.empty();
-                        columns.forEach(col => {
-                            headerRow.append(`<th>${col.columnName}</th>`);
-                        });
-
-                        window.tableInstances[tableId] = $("#" + tableId).DataTable({
-                            "processing": true,
-                            "serverSide": true,
-                            "searching": false,
-                            "info": false,
-                            "destroy": true,
-                            "language": {
-                                "lengthMenu": "페이지당 _MENU_ 행 표시",
-                                "zeroRecords": "검색된 데이터가 없습니다.",
-                                "info": "총 _TOTAL_ 개의 항목",
-                                "infoEmpty": "표시할 데이터가 없습니다.",
-                                "emptyTable": "조회된 데이터가 없습니다.",
-                                "infoFiltered": "(전체 _MAX_ 개의 항목 중 필터링됨)",
-                                "paginate": {
-                                    "first": "처음",
-                                    "last": "마지막",
-                                    "next": "다음",
-                                    "previous": "이전"
-                                }
-                            },
-                            "ajax": {
-                                "url": `${dataUrl}/data`,
-                                "type": "GET",
-                                "data": function (d) {
-                                    return {
-                                        page: d.start / d.length,
-                                        size: d.length,
-                                        sort: d.order
-                                            .filter(order => columns[order.column]) // undefined 방지
-                                            .map(order => {
-                                                let columnName = columns[order.column].column || "timestamp"; // 기본값 설정
-                                                let direction = order.dir === "asc" ? "asc" : "desc";
-                                                return columnName + "," + direction; // "id,asc" 형식으로 변환
-                                            })
-                                            .join(";") // 문자열 리스트 형태로 변환
-                                    };
-                                }
-                            },
-                            "columns": columns.map(col => ({
-                                "data" : col.column,
-                                "title" : col.columnName
-                            }))
-                        });
-                    },
-                    error: function (error) {
-                        console.error("데이터 불러오기 실패:", error);
-                    }
-                });
-            });
-        };
-
-        $(".grd-select").on("click", () => {
-            if (Object.keys(window.tableInstances).length === 0) {
-                console.warn("테이블 인스턴스가 없습니다.");
+            if (window.tableInstances[tableId]) {
                 return;
             }
 
-            Object.values(window.tableInstances).forEach(instance => {
-                if (instance.ajax) {
-                    instance.ajax.reload();
+            $.ajax({
+                url: `${dataUrl}/column`,
+                type: "GET",
+                success: function (columns) {
+                    let headerRow = $("#" + tableId + " thead tr");
+                    headerRow.empty();
+                    let $select = $(`#search-column-${tableId}`);
+                    $select.empty();
+
+                    columns.forEach(col => {
+                        headerRow.append(`<th>${col.columnName}</th>`);
+                        let optionHtml = `<option value="${col.column}" data-type="${col.columnType}">${col.columnName}</option>`;
+                        $select.append(optionHtml);
+                    });
+
+                    // 검색 컬럼 변경 시, 입력 타입 변경 (숫자/문자 필드 전환)
+                    $select.on("change", function () {
+                        let selectedType = $(this).find("option:selected").attr("data-type");
+                        let $textInput = $(`#search-input-text-${tableId}`);
+                        let $numberInput = $(`#search-input-number-${tableId}`);
+
+                        if (selectedType === "NUMBER") {
+                            $textInput.hide();
+                            $numberInput.show().val("");
+                        } else {
+                            $numberInput.hide();
+                            $textInput.show().val("");
+                        }
+                    });
+
+                    // DataTables 초기화
+                    window.tableInstances[tableId] = $("#" + tableId).DataTable({
+                        "processing": true,
+                        "serverSide": true,
+                        "searching": false,
+                        "info": false,
+                        "destroy": true,
+                        "language": {
+                            "lengthMenu": "페이지당 _MENU_ 행 표시",
+                            "zeroRecords": "검색된 데이터가 없습니다.",
+                            "info": "총 _TOTAL_ 개의 항목",
+                            "infoEmpty": "표시할 데이터가 없습니다.",
+                            "emptyTable": "조회된 데이터가 없습니다.",
+                            "infoFiltered": "(전체 _MAX_ 개의 항목 중 필터링됨)",
+                            "paginate": {
+                                "first": "처음",
+                                "last": "마지막",
+                                "next": "다음",
+                                "previous": "이전"
+                            }
+                        },
+                        "ajax": {
+                            "url": `${dataUrl}/data`,
+                            "type": "GET",
+                            "data": function (d) {
+                                let column = $(`#search-column-${tableId}`).val();
+                                let selectedType = $(`#search-column-${tableId}`).find("option:selected").attr("data-type");
+                                let query = selectedType === "NUMBER"
+                                    ? $(`#search-input-number-${tableId}`).val()
+                                    : $(`#search-input-text-${tableId}`).val();
+
+                                return {
+                                    page: d.start / d.length,
+                                    size: d.length,
+                                    searchQuery: query,
+                                    searchColumn: column,
+                                    sort: d.order
+                                        .filter(order => columns[order.column])
+                                        .map(order => {
+                                            let columnName = columns[order.column].column || "timestamp";
+                                            let direction = order.dir === "asc" ? "asc" : "desc";
+                                            return columnName + "," + direction;
+                                        })
+                                        .join(";")
+                                };
+                            }
+                        },
+                        "columns": columns.map(col => ({
+                            "data": col.column,
+                            "title": col.columnName,
+                            "render": function (data, type, row) {
+                                switch (col.columnType) {
+                                    case "TEXT":
+                                        return `<p>${data}</p>`;
+                                    case "INPUT":
+                                        return `<input type="text" class="form-control edit-input" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
+                                    case "BUTTON":
+                                        return `<button class="btn btn-sm ${col.class || 'btn-primary'} action-btn" data-id="${row.id}" data-field="${col.column}">${col.buttonText}</button>`;
+                                    case "SELECT":
+                                        let options = col.options.map(option =>
+                                            `<option value="${option}" ${data === option ? 'selected' : ''}>${option}</option>`
+                                        ).join("");
+                                        return `<select class="form-control edit-select" data-id="${row.id}" data-field="${col.column}">${options}</select>`;
+                                    case "DATE":
+                                        return `<input type="text" class="form-control datepicker" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
+                                    case "CHECKBOX":
+                                        return `<input type="checkbox" class="row-checkbox" data-id="${row.id}">`;
+                                    default:
+                                        return data || "";
+                                }
+                            }
+                        }))
+                    });
+
+                    // 초기에 선택된 컬럼 타입 반영 (기본값)
+                    $select.trigger("change");
+                },
+                error: function (error) {
+                    console.error("데이터 불러오기 실패:", error);
                 }
             });
+        };
+
+        $(document).on("click", ".grd-select", function () {
+            let tableId = $(this).attr("data-table-id");
+            searchGrid(tableId);
         });
+
+        function searchGrid(tableId) {
+            if (!window.tableInstances[tableId]) {
+                console.warn(`테이블 ${tableId} 인스턴스가 없습니다.`);
+                return;
+            }
+            window.tableInstances[tableId].ajax.reload(null, false);
+        }
+
+        window.searchGrid = searchGrid;
 
         $(document).ready(() => {
             let tableId = /*[[${tableId}]]*/ '';
@@ -145,6 +216,11 @@
 
             window.grid(tableId, dataUrl, crudActions);
         });
+
+        $(".search-input-number").on("keydown", function (event) {
+            if (event.key === "e" || event.key === "E" || event.key === "+" || event.key === "-") {
+                event.preventDefault();
+            }
+        });
     </script>
 </div>
-</html>

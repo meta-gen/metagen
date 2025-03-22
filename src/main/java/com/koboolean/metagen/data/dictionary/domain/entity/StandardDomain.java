@@ -44,4 +44,6 @@ public class StandardDomain {
 
     @Column(length = 2000)
     private String allowedValues; // 허용값
+
+    private Boolean isApproval;
 }

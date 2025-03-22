@@ -5,29 +5,23 @@ import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardWordDto;
 import com.koboolean.metagen.data.dictionary.service.DataDictionaryService;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
-import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
-import com.koboolean.metagen.utils.ExcelUtils;
 import com.koboolean.metagen.utils.PageableUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 
@@ -55,10 +49,14 @@ public class DataDictionaryRestController {
             @Parameter(description = "페이지 크기", example = "10")
             @RequestParam int size,
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
-            @RequestParam(required = false) String sort
+            @RequestParam(required = false) String sort,
+            @Parameter(description = "조회 용어명", example = "용어명1")
+            @RequestParam(required = false) String searchQuery,
+            @Parameter(description = "조회컬럼 명", example = "id")
+            @RequestParam(required = false) String searchColumn
     ) {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
-        Page<StandardTermDto> standardTermDataPage = dataDictionaryService.getStandardTermsData(pageable, accountDto);
+        Page<StandardTermDto> standardTermDataPage = dataDictionaryService.getStandardTermsData(pageable, accountDto, searchColumn, searchQuery);
         return PageableUtil.getGridPageableMap(standardTermDataPage);
     }
 
@@ -78,10 +76,14 @@ public class DataDictionaryRestController {
             @Parameter(description = "페이지 크기", example = "10")
             @RequestParam int size,
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
-            @RequestParam(required = false) String sort
+            @RequestParam(required = false) String sort,
+            @Parameter(description = "조회 단어명", example = "단어명1")
+            @RequestParam(required = false) String searchQuery,
+            @Parameter(description = "조회컬럼 명", example = "id")
+            @RequestParam(required = false) String searchColumn
     ) {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
-        Page<StandardWordDto> standardWordsDataPage = dataDictionaryService.getStandardWordsData(pageable, accountDto);
+        Page<StandardWordDto> standardWordsDataPage = dataDictionaryService.getStandardWordsData(pageable, accountDto, searchColumn, searchQuery);
         return PageableUtil.getGridPageableMap(standardWordsDataPage);
     }
 
@@ -92,7 +94,9 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "표준 도메인 데이터 조회", description = "표준 도메인 데이터를 조회합니다.")
+
     @GetMapping("/getStandardDomains/data")
+
     public ResponseEntity<Map<String,Object>> getStandardDomainsData(
             @Parameter(description = "사용자 인증 정보", hidden = true)
             @AuthenticationPrincipal AccountDto accountDto,
@@ -101,11 +105,28 @@ public class DataDictionaryRestController {
             @Parameter(description = "페이지 크기", example = "10")
             @RequestParam int size,
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
-            @RequestParam(required = false) String sort
+            @RequestParam(required = false) String sort,
+            @Parameter(description = "조회 도메인명", example = "도메인명1")
+            @RequestParam(required = false) String searchQuery,
+            @Parameter(description = "조회컬럼 명", example = "id")
+            @RequestParam(required = false) String searchColumn
     ) {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
-        Page<StandardDomainDto> standardDomainsDataPage = dataDictionaryService.getStandardDomainsData(pageable, accountDto);
+        Page<StandardDomainDto> standardDomainsDataPage = dataDictionaryService.getStandardDomainsData(pageable, accountDto, searchColumn, searchQuery);
         return PageableUtil.getGridPageableMap(standardDomainsDataPage);
+    }
+
+    @Operation(summary = "데이터사전 엑셀 업로드", description = "업로드한 엑셀 데이터를 파싱하여 데이터사전 테이블에 저장한다.")
+    @PostMapping(value = "/uploadDataDictionaryExcelFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, String>> uploadDataDictionaryExcelFile(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal AccountDto accountDto) throws IOException {
+
+        try {
+            dataDictionaryService.uploadDictionaryExcelFile(file, accountDto);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 읽을 수 없습니다.", e);
+        }
+
+        return ResponseEntity.ok(Map.of("result", "success"));
     }
 
 }
