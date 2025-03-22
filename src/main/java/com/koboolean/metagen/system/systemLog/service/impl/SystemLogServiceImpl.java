@@ -23,15 +23,15 @@ public class SystemLogServiceImpl implements SystemLogService {
     public List<ColumnDto> getSystemLogColumn() {
         return List.of(
                 new ColumnDto("id","id", ColumnType.NUMBER)
-                , new ColumnDto("요청 URL","logUrl", ColumnType.STRING)
-                , new ColumnDto("메소드","method", ColumnType.STRING)
-                , new ColumnDto("IP","ip", ColumnType.STRING)
-                , new ColumnDto("사용자 ID","username", ColumnType.STRING)
+                , new ColumnDto("요청 URL","logUrl", ColumnType.STRING, true)
+                , new ColumnDto("메소드","method", ColumnType.STRING, true)
+                , new ColumnDto("IP","ip", ColumnType.STRING, true)
+                , new ColumnDto("사용자 ID","username", ColumnType.STRING, true)
                 , new ColumnDto("권한","roleName", ColumnType.STRING)
-                , new ColumnDto("응답 HTTP 상태코드","statusCode", ColumnType.STRING)
-                , new ColumnDto("요청 데이터","requestBody", ColumnType.STRING)
-                , new ColumnDto("응답 데이터","responseBody", ColumnType.STRING)
-                , new ColumnDto("에러 메시지","errorMessage", ColumnType.STRING)
+                , new ColumnDto("응답 HTTP 상태코드","statusCode", ColumnType.STRING, true)
+                , new ColumnDto("요청 데이터","requestBody", ColumnType.STRING, true)
+                , new ColumnDto("응답 데이터","responseBody", ColumnType.STRING, true)
+                , new ColumnDto("에러 메시지","errorMessage", ColumnType.STRING, true)
                 , new ColumnDto("브라우저 정보","userAgent", ColumnType.STRING)
                 , new ColumnDto("요청 발생시간","timestamp", ColumnType.STRING)
         );

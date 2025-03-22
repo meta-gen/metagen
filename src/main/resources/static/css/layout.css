@@ -453,7 +453,6 @@ dialog .btn-primary {
     min-width: 150px;
     max-width: 200px;
     appearance: none; /* 기본 select 스타일 제거 */
-    text-align: center;
     outline: none;
     transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
