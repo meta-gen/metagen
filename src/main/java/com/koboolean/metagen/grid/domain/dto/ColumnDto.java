@@ -12,7 +12,7 @@ public class ColumnDto {
     private String columnName;
     private String column;
     private ColumnType columnType;
-    private RowType type;
+    private RowType rowType;
     private Boolean isSearch;
 
     public ColumnDto(String columnName, String column, ColumnType columnType) {
