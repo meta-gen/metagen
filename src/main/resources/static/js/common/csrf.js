@@ -23,7 +23,7 @@ export function setupAjaxCsrf() {
             beforeSend: function (xhr, settings) {
                 xhr.setRequestHeader('X-XSRF-TOKEN', csrfToken); // CSRF 토큰 추가
 
-                if (!settings.processData) {
+                if (settings.contentType !== false) {
                     xhr.setRequestHeader('Content-Type', 'application/json'); // Content-Type 설정
                 }
 

@@ -179,13 +179,13 @@
                             "data": col.column,
                             "title": col.columnName,
                             "render": function (data, type, row) {
-                                switch (col.columnType) {
+                                switch (col.rowType) {
                                     case "TEXT":
                                         return `<p>${data}</p>`;
                                     case "INPUT":
                                         return `<input type="text" class="form-control edit-input" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
                                     case "BUTTON":
-                                        return `<button class="btn btn-sm ${col.class || 'btn-primary'} action-btn" data-id="${row.id}" data-field="${col.column}">${col.buttonText}</button>`;
+                                        return `<button class="btn btn-sm ${col.class || 'btn-primary'} action-btn" data-id="${row.id}" data-field="${col.column}">${data}</button>`;
                                     case "SELECT":
                                         let options = col.options.map(option =>
                                             `<option value="${option}" ${data === option ? 'selected' : ''}>${option}</option>`
