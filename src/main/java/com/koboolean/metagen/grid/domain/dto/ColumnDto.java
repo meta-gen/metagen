@@ -28,4 +28,12 @@ public class ColumnDto {
         this.columnType = columnType;
         this.isSearch = isSearch;
     }
+
+    public ColumnDto(String columnName, String column, ColumnType columnType, RowType rowType) {
+        this.columnName = columnName;
+        this.column = column;
+        this.columnType = columnType;
+        this.rowType = rowType;
+        this.isSearch = false;
+    }
 }
