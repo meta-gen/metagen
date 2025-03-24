@@ -12,6 +12,7 @@ import com.koboolean.metagen.data.dictionary.repository.StandardWordRepository;
 import com.koboolean.metagen.data.dictionary.service.DataDictionaryService;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.grid.enums.ColumnType;
+import com.koboolean.metagen.grid.enums.RowType;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.utils.AuthUtil;
 import com.koboolean.metagen.utils.ExcelUtils;
@@ -39,7 +40,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     @Override
     public List<ColumnDto> getStandardTermsColumn() {
         return List.of(
-                new ColumnDto("id", "id", ColumnType.NUMBER),
+                new ColumnDto("", "id", ColumnType.NUMBER, RowType.CHECKBOX),
                 new ColumnDto("제정차수", "revisionNumber", ColumnType.NUMBER),
                 new ColumnDto("표준용어명", "commonStandardTermName", ColumnType.STRING, true),
                 new ColumnDto("표준용어설명", "commonStandardTermDescription", ColumnType.STRING, true),
@@ -58,7 +59,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     @Override
     public List<ColumnDto> getStandardDomainsColumn() {
         return List.of(
-                new ColumnDto("id", "id", ColumnType.NUMBER),
+                new ColumnDto("", "id", ColumnType.NUMBER, RowType.CHECKBOX),
                 new ColumnDto("제정차수", "revisionNumber", ColumnType.NUMBER),
                 new ColumnDto("데이터길이", "dataLength", ColumnType.NUMBER),
                 new ColumnDto("데이터소수점길이", "dataDecimalLength", ColumnType.NUMBER),
@@ -78,7 +79,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     @Override
     public List<ColumnDto> getStandardWordsColumn() {
         return List.of(
-                new ColumnDto("id", "id", ColumnType.NUMBER),
+                new ColumnDto("", "id", ColumnType.NUMBER, RowType.CHECKBOX),
                 new ColumnDto("제정차수", "revisionNumber", ColumnType.NUMBER),
                 new ColumnDto("표준단어명", "commonStandardWordName", ColumnType.STRING, true),
                 new ColumnDto("표준단어영문약어명", "commonStandardWordAbbreviation", ColumnType.STRING, true),

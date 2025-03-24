@@ -239,5 +239,28 @@
                 event.preventDefault();
             }
         });
+
+        /**
+         * 테이블에 체크된 row를 확인한다.
+         * @param tableId
+         * @returns {*[]}
+         */
+        function getCheckedData(tableId){
+
+            let checkedData = [];
+
+            $(`#${tableId} .row-checkbox:checked`).each((index, element) => {
+                const row = element.closest('tr');
+                const rowData = window.tableInstances["standardTerms"].row(row).data();
+
+                if(rowData){
+                    checkedData.push(rowData);
+                }
+            });
+
+            return checkedData;
+        }
+
+        window.getCheckedData = getCheckedData;
     </script>
 </div>
