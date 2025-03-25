@@ -20,21 +20,21 @@
     <!-- 탭 네비게이션 -->
     <ul class="nav nav-tabs mt-3">
         <li class="nav-item">
-            <a class="nav-link active" id="standard-terms-tab" data-bs-toggle="tab" data-bs-target="#standard-terms">표준 용어</a>
+            <a class="nav-link active" id="standard-domains-tab" data-bs-toggle="tab" data-bs-target="#standard-domains">표준 도메인</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" id="standard-words-tab" data-bs-toggle="tab" data-bs-target="#standard-words">표준 단어</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" id="standard-domains-tab" data-bs-toggle="tab" data-bs-target="#standard-domains">표준 도메인</a>
+            <a class="nav-link" id="standard-terms-tab" data-bs-toggle="tab" data-bs-target="#standard-terms">표준 용어</a>
         </li>
     </ul>
 
     <!-- 탭 콘텐츠 -->
     <div class="tab-content mt-3">
-        <div class="tab-pane fade show active" id="standard-terms" th:include="fragments/standard_terms"></div>
+        <div class="tab-pane fade show active" id="standard-domains" th:include="fragments/standard_domains"></div>
         <div class="tab-pane fade" id="standard-words" th:include="fragments/standard_words"></div>
-        <div class="tab-pane fade" id="standard-domains" th:include="fragments/standard_domains"></div>
+        <div class="tab-pane fade" id="standard-terms" th:include="fragments/standard_terms"></div>
     </div>
 
 </section>
