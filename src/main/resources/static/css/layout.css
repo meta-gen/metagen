@@ -477,3 +477,7 @@ dialog .btn-primary {
     align-items: center;
     gap: 8px; /* 입력창, select, 조회 버튼 간격 */
 }
+
+.selected {
+    background-color: #d1ecf1 !important;
+}

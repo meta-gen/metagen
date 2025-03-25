@@ -33,3 +33,12 @@ $("#grd-add-standardTerms").on("click", () => {
 $("#grd-delete-standardTerms").on("click", () => {
 
 });
+
+/**
+ * 그리드 선택 callback Function
+ */
+export function selectRow(rowData, tableId){
+    console.log(rowData);
+}
+
+window.gridCallbacks["standardTerms_selectRow"] = selectRow;
