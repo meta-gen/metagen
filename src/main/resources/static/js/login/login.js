@@ -27,6 +27,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    /**
+     * 프로젝트를 선택하며, 선택할 프로젝트가 한가지라면 바로 로그인할 수 있도록 도와준다.
+     * localStorage에 프로젝트 명을 입력한다 -> 실제로 서비스에 영향을 주지 않으며, Header에만 저장되므로, localStorage에 저장하는것이 문제가 되지 않는다.
+     */
     function openProjectDialog() {
         const username = document.getElementById("username").value.trim();
 
@@ -44,8 +48,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if(projects.length === 1){
                 openConfirm(`${projects[0].projectName} 프로젝트로 로그인됩니다.`, () => {
                     $("#project_id").val(projects[0].id);
+                    localStorage.setItem("selectedProject", projects[0].projectName);
                     $("#loginForm").submit(); // 자동 로그인 (폼 제출)
                 });
+
                 return
             }
 
@@ -68,7 +74,10 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             select.addEventListener("change", function () {
-                document.getElementById("projectId").value = this.value;
+                const selectedOption = this.options[this.selectedIndex];
+
+                document.getElementById("projectId").value = selectedOption.value;
+                localStorage.setItem("selectedProject", selectedOption.text);
             });
 
             const dialogContent = document.createElement("div");

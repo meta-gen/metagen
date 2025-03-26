@@ -48,13 +48,11 @@
         </dialog>
 
         <dialog id="mainConfirm">
-            <h3 id="mainDialogTitle">알림</h3>
-            <div id="mainDialogContent">
-
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 id="mainDialogTitle">알림</h3>
+                <button onclick="closeDialog('div', true)" class="close-btn" aria-label="닫기">&times;</button>
             </div>
-            <div class="button-container">
-                <button onclick="closeDialog('div', true)" class="close">확인</button>
-            </div>
+            <div id="mainDialogContent"></div>
         </dialog>
 
         <!-- Main Section -->
