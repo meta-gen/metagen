@@ -39,6 +39,10 @@ public class Board extends BaseEntity implements Serializable {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    /* File */
+    @Column(length = 500, nullable = true)
+    private String filePath;
+
     /* 조회수 */
     @Column(name = "hit_count", nullable = false)
     private int hitCount;
