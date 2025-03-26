@@ -50,6 +50,8 @@
         }
 
         window.grid = function (tableId, dataUrl, crudActions = '', initCompleteCallback = '') {
+            let isManager = false;
+
             if (!tableId || !dataUrl) {
                 console.error("tableId 또는 dataUrl이 없습니다.");
                 return;
@@ -69,6 +71,7 @@
                                     type: "GET",
                                     success: function (response) {
                                         if(response.result){
+                                            isManager = response.result;
                                             button.style.display = "inline-block";
                                         }
                                     }
@@ -150,12 +153,14 @@
                                 const row = $(this).closest("tr");
                                 const rowData = table.row(row).data();
 
+                                const columnInfo = columns; // 전체 column 배열 넘김
+
                                 if (!rowData) {
                                     return;
                                 }
 
                                 if (typeof initCompleteCallback === 'string' && typeof window.gridCallbacks?.[initCompleteCallback] === 'function') {
-                                    window.gridCallbacks[initCompleteCallback](rowData, tableId);
+                                    window.gridCallbacks[initCompleteCallback](rowData, columnInfo, isManager, tableId);
                                 }
                             });
                         },

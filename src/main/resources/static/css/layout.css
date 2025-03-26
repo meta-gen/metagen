@@ -481,3 +481,15 @@ dialog .btn-primary {
 .selected {
     background-color: #d1ecf1 !important;
 }
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+}
+.close-btn:active {
+    color: blue;
+}
