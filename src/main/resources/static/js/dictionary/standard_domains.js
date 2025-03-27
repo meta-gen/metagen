@@ -4,12 +4,9 @@
  */
 $("#grd-active-standardDomains").on("click", () => {
 
-    const checkedData = getCheckedData("standardDomains");
-
-    if(checkedData.length === 0){
-        window.openAlert("체크된 데이터가 존재하지 않습니다.");
-        return;
-    }
+    const checkedData = getCheckedDataIsNonNull("standardDomains");
+    debugger
+    if(!checkedData) return;
 
     window.openConfirm("체크된 표준 도메인를 승인하시겠습니까?", () => {
        // 승인 필요 대상이 하나라도 존재한다면 true로 반환되어 승인로직을 탈 수 있게 된다.
@@ -29,18 +26,29 @@ $("#grd-active-standardDomains").on("click", () => {
  * 표준 도메인 추가 버튼
  */
 $("#grd-add-standardDomains").on("click", () => {
+    addStandardDomains();
+});
 
+/**
+ * 표준 도메인 삭제 버튼
+ */
+$("#grd-delete-standardDomains").on("click", () => {
+    const checkedData = getCheckedDataIsNonNull("standardDomains");
+    if(!checkedData) return;
+});
+
+function addStandardDomains(){
     const columnList = window.tableInstances["standardDomains"]
         .settings()
         .init()
         .columns
         .filter(col => col.data !== "id" && col.data !== "isApprovalYn")
         .map(col => {
-        return {
-            column: col.data,
-            columnName: col.title || col.columnName || col.data
-        };
-    });
+            return {
+                column: col.data,
+                columnName: col.title || col.columnName || col.data
+            };
+        });
 
     const dialog = $("#mainConfirm")[0];
     const dialogTitle = $("#mainDialogTitle");
@@ -111,20 +119,7 @@ $("#grd-add-standardDomains").on("click", () => {
     dialogContent.append(form);
 
     dialog.showModal();
-});
-
-/**
- * 표준 도메인 삭제 버튼
- */
-$("#grd-delete-standardDomains").on("click", () => {
-    const checkedData = getCheckedData("standardDomains");
-
-    if(checkedData.length === 0){
-        window.openAlert("체크된 데이터가 존재하지 않습니다.");
-        return;
-    }
-
-});
+}
 
 /**
  * 그리드 선택 callback Function

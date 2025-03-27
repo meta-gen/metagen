@@ -85,7 +85,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                 new ColumnDto("표준단어영문약어명", "commonStandardWordAbbreviation", ColumnType.STRING, true),
                 new ColumnDto("표준단어 영문명", "commonStandardWordEnglishName", ColumnType.STRING, true),
                 new ColumnDto("표준단어 설명", "commonStandardWordDescription", ColumnType.STRING, true),
-                new ColumnDto("표준도메인분류명", "commonStandardDomainCategory", ColumnType.STRING),
+                new ColumnDto("표준도메인분류명", "commonStandardDomainCategory", ColumnType.STRING, true),
                 new ColumnDto("형식단어 여부", "isFormatWord", ColumnType.STRING),
                 new ColumnDto("이음동의어 목록", "synonyms", ColumnType.STRING),
                 new ColumnDto("금칙어 목록", "restrictedWords", ColumnType.STRING),

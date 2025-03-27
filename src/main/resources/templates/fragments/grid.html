@@ -143,7 +143,11 @@
                         "info": false,
                         "destroy": true,
                         initComplete: function () {
-                            $(`#${tableId} tbody`).on("click", "tr", function () {
+                            $(`#${tableId} tbody`).on("click", "tr", function (e) {
+                                if ($(e.target).is("input, button, select, label")) {
+                                    return; // row 선택 로직을 타지 않게 함
+                                }
+
                                 const table = window.tableInstances[tableId];
 
                                 table.$("tr.selected").removeClass("selected");
@@ -164,6 +168,7 @@
                                 }
                             });
                         },
+
                         "language": {
                             "lengthMenu": "페이지당 _MENU_ 행 표시",
                             "zeroRecords": "검색된 데이터가 없습니다.",
@@ -292,5 +297,23 @@
         }
 
         window.getCheckedData = getCheckedData;
+
+        /**
+         * Check Data가 존재하면 Array를, 존재하지 않으면 null을 반환한다.
+         * Window.openAlert으로 Alert을 보여준다.
+         */
+        function getCheckedDataIsNonNull(tableId){
+            const checkedData = getCheckedData(tableId);
+
+            if(checkedData.length !== 0){
+                return checkedData;
+            }
+
+            window.openAlert("체크된 데이터가 존재하지 않습니다.");
+
+            return null;
+        }
+        window.getCheckedDataIsNonNull = getCheckedDataIsNonNull;
+
     </script>
 </div>

@@ -3,12 +3,9 @@
  *
  */
 $("#grd-active-standardWords").on("click", () => {
-    const checkedData = getCheckedData("standardWords");
+    const checkedData = getCheckedDataIsNonNull("standardWords");
 
-    if(checkedData.length === 0){
-        window.openAlert("체크된 데이터가 존재하지 않습니다.");
-        return;
-    }
+    if(!checkedData) return;
 
     window.openConfirm("체크된 표준 단어를 승인하시겠습니까?", () => {
        // 승인 필요 대상이 하나라도 존재한다면 true로 반환되어 승인로직을 탈 수 있게 된다.
@@ -28,6 +25,20 @@ $("#grd-active-standardWords").on("click", () => {
  * 표준 단어 추가 버튼
  */
 $("#grd-add-standardWords").on("click", () => {
+    addStandardWords();
+});
+
+
+/**
+ * 표준 단어 삭제 버튼
+ */
+$("#grd-delete-standardWords").on("click", () => {
+    const checkedData = getCheckedDataIsNonNull("standardWords");
+    if(!checkedData) return;
+
+});
+
+function addStandardWords(){
     const columnList = window.tableInstances["standardWords"]
         .settings()
         .init()
@@ -109,20 +120,7 @@ $("#grd-add-standardWords").on("click", () => {
     dialogContent.append(form);
 
     dialog.showModal();
-});
-
-/**
- * 표준 단어 삭제 버튼
- */
-$("#grd-delete-standardWords").on("click", () => {
-    const checkedData = getCheckedData("standardWords");
-
-    if(checkedData.length === 0){
-        window.openAlert("체크된 데이터가 존재하지 않습니다.");
-        return;
-    }
-
-});
+}
 
 /**
  * 그리드 선택 callback Function
