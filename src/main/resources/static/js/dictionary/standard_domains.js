@@ -5,7 +5,6 @@
 $("#grd-active-standardDomains").on("click", () => {
 
     const checkedData = getCheckedDataIsNonNull("standardDomains");
-    debugger
     if(!checkedData) return;
 
     window.openConfirm("체크된 표준 도메인를 승인하시겠습니까?", () => {
