@@ -1,6 +1,7 @@
 package com.koboolean.metagen.system.systemLog.service.impl;
 
 import com.koboolean.metagen.grid.enums.ColumnType;
+import com.koboolean.metagen.grid.enums.RowType;
 import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.logs.repository.LogsRepository;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
@@ -23,7 +24,7 @@ public class SystemLogServiceImpl implements SystemLogService {
     public List<ColumnDto> getSystemLogColumn() {
         return List.of(
                 new ColumnDto("id","id", ColumnType.NUMBER)
-                , new ColumnDto("요청 URL","logUrl", ColumnType.STRING, true)
+                , new ColumnDto("요청 URL","logUrl", ColumnType.STRING, RowType.BUTTON, true)
                 , new ColumnDto("메소드","method", ColumnType.STRING, true)
                 , new ColumnDto("IP","ip", ColumnType.STRING, true)
                 , new ColumnDto("사용자 ID","username", ColumnType.STRING, true)
