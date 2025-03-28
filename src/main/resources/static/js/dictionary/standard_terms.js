@@ -4,12 +4,9 @@
  */
 $("#grd-active-standardTerms").on("click", () => {
 
-    const checkedData = getCheckedData("standardTerms");
+    const checkedData = getCheckedDataIsNonNull("standardTerms");
 
-    if(checkedData.length === 0){
-        window.openAlert("체크된 데이터가 존재하지 않습니다.");
-        return;
-    }
+    if(!checkedData) return;
 
     window.openConfirm("체크된 표준용어를 승인하시겠습니까?", () => {
        // 승인 필요 대상이 하나라도 존재한다면 true로 반환되어 승인로직을 탈 수 있게 된다.
@@ -29,6 +26,28 @@ $("#grd-active-standardTerms").on("click", () => {
  * 표준용어 추가 버튼
  */
 $("#grd-add-standardTerms").on("click", () => {
+    addStandardTerms();
+});
+
+/**
+ * 표준용어 삭제 버튼
+ */
+$("#grd-delete-standardTerms").on("click", () => {
+    deleteStandardTerms();
+});
+
+/**
+ * 표준용어를 삭제한다.
+ */
+function deleteStandardTerms(){
+    const checkedData = getCheckedDataIsNonNull("standardTerms");
+    if(!checkedData) return;
+}
+
+/**
+ * 표준용어를 등록한다.
+ */
+function addStandardTerms(){
     const columnList = window.tableInstances["standardTerms"]
         .settings()
         .init()
@@ -54,50 +73,97 @@ $("#grd-add-standardTerms").on("click", () => {
         const key = col.column;
         const labelText = col.columnName || key;
 
-        const label = $("<label></label>")
-            .text(labelText)
-            .attr("for", key)
-            .css("display", "block")
-            .css("margin-top", "10px");
+        if (key === "commonStandardTermAbbreviation") {
+            const label = $("<label></label>")
+                .attr("for", key)
+                .text(labelText)
+                .css({
+                    display: "block",
+                    marginTop: "10px",
+                    fontWeight: "bold"
+                });
 
-        let input;
-
-        if (["commonStandardDomainDescription", "allowedValues"].includes(key)) {
-            input = $("<textarea></textarea>")
-                .attr("id", key)
-                .attr("name", key)
-                .css("width", "100%")
-                .css("height", "60px");
-        } else if (key === "isApprovalYn") {
-            input = $("<select></select>")
-                .attr("id", key)
-                .attr("name", key)
-                .css("width", "100%");
-
-            const options = [
-                { value: "Y", text: "TRUE" },
-                { value: "N", text: "FALSE" }
-            ];
-
-            options.forEach(opt => {
-                input.append($("<option></option>")
-                    .attr("value", opt.value)
-                    .text(opt.text));
+            const wrapper = $("<div></div>").css({
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginBottom: "10px"
             });
-        } else {
-            input = $("<input>")
+
+            const input = $("<input>")
                 .attr("type", "text")
                 .attr("id", key)
                 .attr("name", key)
-                .css("width", "100%");
-        }
+                .prop("readonly", true)
+                .css({
+                    flex: "1",
+                    backgroundColor: "#f0f0f0",
+                    height: "38px",
+                    paddingLeft: "10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px"
+                });
 
-        // id, projectId는 제외하거나 readonly
-        if (key === "id" || key === "projectId") {
-            input.prop("readonly", true).css("background-color", "#f0f0f0");
-        }
+            const searchBtn = $("<button></button>")
+                .attr("type", "button")
+                .addClass("btn btn-secondary")
+                .html("🔍")
+                .css({
+                    height: "38px"
+                })
+                .on("click", function () {
+                    openDomainSearchPopup();
+                });
 
-        form.append(label, input);
+            wrapper.append(input, searchBtn);
+            form.append(label, wrapper); // ✅ label 따로, wrapper 따로 append
+        }else{
+
+            const label = $("<label></label>")
+                .text(labelText)
+                .attr("for", key)
+                .css("display", "block")
+                .css("margin-top", "10px");
+
+            let input;
+
+            if (["commonStandardDomainDescription", "allowedValues"].includes(key)) {
+                input = $("<textarea></textarea>")
+                    .attr("id", key)
+                    .attr("name", key)
+                    .css("width", "100%")
+                    .css("height", "60px");
+            } else if (key === "isApprovalYn") {
+                input = $("<select></select>")
+                    .attr("id", key)
+                    .attr("name", key)
+                    .css("width", "100%");
+
+                const options = [
+                    { value: "Y", text: "TRUE" },
+                    { value: "N", text: "FALSE" }
+                ];
+
+                options.forEach(opt => {
+                    input.append($("<option></option>")
+                        .attr("value", opt.value)
+                        .text(opt.text));
+                });
+            }else {
+                input = $("<input>")
+                    .attr("type", "text")
+                    .attr("id", key)
+                    .attr("name", key)
+                    .css("width", "100%");
+            }
+
+            // id, projectId는 제외하거나 readonly
+            if (key === "id" || key === "projectId") {
+                input.prop("readonly", true).css("background-color", "#f0f0f0");
+            }
+
+            form.append(label, input);
+        }
     });
 
     const saveBtn = $("<button></button>")
@@ -110,20 +176,7 @@ $("#grd-add-standardTerms").on("click", () => {
     dialogContent.append(form);
 
     dialog.showModal();
-});
-
-/**
- * 표준용어 삭제 버튼
- */
-$("#grd-delete-standardTerms").on("click", () => {
-    const checkedData = getCheckedData("standardTerms");
-
-    if(checkedData.length === 0){
-        window.openAlert("체크된 데이터가 존재하지 않습니다.");
-        return;
-    }
-
-});
+}
 
 /**
  * 그리드 선택 callback Function
@@ -146,60 +199,107 @@ export function selectRow(rowData, columnList, isManager, tableId) {
     for (const [key, value] of Object.entries(rowData)) {
         const labelText = columnMap.get(key) || key; // 매칭되는 columnName 없으면 key 그대로 사용
 
-        const label = $("<label></label>")
-            .text(labelText)
-            .attr("for", key)
-            .css("display", "block")
-            .css("margin-top", "10px");
+        if (key === "commonStandardTermAbbreviation") {
+            const label = $("<label></label>")
+                .attr("for", key)
+                .text(labelText)
+                .css({
+                    display: "block",
+                    marginTop: "10px",
+                    fontWeight: "bold"
+                });
 
-        let input;
-
-        if (["commonStandardTermDescription", "synonyms"].includes(key)) {
-            input = $("<textarea></textarea>")
-                .attr("id", key)
-                .attr("name", key)
-                .val(value)
-                .css("width", "100%")
-                .css("height", "60px");
-        } else if (key === "isApprovalYn") {
-            input = $("<select></select>")
-                .attr("id", key)
-                .attr("name", key)
-                .css("width", "100%");
-
-            const options = [
-                { value: "Y", text: "TRUE" },
-                { value: "N", text: "FALSE" }
-            ];
-
-            options.forEach(opt => {
-                const optionEl = $("<option></option>")
-                    .attr("value", opt.value)
-                    .text(opt.text);
-
-                if (opt.value === value) {
-                    optionEl.attr("selected", "selected");
-                }
-
-                input.append(optionEl);
+            const wrapper = $("<div></div>").css({
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginBottom: "10px"
             });
 
-        } else {
-            input = $("<input>")
+            const input = $("<input>")
                 .attr("type", "text")
                 .attr("id", key)
                 .attr("name", key)
-                .val(value)
-                .css("width", "100%");
-        }
+                .val(value || "") // 기본값 처리
+                .prop("readonly", true)
+                .css({
+                    flex: "1",
+                    backgroundColor: "#f0f0f0",
+                    height: "38px",
+                    paddingLeft: "10px",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px"
+                });
 
-        // 수정 불가 필드 처리
-        if (key === "id" || key === "projectId") {
-            input.prop("readonly", true);
-            input.css("background-color", "#f0f0f0");
-        }
+            const searchBtn = $("<button></button>")
+                .attr("type", "button")
+                .addClass("btn btn-secondary")
+                .html("🔍")
+                .css({
+                    height: "38px"
+                })
+                .on("click", function () {
+                    openDomainSearchPopup();
+                });
 
-        form.append(label, input);
+            wrapper.append(input, searchBtn);
+            form.append(label, wrapper); // ✅ label 따로, wrapper 따로 append
+        }else{
+
+            const label = $("<label></label>")
+                .text(labelText)
+                .attr("for", key)
+                .css("display", "block")
+                .css("margin-top", "10px");
+
+            let input;
+
+            if (["commonStandardTermDescription", "synonyms"].includes(key)) {
+                input = $("<textarea></textarea>")
+                    .attr("id", key)
+                    .attr("name", key)
+                    .val(value)
+                    .css("width", "100%")
+                    .css("height", "60px");
+            }else if (key === "isApprovalYn") {
+                input = $("<select></select>")
+                    .attr("id", key)
+                    .attr("name", key)
+                    .css("width", "100%");
+
+                const options = [
+                    { value: "Y", text: "TRUE" },
+                    { value: "N", text: "FALSE" }
+                ];
+
+                options.forEach(opt => {
+                    const optionEl = $("<option></option>")
+                        .attr("value", opt.value)
+                        .text(opt.text);
+
+                    if (opt.value === value) {
+                        optionEl.attr("selected", "selected");
+                    }
+
+                    input.append(optionEl);
+                });
+
+            } else {
+                input = $("<input>")
+                    .attr("type", "text")
+                    .attr("id", key)
+                    .attr("name", key)
+                    .val(value)
+                    .css("width", "100%");
+            }
+
+            // 수정 불가 필드 처리
+            if (key === "id" || key === "projectId") {
+                input.prop("readonly", true);
+                input.css("background-color", "#f0f0f0");
+            }
+            form.append(label, input);
+        }
     }
 
     if(isManager || rowData['isApprovalYn'] === 'N'){
@@ -226,3 +326,23 @@ export function selectRow(rowData, columnList, isManager, tableId) {
 }
 
 window.gridCallbacks["standardTerms_selectRow"] = selectRow;
+
+
+/**
+ * 도메인 검색 팝업을 호출한다.
+ */
+function openDomainSearchPopup(){
+    const value = $("#commonStandardTermName").val();
+    if(value === undefined || value === ""){
+        window.openAlert("표준용어명 입력 후 검색이 가능합니다.");
+        return;
+    }
+
+    const popup = window.open(
+        "/popup/standardTermSearch",  // 팝업으로 띄울 URL
+        "약어 명 검색",     // 팝업 이름 (중복 방지용)
+        "width=600,height=800,resizable=yes,scrollbars=yes"
+    );
+
+    popup.name = JSON.stringify({ "standardTermName" : value });
+}

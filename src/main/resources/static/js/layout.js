@@ -93,6 +93,11 @@ document.addEventListener('DOMContentLoaded', function () {
             item.classList.remove('show');
         });
     }
+
+    // 다이얼로그 이동에 대한 Function
+    makeDialogDraggable("myAlert");
+    makeDialogDraggable("myConfirm");
+    makeDialogDraggable("mainConfirm", "#mainDialogTitle");
 });
 
 function callableFunction() {
@@ -181,3 +186,39 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 window.closeDialog = closeDialog;
+
+function makeDialogDraggable(dialogId) {
+    const dialog = document.getElementById(dialogId);
+    if (!dialog) return;
+
+    let isDragging = false;
+    let offsetX = 0;
+    let offsetY = 0;
+
+    dialog.style.cursor = "move";
+    dialog.style.position = "absolute";
+    dialog.style.margin = "0";
+
+    dialog.addEventListener("mousedown", function (e) {
+        // input, textarea, button은 제외
+        const tag = e.target.tagName.toLowerCase();
+        if (["input", "textarea", "select", "button", "label"].includes(tag)) return;
+
+        isDragging = true;
+        offsetX = e.clientX - dialog.offsetLeft;
+        offsetY = e.clientY - dialog.offsetTop;
+        document.body.style.userSelect = "none";
+    });
+
+    document.addEventListener("mousemove", function (e) {
+        if (isDragging) {
+            dialog.style.left = `${e.clientX - offsetX}px`;
+            dialog.style.top = `${e.clientY - offsetY}px`;
+        }
+    });
+
+    document.addEventListener("mouseup", function () {
+        isDragging = false;
+        document.body.style.userSelect = "";
+    });
+}

@@ -201,7 +201,6 @@ p {
 
 /* 다이얼로그 공통 스타일 */
 dialog {
-    border: none;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     padding: 20px;
@@ -209,8 +208,15 @@ dialog {
     max-width: 90%;
     background-color: #fff;
     font-family: Arial, sans-serif;
-    position: relative;
     text-align: left; /* 기본 내용 왼쪽 정렬 */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    z-index: 1000;
 }
 
 /* 다이얼로그 타이틀 */
