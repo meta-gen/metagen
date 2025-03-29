@@ -60,27 +60,37 @@
             /* CRUD 버튼 표시 여부 처리 */
             if (crudActions.trim() !== '') {
                 let actionsArray = crudActions.split("");
-                actionsArray.forEach(action => {
-                    let mappedAction = window.crudActionMap[action.trim().toUpperCase()]; // C → add, U → save, D → delete
-                    if (mappedAction) {
-                        let button = document.querySelector(`.grd-${mappedAction}[data-table-id="${tableId}"]`);
-                        if (button) {
-                            if(mappedAction === "active"){
-                                $.ajax({
-                                    url: `/isApprovalAvailable`,
-                                    type: "GET",
-                                    success: function (response) {
-                                        if(response.result){
-                                            isManager = response.result;
-                                            button.style.display = "inline-block";
-                                        }
-                                    }
-                                })
-                            }else{
-                                button.style.display = "inline-block";
-                            }
+
+                // 관리자 여부 확인 요청 (소문자가 포함되어 있을 때만)
+                const needManagerCheck = actionsArray.some(a => a === a.toLowerCase());
+                let managerCheckPromise = Promise.resolve({ result: true });
+
+                if (needManagerCheck) {
+                    managerCheckPromise = $.ajax({
+                        url: `/isApprovalAvailable`,
+                        type: "GET"
+                    });
+                }
+
+                managerCheckPromise.then(response => {
+                    let isManagerAvailable = response.result === true;
+
+                    actionsArray.forEach(action => {
+                        const upperAction = action.toUpperCase();
+                        const mappedAction = window.crudActionMap[upperAction];
+                        if (!mappedAction) return;
+
+                        const button = document.querySelector(`.grd-${mappedAction}[data-table-id="${tableId}"]`);
+                        if (!button) return;
+
+                        const isLower = action === action.toLowerCase();
+
+                        if (!isLower || (isLower && isManagerAvailable)) {
+                            button.style.display = "inline-block";
                         }
-                    }
+                    });
+                }).catch(error => {
+                    console.error("권한 확인 실패:", error);
                 });
             }
 
