@@ -5,9 +5,7 @@
 >
 <body>
 <section layout:fragment="content">
-    <div>
-        notice
-    </div>
+    <div th:replace="~{fragments/grid :: grid('noticeList', '/api/getNoticeList', 'CUD', null)}"></div>
 </section>
 </body>
 </html>

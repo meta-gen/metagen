@@ -1,6 +1,8 @@
 package com.koboolean.metagen.board.domain.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.koboolean.metagen.home.jpa.BaseEntity;
 
@@ -12,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -27,6 +30,10 @@ public class Board extends BaseEntity implements Serializable {
     @Column(nullable = false)
     private long id;
 
+    /* 프로젝트 아이디 */
+    @Column(name = "project_id")
+    private Long projectId;
+
     /* 회원 아이디 */
     @Column(length = 16, nullable = false)
     private String username;
@@ -38,10 +45,6 @@ public class Board extends BaseEntity implements Serializable {
     /* 게시글 내용 */
     @Column(columnDefinition = "TEXT")
     private String content;
-
-    /* File */
-    @Column(length = 500, nullable = true)
-    private String filePath;
 
     /* 조회수 */
     @Column(name = "hit_count", nullable = false)
@@ -55,8 +58,16 @@ public class Board extends BaseEntity implements Serializable {
     // @Column(name = "category_id", length = 6, nullable = false)
     // private String categoryId;
 
-    /* 연관 관계 Mapping */
+    /* 연관 관계 Mapping
+     * Board(N) : BoardCategory(1)
+     */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private BoardCategory boardCategory;
+
+    /* 연관 관계 Mapping
+     * Board(1) : File(N)
+     */
+    @OneToMany(mappedBy = "board")
+    private List<File> file = new ArrayList<>();
 }
