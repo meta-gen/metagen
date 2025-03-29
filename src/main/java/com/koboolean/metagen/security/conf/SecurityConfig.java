@@ -53,7 +53,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/css/**", "/js/**", "/images/**"
                                         , "/favicon.*", "/*/icon-*", "/fonts/**", "/", "/error", "/denied", "/help"
-                                        , "/signup", "/login", "/fragments/grid", "/isApprovalAvailable").permitAll()
+                                        , "/signup", "/login", "/fragments/grid", "/isApprovalAvailable","/jsons/**").permitAll()
                         .anyRequest().access(authorizationManager))
                 .formLogin(form -> form
                         .loginPage("/login")

@@ -28,8 +28,8 @@ public class NoticeServiceImpl implements NoticeService {
      */
     public List<BoardDto> selectNoticeList() {
 
-        List<BoardDto> selectNoticeList = noticeRepository.findBy[ProjectId]();
+        //List<BoardDto> selectNoticeList = noticeRepository.findBy[ProjectId]();
 
-        return selectNoticeList;
+        return null;
     }
 }
