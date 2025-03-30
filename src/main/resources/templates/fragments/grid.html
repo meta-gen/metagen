@@ -15,10 +15,11 @@
 
         <!-- 승인, 추가, 저장, 삭제 버튼 -->
         <div class="button-container">
-            <button class="grd-active" th:data-table-id="${tableId}" th:id="'grd-active-' + ${tableId}" style="display: none;">승인</button>
-            <button class="grd-add" th:data-table-id="${tableId}" th:id="'grd-add-' + ${tableId}" style="display: none;">추가</button>
-            <button class="grd-save" th:data-table-id="${tableId}" th:id="'grd-save-' + ${tableId}" style="display: none;">저장</button>
-            <button class="grd-delete" th:data-table-id="${tableId}" th:id="'grd-delete-' + ${tableId}" style="display: none;">삭제</button>
+            <button class="grd-active btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-active-' + ${tableId}" style="display: none;">승인</button>
+            <button class="grd-unactive btn btn-secondary" th:data-table-id="${tableId}" th:id="'grd-unactive-' + ${tableId}" style="display: none;">승인취소</button>
+            <button class="grd-add btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-add-' + ${tableId}" style="display: none;">추가</button>
+            <button class="grd-save btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-save-' + ${tableId}" style="display: none;">저장</button>
+            <button class="grd-delete btn btn-secondary" th:data-table-id="${tableId}" th:id="'grd-delete-' + ${tableId}" style="display: none;">삭제</button>
         </div>
     </div>
 
@@ -45,7 +46,8 @@
                 "C": "add",
                 "U": "save",
                 "D": "delete",
-                "A": "active"
+                "A": "active",
+                "N": "unactive"
             };
         }
 
@@ -74,6 +76,7 @@
 
                 managerCheckPromise.then(response => {
                     let isManagerAvailable = response.result === true;
+                    isManager = response.result;
 
                     actionsArray.forEach(action => {
                         const upperAction = action.toUpperCase();
@@ -109,13 +112,30 @@
 
                     let hasSearchableColumn = false;
 
-                    columns.forEach(col => {
-                        headerRow.append(`<th>${col.columnName}</th>`);
+                    columns.forEach((col, index) => {
+                        if (col.rowType === "CHECKBOX") {
+                            headerRow.append(`
+                                <th>
+                                    <input type="checkbox" class="header-checkbox" data-column-index="${index}">
+                                    ${col.columnName}
+                                </th>
+                            `);
+                        } else {
+                            headerRow.append(`<th>${col.columnName}</th>`);
+                        }
+
+
                         if(col.isSearch){
                             let optionHtml = `<option value="${col.column}" data-type="${col.columnType}">${col.columnName}</option>`;
                             $select.append(optionHtml);
+
                             hasSearchableColumn = true;
                         }
+                    });
+
+                    headerRow.find(".header-checkbox").off("change").on("change", function () {
+                        const isChecked = $(this).is(":checked");
+                        $(`#${tableId} .row-checkbox`).prop("checked", isChecked);
                     });
 
                     // 검색 컬럼 변경 시, 입력 타입 변경 (숫자/문자 필드 전환)
@@ -152,6 +172,22 @@
                         "searching": false,
                         "info": false,
                         "destroy": true,
+                        "headerCallback": function (thead, data, start, end, display) {
+                            $(thead).find("th").each(function (index) {
+                                if (columns[index].rowType === "CHECKBOX") {
+                                    // 이미 체크박스 있으면 무시
+                                    $(this).addClass("grid-checkbox-header").html(`<input type="checkbox" class="header-checkbox" data-column-index="${index}">`);
+                                }
+                            });
+
+                            // 각 테이블마다 따로 이벤트 바인딩
+                            $(thead).find(".header-checkbox").off("change").on("change", function () {
+                                const isChecked = $(this).is(":checked");
+                                const $table = $(this).closest("table");
+                                const tableId = $table.attr("id");
+                                $(`#${tableId} .row-checkbox`).prop("checked", isChecked);
+                            });
+                        },
                         initComplete: function () {
                             $(`#${tableId} tbody`).on("click", "tr", function (e) {
                                 if ($(e.target).is("input, button, select, label")) {
@@ -219,31 +255,38 @@
                                 };
                             }
                         },
-                        "columns": columns.map(col => ({
-                            "data": col.column,
-                            "title": col.columnName,
-                            "render": function (data, type, row) {
-                                switch (col.rowType) {
-                                    case "TEXT":
-                                        return `<p>${data}</p>`;
-                                    case "INPUT":
-                                        return `<input type="text" class="form-control edit-input" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
-                                    case "BUTTON":
-                                        return `<button class="btn btn-sm ${col.class || 'btn-primary'} action-btn" data-id="${row.id}" data-field="${col.column}">${data}</button>`;
-                                    case "SELECT":
-                                        let options = col.options.map(option =>
-                                            `<option value="${option}" ${data === option ? 'selected' : ''}>${option}</option>`
-                                        ).join("");
-                                        return `<select class="form-control edit-select" data-id="${row.id}" data-field="${col.column}">${options}</select>`;
-                                    case "DATE":
-                                        return `<input type="text" class="form-control datepicker" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
-                                    case "CHECKBOX":
-                                        return `<input type="checkbox" class="row-checkbox" data-id="${row.id}">`;
-                                    default:
-                                        return data || "";
+                        "columns": columns.map(col => {
+                            const isCheckbox = col.rowType === "CHECKBOX";
+
+                            return {
+                                data: col.column,
+                                title: isCheckbox ? "" : col.columnName,
+                                orderable: !isCheckbox, // 정렬 비활성화
+                                width: isCheckbox ? "40px" : undefined,
+                                className: isCheckbox ? "text-center" : "text-start",
+                                render: function (data, type, row) {
+                                    switch (col.rowType) {
+                                        case "TEXT":
+                                            return `<p>${data}</p>`;
+                                        case "INPUT":
+                                            return `<input type="text" class="form-control edit-input" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
+                                        case "BUTTON":
+                                            return `<button class="btn btn-sm ${col.class || 'btn-primary'} action-btn" data-id="${row.id}" data-field="${col.column}">${data}</button>`;
+                                        case "SELECT":
+                                            let options = col.options.map(option =>
+                                                `<option value="${option}" ${data === option ? 'selected' : ''}>${option}</option>`
+                                            ).join("");
+                                            return `<select class="form-control edit-select" data-id="${row.id}" data-field="${col.column}">${options}</select>`;
+                                        case "DATE":
+                                            return `<input type="text" class="form-control datepicker" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
+                                        case "CHECKBOX":
+                                            return `<input type="checkbox" class="row-checkbox" data-id="${row.id}">`;
+                                        default:
+                                            return data || "";
+                                    }
                                 }
-                            }
-                        }))
+                            };
+                        })
                     });
 
 
@@ -262,10 +305,13 @@
         });
 
         function searchGrid(tableId) {
+
             if (!window.tableInstances[tableId]) {
                 console.warn(`테이블 ${tableId} 인스턴스가 없습니다.`);
                 return;
             }
+
+            $(`#${tableId} thead .header-checkbox`).prop("checked", false);
             window.tableInstances[tableId].ajax.reload(null, false);
         }
 
@@ -297,7 +343,7 @@
 
             $(`#${tableId} .row-checkbox:checked`).each((index, element) => {
                 const row = element.closest('tr');
-                const rowData = window.tableInstances["standardTerms"].row(row).data();
+                const rowData = window.tableInstances[tableId].row(row).data();
 
                 if(rowData){
                     checkedData.push(rowData);

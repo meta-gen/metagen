@@ -400,18 +400,12 @@ dialog .btn-primary {
     margin-left: 3px;
 }
 
-/* 버튼 색상 */
-.grd-active, .grd-add, .grd-save {
-    background-color: #007bff;
-}
-
-.grd-delete {
-    background-color: #6c757d;
-    opacity: 0.8;
-}
-
 .grd-delete:hover {
     opacity: 1;
+}
+
+.grid-checkbox-header {
+    padding-right: 10px !important;
 }
 
 /* 반응형 레이아웃 */

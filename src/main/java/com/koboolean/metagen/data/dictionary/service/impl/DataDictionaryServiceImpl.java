@@ -226,6 +226,49 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
         setStandardDomain(file, projectId, isApprovalAvailable);
     }
 
+    @Override
+    @Transactional
+    public void approvalStandardDomains(List<StandardDomainDto> standardDomains, AccountDto accountDto, boolean isApprovalAvailable) {
+
+        Long projectId = accountDto.getProjectId();
+
+        standardDomains.forEach(standardDomain -> {
+           StandardDomain domain = standardDomainRepository.findByIdAndProjectId(standardDomain.getId(), projectId);
+           if(domain != null){
+               // 승인/미승인 상태로 변경한다.
+               domain.setIsApproval(isApprovalAvailable);
+           }
+        });
+    }
+
+    @Override
+    @Transactional
+    public void approvalStandardTerms(List<StandardTermDto> standardTerms, AccountDto accountDto, boolean isApprovalAvailable) {
+        Long projectId = accountDto.getProjectId();
+
+        standardTerms.forEach(standardTerm -> {
+            StandardTerm term = standardTermRepository.findByIdAndProjectId(standardTerm.getId(), projectId);
+            if(term != null){
+                // 승인/미승인 상태로 변경한다.
+                term.setIsApproval(isApprovalAvailable);
+            }
+        });
+    }
+
+    @Override
+    @Transactional
+    public void approvalStandardWords(List<StandardWordDto> standardWords, AccountDto accountDto, boolean isApprovalAvailable) {
+        Long projectId = accountDto.getProjectId();
+
+        standardWords.forEach(standardWord -> {
+            StandardWord word = standardWordRepository.findByIdAndProjectId(standardWord.getId(), projectId);
+            if(word != null){
+                // 승인/미승인 상태로 변경한다.
+                word.setIsApproval(isApprovalAvailable);
+            }
+        });
+    }
+
     @Transactional
     protected void setStandardDomain(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
         List<String> standardDomainHeaders = List.of(

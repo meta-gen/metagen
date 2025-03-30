@@ -26,4 +26,6 @@ public interface StandardDomainRepository extends JpaRepository<StandardDomain, 
     Page<StandardDomain> findByAllowedValuesContainingAndProjectId(String keyword, Long projectId, Pageable pageable);
     Page<StandardDomain> findByIsApprovalAndProjectId(Boolean isApproval, Long projectId, Pageable pageable);
     Page<StandardDomain> findAllByIdAndProjectId(Long searchQuery, Long projectId, Pageable pageable);
+
+    StandardDomain findByIdAndProjectId(Long id, Long projectId);
 }

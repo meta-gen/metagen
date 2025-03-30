@@ -3,21 +3,77 @@
  *
  */
 $("#grd-active-standardWords").on("click", () => {
-    const checkedData = getCheckedDataIsNonNull("standardWords");
 
+    const checkedData = getCheckedDataIsNonNull("standardWords");
     if(!checkedData) return;
 
     window.openConfirm("체크된 표준 단어를 승인하시겠습니까?", () => {
-       // 승인 필요 대상이 하나라도 존재한다면 true로 반환되어 승인로직을 탈 수 있게 된다.
-       let isApproval = false;
+        // 승인 필요 대상이 하나라도 존재한다면 true로 반환되어 승인로직을 탈 수 있게 된다.
+        let isApproval = false;
 
-       checkedData.forEach(e => {
-           if(e.isApprovalYn === 'N'){
+        checkedData.forEach(e => {
+            if(e.isApprovalYn === 'N'){
                 isApproval = true;
-           }
-       });
+            }
+        });
 
-       if(!isApproval) window.openAlert("승인이 필요한 표준 단어가 선택되지 않았습니다.");
+        if(!isApproval){
+            window.openAlert("승인이 필요한 표준 단어가 선택되지 않았습니다.");
+            return;
+        }
+
+        $.ajax({
+
+            url: "/api/approvalStandardWords/true",
+            type: 'PATCH',
+            data: JSON.stringify(checkedData),
+            success : (response) => {
+                if(response.result){
+                    window.openAlert("정상적으로 승인처리 되었습니다.", () => {
+                        window.searchGrid("standardWords");
+                    });
+                }
+            }
+        });
+    });
+});
+
+/**
+ * 표준 단어 승인취소 버튼
+ *
+ */
+$("#grd-unactive-standardWords").on("click", () => {
+
+    const checkedData = getCheckedDataIsNonNull("standardWords");
+    if(!checkedData) return;
+
+    window.openConfirm("체크된 표준 단어를 승인하시겠습니까?", () => {
+        // 승인 필요 대상이 하나라도 존재한다면 true로 반환되어 승인로직을 탈 수 있게 된다.
+        let isApproval = false;
+
+        checkedData.forEach(e => {
+            if(e.isApprovalYn === 'Y'){
+                isApproval = true;
+            }
+        });
+
+        if(!isApproval){
+            window.openAlert("승인취소가 필요한 표준 단어가 선택되지 않았습니다.");
+            return;
+        }
+
+        $.ajax({
+            url: "/api/approvalStandardWords/false",
+            type: 'PATCH',
+            data: JSON.stringify(checkedData),
+            success : (response) => {
+                if(response.result){
+                    window.openAlert("정상적으로 승인취소처리 되었습니다.", () => {
+                        window.searchGrid("standardWords");
+                    });
+                }
+            }
+        });
     });
 });
 
@@ -36,6 +92,17 @@ $("#grd-delete-standardWords").on("click", () => {
     const checkedData = getCheckedDataIsNonNull("standardWords");
     if(!checkedData) return;
 
+    let isApproval = true;
+    checkedData.forEach((e) => {
+        if(e.isApprovalYn === 'Y'){
+            isApproval = false;
+        }
+    });
+
+    if(!isApproval){
+        window.openAlert("체크된 데이터에 승인된 정보도 포함되어있습니다. 승인이 완료된 경우, 삭제가 불가능합니다.");
+        return;
+    }
 });
 
 function addStandardWords(){
@@ -78,7 +145,7 @@ function addStandardWords(){
                 .attr("name", key)
                 .css("width", "100%")
                 .css("height", "60px");
-        } else if (key === "isApprovalYn" || key === "isFormatWord") {
+        } else if (key === "isFormatWord") {
             input = $("<select></select>")
                 .attr("id", key)
                 .attr("name", key)
@@ -156,7 +223,9 @@ export function selectRow(rowData, columnList, isManager, tableId) {
 
         let input;
 
-        if (key === "isApprovalYn" || key === "isFormatWord") {
+        if(key === "isApprovalYn"){
+            continue;
+        }else if ( key === "isFormatWord") {
             input = $("<select></select>")
                 .attr("id", key)
                 .attr("name", key)

@@ -129,4 +129,37 @@ public class DataDictionaryRestController {
         return ResponseEntity.ok(Map.of("result", "success"));
     }
 
+    @Operation(summary = "도메인 승인여부 수정", description = "도메인 승인여부를 '승인', '미승인'으로 수정한다.")
+    @PatchMapping(value = "/approvalStandardDomains/{isChecked}")
+    public ResponseEntity<Map<String, Boolean>> approvalStandardDomains(@RequestBody List<StandardDomainDto> standardDomains
+            , @AuthenticationPrincipal AccountDto accountDto
+            , @PathVariable boolean isChecked) {
+
+        dataDictionaryService.approvalStandardDomains(standardDomains, accountDto, isChecked);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "용어 승인여부 수정", description = "용어 승인여부를 '승인', '미승인'으로 수정한다.")
+    @PatchMapping(value = "/approvalStandardTerms/{isChecked}")
+    public ResponseEntity<Map<String, Boolean>> approvalStandardTerms(@RequestBody List<StandardTermDto> standardTerms
+            , @AuthenticationPrincipal AccountDto accountDto
+            , @PathVariable boolean isChecked) {
+
+        dataDictionaryService.approvalStandardTerms(standardTerms, accountDto, isChecked);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "단어 승인여부 수정", description = "단어 승인여부를 '승인', '미승인'으로 수정한다.")
+    @PatchMapping(value = "/approvalStandardWords/{isChecked}")
+    public ResponseEntity<Map<String, Boolean>> approvalStandardWords(@RequestBody List<StandardWordDto> standardWords
+            , @AuthenticationPrincipal AccountDto accountDto
+            , @PathVariable boolean isChecked) {
+
+        dataDictionaryService.approvalStandardWords(standardWords, accountDto, isChecked);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
 }

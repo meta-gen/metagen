@@ -1,6 +1,7 @@
 package com.koboolean.metagen.data.dictionary.repository;
 
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardWordDto;
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardDomain;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,6 @@ public interface StandardWordRepository extends JpaRepository<StandardWord, Long
     Page<StandardWord> findByRestrictedWordsContainingAndProjectId(String restrictedWord, Long projectId, Pageable pageable);
     Page<StandardWord> findByIsApprovalAndProjectId(Boolean isApproval, Long projectId, Pageable pageable);
     Page<StandardWord> findAllByIdAndProjectId(Long searchQuery, Long projectId, Pageable pageable);
+
+    StandardWord findByIdAndProjectId(Long id, Long projectId);
 }

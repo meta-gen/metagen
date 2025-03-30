@@ -1,5 +1,6 @@
 package com.koboolean.metagen.data.dictionary.repository;
 
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardDomain;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
 import org.springframework.data.domain.Page;
@@ -24,4 +25,6 @@ public interface StandardTermRepository extends JpaRepository<StandardTerm, Long
     Page<StandardTerm> findBySynonymListContainingAndProjectId(String synonym, Long projectId, Pageable pageable);
     Page<StandardTerm> findByIsApprovalAndProjectId(Boolean isApproval, Long projectId, Pageable pageable);
     Page<StandardTerm> findAllByIdAndProjectId(Long searchQuery, Long projectId, Pageable pageable);
+
+    StandardTerm findByIdAndProjectId(Long id, Long projectId);
 }
