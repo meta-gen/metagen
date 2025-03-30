@@ -96,6 +96,15 @@ ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
 VALUES (26, '*', 0, '/api/approvalStandardTerms/**','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
+VALUES (27, '*', 0, '/api/insertDataDictionary/**','url', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
+VALUES (28, '*', 0, '/api/deleteDataDictionary/**','url', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
+VALUES (29, '*', 0, '/api/updateDataDictionary/**','url', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
 
 insert into role_resources(resource_id, role_id) values (1,4) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (2,4) on CONFLICT (resource_id, role_id) DO NOTHING;
@@ -123,6 +132,9 @@ insert into role_resources(resource_id, role_id) values (23,4) on CONFLICT (reso
 insert into role_resources(resource_id, role_id) values (24,2) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (25,2) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (26,2) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (27,3) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (28,3) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (29,3) on CONFLICT (resource_id, role_id) DO NOTHING;
 
 /* 유저 정보 생성 */
 insert into account(id, password, username, name, is_password_check,created_by, updated_by) values(0, '{bcrypt}$2a$10$GN1YfMyJLcWhDuslP6P/UuqRwIfJk2VF5tl9mXsRjLJ18ivQfIAoW', 'admin', '관리자', false, 'SYSTEM', 'SYSTEM') ON CONFLICT (id) DO NOTHING;
