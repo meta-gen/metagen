@@ -218,8 +218,15 @@ function addStandardTerms(){
             }
 
             // id, projectId는 제외하거나 readonly
-            if (key === "id" || key === "projectId") {
-                input.prop("readonly", true).css("background-color", "#f0f0f0");
+            if (key === "id" || key === "projectId" || key === "commonStandardDomainName" || key === "allowedValues" || key === "storageFormat" || key === "displayFormat") {
+                input.prop("readonly", true).css({
+                        flex: "1",
+                        backgroundColor: "#f0f0f0",
+                        height: "30px",
+                        paddingLeft: "10px",
+                        border: "1px solid #ccc",
+                        borderRadius: "4px"
+                    });
             }
 
             form.append(label, input);

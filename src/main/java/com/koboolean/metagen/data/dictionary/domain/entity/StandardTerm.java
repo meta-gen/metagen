@@ -3,6 +3,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,6 +16,7 @@ public class StandardTerm {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "standard_term_id")
     private Long id; // 번호
 
     @Column(name = "project_id")
@@ -27,7 +29,10 @@ public class StandardTerm {
     @Column(length = 1000)
     private String commonStandardTermDescription; // 표준용어설명
 
-    private String commonStandardTermAbbreviation; // 표준용어영문약어명
+    @OneToMany(mappedBy = "standardTerm", cascade = CascadeType.ALL)
+    private List<StandardTermWordMapping> termWordMappings;
+
+    private String commonStandardTermAbbreviation;
 
     private String commonStandardDomainName; // 표준도메인명
 

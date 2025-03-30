@@ -2,6 +2,8 @@ package com.koboolean.metagen.data.dictionary.service;
 
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardTermWordMapping;
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
 import com.koboolean.metagen.data.dictionary.repository.StandardTermRepository;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.utils.ExcelUtils;
@@ -13,8 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class StandardTermService {
 
     private final StandardTermRepository standardTermRepository;
     private static final int FIRST_ROW = 1;
+    private final StandardWordService standardWordService;
 
     public Page<StandardTermDto> getStandardTermsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery) {
         if (searchQuery == null || searchQuery.trim().isEmpty()) {
@@ -104,24 +106,59 @@ public class StandardTermService {
         );
         List<Map<String, String>> standardTermData = ExcelUtils.parseExcelFile(file, 0, standardTermHeaders, false, FIRST_ROW);
 
-        standardTermData.forEach(standardTermEntry -> {
-            StandardTerm standardTerm = StandardTerm.builder()
-                    .revisionNumber(standardTermEntry.get("revisionNumber") == null ? 0 : Integer.parseInt(standardTermEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
-                    .commonStandardTermName(standardTermEntry.get("standardTermName"))
-                    .commonStandardTermDescription(standardTermEntry.get("standardTermDescription"))
-                    .commonStandardTermAbbreviation(standardTermEntry.get("standardTermAbbreviation"))
-                    .commonStandardDomainName(standardTermEntry.get("standardDomainName"))
-                    .allowedValues(standardTermEntry.get("allowedValues"))
-                    .storageFormat(standardTermEntry.get("storageFormat"))
-                    .displayFormat(standardTermEntry.get("representationFormat"))
-                    .administrativeStandardCodeName(standardTermEntry.get("administrativeStandardCodeName"))
-                    .responsibleOrganization(standardTermEntry.get("responsibleOrganization"))
-                    .synonymList(List.of(standardTermEntry.get("synonyms").split(",")))
-                    .projectId(projectId)
-                    .isApproval(isApprovalAvailable)
-                    .build();
 
-            standardTermRepository.save(standardTerm);
+        standardTermData.forEach(standardTermEntry -> {
+
+            String[] split = standardTermEntry.get("standardTermAbbreviation").split("_");
+
+            saveTermWordMappings(projectId, isApprovalAvailable, standardTermEntry, split);
         });
+    }
+
+    /**
+     * 표준용어 등록 시 표준 단어와의 Mapping을 수행한다.
+     * @param projectId
+     * @param isApprovalAvailable
+     * @param standardTermEntry
+     * @param split
+     */
+    private void saveTermWordMappings(Long projectId, boolean isApprovalAvailable, Map<String, String> standardTermEntry, String[] split) {
+        List<StandardTermWordMapping> mappings = new ArrayList<>();
+
+        for (int i = 0; i < split.length; i++) {
+            String s = split[i];
+            StandardWord word = standardWordService.findByCommonStandardWordAbbreviation(s, projectId);
+            if (word != null) {
+                // 일단 매핑 객체는 나중에 StandardTerm set
+                StandardTermWordMapping mapping = new StandardTermWordMapping();
+                mapping.setStandardWord(word);
+                mapping.setOrderIndex(i); // 순서 저장
+
+                mappings.add(mapping);
+            }
+        }
+
+        StandardTerm standardTerm = StandardTerm.builder()
+                .revisionNumber(standardTermEntry.get("revisionNumber") == null ? 0 : Integer.parseInt(standardTermEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
+                .commonStandardTermName(standardTermEntry.get("standardTermName"))
+                .commonStandardTermDescription(standardTermEntry.get("standardTermDescription"))
+                .termWordMappings(mappings) // 매핑 넣기
+                .commonStandardTermAbbreviation(standardTermEntry.get("standardTermAbbreviation"))
+                .commonStandardDomainName(standardTermEntry.get("standardDomainName"))
+                .allowedValues(standardTermEntry.get("allowedValues"))
+                .storageFormat(standardTermEntry.get("storageFormat"))
+                .displayFormat(standardTermEntry.get("representationFormat"))
+                .administrativeStandardCodeName(standardTermEntry.get("administrativeStandardCodeName"))
+                .responsibleOrganization(standardTermEntry.get("responsibleOrganization"))
+                .synonymList(List.of(standardTermEntry.get("synonyms").split(",")))
+                .projectId(projectId)
+                .isApproval(isApprovalAvailable)
+                .build();
+
+        for (StandardTermWordMapping mapping : mappings) {
+            mapping.setStandardTerm(standardTerm);
+        }
+
+        standardTermRepository.save(standardTerm);
     }
 }

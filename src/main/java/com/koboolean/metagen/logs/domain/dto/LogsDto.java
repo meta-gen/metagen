@@ -1,5 +1,6 @@
 package com.koboolean.metagen.logs.domain.dto;
 
+import com.koboolean.metagen.logs.domain.entity.Logs;
 import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,4 +29,21 @@ public class LogsDto {
     private String userAgent; // 브라우저, OS 정보
     private LocalDateTime timestamp; // 요청 발생 시간
 
+    public static LogsDto fromEntity(Logs log) {
+        return LogsDto.builder()
+                .id(log.getId())
+                .projectId(log.getProjectId())
+                .logUrl(log.getLogUrl())
+                .method(log.getMethod())
+                .ip(log.getIp())
+                .username(log.getUsername())
+                .roleName(log.getRoleName())
+                .statusCode(log.getStatusCode())
+                .requestBody(log.getRequestBody())
+                .responseBody(log.getResponseBody())
+                .errorMessage(log.getErrorMessage())
+                .userAgent(log.getUserAgent())
+                .timestamp(log.getTimestamp())
+                .build();
+    }
 }

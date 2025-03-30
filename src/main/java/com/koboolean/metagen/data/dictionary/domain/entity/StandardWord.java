@@ -43,4 +43,7 @@ public class StandardWord {
     private List<String> restrictedWords; // 금칙어 목록
 
     private Boolean isApproval;
+
+    @OneToMany(mappedBy = "standardWord", cascade = CascadeType.ALL)
+    private List<StandardTermWordMapping> termWordMappings;
 }
