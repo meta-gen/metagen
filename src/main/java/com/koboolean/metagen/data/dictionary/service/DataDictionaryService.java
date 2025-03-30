@@ -24,4 +24,9 @@ public interface DataDictionaryService {
 
     void uploadDictionaryExcelFile(MultipartFile file, AccountDto accountDto) throws IOException;
 
+    void approvalStandardDomains(List<StandardDomainDto> standardDomains, AccountDto accountDto, boolean isApprovalAvailable);
+
+    void approvalStandardTerms(List<StandardTermDto> standardTerms, AccountDto accountDto, boolean isApprovalAvailable);
+
+    void approvalStandardWords(List<StandardWordDto> standardWords, AccountDto accountDto, boolean isApprovalAvailable);
 }

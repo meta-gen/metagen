@@ -1,24 +1,79 @@
 /**
- * 표준용어 승인 버튼
+ * 표준 용어 승인 버튼
  *
  */
 $("#grd-active-standardTerms").on("click", () => {
 
     const checkedData = getCheckedDataIsNonNull("standardTerms");
-
     if(!checkedData) return;
 
-    window.openConfirm("체크된 표준용어를 승인하시겠습니까?", () => {
-       // 승인 필요 대상이 하나라도 존재한다면 true로 반환되어 승인로직을 탈 수 있게 된다.
-       let isApproval = false;
+    window.openConfirm("체크된 표준 용어를 승인하시겠습니까?", () => {
+        // 승인 필요 대상이 하나라도 존재한다면 true로 반환되어 승인로직을 탈 수 있게 된다.
+        let isApproval = false;
 
-       checkedData.forEach(e => {
-           if(e.isApprovalYn === 'N'){
+        checkedData.forEach(e => {
+            if(e.isApprovalYn === 'N'){
                 isApproval = true;
-           }
-       });
+            }
+        });
 
-       if(!isApproval) window.openAlert("승인이 필요한 표준용어가 선택되지 않았습니다.");
+        if(!isApproval){
+            window.openAlert("승인이 필요한 표준 용어가 선택되지 않았습니다.");
+            return;
+        }
+
+        $.ajax({
+
+            url: "/api/approvalStandardTerms/true",
+            type: 'PATCH',
+            data: JSON.stringify(checkedData),
+            success : (response) => {
+                if(response.result){
+                    window.openAlert("정상적으로 승인처리 되었습니다.", () => {
+                        window.searchGrid("standardTerms");
+                    });
+                }
+            }
+        });
+    });
+});
+
+/**
+ * 표준 용어 승인취소 버튼
+ *
+ */
+$("#grd-unactive-standardTerms").on("click", () => {
+
+    const checkedData = getCheckedDataIsNonNull("standardTerms");
+    if(!checkedData) return;
+
+    window.openConfirm("체크된 표준 용어를 승인하시겠습니까?", () => {
+        // 승인 필요 대상이 하나라도 존재한다면 true로 반환되어 승인로직을 탈 수 있게 된다.
+        let isApproval = false;
+
+        checkedData.forEach(e => {
+            if(e.isApprovalYn === 'Y'){
+                isApproval = true;
+            }
+        });
+
+        if(!isApproval){
+            window.openAlert("승인취소가 필요한 표준 용어가 선택되지 않았습니다.");
+            return;
+        }
+
+        $.ajax({
+            url: "/api/approvalStandardTerms/false",
+            type: 'PATCH',
+            data: JSON.stringify(checkedData),
+            success : (response) => {
+                if(response.result){
+                    window.openAlert("정상적으로 승인취소처리 되었습니다.", () => {
+                        window.searchGrid("standardTerms");
+                    });
+                }
+            }
+        });
     });
 });
 
@@ -33,16 +88,21 @@ $("#grd-add-standardTerms").on("click", () => {
  * 표준용어 삭제 버튼
  */
 $("#grd-delete-standardTerms").on("click", () => {
-    deleteStandardTerms();
-});
-
-/**
- * 표준용어를 삭제한다.
- */
-function deleteStandardTerms(){
     const checkedData = getCheckedDataIsNonNull("standardTerms");
     if(!checkedData) return;
-}
+
+    let isApproval = true;
+    checkedData.forEach((e) => {
+        if(e.isApprovalYn === 'Y'){
+            isApproval = false;
+        }
+    });
+
+    if(!isApproval){
+        window.openAlert("체크된 데이터에 승인된 정보도 포함되어있습니다. 승인이 완료된 경우, 삭제가 불가능합니다.");
+        return;
+    }
+});
 
 /**
  * 표준용어를 등록한다.
@@ -133,23 +193,7 @@ function addStandardTerms(){
                     .attr("name", key)
                     .css("width", "100%")
                     .css("height", "60px");
-            } else if (key === "isApprovalYn") {
-                input = $("<select></select>")
-                    .attr("id", key)
-                    .attr("name", key)
-                    .css("width", "100%");
-
-                const options = [
-                    { value: "Y", text: "TRUE" },
-                    { value: "N", text: "FALSE" }
-                ];
-
-                options.forEach(opt => {
-                    input.append($("<option></option>")
-                        .attr("value", opt.value)
-                        .text(opt.text));
-                });
-            }else {
+            } else {
                 input = $("<input>")
                     .attr("type", "text")
                     .attr("id", key)
@@ -262,28 +306,7 @@ export function selectRow(rowData, columnList, isManager, tableId) {
                     .css("width", "100%")
                     .css("height", "60px");
             }else if (key === "isApprovalYn") {
-                input = $("<select></select>")
-                    .attr("id", key)
-                    .attr("name", key)
-                    .css("width", "100%");
-
-                const options = [
-                    { value: "Y", text: "TRUE" },
-                    { value: "N", text: "FALSE" }
-                ];
-
-                options.forEach(opt => {
-                    const optionEl = $("<option></option>")
-                        .attr("value", opt.value)
-                        .text(opt.text);
-
-                    if (opt.value === value) {
-                        optionEl.attr("selected", "selected");
-                    }
-
-                    input.append(optionEl);
-                });
-
+                continue;
             } else {
                 input = $("<input>")
                     .attr("type", "text")
@@ -329,7 +352,7 @@ window.gridCallbacks["standardTerms_selectRow"] = selectRow;
 
 
 /**
- * 도메인 검색 팝업을 호출한다.
+ * 용어 검색 팝업을 호출한다.
  */
 function openDomainSearchPopup(){
     const value = $("#commonStandardTermName").val();
