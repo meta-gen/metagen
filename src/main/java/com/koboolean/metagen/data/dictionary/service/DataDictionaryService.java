@@ -29,4 +29,8 @@ public interface DataDictionaryService {
     void approvalStandardTerms(List<StandardTermDto> standardTerms, AccountDto accountDto, boolean isApprovalAvailable);
 
     void approvalStandardWords(List<StandardWordDto> standardWords, AccountDto accountDto, boolean isApprovalAvailable);
+
+    void deleteDataDictionaryStandardDomains(List<StandardDomainDto> standardDomains, AccountDto accountDto);
+    void deleteDataDictionaryStandardTerms(List<StandardTermDto> standardTerms, AccountDto accountDto);
+    void deleteDataDictionaryStandardWords(List<StandardWordDto> standardWords, AccountDto accountDto);
 }

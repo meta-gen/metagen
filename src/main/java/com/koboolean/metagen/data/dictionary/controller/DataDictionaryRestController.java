@@ -162,4 +162,35 @@ public class DataDictionaryRestController {
         return ResponseEntity.ok(Map.of("result", true));
     }
 
+    @Operation(summary = "도메인 삭제", description = "도메인 데이터를 삭제처리한다.")
+    @DeleteMapping(value = "/deleteDataDictionary/standardDomains")
+    public ResponseEntity<Map<String, Boolean>> deleteDataDictionaryStandardDomains(@RequestBody List<StandardDomainDto> standardDomains
+            , @AuthenticationPrincipal AccountDto accountDto) {
+
+
+        dataDictionaryService.deleteDataDictionaryStandardDomains(standardDomains, accountDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "용어 삭제", description = "용어 데이터를 삭제처리한다.")
+    @DeleteMapping(value = "/deleteDataDictionary/standardTerms")
+    public ResponseEntity<Map<String, Boolean>> deleteDataDictionaryStandardTerms(@RequestBody List<StandardTermDto> standardTerms
+            , @AuthenticationPrincipal AccountDto accountDto) {
+
+        dataDictionaryService.deleteDataDictionaryStandardTerms(standardTerms, accountDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "단어 삭제", description = "단어 데이터를 삭제처리한다.")
+    @DeleteMapping(value = "/deleteDataDictionary/standardWords")
+    public ResponseEntity<Map<String, Boolean>> deleteDataDictionaryStandardWords(@RequestBody List<StandardWordDto> standardWords
+            , @AuthenticationPrincipal AccountDto accountDto) {
+
+        dataDictionaryService.deleteDataDictionaryStandardWords(standardWords, accountDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
 }

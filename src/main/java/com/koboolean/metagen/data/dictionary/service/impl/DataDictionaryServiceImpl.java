@@ -10,6 +10,9 @@ import com.koboolean.metagen.data.dictionary.repository.StandardDomainRepository
 import com.koboolean.metagen.data.dictionary.repository.StandardTermRepository;
 import com.koboolean.metagen.data.dictionary.repository.StandardWordRepository;
 import com.koboolean.metagen.data.dictionary.service.DataDictionaryService;
+import com.koboolean.metagen.data.dictionary.service.StandardDomainService;
+import com.koboolean.metagen.data.dictionary.service.StandardTermService;
+import com.koboolean.metagen.data.dictionary.service.StandardWordService;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.grid.enums.RowType;
@@ -31,11 +34,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class DataDictionaryServiceImpl implements DataDictionaryService {
 
-    private final StandardWordRepository standardWordRepository;
-    private final StandardDomainRepository standardDomainRepository;
-    private final StandardTermRepository standardTermRepository;
-
-    private static final int FIRST_ROW = 1;
+    private final StandardWordService standardWordService;
+    private final StandardDomainService standardDomainService;
+    private final StandardTermService standardTermService;
 
     @Override
     public List<ColumnDto> getStandardTermsColumn() {
@@ -95,122 +96,17 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
 
     @Override
     public Page<StandardTermDto> getStandardTermsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery) {
-        if (searchQuery == null || searchQuery.trim().isEmpty()) {
-            // 검색어가 없을 경우 전체 조회
-            Page<StandardTerm> allByProjectId = standardTermRepository.findAllByProjectId(accountDto.getProjectId(), pageable);
-            return allByProjectId.map(StandardTermDto::fromEntity);
-        }
-
-        Page<StandardTerm> searchResult = switch (searchColumn) {
-            case "id" -> standardTermRepository.findAllByIdAndProjectId(Long.parseLong(searchQuery.replaceAll("[^0-9]", "")), Long.parseLong(accountDto.getProjectId().toString()), pageable);
-            case "revisionNumber" ->
-                    standardTermRepository.findByRevisionNumberAndProjectId(Integer.parseInt(searchQuery.replaceAll("[^0-9]", "")), accountDto.getProjectId(), pageable);
-            case "commonStandardTermName" ->
-                    standardTermRepository.findByCommonStandardTermNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "commonStandardTermDescription" ->
-                    standardTermRepository.findByCommonStandardTermDescriptionContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "commonStandardTermAbbreviation" ->
-                    standardTermRepository.findByCommonStandardTermAbbreviationContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "commonStandardDomainName" ->
-                    standardTermRepository.findByCommonStandardDomainNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "allowedValues" ->
-                    standardTermRepository.findByAllowedValuesContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "storageFormat" ->
-                    standardTermRepository.findByStorageFormatContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "displayFormat" ->
-                    standardTermRepository.findByDisplayFormatContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "administrativeStandardCodeName" ->
-                    standardTermRepository.findByAdministrativeStandardCodeNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "responsibleOrganization" ->
-                    standardTermRepository.findByResponsibleOrganizationContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "synonyms" ->
-                    standardTermRepository.findBySynonymListContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "isApproval" ->
-                    standardTermRepository.findByIsApprovalAndProjectId(searchQuery.equals("Y"), accountDto.getProjectId(), pageable);
-            default ->
-                    standardTermRepository.findByCommonStandardTermNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-        };
-
-        return searchResult.map(StandardTermDto::fromEntity);
+        return standardTermService.getStandardTermsData(pageable, accountDto, searchColumn, searchQuery);
     }
 
     @Override
     public Page<StandardWordDto> getStandardWordsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery) {
-        if (searchQuery == null || searchQuery.trim().isEmpty()) {
-            // 검색어가 없을 경우 전체 조회
-            Page<StandardWord> allByProjectId = standardWordRepository.findAllByProjectId(accountDto.getProjectId(), pageable);
-            return allByProjectId.map(StandardWordDto::fromEntity);
-        }
-
-        Page<StandardWord> searchResult = switch (searchColumn) {
-            case "id" -> standardWordRepository.findAllByIdAndProjectId(Long.parseLong(searchQuery.replaceAll("[^0-9]", "")), Long.parseLong(accountDto.getProjectId().toString()), pageable);
-            case "revisionNumber" ->
-                    standardWordRepository.findByRevisionNumberContainingAndProjectId(Integer.parseInt(searchQuery.replaceAll("[^0-9]", "")), accountDto.getProjectId(), pageable);
-            case "commonStandardWordName" ->
-                    standardWordRepository.findByCommonStandardWordNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "commonStandardWordAbbreviation" ->
-                    standardWordRepository.findByCommonStandardWordAbbreviationContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "commonStandardWordEnglishName" ->
-                    standardWordRepository.findByCommonStandardWordEnglishNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "commonStandardWordDescription" ->
-                    standardWordRepository.findByCommonStandardWordDescriptionContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "isFormatWord" ->
-                    standardWordRepository.findByIsFormatWordAndProjectId(searchQuery.equals("Y"), accountDto.getProjectId(), pageable);
-            case "commonStandardDomainCategory" ->
-                    standardWordRepository.findByCommonStandardDomainCategoryContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "synonyms" ->
-                    standardWordRepository.findBySynonymListContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "restrictedWords" ->
-                    standardWordRepository.findByRestrictedWordsContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "isApproval" ->
-                    standardWordRepository.findByIsApprovalAndProjectId(searchQuery.equals("Y"), accountDto.getProjectId(), pageable);
-            default ->
-                    standardWordRepository.findByCommonStandardWordNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-        };
-
-        return searchResult.map(StandardWordDto::fromEntity);
+        return standardWordService.getStandardWordsData(pageable, accountDto, searchColumn, searchQuery);
     }
 
     @Override
     public Page<StandardDomainDto> getStandardDomainsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery) {
-        if (searchQuery == null || searchQuery.trim().isEmpty()) {
-            Page<StandardDomain> allByProjectId = standardDomainRepository.findAllByProjectId(accountDto.getProjectId(), pageable);
-            return allByProjectId.map(StandardDomainDto::fromEntity);
-        }
-
-        Page<StandardDomain> searchResult = switch (searchColumn) {
-            case "id" -> standardDomainRepository.findAllByIdAndProjectId(Long.parseLong(searchQuery.replaceAll("[^0-9]", "")), Long.parseLong(accountDto.getProjectId().toString()), pageable);
-            case "revisionNumber" ->
-                    standardDomainRepository.findByRevisionNumberContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "commonStandardDomainGroupName" ->
-                    standardDomainRepository.findByCommonStandardDomainGroupNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "commonStandardDomainCategory" ->
-                    standardDomainRepository.findByCommonStandardDomainCategoryContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "commonStandardDomainName" ->
-                    standardDomainRepository.findByCommonStandardDomainNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "commonStandardDomainDescription" ->
-                    standardDomainRepository.findByCommonStandardDomainDescriptionContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "dataType" ->
-                    standardDomainRepository.findByDataTypeContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "dataLength" ->
-                    standardDomainRepository.findByDataLengthContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "dataDecimalLength" ->
-                    standardDomainRepository.findByDataDecimalLengthContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "storageFormat" ->
-                    standardDomainRepository.findByStorageFormatContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "displayFormat" ->
-                    standardDomainRepository.findByDisplayFormatContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "unit" ->
-                    standardDomainRepository.findByUnitContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "allowedValues" ->
-                    standardDomainRepository.findByAllowedValuesContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-            case "isApproval" ->
-                    standardDomainRepository.findByIsApprovalAndProjectId(searchQuery.equals("Y"), accountDto.getProjectId(), pageable);
-            default ->
-                    standardDomainRepository.findByCommonStandardDomainNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
-        };
-
-        return searchResult.map(StandardDomainDto::fromEntity);
+        return standardDomainService.getStandardDomainsData(pageable, accountDto, searchColumn, searchQuery);
     }
 
     @Override
@@ -221,167 +117,43 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
         // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
         boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
 
-        setStandardTerm(file, projectId, isApprovalAvailable);
-        setStandardWord(file, projectId, isApprovalAvailable);
-        setStandardDomain(file, projectId, isApprovalAvailable);
+        standardDomainService.setStandardDomain(file, projectId, isApprovalAvailable);
+        standardWordService.setStandardWord(file, projectId, isApprovalAvailable);
+        standardTermService.setStandardTerm(file, projectId, isApprovalAvailable);
     }
 
     @Override
     @Transactional
     public void approvalStandardDomains(List<StandardDomainDto> standardDomains, AccountDto accountDto, boolean isApprovalAvailable) {
-
-        Long projectId = accountDto.getProjectId();
-
-        standardDomains.forEach(standardDomain -> {
-           StandardDomain domain = standardDomainRepository.findByIdAndProjectId(standardDomain.getId(), projectId);
-           if(domain != null){
-               // 승인/미승인 상태로 변경한다.
-               domain.setIsApproval(isApprovalAvailable);
-           }
-        });
+        standardDomainService.approvalStandardDomains(standardDomains, accountDto, isApprovalAvailable);
     }
 
     @Override
     @Transactional
     public void approvalStandardTerms(List<StandardTermDto> standardTerms, AccountDto accountDto, boolean isApprovalAvailable) {
-        Long projectId = accountDto.getProjectId();
+        standardTermService.approvalStandardTerms(standardTerms, accountDto, isApprovalAvailable);
+    }
 
-        standardTerms.forEach(standardTerm -> {
-            StandardTerm term = standardTermRepository.findByIdAndProjectId(standardTerm.getId(), projectId);
-            if(term != null){
-                // 승인/미승인 상태로 변경한다.
-                term.setIsApproval(isApprovalAvailable);
-            }
-        });
+    @Override
+    public void approvalStandardWords(List<StandardWordDto> standardWords, AccountDto accountDto, boolean isApprovalAvailable) {
+        standardWordService.approvalStandardWords(standardWords, accountDto, isApprovalAvailable);
     }
 
     @Override
     @Transactional
-    public void approvalStandardWords(List<StandardWordDto> standardWords, AccountDto accountDto, boolean isApprovalAvailable) {
-        Long projectId = accountDto.getProjectId();
-
-        standardWords.forEach(standardWord -> {
-            StandardWord word = standardWordRepository.findByIdAndProjectId(standardWord.getId(), projectId);
-            if(word != null){
-                // 승인/미승인 상태로 변경한다.
-                word.setIsApproval(isApprovalAvailable);
-            }
-        });
+    public void deleteDataDictionaryStandardDomains(List<StandardDomainDto> standardDomains, AccountDto accountDto) {
+        standardDomainService.deleteDataDictionaryStandardDomains(standardDomains, accountDto);
     }
 
+    @Override
     @Transactional
-    protected void setStandardDomain(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
-        List<String> standardDomainHeaders = List.of(
-                "id",
-                "revisionNumber",
-                "standardDomainGroupName",
-                "standardDomainCategoryName",
-                "standardDomainName",
-                "standardDomainDescription",
-                "dataType",
-                "dataLength",
-                "dataDecimalLength",
-                "storageFormat",
-                "displayFormat",
-                "unit",
-                "allowedValues"
-        );
-
-        List<Map<String, String>> standardDomainData = ExcelUtils.parseExcelFile(file, 2, standardDomainHeaders, false, FIRST_ROW);
-
-        standardDomainData.forEach(standardDomainEntry -> {
-            StandardDomain standardDomain = StandardDomain.builder()
-                    .revisionNumber(standardDomainEntry.get("revisionNumber") == null ? 0 : Integer.parseInt(standardDomainEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
-                    .commonStandardDomainGroupName(standardDomainEntry.get("standardDomainGroupName"))
-                    .commonStandardDomainCategory(standardDomainEntry.get("standardDomainCategoryName"))
-                    .commonStandardDomainName(standardDomainEntry.get("standardDomainName"))
-                    .commonStandardDomainDescription(standardDomainEntry.get("standardDomainDescription"))
-                    .dataType(standardDomainEntry.get("dataType"))
-                    .dataLength(standardDomainEntry.get("dataLength").equals("-") ? 0 : Integer.parseInt(standardDomainEntry.get("dataLength")))
-                    .dataDecimalLength(standardDomainEntry.get("dataDecimalLength").equals("-") ? 0 : Integer.parseInt(standardDomainEntry.get("dataDecimalLength")))
-                    .storageFormat(standardDomainEntry.get("storageFormat"))
-                    .displayFormat(standardDomainEntry.get("displayFormat"))
-                    .unit(standardDomainEntry.get("unit"))
-                    .allowedValues(standardDomainEntry.get("allowedValues"))
-                    .projectId(projectId)
-                    .isApproval(isApprovalAvailable)
-                    .build();
-
-            standardDomainRepository.save(standardDomain);
-        });
+    public void deleteDataDictionaryStandardTerms(List<StandardTermDto> standardTerms, AccountDto accountDto) {
+        standardTermService.deleteDataDictionaryStandardTerms(standardTerms, accountDto);
     }
 
+    @Override
     @Transactional
-    protected void setStandardWord(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
-        List<String> standardWordHeaders = List.of(
-                "id",
-                "revisionNumber",
-                "standardWordName",
-                "standardWordAbbreviation",
-                "standardWordEnglishName",
-                "standardWordDescription",
-                "isFormatWord",
-                "standardDomainCategoryName",
-                "synonyms",
-                "prohibitedWords"
-        );
-        List<Map<String, String>> standardWordData = ExcelUtils.parseExcelFile(file, 1, standardWordHeaders, false, FIRST_ROW);
-
-        standardWordData.forEach(standardWordEntry -> {
-            StandardWord standardWord = StandardWord.builder()
-                    .revisionNumber(standardWordEntry.get("revisionNumber") == null ? 0 : Integer.parseInt(standardWordEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
-                    .commonStandardWordName(standardWordEntry.get("standardWordName"))
-                    .commonStandardWordAbbreviation(standardWordEntry.get("standardWordAbbreviation"))
-                    .commonStandardWordEnglishName(standardWordEntry.get("standardWordEnglishName"))
-                    .commonStandardWordDescription(standardWordEntry.get("standardWordDescription"))
-                    .isFormatWord(standardWordEntry.containsKey("isFormatWord"))
-                    .commonStandardDomainCategory(standardWordEntry.get("standardDomainCategoryName"))
-                    .synonymList(List.of(standardWordEntry.get("synonyms").split(",")))
-                    .restrictedWords(List.of(standardWordEntry.get("prohibitedWords").split(",")))
-                    .projectId(projectId)
-                    .isApproval(isApprovalAvailable)
-                    .build();
-
-            standardWordRepository.save(standardWord);
-        });
-    }
-
-    @Transactional
-    protected void setStandardTerm(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
-        List<String> standardTermHeaders = List.of(
-                "id",
-                "revisionNumber",
-                "standardTermName",
-                "standardTermDescription",
-                "standardTermAbbreviation",
-                "standardDomainName",
-                "allowedValues",
-                "storageFormat",
-                "representationFormat",
-                "administrativeStandardCodeName",
-                "responsibleOrganization",
-                "synonyms"
-        );
-        List<Map<String, String>> standardTermData = ExcelUtils.parseExcelFile(file, 0, standardTermHeaders, false, FIRST_ROW);
-
-        standardTermData.forEach(standardTermEntry -> {
-           StandardTerm standardTerm = StandardTerm.builder()
-                   .revisionNumber(standardTermEntry.get("revisionNumber") == null ? 0 : Integer.parseInt(standardTermEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
-                   .commonStandardTermName(standardTermEntry.get("standardTermName"))
-                   .commonStandardTermDescription(standardTermEntry.get("standardTermDescription"))
-                   .commonStandardTermAbbreviation(standardTermEntry.get("standardTermAbbreviation"))
-                   .commonStandardDomainName(standardTermEntry.get("standardDomainName"))
-                   .allowedValues(standardTermEntry.get("allowedValues"))
-                   .storageFormat(standardTermEntry.get("storageFormat"))
-                   .displayFormat(standardTermEntry.get("representationFormat"))
-                   .administrativeStandardCodeName(standardTermEntry.get("administrativeStandardCodeName"))
-                   .responsibleOrganization(standardTermEntry.get("responsibleOrganization"))
-                   .synonymList(List.of(standardTermEntry.get("synonyms").split(",")))
-                   .projectId(projectId)
-                   .isApproval(isApprovalAvailable)
-                   .build();
-
-           standardTermRepository.save(standardTerm);
-        });
+    public void deleteDataDictionaryStandardWords(List<StandardWordDto> standardWords, AccountDto accountDto) {
+        standardWordService.deleteDataDictionaryStandardWords(standardWords, accountDto);
     }
 }
