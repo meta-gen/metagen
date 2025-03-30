@@ -88,7 +88,8 @@ $("#grd-add-standardTerms").on("click", () => {
  * 표준용어 삭제 버튼
  */
 $("#grd-delete-standardTerms").on("click", () => {
-    const checkedData = getCheckedDataIsNonNull("standardTerms");
+    const tableId = "standardTerms";
+    const checkedData = getCheckedDataIsNonNull(tableId);
     if(!checkedData) return;
 
     let isApproval = true;
@@ -102,6 +103,21 @@ $("#grd-delete-standardTerms").on("click", () => {
         window.openAlert("체크된 데이터에 승인된 정보도 포함되어있습니다. 승인이 완료된 경우, 삭제가 불가능합니다.");
         return;
     }
+
+    window.openConfirm("체크된 데이터를 삭제하시겠습니까?", () => {
+        $.ajax({
+            url : `/api/deleteDataDictionary/${tableId}`,
+            type : 'DELETE',
+            data : JSON.stringify(checkedData),
+            success : (response) => {
+                if(response.result){
+                    window.openAlert("정상적으로 삭제처리 되었습니다.", () => {
+                        window.searchGrid(tableId);
+                    });
+                }
+            }
+        });
+    });
 });
 
 /**
