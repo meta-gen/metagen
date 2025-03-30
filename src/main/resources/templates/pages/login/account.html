@@ -32,7 +32,7 @@
             <input type="text" class="form-control" id="name" name="name" th:value="${account.name}">
         </div>
         <br/>
-        <button id="changeNameBtn" type="button" class="btn btn-primary">사용자명 변경</button>
+        <button id="changeNameBtn" type="submit" class="btn btn-primary">사용자명 변경</button>
     </form>
     <hr/>
     <form id="changedPasswdForm" th:action="@{/api/updatePwd}" method="post">

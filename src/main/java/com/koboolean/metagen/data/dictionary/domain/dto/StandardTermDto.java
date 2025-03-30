@@ -1,7 +1,11 @@
 package com.koboolean.metagen.data.dictionary.domain.dto;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardTermWordMapping;
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,13 +31,19 @@ public class StandardTermDto {
     private String isApprovalYn;
 
     public static StandardTermDto fromEntity(StandardTerm entity) {
+
+        String abbreviation = entity.getTermWordMappings().stream()
+                .sorted(Comparator.comparingInt(StandardTermWordMapping::getOrderIndex))
+                .map(mapping -> mapping.getStandardWord().getCommonStandardWordAbbreviation())
+                .collect(Collectors.joining("_"));
+
         return StandardTermDto.builder()
                 .id(entity.getId())
                 .projectId(entity.getProjectId())
                 .revisionNumber(entity.getRevisionNumber())
                 .commonStandardTermName(entity.getCommonStandardTermName())
                 .commonStandardTermDescription(entity.getCommonStandardTermDescription())
-                .commonStandardTermAbbreviation(entity.getCommonStandardTermAbbreviation())
+                .commonStandardTermAbbreviation(abbreviation)
                 .commonStandardDomainName(entity.getCommonStandardDomainName())
                 .allowedValues(entity.getAllowedValues())
                 .storageFormat(entity.getStorageFormat())

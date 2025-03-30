@@ -117,4 +117,7 @@ public class StandardWordService {
         });
     }
 
+    public StandardWord findByCommonStandardWordAbbreviation(String s, Long projectId) {
+        return standardWordRepository.findByCommonStandardWordAbbreviationAndProjectId(s, projectId);
+    }
 }

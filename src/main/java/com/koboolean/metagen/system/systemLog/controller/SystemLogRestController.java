@@ -45,11 +45,15 @@ public class SystemLogRestController {
             @Parameter(description = "페이지 크기", example = "10")
             @RequestParam int size,
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "timestamp,desc")
-            @RequestParam(required = false) String sort) {
+            @RequestParam(required = false) String sort,
+            @Parameter(description = "조회 도메인명", example = "도메인명1")
+            @RequestParam(required = false) String searchQuery,
+            @Parameter(description = "조회컬럼 명", example = "id")
+            @RequestParam(required = false) String searchColumn) {
 
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
 
-        Page<LogsDto> logsPage = systemLogService.getSystemLogData(pageable, accountDto);
+        Page<LogsDto> logsPage = systemLogService.getSystemLogData(pageable, accountDto, searchQuery, searchColumn);
 
         return PageableUtil.getGridPageableMap(logsPage);
     }

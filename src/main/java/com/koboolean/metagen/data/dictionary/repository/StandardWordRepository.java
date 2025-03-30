@@ -24,4 +24,6 @@ public interface StandardWordRepository extends JpaRepository<StandardWord, Long
     Page<StandardWord> findAllByIdAndProjectId(Long searchQuery, Long projectId, Pageable pageable);
 
     StandardWord findByIdAndProjectId(Long id, Long projectId);
+
+    StandardWord findByCommonStandardWordAbbreviationAndProjectId(String commonStandardWordAbbreviation, Long projectId);
 }

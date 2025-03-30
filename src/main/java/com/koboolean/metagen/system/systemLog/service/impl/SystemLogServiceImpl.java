@@ -2,6 +2,7 @@ package com.koboolean.metagen.system.systemLog.service.impl;
 
 import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.logs.domain.dto.LogsDto;
+import com.koboolean.metagen.logs.domain.entity.Logs;
 import com.koboolean.metagen.logs.repository.LogsRepository;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
@@ -38,7 +39,7 @@ public class SystemLogServiceImpl implements SystemLogService {
     }
 
     @Override
-    public Page<LogsDto> getSystemLogData(Pageable pageable, AccountDto accountDto) {
+    public Page<LogsDto> getSystemLogData(Pageable pageable, AccountDto accountDto, String searchQuery, String searchColumn) {
 
         Long projectId = accountDto.getProjectId();
 
@@ -46,21 +47,23 @@ public class SystemLogServiceImpl implements SystemLogService {
             throw new IllegalArgumentException("projectId 값이 null입니다!");
         }
 
-        return logsRepository.findAllByProjectId(projectId, pageable)
-                .map(log -> LogsDto.builder()
-                        .id(log.getId())
-                        .projectId(log.getProjectId())
-                        .logUrl(log.getLogUrl())
-                        .method(log.getMethod())
-                        .ip(log.getIp())
-                        .username(log.getUsername())
-                        .roleName(log.getRoleName())
-                        .statusCode(log.getStatusCode())
-                        .requestBody(log.getRequestBody())
-                        .responseBody(log.getResponseBody())
-                        .errorMessage(log.getErrorMessage())
-                        .userAgent(log.getUserAgent())
-                        .timestamp(log.getTimestamp())
-                        .build());
+        if (searchQuery == null || searchQuery.isBlank()) {
+            return logsRepository.findAllByProjectId(projectId, pageable)
+                    .map(LogsDto::fromEntity);
+        }
+
+        Page<Logs> searchResult = switch (searchColumn) {
+            case "logUrl" -> logsRepository.findByProjectIdAndLogUrlContaining(projectId, searchQuery, pageable);
+            case "method" -> logsRepository.findByProjectIdAndMethodContaining(projectId, searchQuery, pageable);
+            case "ip" -> logsRepository.findByProjectIdAndIpContaining(projectId, searchQuery, pageable);
+            case "username" -> logsRepository.findByProjectIdAndUsernameContaining(projectId, searchQuery, pageable);
+            case "statusCode" -> logsRepository.findByProjectIdAndStatusCodeContaining(projectId, searchQuery, pageable);
+            case "requestBody" -> logsRepository.findByProjectIdAndRequestBodyContaining(projectId, searchQuery, pageable);
+            case "responseBody" -> logsRepository.findByProjectIdAndResponseBodyContaining(projectId, searchQuery, pageable);
+            case "errorMessage" -> logsRepository.findByProjectIdAndErrorMessageContaining(projectId, searchQuery, pageable);
+            default -> logsRepository.findAllByProjectId(projectId, pageable); // fallback
+        };
+
+        return searchResult.map(LogsDto::fromEntity);
     }
 }

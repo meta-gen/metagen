@@ -12,5 +12,5 @@ public interface SystemLogService {
 
     List<ColumnDto> getSystemLogColumn();
 
-    Page<LogsDto> getSystemLogData(Pageable pageable, AccountDto accountDto);
+    Page<LogsDto> getSystemLogData(Pageable pageable, AccountDto accountDto, String searchQuery, String searchColumn);
 }
