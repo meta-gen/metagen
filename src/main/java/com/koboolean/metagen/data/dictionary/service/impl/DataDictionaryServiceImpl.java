@@ -110,6 +110,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     }
 
     @Override
+    @Transactional
     public void uploadDictionaryExcelFile(MultipartFile file, AccountDto accountDto) throws IOException {
 
         Long projectId = accountDto.getProjectId();

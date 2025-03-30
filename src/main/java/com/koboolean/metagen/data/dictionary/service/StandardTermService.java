@@ -6,6 +6,8 @@ import com.koboolean.metagen.data.dictionary.domain.entity.StandardTermWordMappi
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
 import com.koboolean.metagen.data.dictionary.repository.StandardTermRepository;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.security.exception.CustomException;
+import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -88,7 +90,6 @@ public class StandardTermService {
         });
     }
 
-    @Transactional
     public void setStandardTerm(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
         List<String> standardTermHeaders = List.of(
                 "id",
@@ -135,6 +136,8 @@ public class StandardTermService {
                 mapping.setOrderIndex(i); // 순서 저장
 
                 mappings.add(mapping);
+            }else{
+                throw new CustomException(ErrorCode.NOT_FOUND_WORD_DATA, "누락된 문자열 : " + s);
             }
         }
 

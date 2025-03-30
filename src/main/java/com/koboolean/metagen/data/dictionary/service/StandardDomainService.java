@@ -88,7 +88,6 @@ public class StandardDomainService {
         });
     }
 
-    @Transactional
     public void setStandardDomain(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
         List<String> standardDomainHeaders = List.of(
                 "id",

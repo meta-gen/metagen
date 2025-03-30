@@ -27,7 +27,12 @@ public enum ErrorCode {
     /**
      * 등록된 아이디가 존재합니다.
      */
-    USERNAME_IS_DUPLICATION(HttpStatus.BAD_REQUEST, "USERNAME_IS_DUPLICATION", "등록된 아이디가 존재합니다.");
+    USERNAME_IS_DUPLICATION(HttpStatus.BAD_REQUEST, "USERNAME_IS_DUPLICATION", "등록된 아이디가 존재합니다."),
+
+    /**
+     * 등록 용어중 매핑되지 않는 단어가 존재합니다.
+     */
+    NOT_FOUND_WORD_DATA(HttpStatus.BAD_REQUEST, "NOT_FOUND_WORD_DATA", "등록 용어중 매핑되지 않는 단어가 존재합니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

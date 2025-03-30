@@ -82,7 +82,6 @@ public class StandardWordService {
         });
     }
 
-    @Transactional
     public void setStandardWord(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
         List<String> standardWordHeaders = List.of(
                 "id",
