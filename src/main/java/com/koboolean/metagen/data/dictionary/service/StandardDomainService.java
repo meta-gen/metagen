@@ -129,4 +129,7 @@ public class StandardDomainService {
         });
     }
 
+    public List<StandardDomain> getStandardDomains(String splitDatum, Long projectId) {
+        return standardDomainRepository.findAllByCommonStandardDomainCategoryAndProjectId(splitDatum, projectId);
+    }
 }

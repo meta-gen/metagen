@@ -126,22 +126,19 @@ public class StandardTermService {
     private void saveTermWordMappings(Long projectId, boolean isApprovalAvailable, Map<String, String> standardTermEntry, String[] split) {
         List<StandardTermWordMapping> mappings = new ArrayList<>();
 
-        for (int i = 0; i < split.length; i++) {
-            String s = split[i];
-            StandardWord word = standardWordService.findByCommonStandardWordAbbreviation(s, projectId);
-            if (word != null) {
-                // 일단 매핑 객체는 나중에 StandardTerm set
-                StandardTermWordMapping mapping = new StandardTermWordMapping();
-                mapping.setStandardWord(word);
-                mapping.setOrderIndex(i); // 순서 저장
+        getStandardTermDomain(projectId, split, mappings);
 
-                mappings.add(mapping);
-            }else{
-                throw new CustomException(ErrorCode.NOT_FOUND_WORD_DATA, "누락된 문자열 : " + s);
-            }
+        StandardTerm standardTerm = getStandardTerm(projectId, isApprovalAvailable, standardTermEntry, mappings);
+
+        for (StandardTermWordMapping mapping : mappings) {
+            mapping.setStandardTerm(standardTerm);
         }
 
-        StandardTerm standardTerm = StandardTerm.builder()
+        standardTermRepository.save(standardTerm);
+    }
+
+    private static StandardTerm getStandardTerm(Long projectId, boolean isApprovalAvailable, Map<String, String> standardTermEntry, List<StandardTermWordMapping> mappings) {
+        return StandardTerm.builder()
                 .revisionNumber(standardTermEntry.get("revisionNumber") == null ? 0 : Integer.parseInt(standardTermEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
                 .commonStandardTermName(standardTermEntry.get("standardTermName"))
                 .commonStandardTermDescription(standardTermEntry.get("standardTermDescription"))
@@ -157,11 +154,87 @@ public class StandardTermService {
                 .projectId(projectId)
                 .isApproval(isApprovalAvailable)
                 .build();
+    }
+
+    private void getStandardTermDomain(Long projectId, String[] split, List<StandardTermWordMapping> mappings) {
+        for (int i = 0; i < split.length; i++) {
+            String s = split[i];
+            StandardWord word = standardWordService.findByCommonStandardWordAbbreviation(s, projectId);
+            if (word != null) {
+                // 일단 매핑 객체는 나중에 StandardTerm set
+                StandardTermWordMapping mapping = new StandardTermWordMapping();
+                mapping.setStandardWord(word);
+                mapping.setOrderIndex(i); // 순서 저장
+
+                mappings.add(mapping);
+            }else{
+                throw new CustomException(ErrorCode.NOT_FOUND_WORD_DATA, "누락된 문자열 : " + s);
+            }
+        }
+    }
+
+    public void saveStandardTerms(Long projectId, boolean isApprovalAvailable, StandardTermDto standardTermDto, String[] split) {
+
+        List<StandardTerm> byCommonStandardTermAbbreviationAndProjectId = standardTermRepository.findByCommonStandardTermAbbreviationAndCommonStandardDomainNameAndProjectId(standardTermDto.getCommonStandardTermAbbreviation(), standardTermDto.getCommonStandardDomainName(), projectId);
+
+        if(!byCommonStandardTermAbbreviationAndProjectId.isEmpty()){
+            // 이미 등록된 정보가 있기 떄문에 Error처리
+            throw new CustomException(ErrorCode.DUPLICATE_TERM_DATA);
+        }
+
+        List<StandardTermWordMapping> mappings = new ArrayList<>();
+
+        getStandardTermDomain(projectId, split, mappings);
+
+        StandardTerm standardTerm = getStandardTerm(projectId, isApprovalAvailable, standardTermDto, mappings);
 
         for (StandardTermWordMapping mapping : mappings) {
             mapping.setStandardTerm(standardTerm);
         }
 
         standardTermRepository.save(standardTerm);
+    }
+
+    private static StandardTerm getStandardTerm(Long projectId, boolean isApprovalAvailable, StandardTermDto standardTermDto, List<StandardTermWordMapping> mappings) {
+        return StandardTerm.builder()
+                .revisionNumber(standardTermDto.getRevisionNumber())
+                .commonStandardTermName(standardTermDto.getCommonStandardTermName())
+                .commonStandardTermDescription(standardTermDto.getCommonStandardTermDescription())
+                .termWordMappings(mappings) // 매핑 넣기
+                .commonStandardTermAbbreviation(standardTermDto.getCommonStandardTermAbbreviation())
+                .commonStandardDomainName(standardTermDto.getCommonStandardDomainName())
+                .allowedValues(standardTermDto.getAllowedValues())
+                .storageFormat(standardTermDto.getStorageFormat())
+                .displayFormat(standardTermDto.getDisplayFormat())
+                .administrativeStandardCodeName(standardTermDto.getAdministrativeStandardCodeName())
+                .responsibleOrganization(standardTermDto.getResponsibleOrganization())
+                .synonymList(List.of(standardTermDto.getSynonyms().split(",")))
+                .projectId(projectId)
+                .isApproval(isApprovalAvailable)
+                .build();
+    }
+
+    @Transactional
+    public void updateStandardTerms(Long projectId, boolean isApprovalAvailable, StandardTermDto standardTermDto, String[] split) {
+        /**
+         * Mapping부분까지 수정이 필요하여 삭제처리 후 재등록
+         */
+        StandardTerm existingTerm = standardTermRepository.findByIdAndProjectId(standardTermDto.getId(), projectId);
+        if (existingTerm == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_TERM_DATA);
+        }
+
+        existingTerm.setRevisionNumber(standardTermDto.getRevisionNumber());
+        existingTerm.setCommonStandardTermName(standardTermDto.getCommonStandardTermName());
+        existingTerm.setCommonStandardTermDescription(standardTermDto.getCommonStandardTermDescription());
+        existingTerm.setCommonStandardTermAbbreviation(standardTermDto.getCommonStandardTermAbbreviation());
+        existingTerm.setCommonStandardDomainName(standardTermDto.getCommonStandardDomainName());
+        existingTerm.setAllowedValues(standardTermDto.getAllowedValues());
+        existingTerm.setStorageFormat(standardTermDto.getStorageFormat());
+        existingTerm.setDisplayFormat(standardTermDto.getDisplayFormat());
+        existingTerm.setAdministrativeStandardCodeName(standardTermDto.getAdministrativeStandardCodeName());
+        existingTerm.setResponsibleOrganization(standardTermDto.getResponsibleOrganization());
+        existingTerm.setSynonymList(List.of(standardTermDto.getSynonyms().split(",")));
+        existingTerm.setIsApproval(isApprovalAvailable);
     }
 }

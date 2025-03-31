@@ -8,10 +8,12 @@ import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface DataDictionaryService {
     List<ColumnDto> getStandardTermsColumn();
@@ -33,4 +35,9 @@ public interface DataDictionaryService {
     void deleteDataDictionaryStandardDomains(List<StandardDomainDto> standardDomains, AccountDto accountDto);
     void deleteDataDictionaryStandardTerms(List<StandardTermDto> standardTerms, AccountDto accountDto);
     void deleteDataDictionaryStandardWords(List<StandardWordDto> standardWords, AccountDto accountDto);
+
+    Map<String, Object> getStandardTermList(String termNm, AccountDto accountDto);
+
+    void insertStandardTerms(AccountDto accountDto, StandardTermDto standardTermDto);
+    void updateStandardTerms(AccountDto accountDto, StandardTermDto standardTermDto);
 }

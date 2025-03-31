@@ -162,7 +162,18 @@ function addStandardDomains(){
                 .attr("name", key)
                 .css("width", "100%")
                 .css("height", "60px");
-        } else {
+        }else if(key === "revisionNumber"){
+            input = $("<input>")
+                .attr("type", "number")
+                .attr("id", key)
+                .attr("name", key)
+                .css("width", "100%")
+                .on("keydown", function(event){
+                    if (event.key === "e" || event.key === "E" || event.key === "+" || event.key === "-") {
+                        event.preventDefault();
+                    }
+                });
+        }else {
             input = $("<input>")
                 .attr("type", "text")
                 .attr("id", key)
@@ -218,7 +229,19 @@ export function selectRow(rowData, columnList, isManager, tableId){
 
         if (key === "isApprovalYn") {
             continue;
-        } else {
+        }else if(key === "revisionNumber"){
+            input = $("<input>")
+                .attr("type", "number")
+                .attr("id", key)
+                .attr("name", key)
+                .val(value)
+                .css("width", "100%")
+                .on("keydown", function(event){
+                    if (event.key === "e" || event.key === "E" || event.key === "+" || event.key === "-") {
+                        event.preventDefault();
+                    }
+                });
+        }else {
             input = $("<input>")
                 .attr("type", "text")
                 .attr("id", key)
