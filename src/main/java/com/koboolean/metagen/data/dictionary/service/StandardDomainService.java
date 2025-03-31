@@ -4,6 +4,8 @@ import com.koboolean.metagen.data.dictionary.domain.dto.StandardDomainDto;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardDomain;
 import com.koboolean.metagen.data.dictionary.repository.StandardDomainRepository;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.security.exception.CustomException;
+import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -80,10 +82,24 @@ public class StandardDomainService {
 
     @Transactional
     public void deleteDataDictionaryStandardDomains(List<StandardDomainDto> standardDomains, AccountDto accountDto) {
-        standardDomains.forEach(standardDomain -> {
-            StandardDomain byIdAndProjectId = standardDomainRepository.findByIdAndProjectId(standardDomain.getId(), accountDto.getProjectId());
-            if(byIdAndProjectId != null && !byIdAndProjectId.getIsApproval()){
-                standardDomainRepository.deleteById(standardDomain.getId());
+        standardDomains.forEach(domainDto -> {
+            StandardDomain domain = standardDomainRepository.findByIdAndProjectId(domainDto.getId(), accountDto.getProjectId());
+
+            if (domain != null) {
+                // 1. 승인된 도메인 삭제 불가
+                if (Boolean.TRUE.equals(domain.getIsApproval())) {
+                    throw new CustomException(ErrorCode.APPROVED_DATA_CANNOT_BE_DELETED,
+                            "승인된 도메인은 삭제할 수 없습니다: " + domain.getCommonStandardDomainName());
+                }
+
+                // 2. 표준용어에서 참조 중인 경우 삭제 불가
+                if (domain.getStandardTerms() != null && !domain.getStandardTerms().isEmpty()) {
+                    throw new CustomException(ErrorCode.RELATION_EXISTS,
+                            "표준용어에서 사용 중인 도메인은 삭제할 수 없습니다: " + domain.getCommonStandardDomainName());
+                }
+
+                // 3. 삭제 수행
+                standardDomainRepository.delete(domain);
             }
         });
     }
@@ -131,5 +147,9 @@ public class StandardDomainService {
 
     public List<StandardDomain> getStandardDomains(String splitDatum, Long projectId) {
         return standardDomainRepository.findAllByCommonStandardDomainCategoryAndProjectId(splitDatum, projectId);
+    }
+
+    public StandardDomain findByCommonStandardDomainNameAndProjectId(String domainName, Long projectId) {
+        return standardDomainRepository.findByCommonStandardDomainNameAndProjectId(domainName, projectId);
     }
 }

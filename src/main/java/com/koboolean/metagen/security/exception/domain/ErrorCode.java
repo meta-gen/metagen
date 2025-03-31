@@ -43,7 +43,22 @@ public enum ErrorCode {
     /**
      * 등록 용어중 매핑되지 않는 단어가 존재합니다.
      */
-    NOT_FOUND_WORD_DATA(HttpStatus.BAD_REQUEST, "NOT_FOUND_WORD_DATA", "등록 용어중 매핑되지 않는 단어가 존재합니다.");
+    NOT_FOUND_WORD_DATA(HttpStatus.BAD_REQUEST, "NOT_FOUND_WORD_DATA", "등록 용어중 매핑되지 않는 단어가 존재합니다."),
+
+    /**
+     * 승인된 정보는 삭제할 수 없습니다.
+     */
+    APPROVED_DATA_CANNOT_BE_DELETED(HttpStatus.BAD_REQUEST, "APPROVED_DATA_CANNOT_BE_DELETED", "승인된 정보는 삭제할 수 없습니다."),
+
+    /**
+     * 사용 중인 정보는 삭제할 수 없습니다.
+     */
+    RELATION_EXISTS(HttpStatus.BAD_REQUEST, "RELATION_EXISTS", "사용 중인 정보는 삭제할 수 없습니다."),
+
+    /**
+     * 해당 도메인을 찾을 수 없습니다.
+     */
+    NOT_FOUND_DOMAIN_DATA(HttpStatus.BAD_REQUEST, "NOT_FOUND_DOMAIN_DATA", "해당 도메인을 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

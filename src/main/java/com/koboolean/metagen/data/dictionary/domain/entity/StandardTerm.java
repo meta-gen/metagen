@@ -34,14 +34,14 @@ public class StandardTerm {
 
     private String commonStandardTermAbbreviation;
 
-    private String commonStandardDomainName; // 표준도메인명
+    //private String commonStandardDomainName; // 표준도메인명
 
-    @Column(length = 2000)
-    private String allowedValues; // 허용값
+    //@Column(length = 2000)
+    //private String allowedValues; // 허용값
 
-    private String storageFormat; // 저장 형식
+    //private String storageFormat; // 저장 형식
 
-    private String displayFormat; // 표현 형식
+    //private String displayFormat; // 표현 형식
 
     private String administrativeStandardCodeName; // 행정표준코드명
 
@@ -51,4 +51,8 @@ public class StandardTerm {
     private List<String> synonymList; // 용어 이음동의어 목록
 
     private Boolean isApproval;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "standard_domain_id")
+    private StandardDomain standardDomain;
 }

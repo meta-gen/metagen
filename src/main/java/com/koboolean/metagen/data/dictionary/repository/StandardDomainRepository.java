@@ -6,11 +6,12 @@ import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@RestController
+@Repository
 public interface StandardDomainRepository extends JpaRepository<StandardDomain, Long> {
     Page<StandardDomain> findAllByProjectId(Long projectId, Pageable pageable);
 
@@ -32,4 +33,6 @@ public interface StandardDomainRepository extends JpaRepository<StandardDomain, 
     StandardDomain findByIdAndProjectId(Long id, Long projectId);
 
     List<StandardDomain> findAllByCommonStandardDomainCategoryAndProjectId(String splitDatum, Long projectId);
+
+    StandardDomain findByCommonStandardDomainNameAndProjectId(String domainName, Long projectId);
 }

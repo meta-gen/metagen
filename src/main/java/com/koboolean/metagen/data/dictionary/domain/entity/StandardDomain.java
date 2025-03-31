@@ -3,6 +3,8 @@ package com.koboolean.metagen.data.dictionary.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,6 +16,7 @@ public class StandardDomain {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "standard_domain_id")
     private Long id; // 번호
 
     @Column(name = "project_id")
@@ -46,4 +49,7 @@ public class StandardDomain {
     private String allowedValues; // 허용값
 
     private Boolean isApproval;
+
+    @OneToMany(mappedBy = "standardDomain")
+    private List<StandardTerm> standardTerms;
 }

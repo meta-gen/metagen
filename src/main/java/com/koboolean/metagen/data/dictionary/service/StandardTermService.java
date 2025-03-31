@@ -1,9 +1,11 @@
 package com.koboolean.metagen.data.dictionary.service;
 
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardDomain;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTermWordMapping;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
+import com.koboolean.metagen.data.dictionary.repository.StandardDomainRepository;
 import com.koboolean.metagen.data.dictionary.repository.StandardTermRepository;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.exception.CustomException;
@@ -24,8 +26,11 @@ import java.util.*;
 public class StandardTermService {
 
     private final StandardTermRepository standardTermRepository;
-    private static final int FIRST_ROW = 1;
+
+    private final StandardDomainService standardDomainService;
     private final StandardWordService standardWordService;
+
+    private static final int FIRST_ROW = 1;
 
     public Page<StandardTermDto> getStandardTermsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery) {
         if (searchQuery == null || searchQuery.trim().isEmpty()) {
@@ -45,13 +50,13 @@ public class StandardTermService {
             case "commonStandardTermAbbreviation" ->
                     standardTermRepository.findByCommonStandardTermAbbreviationContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "commonStandardDomainName" ->
-                    standardTermRepository.findByCommonStandardDomainNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
+                    standardTermRepository.findByStandardDomain_CommonStandardDomainNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "allowedValues" ->
-                    standardTermRepository.findByAllowedValuesContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
+                    standardTermRepository.findByStandardDomain_AllowedValuesContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "storageFormat" ->
-                    standardTermRepository.findByStorageFormatContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
+                    standardTermRepository.findByStandardDomain_StorageFormatContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "displayFormat" ->
-                    standardTermRepository.findByDisplayFormatContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
+                    standardTermRepository.findByStandardDomain_DisplayFormatContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "administrativeStandardCodeName" ->
                     standardTermRepository.findByAdministrativeStandardCodeNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "responsibleOrganization" ->
@@ -137,22 +142,27 @@ public class StandardTermService {
         standardTermRepository.save(standardTerm);
     }
 
-    private static StandardTerm getStandardTerm(Long projectId, boolean isApprovalAvailable, Map<String, String> standardTermEntry, List<StandardTermWordMapping> mappings) {
+    private StandardTerm getStandardTerm(Long projectId, boolean isApprovalAvailable, Map<String, String> standardTermEntry, List<StandardTermWordMapping> mappings) {
+        String domainName = standardTermEntry.get("standardDomainName");
+
+        StandardDomain standardDomain = standardDomainService.findByCommonStandardDomainNameAndProjectId(domainName, projectId);
+
+        if (standardDomain == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_DOMAIN_DATA);
+        }
+
         return StandardTerm.builder()
                 .revisionNumber(standardTermEntry.get("revisionNumber") == null ? 0 : Integer.parseInt(standardTermEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
                 .commonStandardTermName(standardTermEntry.get("standardTermName"))
                 .commonStandardTermDescription(standardTermEntry.get("standardTermDescription"))
-                .termWordMappings(mappings) // 매핑 넣기
+                .termWordMappings(mappings)
                 .commonStandardTermAbbreviation(standardTermEntry.get("standardTermAbbreviation"))
-                .commonStandardDomainName(standardTermEntry.get("standardDomainName"))
-                .allowedValues(standardTermEntry.get("allowedValues"))
-                .storageFormat(standardTermEntry.get("storageFormat"))
-                .displayFormat(standardTermEntry.get("representationFormat"))
                 .administrativeStandardCodeName(standardTermEntry.get("administrativeStandardCodeName"))
                 .responsibleOrganization(standardTermEntry.get("responsibleOrganization"))
                 .synonymList(List.of(standardTermEntry.get("synonyms").split(",")))
                 .projectId(projectId)
                 .isApproval(isApprovalAvailable)
+                .standardDomain(standardDomain) // 연관관계 주입
                 .build();
     }
 
@@ -175,7 +185,7 @@ public class StandardTermService {
 
     public void saveStandardTerms(Long projectId, boolean isApprovalAvailable, StandardTermDto standardTermDto, String[] split) {
 
-        List<StandardTerm> byCommonStandardTermAbbreviationAndProjectId = standardTermRepository.findByCommonStandardTermAbbreviationAndCommonStandardDomainNameAndProjectId(standardTermDto.getCommonStandardTermAbbreviation(), standardTermDto.getCommonStandardDomainName(), projectId);
+        List<StandardTerm> byCommonStandardTermAbbreviationAndProjectId = standardTermRepository.findByCommonStandardTermAbbreviationAndStandardDomain_CommonStandardDomainNameAndProjectId(standardTermDto.getCommonStandardTermAbbreviation(), standardTermDto.getCommonStandardDomainName(), projectId);
 
         if(!byCommonStandardTermAbbreviationAndProjectId.isEmpty()){
             // 이미 등록된 정보가 있기 떄문에 Error처리
@@ -195,46 +205,57 @@ public class StandardTermService {
         standardTermRepository.save(standardTerm);
     }
 
-    private static StandardTerm getStandardTerm(Long projectId, boolean isApprovalAvailable, StandardTermDto standardTermDto, List<StandardTermWordMapping> mappings) {
+    private StandardTerm getStandardTerm(Long projectId, boolean isApprovalAvailable, StandardTermDto dto, List<StandardTermWordMapping> mappings) {
+        StandardDomain standardDomain = standardDomainService.findByCommonStandardDomainNameAndProjectId(
+                dto.getCommonStandardDomainName(), projectId
+        );
+
+        if (standardDomain == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_DOMAIN_DATA,
+                    "도메인을 찾을 수 없습니다: " + dto.getCommonStandardDomainName());
+        }
+
         return StandardTerm.builder()
-                .revisionNumber(standardTermDto.getRevisionNumber())
-                .commonStandardTermName(standardTermDto.getCommonStandardTermName())
-                .commonStandardTermDescription(standardTermDto.getCommonStandardTermDescription())
-                .termWordMappings(mappings) // 매핑 넣기
-                .commonStandardTermAbbreviation(standardTermDto.getCommonStandardTermAbbreviation())
-                .commonStandardDomainName(standardTermDto.getCommonStandardDomainName())
-                .allowedValues(standardTermDto.getAllowedValues())
-                .storageFormat(standardTermDto.getStorageFormat())
-                .displayFormat(standardTermDto.getDisplayFormat())
-                .administrativeStandardCodeName(standardTermDto.getAdministrativeStandardCodeName())
-                .responsibleOrganization(standardTermDto.getResponsibleOrganization())
-                .synonymList(List.of(standardTermDto.getSynonyms().split(",")))
+                .revisionNumber(dto.getRevisionNumber())
+                .commonStandardTermName(dto.getCommonStandardTermName())
+                .commonStandardTermDescription(dto.getCommonStandardTermDescription())
+                .termWordMappings(mappings)
+                .commonStandardTermAbbreviation(dto.getCommonStandardTermAbbreviation())
+                .administrativeStandardCodeName(dto.getAdministrativeStandardCodeName())
+                .responsibleOrganization(dto.getResponsibleOrganization())
+                .synonymList(List.of(dto.getSynonyms().split(",")))
                 .projectId(projectId)
                 .isApproval(isApprovalAvailable)
+                .standardDomain(standardDomain) // 연관관계 설정
                 .build();
     }
 
     @Transactional
-    public void updateStandardTerms(Long projectId, boolean isApprovalAvailable, StandardTermDto standardTermDto, String[] split) {
-        /**
-         * Mapping부분까지 수정이 필요하여 삭제처리 후 재등록
-         */
-        StandardTerm existingTerm = standardTermRepository.findByIdAndProjectId(standardTermDto.getId(), projectId);
+    public void updateStandardTerms(Long projectId, boolean isApprovalAvailable, StandardTermDto dto, String[] split) {
+        StandardTerm existingTerm = standardTermRepository.findByIdAndProjectId(dto.getId(), projectId);
         if (existingTerm == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_TERM_DATA);
         }
 
-        existingTerm.setRevisionNumber(standardTermDto.getRevisionNumber());
-        existingTerm.setCommonStandardTermName(standardTermDto.getCommonStandardTermName());
-        existingTerm.setCommonStandardTermDescription(standardTermDto.getCommonStandardTermDescription());
-        existingTerm.setCommonStandardTermAbbreviation(standardTermDto.getCommonStandardTermAbbreviation());
-        existingTerm.setCommonStandardDomainName(standardTermDto.getCommonStandardDomainName());
-        existingTerm.setAllowedValues(standardTermDto.getAllowedValues());
-        existingTerm.setStorageFormat(standardTermDto.getStorageFormat());
-        existingTerm.setDisplayFormat(standardTermDto.getDisplayFormat());
-        existingTerm.setAdministrativeStandardCodeName(standardTermDto.getAdministrativeStandardCodeName());
-        existingTerm.setResponsibleOrganization(standardTermDto.getResponsibleOrganization());
-        existingTerm.setSynonymList(List.of(standardTermDto.getSynonyms().split(",")));
+        StandardDomain standardDomain = standardDomainService.findByCommonStandardDomainNameAndProjectId(
+                dto.getCommonStandardDomainName(), projectId
+        );
+
+        if (standardDomain == null) {
+            throw new CustomException(ErrorCode.NOT_FOUND_DOMAIN_DATA,
+                    "도메인을 찾을 수 없습니다: " + dto.getCommonStandardDomainName());
+        }
+
+        existingTerm.setRevisionNumber(dto.getRevisionNumber());
+        existingTerm.setCommonStandardTermName(dto.getCommonStandardTermName());
+        existingTerm.setCommonStandardTermDescription(dto.getCommonStandardTermDescription());
+        existingTerm.setCommonStandardTermAbbreviation(dto.getCommonStandardTermAbbreviation());
+        existingTerm.setAdministrativeStandardCodeName(dto.getAdministrativeStandardCodeName());
+        existingTerm.setResponsibleOrganization(dto.getResponsibleOrganization());
+        existingTerm.setSynonymList(List.of(dto.getSynonyms().split(",")));
         existingTerm.setIsApproval(isApprovalAvailable);
+        existingTerm.setStandardDomain(standardDomain); // 연관관계 주입
+
+        // 단어 매핑도 갱신 필요 시 추가
     }
 }
