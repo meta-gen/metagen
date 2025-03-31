@@ -251,7 +251,7 @@ export function selectRow(rowData, columnList, isManager, tableId){
         }
 
         // 수정 불가 필드 처리
-        if (key === "id" || key === "projectId") {
+        if (key === "id" || key === "projectId" || key === "allowedValues" || key === "commonStandardDomainName" || key === "storageFormat" || key === "displayFormat" || key === "commonStandardDomainGroupName" || key === "commonStandardDomainCategory") {
             input.prop("readonly", true);
 
             input.css("background-color", "#f0f0f0"); // 회색 배경

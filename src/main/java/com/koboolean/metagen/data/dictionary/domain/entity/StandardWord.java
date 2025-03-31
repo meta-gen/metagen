@@ -1,5 +1,6 @@
 package com.koboolean.metagen.data.dictionary.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
