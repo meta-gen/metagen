@@ -8,6 +8,7 @@ import com.koboolean.metagen.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -82,7 +83,6 @@ public class StandardWordService {
         });
     }
 
-    @Transactional
     public void setStandardWord(MultipartFile file, Long projectId, boolean isApprovalAvailable) throws IOException {
         List<String> standardWordHeaders = List.of(
                 "id",
@@ -119,5 +119,9 @@ public class StandardWordService {
 
     public StandardWord findByCommonStandardWordAbbreviation(String s, Long projectId) {
         return standardWordRepository.findByCommonStandardWordAbbreviationAndProjectId(s, projectId);
+    }
+
+    public StandardWord commonStandardWordName(String s, Long projectId) {
+        return standardWordRepository.findByCommonStandardWordNameAndProjectId(s, projectId);
     }
 }

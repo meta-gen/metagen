@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public interface StandardTermRepository extends JpaRepository<StandardTerm, Long> {
     Page<StandardTerm> findAllByProjectId(Long projectId, Pageable pageable);
@@ -27,4 +29,6 @@ public interface StandardTermRepository extends JpaRepository<StandardTerm, Long
     Page<StandardTerm> findAllByIdAndProjectId(Long searchQuery, Long projectId, Pageable pageable);
 
     StandardTerm findByIdAndProjectId(Long id, Long projectId);
+
+    List<StandardTerm> findByCommonStandardTermAbbreviationAndCommonStandardDomainNameAndProjectId(String commonStandardTermAbbreviation, String commonStandardDomainName, Long projectId);
 }

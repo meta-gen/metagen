@@ -26,4 +26,8 @@ public interface StandardWordRepository extends JpaRepository<StandardWord, Long
     StandardWord findByIdAndProjectId(Long id, Long projectId);
 
     StandardWord findByCommonStandardWordAbbreviationAndProjectId(String commonStandardWordAbbreviation, Long projectId);
+
+    StandardWord findBycommonStandardWordName(String commonStandardWordName);
+
+    StandardWord findByCommonStandardWordNameAndProjectId(String s, Long projectId);
 }

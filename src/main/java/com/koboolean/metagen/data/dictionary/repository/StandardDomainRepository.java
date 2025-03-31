@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 public interface StandardDomainRepository extends JpaRepository<StandardDomain, Long> {
     Page<StandardDomain> findAllByProjectId(Long projectId, Pageable pageable);
@@ -28,4 +30,6 @@ public interface StandardDomainRepository extends JpaRepository<StandardDomain, 
     Page<StandardDomain> findAllByIdAndProjectId(Long searchQuery, Long projectId, Pageable pageable);
 
     StandardDomain findByIdAndProjectId(Long id, Long projectId);
+
+    List<StandardDomain> findAllByCommonStandardDomainCategoryAndProjectId(String splitDatum, Long projectId);
 }

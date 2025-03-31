@@ -193,4 +193,28 @@ public class DataDictionaryRestController {
         return ResponseEntity.ok(Map.of("result", true));
     }
 
+    @Operation(summary = "단어/도메인 조회", description = "용어 등록을 위한 단어 및 도메인을 조회한다.")
+    @GetMapping(value = "/getStandardTerms/popup/{termNm}")
+    public ResponseEntity<Map<String, Object>> searchStandardTermList(@PathVariable String termNm, @AuthenticationPrincipal AccountDto accountDto) {
+        return ResponseEntity.ok(dataDictionaryService.getStandardTermList(termNm, accountDto));
+    }
+
+    @Operation(summary = "용어 등록", description = "표준용어를 등록한다.")
+    @PostMapping(value = "/insertDataDictionary/standardTerms")
+    public ResponseEntity<Map<String, Boolean>> insertStandardTerms(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardTermDto standardTermDto){
+
+        dataDictionaryService.insertStandardTerms(accountDto, standardTermDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "용어 수정", description = "표준용어를 수정한다.")
+    @PutMapping(value = "/updateDataDictionary/standardTerms")
+    public ResponseEntity<Map<String, Boolean>> updateStandardTerms(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardTermDto standardTermDto){
+
+        dataDictionaryService.updateStandardTerms(accountDto, standardTermDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
 }

@@ -22,11 +22,14 @@ import com.koboolean.metagen.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -110,6 +113,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     }
 
     @Override
+    @Transactional
     public void uploadDictionaryExcelFile(MultipartFile file, AccountDto accountDto) throws IOException {
 
         Long projectId = accountDto.getProjectId();
@@ -155,5 +159,53 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     @Transactional
     public void deleteDataDictionaryStandardWords(List<StandardWordDto> standardWords, AccountDto accountDto) {
         standardWordService.deleteDataDictionaryStandardWords(standardWords, accountDto);
+    }
+
+    @Override
+    public Map<String, Object> getStandardTermList(String termNm, AccountDto accountDto) {
+        Map<String, Object> result = new HashMap<>();
+
+        Long projectId = accountDto.getProjectId();
+
+        List<StandardWordDto> list = new ArrayList<>();
+
+        String[] splitData = termNm.split(" ");
+
+        for (int i = 0; i < splitData.length; i++) {
+            StandardWord standardWord = standardWordService.commonStandardWordName(splitData[i], projectId);
+            if (standardWord != null) {
+                list.add(StandardWordDto.fromEntity(standardWord));
+            }
+
+            if(i == splitData.length - 1) {
+                List<StandardDomain> standardDomains = standardDomainService.getStandardDomains(splitData[i], projectId);
+                result.put("standardDomains", standardDomains);
+            }
+        }
+
+        result.put("list", list);
+
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public void insertStandardTerms(AccountDto accountDto, StandardTermDto standardTermDto) {
+        String domainName = standardTermDto.getCommonStandardTermAbbreviation();
+
+        // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
+        boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
+
+        standardTermService.saveStandardTerms(accountDto.getProjectId(), isApprovalAvailable, standardTermDto, domainName.split("_"));
+    }
+
+    @Override
+    public void updateStandardTerms(AccountDto accountDto, StandardTermDto standardTermDto) {
+        String domainName = standardTermDto.getCommonStandardTermAbbreviation();
+
+        // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
+        boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
+
+        standardTermService.updateStandardTerms(accountDto.getProjectId(), isApprovalAvailable, standardTermDto, domainName.split("_"));
     }
 }

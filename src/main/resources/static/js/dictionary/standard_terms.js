@@ -124,6 +124,8 @@ $("#grd-delete-standardTerms").on("click", () => {
  * 표준용어를 등록한다.
  */
 function addStandardTerms(){
+    const tableId = "standardTerms";
+
     const columnList = window.tableInstances["standardTerms"]
         .settings()
         .init()
@@ -143,13 +145,20 @@ function addStandardTerms(){
     dialogTitle.text("표준용어 추가");
     dialogContent.empty(); // 초기화
 
-    const form = $("<form></form>").attr("id", "add-domain-form");
+    const form = $("<form></form>").attr("id", `edit-${tableId}`);
+
+    const inputType = $("<input>").attr("id", "type")
+        .attr("name", "type")
+        .attr("type", "hidden")
+        .attr("value", "C");
+
+    form.append(inputType);
 
     columnList.forEach(col => {
         const key = col.column;
         const labelText = col.columnName || key;
 
-        if (key === "commonStandardTermAbbreviation") {
+        if (key === "commonStandardTermName") {
             const label = $("<label></label>")
                 .attr("for", key)
                 .text(labelText)
@@ -192,7 +201,7 @@ function addStandardTerms(){
                 });
 
             wrapper.append(input, searchBtn);
-            form.append(label, wrapper); // ✅ label 따로, wrapper 따로 append
+            form.append(label, wrapper); // label 따로, wrapper 따로 append
         }else{
 
             const label = $("<label></label>")
@@ -209,6 +218,17 @@ function addStandardTerms(){
                     .attr("name", key)
                     .css("width", "100%")
                     .css("height", "60px");
+            }else if(key === "revisionNumber"){
+                input = $("<input>")
+                    .attr("type", "number")
+                    .attr("id", key)
+                    .attr("name", key)
+                    .css("width", "100%")
+                    .on("keydown", function(event){
+                        if (event.key === "e" || event.key === "E" || event.key === "+" || event.key === "-") {
+                            event.preventDefault();
+                        }
+                    });
             } else {
                 input = $("<input>")
                     .attr("type", "text")
@@ -218,7 +238,7 @@ function addStandardTerms(){
             }
 
             // id, projectId는 제외하거나 readonly
-            if (key === "id" || key === "projectId" || key === "commonStandardDomainName" || key === "allowedValues" || key === "storageFormat" || key === "displayFormat") {
+            if (key === "id" || key === "projectId" || key === "commonStandardDomainName" || key === "allowedValues" || key === "storageFormat" || key === "displayFormat" || key === "synonyms" || key === "commonStandardTermName" || key === "commonStandardTermAbbreviation") {
                 input.prop("readonly", true).css({
                         flex: "1",
                         backgroundColor: "#f0f0f0",
@@ -234,10 +254,13 @@ function addStandardTerms(){
     });
 
     const saveBtn = $("<button></button>")
-        .attr("type", "submit")
+        .attr("type", "button")
         .text("추가")
+        .attr("id", "approvalSubmit")
+        .attr("name", "approvalSubmit")
         .addClass("btn btn-primary")
-        .css("margin-top", "20px");
+        .css("margin-top", "20px")
+        .on("click", approvalSubmitClick);
 
     form.append(saveBtn);
     dialogContent.append(form);
@@ -257,6 +280,13 @@ export function selectRow(rowData, columnList, isManager, tableId) {
     const dialogContent = $("<div></div>");
     const form = $("<form></form>").attr("id", `edit-${tableId}`);
 
+    const inputType = $("<input>").attr("id", "type")
+        .attr("name", "type")
+        .attr("type", "hidden")
+        .attr("value", "U");
+
+    form.append(inputType);
+
     // key와 columnName을 매핑할 Map 생성
     const columnMap = new Map();
     columnList.forEach(col => {
@@ -266,7 +296,7 @@ export function selectRow(rowData, columnList, isManager, tableId) {
     for (const [key, value] of Object.entries(rowData)) {
         const labelText = columnMap.get(key) || key; // 매칭되는 columnName 없으면 key 그대로 사용
 
-        if (key === "commonStandardTermAbbreviation") {
+        if (key === "commonStandardTermName") {
             const label = $("<label></label>")
                 .attr("for", key)
                 .text(labelText)
@@ -297,6 +327,7 @@ export function selectRow(rowData, columnList, isManager, tableId) {
                     border: "1px solid #ccc",
                     borderRadius: "4px"
                 });
+/*
 
             const searchBtn = $("<button></button>")
                 .attr("type", "button")
@@ -308,9 +339,10 @@ export function selectRow(rowData, columnList, isManager, tableId) {
                 .on("click", function () {
                     openDomainSearchPopup();
                 });
+*/
 
-            wrapper.append(input, searchBtn);
-            form.append(label, wrapper); // ✅ label 따로, wrapper 따로 append
+            wrapper.append(input);
+            form.append(label, wrapper); // label 따로, wrapper 따로 append
         }else{
 
             const label = $("<label></label>")
@@ -330,6 +362,18 @@ export function selectRow(rowData, columnList, isManager, tableId) {
                     .css("height", "60px");
             }else if (key === "isApprovalYn") {
                 continue;
+            }else if(key === "revisionNumber"){
+                input = $("<input>")
+                    .attr("type", "number")
+                    .attr("id", key)
+                    .attr("name", key)
+                    .val(value)
+                    .css("width", "100%")
+                    .on("keydown", function(event){
+                        if (event.key === "e" || event.key === "E" || event.key === "+" || event.key === "-") {
+                            event.preventDefault();
+                        }
+                    });
             } else {
                 input = $("<input>")
                     .attr("type", "text")
@@ -340,7 +384,7 @@ export function selectRow(rowData, columnList, isManager, tableId) {
             }
 
             // 수정 불가 필드 처리
-            if (key === "id" || key === "projectId") {
+            if (key === "id" || key === "projectId" || key === "commonStandardDomainName" || key === "allowedValues" || key === "storageFormat" || key === "displayFormat" || key === "synonyms" || key === "commonStandardTermName" || key === "commonStandardTermAbbreviation") {
                 input.prop("readonly", true);
                 input.css("background-color", "#f0f0f0");
             }
@@ -350,10 +394,13 @@ export function selectRow(rowData, columnList, isManager, tableId) {
 
     if(isManager || rowData['isApprovalYn'] === 'N'){
         const saveBtn = $("<button></button>")
-            .attr("type", "submit")
+            .attr("type", "button")
             .text("저장")
+            .attr("id", "approvalSubmit")
+            .attr("name", "approvalSubmit")
             .addClass("btn btn-primary")
-            .css("margin-top", "20px");
+            .css("margin-top", "20px")
+            .on("click", approvalSubmitClick);
 
         form.append(saveBtn);
     }else{
@@ -378,11 +425,8 @@ window.gridCallbacks["standardTerms_selectRow"] = selectRow;
  * 용어 검색 팝업을 호출한다.
  */
 function openDomainSearchPopup(){
+
     const value = $("#commonStandardTermName").val();
-    if(value === undefined || value === ""){
-        window.openAlert("표준용어명 입력 후 검색이 가능합니다.");
-        return;
-    }
 
     const popup = window.open(
         "/popup/standardTermSearch",  // 팝업으로 띄울 URL
@@ -391,4 +435,95 @@ function openDomainSearchPopup(){
     );
 
     popup.name = JSON.stringify({ "standardTermName" : value });
+}
+
+function receiveTermAbbreviation(data){
+    $("#commonStandardTermAbbreviation").val(data.abbreviation);
+    $("#commonStandardDomainName").val(data.domainName);
+    $("#allowedValues").val(data.allowedValues);
+    $("#storageFormat").val(data.storageFormat);
+    $("#displayFormat").val(data.displayFormat);
+    $("#synonyms").val(data.synonyms);
+    $("#commonStandardTermName").val(data.termWordText);
+}
+
+window.popupFunction = window.popupFunction || {}; // 혹시 없을 경우 방지
+window.popupFunction['receiveTermAbbreviation'] = receiveTermAbbreviation;
+
+
+/**
+ * 저장/추가버튼을 눌려 저장을 수행한다.
+ * @param e
+ */
+function approvalSubmitClick(e){
+    e.preventDefault();
+
+    const requiredFields = [
+        "commonStandardDomainName",
+        "allowedValues",
+        "storageFormat",
+        "displayFormat",
+        "synonyms",
+        "commonStandardTermName",
+        "commonStandardTermDescription"
+    ];
+
+    const form = $(e.target).closest("form");
+    const inputs = form.find("input, textarea");
+
+    const formData = {};
+    let isValid = true;
+
+    let type = "C";
+
+    inputs.each(function () {
+        const $input = $(this);
+        const name = $input.attr("name");
+        const value = $input.val();
+
+        // 값 저장
+        if(name !== "type"){
+            formData[name] = value;
+        }else{
+            type = value;
+        }
+
+        // 필수값 체크
+        if (requiredFields.includes(name)) {
+            if (!value || value.trim() === "") {
+                const labelText = form.find(`label[for='${name}']`).text() || name;
+                alert(`필수값 누락: ${labelText}`);
+                $input.focus();
+                isValid = false;
+                return false; // .each 중단
+            }
+        }
+    });
+
+    if (!isValid) return;
+
+    console.log(type + " : ");
+    console.log(formData);
+
+    const url = "/api/" + (type === "C" ? "insertDataDictionary/standardTerms" : "updateDataDictionary/standardTerms");
+    const ajaxType = type === "C" ? "POST" : "PUT"
+
+    $.ajax({
+        url: url,
+        type : ajaxType,
+        data : JSON.stringify(formData),
+        success : (response) => {
+
+            const tableId = "standardTerms";
+
+            if(response.result){
+                window.openAlert(`정상적으로 ${type === "C" ? "등록" : "수정"}되었습니다.`, () => {
+                    window.closeDialog("div");
+                    window.searchGrid(tableId);
+                });
+            }
+        }
+    })
+
+
 }

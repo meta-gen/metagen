@@ -33,8 +33,13 @@ export function setupAjaxCsrf() {
             complete: function () {
                 // AJAX 요청이 완료되면 로딩 바 숨김
                 $("#loading-bar").hide();
+            },
+            error: function (xhr) {
+                const errorMessage = xhr.responseJSON?.message;
+                alert(errorMessage);
             }
         });
+
     } else {
         console.warn("CSRF 토큰이 쿠키에서 발견되지 않았습니다.");
     }

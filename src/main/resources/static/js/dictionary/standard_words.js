@@ -177,7 +177,18 @@ function addStandardWords(){
                     .attr("value", opt.value)
                     .text(opt.text));
             });
-        } else {
+        }else if(key === "revisionNumber"){
+            input = $("<input>")
+                .attr("type", "number")
+                .attr("id", key)
+                .attr("name", key)
+                .css("width", "100%")
+                .on("keydown", function(event){
+                    if (event.key === "e" || event.key === "E" || event.key === "+" || event.key === "-") {
+                        event.preventDefault();
+                    }
+                });
+        }else {
             input = $("<input>")
                 .attr("type", "text")
                 .attr("id", key)
@@ -264,7 +275,19 @@ export function selectRow(rowData, columnList, isManager, tableId) {
                 input.append(optionEl);
             });
 
-        } else {
+        }else if(key === "revisionNumber"){
+            input = $("<input>")
+                .attr("type", "number")
+                .attr("id", key)
+                .attr("name", key)
+                .val(value)
+                .css("width", "100%")
+                .on("keydown", function(event){
+                    if (event.key === "e" || event.key === "E" || event.key === "+" || event.key === "-") {
+                        event.preventDefault();
+                    }
+                });
+        }else {
             input = $("<input>")
                 .attr("type", "text")
                 .attr("id", key)
