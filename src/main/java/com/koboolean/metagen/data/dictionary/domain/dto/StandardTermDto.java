@@ -1,4 +1,5 @@
 package com.koboolean.metagen.data.dictionary.domain.dto;
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardDomain;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTermWordMapping;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
@@ -37,6 +38,8 @@ public class StandardTermDto {
                 .map(mapping -> mapping.getStandardWord().getCommonStandardWordAbbreviation())
                 .collect(Collectors.joining("_"));
 
+        StandardDomain domain = entity.getStandardDomain();
+
         return StandardTermDto.builder()
                 .id(entity.getId())
                 .projectId(entity.getProjectId())
@@ -44,10 +47,10 @@ public class StandardTermDto {
                 .commonStandardTermName(entity.getCommonStandardTermName())
                 .commonStandardTermDescription(entity.getCommonStandardTermDescription())
                 .commonStandardTermAbbreviation(abbreviation)
-                .commonStandardDomainName(entity.getCommonStandardDomainName())
-                .allowedValues(entity.getAllowedValues())
-                .storageFormat(entity.getStorageFormat())
-                .displayFormat(entity.getDisplayFormat())
+                .commonStandardDomainName(domain != null ? domain.getCommonStandardDomainName() : null)
+                .allowedValues(domain != null ? domain.getAllowedValues() : null)
+                .storageFormat(domain != null ? domain.getStorageFormat() : null)
+                .displayFormat(domain != null ? domain.getDisplayFormat() : null)
                 .administrativeStandardCodeName(entity.getAdministrativeStandardCodeName())
                 .responsibleOrganization(entity.getResponsibleOrganization())
                 .synonyms(convertListToString(entity.getSynonymList()))

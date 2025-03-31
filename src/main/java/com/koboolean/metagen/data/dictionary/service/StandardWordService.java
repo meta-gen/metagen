@@ -4,6 +4,8 @@ import com.koboolean.metagen.data.dictionary.domain.dto.StandardWordDto;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
 import com.koboolean.metagen.data.dictionary.repository.StandardWordRepository;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.security.exception.CustomException;
+import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -76,9 +78,18 @@ public class StandardWordService {
     @Transactional
     public void deleteDataDictionaryStandardWords(List<StandardWordDto> standardWords, AccountDto accountDto) {
         standardWords.forEach(standardDomain -> {
-            StandardWord byIdAndProjectId = standardWordRepository.findByIdAndProjectId(standardDomain.getId(), accountDto.getProjectId());
-            if(byIdAndProjectId != null && !byIdAndProjectId.getIsApproval()){
-                standardWordRepository.deleteById(standardDomain.getId());
+            StandardWord word = standardWordRepository.findByIdAndProjectId(standardDomain.getId(), accountDto.getProjectId());
+
+            if (word != null) {
+                if (word.getIsApproval()) {
+                    throw new CustomException(ErrorCode.APPROVED_DATA_CANNOT_BE_DELETED, word.getCommonStandardWordName());
+                }
+
+                if (word.getTermWordMappings() != null && !word.getTermWordMappings().isEmpty()) {
+                    throw new CustomException(ErrorCode.RELATION_EXISTS, word.getCommonStandardWordName());
+                }
+
+                standardWordRepository.deleteById(word.getId());
             }
         });
     }
