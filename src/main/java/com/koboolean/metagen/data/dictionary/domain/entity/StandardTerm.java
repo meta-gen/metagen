@@ -34,15 +34,6 @@ public class StandardTerm {
 
     private String commonStandardTermAbbreviation;
 
-    //private String commonStandardDomainName; // 표준도메인명
-
-    //@Column(length = 2000)
-    //private String allowedValues; // 허용값
-
-    //private String storageFormat; // 저장 형식
-
-    //private String displayFormat; // 표현 형식
-
     private String administrativeStandardCodeName; // 행정표준코드명
 
     private String responsibleOrganization; // 소관기관명

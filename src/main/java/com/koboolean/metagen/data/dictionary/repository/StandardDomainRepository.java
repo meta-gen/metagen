@@ -35,4 +35,6 @@ public interface StandardDomainRepository extends JpaRepository<StandardDomain, 
     List<StandardDomain> findAllByCommonStandardDomainCategoryAndProjectId(String splitDatum, Long projectId);
 
     StandardDomain findByCommonStandardDomainNameAndProjectId(String domainName, Long projectId);
+
+    List<StandardDomain> findAllByCommonStandardDomainCategoryAndCommonStandardDomainCategoryAndProjectId(String commonStandardDomainCategory, String commonStandardDomainCategory1, Long projectId);
 }
