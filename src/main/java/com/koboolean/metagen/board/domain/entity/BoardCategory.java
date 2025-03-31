@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.koboolean.metagen.home.jpa.BaseEntity;
 
+import groovy.transform.builder.Builder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -14,6 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Entity
+@Builder
 @Getter
 @AllArgsConstructor
 public class BoardCategory extends BaseEntity implements Serializable {

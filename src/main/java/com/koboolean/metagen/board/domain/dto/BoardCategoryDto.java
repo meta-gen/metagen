@@ -1,7 +1,9 @@
 package com.koboolean.metagen.board.domain.dto;
 
-import groovy.transform.builder.Builder;
+import com.koboolean.metagen.board.domain.entity.BoardCategory;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -18,8 +20,20 @@ public class BoardCategoryDto {
     private String categoryName;
 
     /* 순번 */
-    private String orderNumber;
+    private int orderNumber;
 
     /* 사용 여부 */
-    private String useYn;
+    private char useYn;
+
+    /* 빌더 호출 */
+    public static BoardCategoryDto fromEntity(BoardCategory entity) {
+
+        return BoardCategoryDto.builder()
+                               .categoryId  (entity.getCategoryId()  )
+                               .categoryName(entity.getCategoryName())
+                               .orderNumber (entity.getOrderNumber() )
+                               .useYn       (entity.getUseYn()       )
+                               .build()
+        ;
+    }
 }
