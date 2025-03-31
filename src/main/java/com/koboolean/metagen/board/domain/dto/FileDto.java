@@ -1,9 +1,6 @@
 package com.koboolean.metagen.board.domain.dto;
 
 import groovy.transform.builder.Builder;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.Accessors;

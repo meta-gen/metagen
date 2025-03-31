@@ -29,8 +29,12 @@ public class NoticeServiceImpl implements NoticeService {
     @Override
     public List<ColumnDto> getNoticeListColumn() {
 
-        return List.of(new ColumnDto("게시글 번호", "id"        , ColumnType.NUMBER)
-                     , new ColumnDto("게시글 제목", "title"     , ColumnType.STRING)
+        return List.of(new ColumnDto("게시글 번호", "id", ColumnType.NUMBER)
+                     , new ColumnDto("카테고리 명", "title", ColumnType.STRING)
+                     , new ColumnDto("게시글 제목", "categoryName", ColumnType.STRING)
+                     , new ColumnDto("작성자", "username", ColumnType.STRING)
+                     , new ColumnDto("작성일", "created", ColumnType.STRING)
+                     , new ColumnDto("조회수", "hitCount", ColumnType.NUMBER)
                     );
     }
 
