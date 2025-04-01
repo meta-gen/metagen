@@ -1,9 +1,12 @@
 package com.koboolean.metagen.data.dictionary.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.koboolean.metagen.data.dictionary.domain.dto.StandardWordDto;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Getter
@@ -33,7 +36,7 @@ public class StandardWord {
     @Column(length = 1000)
     private String commonStandardWordDescription; // 표준단어 설명
 
-    private boolean isFormatWord; // 형식단어 여부 (true/false)
+    private Boolean isFormatWord; // 형식단어 여부 (true/false)
 
     private String commonStandardDomainCategory; // 표준도메인분류명
 
@@ -47,4 +50,33 @@ public class StandardWord {
 
     @OneToMany(mappedBy = "standardWord", cascade = CascadeType.ALL)
     private List<StandardTermWordMapping> termWordMappings;
+
+    public static StandardWord fromEntity(StandardWordDto standardWordDto) {
+
+        List<String> synonyms = new ArrayList<>();
+
+        if(!standardWordDto.getSynonyms().isEmpty()){
+            synonyms.addAll(Arrays.asList(standardWordDto.getSynonyms().split(",")));
+        }
+
+        List<String> restrictedWords = new ArrayList<>();
+        if(!standardWordDto.getRestrictedWords().isEmpty()){
+            restrictedWords.addAll(Arrays.asList(standardWordDto.getRestrictedWords().split(",")));
+        }
+
+
+        return StandardWord.builder()
+                .projectId(standardWordDto.getProjectId())
+                .revisionNumber(standardWordDto.getRevisionNumber())
+                .commonStandardWordName(standardWordDto.getCommonStandardWordName())
+                .commonStandardWordAbbreviation(standardWordDto.getCommonStandardWordAbbreviation())
+                .commonStandardWordEnglishName(standardWordDto.getCommonStandardWordEnglishName())
+                .commonStandardWordDescription(standardWordDto.getCommonStandardWordDescription())
+                .isFormatWord(standardWordDto.getIsFormatWord().equals("Y"))
+                .commonStandardDomainCategory(standardWordDto.getCommonStandardDomainCategory())
+                .synonymList(synonyms)
+                .restrictedWords(restrictedWords)
+                .isApproval(standardWordDto.getIsApprovalYn().equals("Y"))
+                .build();
+    }
 }

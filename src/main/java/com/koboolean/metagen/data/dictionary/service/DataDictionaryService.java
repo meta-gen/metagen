@@ -40,4 +40,10 @@ public interface DataDictionaryService {
 
     void insertStandardTerms(AccountDto accountDto, StandardTermDto standardTermDto);
     void updateStandardTerms(AccountDto accountDto, StandardTermDto standardTermDto);
+
+    void insertStandardDomain(AccountDto accountDto, StandardDomainDto standardDomainDto);
+    void updateStandardDomain(AccountDto accountDto, StandardDomainDto standardDomainDto);
+
+    void updateStandardWords(AccountDto accountDto, StandardWordDto standardWordDto);
+    void insertStandardWord(AccountDto accountDto, StandardWordDto standardWordDto);
 }

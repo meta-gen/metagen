@@ -273,10 +273,6 @@ function addStandardTerms(){
  */
 export function selectRow(rowData, columnList, isManager, tableId) {
 
-    console.log(rowData);
-    console.log(columnList);
-
-
     const dialogContent = $("<div></div>");
     const form = $("<form></form>").attr("id", `edit-${tableId}`);
 
@@ -458,6 +454,8 @@ window.popupFunction['receiveTermAbbreviation'] = receiveTermAbbreviation;
 function approvalSubmitClick(e){
     e.preventDefault();
 
+    const tableId = "standardTerms";
+
     const requiredFields = [
         "commonStandardDomainName",
         "allowedValues",
@@ -502,10 +500,7 @@ function approvalSubmitClick(e){
 
     if (!isValid) return;
 
-    console.log(type + " : ");
-    console.log(formData);
-
-    const url = "/api/" + (type === "C" ? "insertDataDictionary/standardTerms" : "updateDataDictionary/standardTerms");
+    const url = "/api/" + (type === "C" ? `insertDataDictionary/${tableId}` : `updateDataDictionary/${tableId}`);
     const ajaxType = type === "C" ? "POST" : "PUT"
 
     $.ajax({
@@ -513,8 +508,6 @@ function approvalSubmitClick(e){
         type : ajaxType,
         data : JSON.stringify(formData),
         success : (response) => {
-
-            const tableId = "standardTerms";
 
             if(response.result){
                 window.openAlert(`정상적으로 ${type === "C" ? "등록" : "수정"}되었습니다.`, () => {

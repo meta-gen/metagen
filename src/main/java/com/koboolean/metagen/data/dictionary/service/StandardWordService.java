@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -134,5 +136,28 @@ public class StandardWordService {
 
     public StandardWord commonStandardWordName(String s, Long projectId) {
         return standardWordRepository.findByCommonStandardWordNameAndProjectId(s, projectId);
+    }
+
+    @Transactional
+    public void insertStandardWords(StandardWord standardWord) {
+        standardWordRepository.save(standardWord);
+    }
+
+    @Transactional
+    public void updateStandardWords(StandardWordDto standardWordDto) {
+
+        List<String> restrictedWordList = new ArrayList<>();
+        String restrictedWords = standardWordDto.getRestrictedWords();
+
+        if(!restrictedWords.isEmpty()) {
+            restrictedWordList.addAll(Arrays.asList(restrictedWords.split(",")));
+        }
+
+        StandardWord standardWord = standardWordRepository.findByIdAndProjectId(standardWordDto.getId(), standardWordDto.getProjectId());
+
+        standardWord.setRevisionNumber(standardWordDto.getRevisionNumber());
+        standardWord.setCommonStandardWordDescription(standardWordDto.getCommonStandardWordDescription());
+        standardWord.setIsFormatWord(standardWordDto.getIsFormatWord().equals("Y"));
+        standardWord.setRestrictedWords(restrictedWordList);
     }
 }

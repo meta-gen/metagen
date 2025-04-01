@@ -143,6 +143,13 @@ function addStandardWords(){
 
     const form = $("<form></form>").attr("id", "add-domain-form");
 
+    const inputType = $("<input>").attr("id", "type")
+        .attr("name", "type")
+        .attr("type", "hidden")
+        .attr("value", "C");
+
+    form.append(inputType);
+
     columnList.forEach(col => {
         const key = col.column;
         const labelText = col.columnName || key;
@@ -165,7 +172,8 @@ function addStandardWords(){
             input = $("<select></select>")
                 .attr("id", key)
                 .attr("name", key)
-                .css("width", "100%");
+                .css("width", "100%")
+                .css("height", "30px");
 
             const options = [
                 { value: "Y", text: "TRUE" },
@@ -208,7 +216,8 @@ function addStandardWords(){
         .attr("type", "submit")
         .text("추가")
         .addClass("btn btn-primary")
-        .css("margin-top", "20px");
+        .css("margin-top", "20px")
+        .on("click", saveStandardWords);
 
     form.append(saveBtn);
     dialogContent.append(form);
@@ -220,10 +229,6 @@ function addStandardWords(){
  * 그리드 선택 callback Function
  */
 export function selectRow(rowData, columnList, isManager, tableId) {
-
-    console.log(rowData);
-    console.log(columnList);
-
     const dialog = $("#mainConfirm")[0];
     const dialogTitle = $("#mainDialogTitle");
     const dialogContent = $("#mainDialogContent");
@@ -238,6 +243,13 @@ export function selectRow(rowData, columnList, isManager, tableId) {
     });
 
     const form = $("<form></form>").attr("id", `edit-${tableId}`);
+
+    const inputType = $("<input>").attr("id", "type")
+        .attr("name", "type")
+        .attr("type", "hidden")
+        .attr("value", "U");
+
+    form.append(inputType);
 
     for (const [key, value] of Object.entries(rowData)) {
         const labelText = columnMap.get(key) || key;
@@ -256,7 +268,8 @@ export function selectRow(rowData, columnList, isManager, tableId) {
             input = $("<select></select>")
                 .attr("id", key)
                 .attr("name", key)
-                .css("width", "100%");
+                .css("width", "100%")
+                .css("height", "30px");
 
             const options = [
                 { value: "Y", text: "TRUE" },
@@ -296,7 +309,7 @@ export function selectRow(rowData, columnList, isManager, tableId) {
                 .css("width", "100%");
         }
 
-        if (key === "id" || key === "projectId") {
+        if (key === "id" || key === "projectId" || key === "commonStandardWordName" || key === "commonStandardWordAbbreviation" || key === "commonStandardWordEnglishName" || key === "commonStandardDomainCategory" || key === "synonyms") {
             input.prop("readonly", true);
             input.css("background-color", "#f0f0f0");
         }
@@ -310,7 +323,8 @@ export function selectRow(rowData, columnList, isManager, tableId) {
             .attr("type", "submit")
             .text("저장")
             .addClass("btn btn-primary")
-            .css("margin-top", "20px");
+            .css("margin-top", "20px")
+            .on("click", saveStandardWords);
 
         form.append(saveBtn);
     }else{
@@ -326,3 +340,68 @@ export function selectRow(rowData, columnList, isManager, tableId) {
 }
 
 window.gridCallbacks["standardWords_selectRow"] = selectRow;
+
+function saveStandardWords(e){
+    e.preventDefault();
+
+    const tableId = "standardWords";
+
+    const form = $(e.target).closest("form");
+    const inputs = form.find("input, textarea, select");
+
+    const formData = {};
+    let isValid = true;
+
+    let type = "C";
+
+    const requiredFields = [
+        "commonStandardDomainCategory", "synonyms", "restrictedWords", "revisionNumber"
+    ]
+
+    inputs.each(function () {
+        const $input = $(this);
+        const name = $input.attr("name");
+        const value = $input.val();
+
+        // 값 저장
+        if(name !== "type"){
+            formData[name] = value;
+        }else{
+            type = value;
+        }
+
+        // 필수값 체크
+        if (!requiredFields.includes(name)) {
+            if (!value || value.trim() === "") {
+                const labelText = form.find(`label[for='${name}']`).text() || name;
+                alert(`필수값 누락: ${labelText}`);
+                $input.focus();
+                isValid = false;
+                return false; // .each 중단
+            }
+        }
+    });
+
+    if (!isValid) return;
+
+    console.log(formData);
+
+    const url = "/api/" + (type === "C" ? `insertDataDictionary/${tableId}` : `updateDataDictionary/${tableId}`);
+    const ajaxType = type === "C" ? "POST" : "PUT"
+
+
+    $.ajax({
+        url: url,
+        type : ajaxType,
+        data : JSON.stringify(formData),
+        success : (response) => {
+
+            if(response.result){
+                window.openAlert(`정상적으로 ${type === "C" ? "등록" : "수정"}되었습니다.`, () => {
+                    window.closeDialog("div");
+                    window.searchGrid(tableId);
+                });
+            }
+        }
+    })
+}

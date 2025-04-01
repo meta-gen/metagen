@@ -1,5 +1,7 @@
 package com.koboolean.metagen.data.dictionary.domain.entity;
 
+import com.koboolean.metagen.data.dictionary.domain.dto.StandardDomainDto;
+import com.koboolean.metagen.security.domain.dto.AccountDto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -52,4 +54,23 @@ public class StandardDomain {
 
     @OneToMany(mappedBy = "standardDomain")
     private List<StandardTerm> standardTerms;
+
+    public static StandardDomain fromEntity(StandardDomainDto standardDomainDto) {
+        return StandardDomain.builder()
+                .projectId(standardDomainDto.getProjectId())
+                .revisionNumber(standardDomainDto.getRevisionNumber())
+                .commonStandardDomainGroupName(standardDomainDto.getCommonStandardDomainGroupName())
+                .commonStandardDomainCategory(standardDomainDto.getCommonStandardDomainCategory())
+                .commonStandardDomainName(standardDomainDto.getCommonStandardDomainName())
+                .commonStandardDomainDescription(standardDomainDto.getCommonStandardDomainDescription())
+                .dataType(standardDomainDto.getDataType())
+                .dataLength(standardDomainDto.getDataLength())
+                .dataDecimalLength(standardDomainDto.getDataDecimalLength())
+                .storageFormat(standardDomainDto.getStorageFormat())
+                .displayFormat(standardDomainDto.getDisplayFormat())
+                .unit(standardDomainDto.getUnit())
+                .allowedValues(standardDomainDto.getAllowedValues())
+                .isApproval(standardDomainDto.getIsApprovalYn().equals("Y"))
+                .build();
+    }
 }

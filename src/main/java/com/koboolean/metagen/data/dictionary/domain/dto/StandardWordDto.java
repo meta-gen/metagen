@@ -34,7 +34,7 @@ public class StandardWordDto {
                 .commonStandardWordAbbreviation(entity.getCommonStandardWordAbbreviation())
                 .commonStandardWordEnglishName(entity.getCommonStandardWordEnglishName())
                 .commonStandardWordDescription(entity.getCommonStandardWordDescription())
-                .isFormatWord(entity.isFormatWord() ? "Y" : "N")
+                .isFormatWord(entity.getIsFormatWord() ? "Y" : "N")
                 .commonStandardDomainCategory(entity.getCommonStandardDomainCategory())
                 .synonyms(convertListToString(entity.getSynonymList()))
                 .restrictedWords(convertListToString(entity.getRestrictedWords()))
