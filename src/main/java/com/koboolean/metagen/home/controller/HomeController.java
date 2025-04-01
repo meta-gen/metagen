@@ -43,12 +43,12 @@ public class HomeController {
 
     @GetMapping("/systemLog")
     public String systemLog() {
-        return "pages/system_log";
+        return "pages/system/system_log";
     }
 
     @GetMapping("/dataDictionary")
     public String dataDictionary() {
-        return "pages/data_dictionary";
+        return "pages/data/data_dictionary";
     }
 
     @GetMapping("/accessControl")
@@ -59,5 +59,10 @@ public class HomeController {
     @GetMapping("/help")
     public String help() {
         return "pages/help";
+    }
+
+    @GetMapping("/projectManage")
+    public String projectManage() {
+        return "pages/system/project_manage";
     }
 }
