@@ -142,7 +142,24 @@ function addStandardDomains(){
     dialogTitle.text("표준도메인 추가");
     dialogContent.empty(); // 초기화
 
+    const dbDataTypes = [
+        "VARCHAR", "CHAR", "TEXT", "CLOB",
+        "INT", "INTEGER", "BIGINT", "SMALLINT",
+        "FLOAT", "DOUBLE", "DECIMAL", "NUMERIC",
+        "DATE", "DATETIME", "TIMESTAMP", "TIME",
+        "BOOLEAN", "BIT",
+        "BLOB", "BINARY", "VARBINARY", "LONGBLOB", "MEDIUMBLOB",
+        "JSON", "ENUM", "SET"
+    ];
+
     const form = $("<form></form>").attr("id", "add-domain-form");
+
+    const inputType = $("<input>").attr("id", "type")
+        .attr("name", "type")
+        .attr("type", "hidden")
+        .attr("value", "C");
+
+    form.append(inputType);
 
     columnList.forEach(col => {
         const key = col.column;
@@ -162,7 +179,7 @@ function addStandardDomains(){
                 .attr("name", key)
                 .css("width", "100%")
                 .css("height", "60px");
-        }else if(key === "revisionNumber"){
+        }else if(key === "revisionNumber" || key === "dataLength" || key === "dataDecimalLength"){
             input = $("<input>")
                 .attr("type", "number")
                 .attr("id", key)
@@ -173,6 +190,21 @@ function addStandardDomains(){
                         event.preventDefault();
                     }
                 });
+        }else if (key === "dataType") {
+            input = $("<select></select>")
+
+                .attr("id", key)
+                .attr("name", key)
+                .css("width", "100%")
+                .css("height", "30px");
+
+            dbDataTypes.forEach(type => {
+                const option = $("<option></option>")
+                    .attr("value", type)
+                    .text(type);
+
+                input.append(option);
+            });
         }else {
             input = $("<input>")
                 .attr("type", "text")
@@ -190,10 +222,11 @@ function addStandardDomains(){
     });
 
     const saveBtn = $("<button></button>")
-        .attr("type", "submit")
+        .attr("type", "button")
         .text("추가")
         .addClass("btn btn-primary")
-        .css("margin-top", "20px");
+        .css("margin-top", "20px")
+        .on("click", saveStandardDomain);
 
     form.append(saveBtn);
     dialogContent.append(form);
@@ -206,7 +239,25 @@ function addStandardDomains(){
  */
 export function selectRow(rowData, columnList, isManager, tableId){
     const dialogContent = $("<div></div>");
+
+    const dbDataTypes = [
+        "VARCHAR", "CHAR", "TEXT", "CLOB",
+        "INT", "INTEGER", "BIGINT", "SMALLINT",
+        "FLOAT", "DOUBLE", "DECIMAL", "NUMERIC",
+        "DATE", "DATETIME", "TIMESTAMP", "TIME",
+        "BOOLEAN", "BIT",
+        "BLOB", "BINARY", "VARBINARY", "LONGBLOB", "MEDIUMBLOB",
+        "JSON", "ENUM", "SET"
+    ];
+
     const form = $("<form></form>").attr("id", `edit-${tableId}`);
+
+    const inputType = $("<input>").attr("id", "type")
+        .attr("name", "type")
+        .attr("type", "hidden")
+        .attr("value", "U");
+
+    form.append(inputType);
 
     // key와 columnName을 매핑할 Map 생성
     const columnMap = new Map();
@@ -229,7 +280,7 @@ export function selectRow(rowData, columnList, isManager, tableId){
 
         if (key === "isApprovalYn") {
             continue;
-        }else if(key === "revisionNumber"){
+        }else if(key === "revisionNumber" || key === "dataLength" || key === "dataDecimalLength"){
             input = $("<input>")
                 .attr("type", "number")
                 .attr("id", key)
@@ -241,6 +292,22 @@ export function selectRow(rowData, columnList, isManager, tableId){
                         event.preventDefault();
                     }
                 });
+        }else if (key === "dataType") {
+            input = $("<select></select>")
+                .attr("id", key)
+                .attr("name", key)
+                .css("width", "100%")
+                .css("height", "30px");
+
+            dbDataTypes.forEach(type => {
+                const option = $("<option></option>")
+                    .attr("value", type)
+                    .text(type);
+                if (value === type) {
+                    option.prop("selected", true);
+                }
+                input.append(option);
+            });
         }else {
             input = $("<input>")
                 .attr("type", "text")
@@ -263,10 +330,11 @@ export function selectRow(rowData, columnList, isManager, tableId){
     // 저장 버튼 추가
     if(isManager || rowData['isApprovalYn'] === 'N'){
         const saveBtn = $("<button></button>")
-            .attr("type", "submit")
+            .attr("type", "button")
             .text("저장")
             .addClass("btn btn-primary")
-            .css("margin-top", "20px");
+            .css("margin-top", "20px")
+            .on("click", saveStandardDomain);
 
         form.append(saveBtn);
     }else{
@@ -285,3 +353,68 @@ export function selectRow(rowData, columnList, isManager, tableId){
 }
 
 window.gridCallbacks["standardDomains_selectRow"] = selectRow;
+
+function saveStandardDomain(e){
+    e.preventDefault();
+
+    const tableId = "standardDomains";
+
+    const form = $(e.target).closest("form");
+    const inputs = form.find("input, textarea, select");
+
+    const formData = {};
+    let isValid = true;
+
+    let type = "C";
+
+    const requiredFields = [
+        "allowedValues", "revisionNumber"
+    ]
+
+    inputs.each(function () {
+        const $input = $(this);
+        const name = $input.attr("name");
+        const value = $input.val();
+
+        // 값 저장
+        if(name !== "type"){
+            formData[name] = value;
+        }else{
+            type = value;
+        }
+
+        // 필수값 체크
+        if (!requiredFields.includes(name)) {
+            if (!value || value.trim() === "") {
+                const labelText = form.find(`label[for='${name}']`).text() || name;
+                alert(`필수값 누락: ${labelText}`);
+                $input.focus();
+                isValid = false;
+                return false; // .each 중단
+            }
+        }
+    });
+
+    if (!isValid) return;
+
+    console.log(formData);
+
+    const url = "/api/" + (type === "C" ? `insertDataDictionary/${tableId}` : `updateDataDictionary/${tableId}`);
+    const ajaxType = type === "C" ? "POST" : "PUT"
+
+
+    $.ajax({
+        url: url,
+        type : ajaxType,
+        data : JSON.stringify(formData),
+        success : (response) => {
+
+            if(response.result){
+                window.openAlert(`정상적으로 ${type === "C" ? "등록" : "수정"}되었습니다.`, () => {
+                    window.closeDialog("div");
+                    window.searchGrid(tableId);
+                });
+            }
+        }
+    })
+}

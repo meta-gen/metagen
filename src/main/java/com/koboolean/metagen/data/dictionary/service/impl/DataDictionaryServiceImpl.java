@@ -213,4 +213,43 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
 
         standardTermService.updateStandardTerms(accountDto.getProjectId(), isApprovalAvailable, standardTermDto, domainName.split("_"));
     }
+
+    @Override
+    public void insertStandardDomain(AccountDto accountDto, StandardDomainDto standardDomainDto) {
+
+        // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
+        boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
+
+        standardDomainDto.setProjectId(accountDto.getProjectId());
+        standardDomainDto.setIsApprovalYn(isApprovalAvailable ? "Y" : "N");
+        StandardDomain standardDomain = StandardDomain.fromEntity(standardDomainDto);
+
+        standardDomainService.insertStandardDomain(standardDomain);
+    }
+
+    @Override
+    public void updateStandardDomain(AccountDto accountDto, StandardDomainDto standardDomainDto) {
+        standardDomainDto.setProjectId(accountDto.getProjectId());
+
+        standardDomainService.updateStandardDomain(standardDomainDto);
+    }
+
+    @Override
+    public void updateStandardWords(AccountDto accountDto, StandardWordDto standardWordDto) {
+        standardWordDto.setProjectId(accountDto.getProjectId());
+
+        standardWordService.updateStandardWords(standardWordDto);
+    }
+
+    @Override
+    public void insertStandardWord(AccountDto accountDto, StandardWordDto standardWordDto) {
+        // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
+        boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
+
+        standardWordDto.setProjectId(accountDto.getProjectId());
+        standardWordDto.setIsApprovalYn(isApprovalAvailable ? "Y" : "N");
+        StandardWord standardWord = StandardWord.fromEntity(standardWordDto);
+
+        standardWordService.insertStandardWords(standardWord);
+    }
 }

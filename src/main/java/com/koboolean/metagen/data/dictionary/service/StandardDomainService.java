@@ -152,4 +152,21 @@ public class StandardDomainService {
     public StandardDomain findByCommonStandardDomainNameAndProjectId(String domainName, Long projectId) {
         return standardDomainRepository.findByCommonStandardDomainNameAndProjectId(domainName, projectId);
     }
+
+    @Transactional
+    public void insertStandardDomain(StandardDomain standardDomain) {
+        standardDomainRepository.save(standardDomain);
+    }
+
+    @Transactional
+    public void updateStandardDomain(StandardDomainDto standardDomainDto) {
+        StandardDomain standardDomain = standardDomainRepository.findByIdAndProjectId(standardDomainDto.getId(), standardDomainDto.getProjectId());
+
+        standardDomain.setRevisionNumber(standardDomainDto.getRevisionNumber());
+        standardDomain.setCommonStandardDomainDescription(standardDomainDto.getCommonStandardDomainDescription());
+        standardDomain.setDataType(standardDomainDto.getDataType());
+        standardDomain.setDataLength(standardDomainDto.getDataLength());
+        standardDomain.setDataDecimalLength(standardDomainDto.getDataDecimalLength());
+        standardDomain.setUnit(standardDomainDto.getUnit());
+    }
 }

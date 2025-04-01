@@ -217,4 +217,39 @@ public class DataDictionaryRestController {
         return ResponseEntity.ok(Map.of("result", true));
     }
 
+    @Operation(summary = "도메인 등록", description = "표준 도메인을 등록한다.")
+    @PostMapping(value = "/insertDataDictionary/standardDomains")
+    public ResponseEntity<Map<String, Boolean>> insertStandardDomains(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardDomainDto standardDomainDto){
+
+        dataDictionaryService.insertStandardDomain(accountDto, standardDomainDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "도메인 수정", description = "표준 도메인을 수정한다.")
+    @PutMapping(value = "/updateDataDictionary/standardDomains")
+    public ResponseEntity<Map<String, Boolean>> updateStandardDomains(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardDomainDto standardDomainDto){
+
+        dataDictionaryService.updateStandardDomain(accountDto, standardDomainDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "단어 등록", description = "표준 단어를 등록한다.")
+    @PostMapping(value = "/insertDataDictionary/standardWords")
+    public ResponseEntity<Map<String, Boolean>> insertStandardWords(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardWordDto standardWordDto){
+
+        dataDictionaryService.insertStandardWord(accountDto, standardWordDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "단어 수정", description = "표준 단어를 수정한다.")
+    @PutMapping(value = "/updateDataDictionary/standardWords")
+    public ResponseEntity<Map<String, Boolean>> updateStandardWords(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardWordDto standardWordDto){
+
+        dataDictionaryService.updateStandardWords(accountDto, standardWordDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
 }
