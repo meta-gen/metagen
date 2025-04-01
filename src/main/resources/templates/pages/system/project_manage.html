@@ -1,8 +1,42 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorate="~{layout}">
+
+<head>
+    <link rel="stylesheet" th:href="@{/css/system/project_manage.css}">
+    <script type="module" th:src="@{/js/system/project/project_manage.js}"></script>
+</head>
+
 <body>
 <section layout:fragment="content">
+
+    <div class="button-container">
+        <div class="left-group">
+            <label for="projectSelector">프로젝트 선택:</label>
+            <select id="projectSelector" class="search-column-select">
+                <option th:each="project : ${projects}"
+                        th:value="${project.id}"
+                        th:data-active="${project.isActive}"
+                        th:text="${project.projectName}">
+                </option>
+            </select>
+        </div>
+
+        <div class="right-group">
+            <button id="btn-project-add" class="btn btn-primary">프로젝트 등록</button>
+            <button id="btn-project-edit" class="btn btn-primary">프로젝트 수정</button>
+            <button id="btn-project-delete" class="btn btn-secondary">프로젝트 삭제</button>
+        </div>
+    </div>
+
+
+
+    <!-- 그리드 영역 -->
+    <div id="gridContainer">
+        <div th:replace="~{fragments/grid :: grid('projectMemberGrid', '/api/getProject/0', 'and', null)}"></div>
+    </div>
+
 </section>
 </body>
 </html>

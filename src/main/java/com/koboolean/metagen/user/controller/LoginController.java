@@ -45,7 +45,7 @@ public class LoginController {
 
     @GetMapping(value="/signup")
     public String signup(Model model) {
-        model.addAttribute("projects", userService.selectAllProjects());
+        model.addAttribute("projects", userService.selectAllProjectsIsActive());
         return "pages/login/signup";
     }
 

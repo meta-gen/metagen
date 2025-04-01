@@ -1,10 +1,16 @@
 package com.koboolean.metagen.home.controller;
 
+import com.koboolean.metagen.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
+
+    private final UserService userService;
 
     @GetMapping(value="/")
     public String dashboard() {
@@ -62,7 +68,8 @@ public class HomeController {
     }
 
     @GetMapping("/projectManage")
-    public String projectManage() {
+    public String projectManage(Model model) {
+        model.addAttribute("projects", userService.selectAllProjects());
         return "pages/system/project_manage";
     }
 }

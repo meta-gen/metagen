@@ -1,5 +1,5 @@
-import {getCsrfToken, setupAjaxCsrf} from "../common/csrf.js";
-import {downloadFile} from "../common/common.js";
+import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
+import {downloadFile} from "../../common/common.js";
 
 $(document).ready(function () {
     setupAjaxCsrf();

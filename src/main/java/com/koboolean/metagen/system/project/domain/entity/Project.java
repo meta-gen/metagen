@@ -1,16 +1,16 @@
-package com.koboolean.metagen.security.domain.entity;
+package com.koboolean.metagen.system.project.domain.entity;
 
+import com.koboolean.metagen.board.domain.entity.Board;
 import com.koboolean.metagen.home.jpa.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -28,5 +28,8 @@ public class Project extends BaseEntity implements Serializable {
 
     @Column(name = "is_active")
     private Boolean isActive;
+
+    @OneToMany(mappedBy = "project")
+    private List<ProjectMember> projectMembers = new ArrayList<>();
 
 }

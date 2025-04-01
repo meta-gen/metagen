@@ -1,7 +1,7 @@
 package com.koboolean.metagen.user.controller;
 
 import com.koboolean.metagen.security.domain.dto.AccountDto;
-import com.koboolean.metagen.security.domain.dto.ProjectDto;
+import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.user.service.LoginService;
 import com.koboolean.metagen.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
