@@ -1,6 +1,6 @@
-package com.koboolean.metagen.user.repository;
+package com.koboolean.metagen.system.project.repository;
 
-import com.koboolean.metagen.security.domain.entity.Project;
+import com.koboolean.metagen.system.project.domain.entity.Project;
 
 import java.util.List;
 

@@ -174,13 +174,21 @@
                         "destroy": true,
                         "headerCallback": function (thead, data, start, end, display) {
                             $(thead).find("th").each(function (index) {
-                                if (columns[index].rowType === "CHECKBOX") {
-                                    // 이미 체크박스 있으면 무시
-                                    $(this).addClass("grid-checkbox-header").html(`<input type="checkbox" class="header-checkbox" data-column-index="${index}">`);
+                                const col = columns[index];
+
+                                if (col.rowType === "CHECKBOX") {
+                                    $(this).addClass("grid-checkbox-header").html(
+                                        `<input type="checkbox" class="header-checkbox" data-column-index="${index}">`
+                                    );
+                                }
+
+                                // 정렬 비활성화 UI 처리
+                                if (col.isFilter === false || col.isFilter === "false") {
+                                    $(this).removeClass("sorting sorting_asc sorting_desc").addClass("no-sort");
                                 }
                             });
 
-                            // 각 테이블마다 따로 이벤트 바인딩
+                            // 체크박스 전체 선택 이벤트 바인딩
                             $(thead).find(".header-checkbox").off("change").on("change", function () {
                                 const isChecked = $(this).is(":checked");
                                 const $table = $(this).closest("table");
@@ -257,11 +265,12 @@
                         },
                         "columns": columns.map(col => {
                             const isCheckbox = col.rowType === "CHECKBOX";
+                            const isFilter = col.isFilter !== false && col.isFilter !== "false";
 
                             return {
                                 data: col.column,
                                 title: isCheckbox ? "" : col.columnName,
-                                orderable: !isCheckbox, // 정렬 비활성화
+                                orderable: isFilter && !isCheckbox, // 정렬 비활성화
                                 width: isCheckbox ? "40px" : undefined,
                                 className: isCheckbox ? "text-center" : "text-start",
                                 render: function (data, type, row) {

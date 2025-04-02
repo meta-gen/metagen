@@ -1,6 +1,7 @@
 package com.koboolean.metagen.security.domain.entity;
 
 import com.koboolean.metagen.home.jpa.BaseEntity;
+import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
 import jakarta.persistence.*;
 import lombok.*;
 

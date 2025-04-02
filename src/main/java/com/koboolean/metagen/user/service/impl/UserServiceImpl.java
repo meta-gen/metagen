@@ -2,17 +2,17 @@ package com.koboolean.metagen.user.service.impl;
 
 
 import com.koboolean.metagen.security.domain.dto.AccountDto;
-import com.koboolean.metagen.security.domain.dto.ProjectDto;
+import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.security.domain.entity.Account;
-import com.koboolean.metagen.security.domain.entity.Project;
-import com.koboolean.metagen.security.domain.entity.ProjectMember;
+import com.koboolean.metagen.system.project.domain.entity.Project;
+import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
 import com.koboolean.metagen.security.domain.entity.Role;
 import com.koboolean.metagen.security.exception.CustomFormException;
 import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.security.repository.RoleRepository;
 import com.koboolean.metagen.security.repository.UserRepository;
-import com.koboolean.metagen.user.repository.ProjectMemberRepository;
-import com.koboolean.metagen.user.repository.ProjectRepository;
+import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
+import com.koboolean.metagen.system.project.repository.ProjectRepository;
 import com.koboolean.metagen.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -57,10 +57,13 @@ public class UserServiceImpl implements UserService {
         account.setUserRoles(roles);
         userRepository.save(account);
 
+        Project project = projectRepository.findById(accountDto.getProjectId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 프로젝트입니다."));
+
         ProjectMember projectMember = ProjectMember.builder()
-                .projectId(accountDto.getProjectId())
+                .project(project)
                 .account(account)
-                .isActive(false)
+                .isActive(project.getIsAutoActive())
                 .build();
 
         projectMemberRepository.save(projectMember);
@@ -115,5 +118,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<ProjectDto> selectAllProjects() {
         return projectRepository.findAll().stream().map(ProjectDto::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProjectDto> selectAllProjectsIsActive() {
+        return projectRepository.findByIsActive(true).stream().map(ProjectDto::fromEntity).collect(Collectors.toList());
     }
 }

@@ -48,14 +48,14 @@ public class PageableUtil {
 
     /**
      * 페이지를위한 ResponseEntity를 생성한다.
-     * @param logsPage
+     * @param page
      * @return
      */
-    public static <T> ResponseEntity<Map<String, Object>> getGridPageableMap(Page<T> logsPage) {
+    public static <T> ResponseEntity<Map<String, Object>> getGridPageableMap(Page<T> page) {
         Map<String, Object> response = new HashMap<>();
-        response.put("data", logsPage.getContent()); // 현재 페이지 데이터
-        response.put("recordsTotal", logsPage.getTotalElements()); // 전체 데이터 개수
-        response.put("recordsFiltered", logsPage.getTotalElements()); // 필터링된 데이터 개수
+        response.put("data", page.getContent()); // 현재 페이지 데이터
+        response.put("recordsTotal", page.getTotalElements()); // 전체 데이터 개수
+        response.put("recordsFiltered", page.getTotalElements()); // 필터링된 데이터 개수
         return ResponseEntity.ok(response);
     }
 }

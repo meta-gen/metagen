@@ -1,11 +1,10 @@
-package com.koboolean.metagen.user.repository.impl;
+package com.koboolean.metagen.system.project.repository.impl;
 
-import com.koboolean.metagen.security.domain.entity.Project;
-import com.koboolean.metagen.security.domain.entity.QProject;
-import com.koboolean.metagen.security.domain.entity.QProjectMember;
-import com.koboolean.metagen.user.repository.ProjectRepositoryCustom;
+import com.koboolean.metagen.system.project.domain.entity.Project;
+import com.koboolean.metagen.system.project.domain.entity.QProject;
+import com.koboolean.metagen.system.project.domain.entity.QProjectMember;
+import com.koboolean.metagen.system.project.repository.ProjectRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -24,7 +23,7 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
 
         return queryFactory
                 .selectFrom(project)
-                .join(projectMember).on(project.id.eq(projectMember.projectId))
+                .join(projectMember).on(project.id.eq(projectMember.project.id))
                 .where(projectMember.account.username.eq(username))
                 .where(project.isActive.eq(true))
                 .where(projectMember.isActive.eq(true))
