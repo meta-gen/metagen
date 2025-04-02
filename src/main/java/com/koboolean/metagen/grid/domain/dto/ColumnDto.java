@@ -5,6 +5,8 @@ import com.koboolean.metagen.grid.enums.RowType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ColumnDto {
 
@@ -12,6 +14,7 @@ public class ColumnDto {
     private String column;
     private ColumnType columnType;
     private RowType rowType;
+    private List<String> options;
     private Boolean isSearch;
     private Boolean isFilter;
 
