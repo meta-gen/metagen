@@ -3,6 +3,7 @@ package com.koboolean.metagen.system.project.domain.dto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.system.project.domain.entity.Project;
+import com.koboolean.metagen.utils.AuthUtil;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -48,7 +49,8 @@ public class ProjectDto {
     public static ProjectDto fromEntity(Project project, AccountDto accountDto) {
 
         List<ProjectMemberDto> projectMembers = project.getProjectMembers().stream().map(ProjectMemberDto::fromEntity).toList();
-        Boolean isModified = project.getAccount() != null && project.getAccount().getId() == Long.parseLong(accountDto.getId());
+        Boolean isModified = project.getAccount() != null && (project.getAccount().getId() == Long.parseLong(accountDto.getId())
+                || AuthUtil.isIsApprovalAvailable());
 
         return new ProjectDto(
                 project.getId(),
