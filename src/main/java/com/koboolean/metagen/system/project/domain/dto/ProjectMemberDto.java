@@ -16,6 +16,7 @@ public class ProjectMemberDto {
     private String username;
     private String name;
     private String isActive;
+    private Long accountId;
 
     public static ProjectMemberDto fromEntity(ProjectMember projectMember) {
 
@@ -23,9 +24,10 @@ public class ProjectMemberDto {
                 .id(projectMember.getId())
                 .projectId(projectMember.getProject().getId())
                 .projectName(projectMember.getProject().getProjectName())
-                .username(projectMember.getAccount().getUsername())
-                .name(projectMember.getAccount().getName())
+                .username(projectMember.getAccount() != null ? projectMember.getAccount().getUsername() : "")
+                .name(projectMember.getAccount() != null ? projectMember.getAccount().getName() : "")
                 .isActive(projectMember.getIsActive() ? "Y" : "N")
+                .accountId(projectMember.getAccount() != null ? projectMember.getAccount().getId() : null)
                 .build();
     }
 

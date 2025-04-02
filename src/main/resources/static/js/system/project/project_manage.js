@@ -1,6 +1,9 @@
+import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
+
 $(document).ready(function () {
+    setupAjaxCsrf();
+
     const tableId = 'projectMemberGrid';
-    const crudActions = 'and';
     const initCallback = null;
 
     const $selector = $('#projectSelector');
@@ -42,6 +45,114 @@ $(document).ready(function () {
         });
     }
 
+    /**
+     * 프로젝트를 저장한다.
+     */
+    function saveProject(){
+        const $form = $('#editProjectForm');
+        const type = $form.find('[name="type"]').val();
+
+        const formData = {
+            id: $form.find('[name="id"]').val(),
+            projectName: $form.find('[name="projectName"]').val(),
+            isActive: $form.find('[name="isActive"]').is(':checked'),
+            isAutoActive: $form.find('[name="isAutoActive"]').is(':checked')
+        };
+
+        if (type === 'U') {
+            formData.projectManagerId = $form.find('[name="projectManagerId"]').val();
+        }
+
+        const url = `/api/saveProject/project`;
+        const ajaxType = type === "C" ? "POST" : "PUT"
+
+        $.ajax({
+            url : url,
+            type : ajaxType,
+            data : JSON.stringify(formData),
+            success : (response) => {
+                if(response.result){
+                    const typeText = type === "C" ? "등록" : "수정";
+
+                    openAlert(`정상적으로 ${typeText}되었습니다.`, () => {
+                        location.reload();
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * 프로젝트 등록/수정 버튼을 클릭 시 다이알로그를 open한다.
+     * @param type
+     * @param projectData
+     * @param saveProject
+     */
+    function openDialog(type, projectData, saveProject) {
+        let managerSelectHtml = '';
+
+        if (type === 'U' && Array.isArray(projectData.projectMembers)) {
+            const options = projectData.projectMembers.map(member => {
+                const isSelected = member.username === projectData.projectManagerName ? 'selected' : '';
+                return `<option value="${member.accountId}" ${isSelected}>${member.name}</option>`;
+            }).join('');
+
+            managerSelectHtml = `
+            <div class="form-group">
+                <label for="project-manager">프로젝트 관리자</label>
+                <select id="project-manager" name="projectManagerId" class="form-control">
+                    ${options}
+                </select>
+            </div>
+        `;
+        }
+
+        const formHtml = `
+        <form id="editProjectForm" class="edit-form">
+        
+            <input type="hidden" name="type" value="${type}" />
+            <input type="hidden" name="id" value="${projectData.id ?? ''}" />
+
+            <div class="form-group">
+                <label for="project-name">프로젝트 명</label>
+                <input type="text" id="project-name" name="projectName" class="form-control" value="${projectData.projectName ?? ''}" required/>
+            </div>
+
+            ${managerSelectHtml}
+
+            <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
+                <input type="checkbox" id="project-active" name="isActive" class="form-check-input" ${projectData.isActive ? 'checked' : ''} />
+                <label class="form-check-label" for="project-active">활성화 여부</label>
+            </div>
+
+            <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
+                <input type="checkbox" id="project-autoactive" name="isAutoActive" class="form-check-input" ${projectData.isAutoActive ? 'checked' : ''} />
+                <label class="form-check-label" for="project-autoactive">사용자 자동 승인 여부</label>
+            </div>
+
+            ${type === 'C' || projectData.isModified ? '<input type="submit" id="btn-save-project" class="btn btn-primary"/>' : ''}
+        </form>
+    `;
+
+        window.openDialog('div', { title: type === 'C' ? '프로젝트 등록' : '프로젝트 수정', content: formHtml });
+
+        // 저장 버튼 이벤트
+        $("#btn-save-project").on('click', function (e) {
+            e.preventDefault();
+
+            if($("#project-name").val() === ""){
+                window.openAlert("프로젝트 명은 필수값입니다.");
+                return;
+            }
+
+            saveProject();
+        });
+    }
+
+    // 초기 세팅
+    const isActive = updateProjectSelectorStyle();
+    applyUIBasedOnActiveStatus(isActive);
+
     $selector.on('change', function () {
         const selectedId = $(this).val();
         if (!selectedId) return;
@@ -56,11 +167,69 @@ $(document).ready(function () {
             delete window.tableInstances[tableId];
         }
 
+        const $selectedOption = $('#projectSelector option:selected');
+        const isAutoActive = $selectedOption.data('autoactive');
+
+        let crudActions = 'ancd';
+
+        if(isAutoActive || isAutoActive === "true"){
+            crudActions = "cd";
+        }
+
         $('#' + tableId + ' thead tr').empty();
         window.grid(tableId, dataUrl, crudActions, initCallback);
     });
 
-    // 초기 세팅
-    const isActive = updateProjectSelectorStyle();
-    applyUIBasedOnActiveStatus(isActive);
+    $("#btn-project-add").on("click", function (e){
+        openDialog("C", {}, saveProject);
+    });
+
+    /**
+     * 프로젝트 수정버튼 클릭 시
+     */
+    $("#btn-project-edit").on("click", function(e){
+        e.preventDefault();
+
+        const selectedId = $("#projectSelector").val();
+
+        $.ajax({
+            url : `/api/getProject/${selectedId}/getEditProjectData`,
+            type : "GET",
+            success : (response) => {
+                if(response.result){
+                    const projectData = response.project;
+
+                    const type = "U"
+
+                    openDialog(type, projectData, saveProject);
+                }
+            }
+        })
+    });
+
+    $("#btn-project-delete").on("click", function(){
+       window.openConfirm("해당 프로젝트를 삭제하시겠습니까?", function(){
+           const selectedId = $("#projectSelector").val();
+
+           if(selectedId === 0){
+               openAlert("기본 프로젝트는 삭제가 불가능합니다.");
+               return;
+           }
+
+           $.ajax({
+               url : `/api/deleteProject/project/${selectedId}`,
+               type : "DELETE",
+               success : (response) => {
+                   if(response.result){
+                       openAlert("정상적으로 삭제 되었습니다.", () => {
+                           location.reload();
+                       })
+                   }
+               }
+           })
+       });
+    });
+
 });
+
+

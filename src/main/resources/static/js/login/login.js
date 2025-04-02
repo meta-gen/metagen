@@ -76,14 +76,25 @@ document.addEventListener("DOMContentLoaded", function () {
             select.addEventListener("change", function () {
                 const selectedOption = this.options[this.selectedIndex];
 
-                document.getElementById("projectId").value = selectedOption.value;
+                if(selectedOption.value === ""){
+                    return;
+                }
+
+                document.getElementById("project_id").value = selectedOption.value;
                 localStorage.setItem("selectedProject", selectedOption.text);
+
+                closeDialog("div", true);
             });
 
             const dialogContent = document.createElement("div");
             dialogContent.appendChild(select);
 
             openDialog("div", { title: "프로젝트 선택", content: dialogContent }, () => {
+
+                if($("#project_id").val() === ""){
+                    return;
+                }
+
                 $("#project-btn").hide();
                 $("#login-btn").css("visibility", "visible");
                 document.getElementById("project_id").value = document.getElementById("projectSelect").value;

@@ -2,11 +2,9 @@ package com.koboolean.metagen.system.project.domain.entity;
 
 import com.koboolean.metagen.board.domain.entity.Board;
 import com.koboolean.metagen.home.jpa.BaseEntity;
+import com.koboolean.metagen.security.domain.entity.Account;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +13,7 @@ import java.util.List;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Project extends BaseEntity implements Serializable {
@@ -26,10 +25,15 @@ public class Project extends BaseEntity implements Serializable {
     @Column(name = "project_name")
     private String projectName;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Account account;
+
     @Column(name = "is_active")
     private Boolean isActive;
 
     @OneToMany(mappedBy = "project")
     private List<ProjectMember> projectMembers = new ArrayList<>();
 
+    @Column(name = "is_auto_active")
+    private Boolean isAutoActive; // 자동 승인여부
 }

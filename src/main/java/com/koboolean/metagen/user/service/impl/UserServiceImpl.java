@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
         ProjectMember projectMember = ProjectMember.builder()
                 .project(project)
                 .account(account)
-                .isActive(false)
+                .isActive(project.getIsAutoActive())
                 .build();
 
         projectMemberRepository.save(projectMember);

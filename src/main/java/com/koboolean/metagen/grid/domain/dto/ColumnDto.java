@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class ColumnDto {
 
     private String columnName;
@@ -14,12 +13,14 @@ public class ColumnDto {
     private ColumnType columnType;
     private RowType rowType;
     private Boolean isSearch;
+    private Boolean isFilter;
 
     public ColumnDto(String columnName, String column, ColumnType columnType) {
         this.columnName = columnName;
         this.column = column;
         this.columnType = columnType;
         this.isSearch = false;
+        this.isFilter = true;
     }
 
     public ColumnDto(String columnName, String column, ColumnType columnType, Boolean isSearch) {
@@ -27,6 +28,7 @@ public class ColumnDto {
         this.column = column;
         this.columnType = columnType;
         this.isSearch = isSearch;
+        this.isFilter = true;
     }
 
     public ColumnDto(String columnName, String column, ColumnType columnType, RowType rowType) {
@@ -35,5 +37,24 @@ public class ColumnDto {
         this.columnType = columnType;
         this.rowType = rowType;
         this.isSearch = false;
+        this.isFilter = true;
+    }
+
+    public ColumnDto(String columnName, String column, ColumnType columnType, RowType rowType, Boolean isFilter) {
+        this.columnName = columnName;
+        this.column = column;
+        this.columnType = columnType;
+        this.rowType = rowType;
+        this.isSearch = false;
+        this.isFilter = isFilter;
+    }
+
+    public ColumnDto(String columnName, String column, ColumnType columnType, RowType rowType, Boolean isSearch, Boolean isFilter) {
+        this.columnName = columnName;
+        this.column = column;
+        this.columnType = columnType;
+        this.rowType = rowType;
+        this.isSearch = isSearch;
+        this.isFilter = isFilter;
     }
 }

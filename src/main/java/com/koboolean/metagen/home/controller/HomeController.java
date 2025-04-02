@@ -1,10 +1,13 @@
 package com.koboolean.metagen.home.controller;
 
+import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -69,7 +72,12 @@ public class HomeController {
 
     @GetMapping("/projectManage")
     public String projectManage(Model model) {
-        model.addAttribute("projects", userService.selectAllProjects());
+
+        List<ProjectDto> projectDtos = userService.selectAllProjects();
+
+        model.addAttribute("projects", projectDtos);
+        model.addAttribute("crudActions", projectDtos.get(0).getIsAutoActive()? "cd" : "ancd");
+
         return "pages/system/project_manage";
     }
 }

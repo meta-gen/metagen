@@ -58,7 +58,12 @@ public enum ErrorCode {
     /**
      * 해당 도메인을 찾을 수 없습니다.
      */
-    NOT_FOUND_DOMAIN_DATA(HttpStatus.BAD_REQUEST, "NOT_FOUND_DOMAIN_DATA", "해당 도메인을 찾을 수 없습니다.");
+    NOT_FOUND_DOMAIN_DATA(HttpStatus.BAD_REQUEST, "NOT_FOUND_DOMAIN_DATA", "해당 도메인을 찾을 수 없습니다."),
+
+    /**
+     * 권한이 없어 작업을 수행할 수 없습니다.
+     */
+    DATA_CANNOT_BE_DELETED(HttpStatus.BAD_REQUEST, "DATA_CANNOT_BE_DELETED", "권한이 없어 작업을 수행할 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

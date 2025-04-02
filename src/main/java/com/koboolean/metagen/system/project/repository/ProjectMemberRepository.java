@@ -8,5 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Long> {
+
     Page<ProjectMember> findAllByProject_Id(Pageable pageable, Long projectId);
 }

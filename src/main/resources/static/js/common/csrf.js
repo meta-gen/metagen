@@ -36,7 +36,7 @@ export function setupAjaxCsrf() {
             },
             error: function (xhr) {
                 const errorMessage = xhr.responseJSON?.message;
-                alert(errorMessage);
+                window.openAlert(errorMessage);
             }
         });
 
