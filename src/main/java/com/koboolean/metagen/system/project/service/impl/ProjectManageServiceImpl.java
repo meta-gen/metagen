@@ -33,18 +33,16 @@ public class ProjectManageServiceImpl implements ProjectManageService {
 
     @Override
     public List<ColumnDto> getProjectColumn(Long projectId) {
+        ColumnDto columnDto = new ColumnDto("활성화여부", "isActive", ColumnType.STRING, RowType.TEXT, true,false);
 
-        /*private Long id;
-        private Long projectId;
-        private String username;
-        private String name;
-        private Boolean isActive;*/
+        // List<String> options = List.of("Y", "N");
+        // columnDto.setOptions(options);
 
         return List.of(new ColumnDto("id", "id", ColumnType.NUMBER, RowType.CHECKBOX, false),
                 new ColumnDto("프로젝트명", "projectName", ColumnType.STRING, RowType.TEXT, false),
                 new ColumnDto("아이디", "username", ColumnType.STRING, RowType.TEXT, false),
                 new ColumnDto("사용자명", "name", ColumnType.STRING, RowType.TEXT, false),
-                new ColumnDto("활성화여부", "isActive", ColumnType.STRING, RowType.TEXT, true,false));
+                columnDto);
     }
 
     @Override
@@ -55,7 +53,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
             return allByProjectId.map(ProjectMemberDto::fromEntity);
         }
 
-        return null;
+        return projectMemberRepository.findAllByIsActiveAndProject_id(pageable, searchQuery.equals("Y"),projectId).map(ProjectMemberDto::fromEntity);
     }
 
     @Override

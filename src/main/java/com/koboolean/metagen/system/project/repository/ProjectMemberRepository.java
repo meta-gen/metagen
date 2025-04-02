@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Long> {
 
     Page<ProjectMember> findAllByProject_Id(Pageable pageable, Long projectId);
+
+    Page<ProjectMember> findAllByIsActiveAndProject_id(Pageable pageable, boolean y, Long projectId);
 }
