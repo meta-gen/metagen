@@ -128,4 +128,14 @@ public class ProjectManageServiceImpl implements ProjectManageService {
 
         projectRepository.delete(project);
     }
+
+    @Override
+    public boolean selectLoginProject(Long projectId, String id) {
+        Project project = projectRepository.findById(projectId).orElse(null);
+
+        if(project != null){
+            return project.getAccount().getId().equals(Long.parseLong(id));
+        }
+        return false;
+    }
 }

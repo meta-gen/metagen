@@ -18,4 +18,6 @@ public interface ProjectManageService {
     void createProject(ProjectDto projectDto, AccountDto accountDto);
     void updateProject(ProjectDto projectDto);
     void deleteProject(Long selectedId, AccountDto accountDto);
+
+    boolean selectLoginProject(Long projectId, String id);
 }
