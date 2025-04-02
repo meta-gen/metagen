@@ -92,7 +92,7 @@ $(document).ready(function () {
         let managerSelectHtml = '';
 
         if (type === 'U' && Array.isArray(projectData.projectMembers)) {
-            const options = projectData.projectMembers.map(member => {
+            const options = projectData.projectMembers.filter(p => p.isActive === 'Y').map(member => {
                 const isSelected = member.username === projectData.projectManagerName ? 'selected' : '';
                 return `<option value="${member.accountId}" ${isSelected}>${member.name}</option>`;
             }).join('');
