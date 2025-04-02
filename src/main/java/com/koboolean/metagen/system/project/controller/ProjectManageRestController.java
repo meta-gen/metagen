@@ -23,7 +23,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Tag(name = "Data Dictionary API", description = "데이터 사전 관리 API")
+@Tag(name = "Project Manage API", description = "프로젝트 관리 및 프로젝트 멤버 관리를 위한 API")
 public class ProjectManageRestController {
 
     private final ProjectManageService projectManageService;
@@ -82,7 +82,7 @@ public class ProjectManageRestController {
         return ResponseEntity.ok(Map.of("result", true));
     }
 
-    @Operation(summary = "프로젝트 수정", description = "프로젝트를 수정합니다.")
+    @Operation(summary = "프로젝트 삭제", description = "프로젝트를 삭제합니다.")
     @DeleteMapping("/deleteProject/project/{selectedId}")
     public ResponseEntity<Map<String,Boolean>> deleteProject(@PathVariable Long selectedId, @AuthenticationPrincipal AccountDto accountDto) {
         projectManageService.deleteProject(selectedId, accountDto);

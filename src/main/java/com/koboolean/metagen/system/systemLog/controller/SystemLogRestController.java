@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.Map;
 
-@Tag(name = "시스템 로그 관리", description = "시스템 로그 관련 API")
+@Tag(name = "System Log Manage API", description = "시스템 로그 관련 API")
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
