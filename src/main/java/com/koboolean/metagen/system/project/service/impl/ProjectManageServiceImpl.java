@@ -15,6 +15,7 @@ import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
 import com.koboolean.metagen.system.project.repository.ProjectRepository;
 import com.koboolean.metagen.system.project.service.ProjectManageService;
 import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
+import com.koboolean.metagen.utils.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +46,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
                 new ColumnDto("프로젝트명", "projectName", ColumnType.STRING, RowType.TEXT, false),
                 new ColumnDto("아이디", "username", ColumnType.STRING, RowType.TEXT, false),
                 new ColumnDto("사용자명", "name", ColumnType.STRING, RowType.TEXT, false),
+                new ColumnDto("프로젝트 관리자", "projectManagerYn", ColumnType.STRING, RowType.TEXT, false),
                 columnDto);
     }
 
@@ -72,6 +77,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
                 .isActive(projectDto.getIsActive())
                 .account(account)
                 .isAutoActive(projectDto.getIsAutoActive())
+                .isUseSwagger(projectDto.getIsUseSwagger())
                 .build();
 
         ProjectMember projectMember = ProjectMember.builder()
@@ -98,6 +104,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
         project.setAccount(account);
         project.setIsActive(projectDto.getIsActive());
         project.setIsAutoActive(projectDto.getIsAutoActive());
+        project.setIsUseSwagger(projectDto.getIsUseSwagger());
 
     }
 
@@ -135,5 +142,80 @@ public class ProjectManageServiceImpl implements ProjectManageService {
             return project.getAccount().getId().equals(Long.parseLong(id));
         }
         return false;
+    }
+
+    @Override
+    @Transactional
+    public void saveActiveProject(List<ProjectMemberDto> projectMemberDtos, Boolean isActive) {
+        if(!AuthUtil.isIsApprovalAvailable()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        for(ProjectMemberDto projectMemberDto : projectMemberDtos){
+            ProjectMember projectMember = projectMemberRepository.findById(projectMemberDto.getId()).orElse(null);
+
+            if(projectMember != null){
+                projectMember.setIsActive(isActive);
+            }
+        }
+    }
+
+    @Override
+    @Transactional
+    public void deleteProjectMember(List<ProjectMemberDto> projectMemberDtos, AccountDto accountDto) {
+        if(!AuthUtil.isIsApprovalAvailable()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        for(ProjectMemberDto projectMemberDto : projectMemberDtos){
+            ProjectMember projectMember = projectMemberRepository.findById(projectMemberDto.getId()).orElse(null);
+
+            if(projectMember != null){
+                // 프로젝트의 관리자의 경우에는 삭제가 불가능하다.
+                if(projectMember.getAccount().getId().equals(Long.parseLong(accountDto.getId()))){
+                    throw new CustomException(ErrorCode.PROJECT_MANAGER_NON_DELETED);
+                }
+
+                projectMemberRepository.delete(projectMember);
+            }
+        }
+    }
+
+    @Override
+    public List<AccountDto> selectProjectMember(Long selectedId, AccountDto accountDto) {
+
+        List<ProjectMember> projectMembers = projectMemberRepository.findAllByProject_Id(selectedId);
+
+        Set<Long> memberAccountIds = projectMembers.stream()
+                .map(pm -> pm.getAccount().getId())
+                .collect(Collectors.toSet());
+
+        List<AccountDto> allAccount = accountRepository.findAll().stream().map(AccountDto::fromEntity).toList();
+
+        return allAccount.stream()
+                .filter(account -> !memberAccountIds.contains(Long.valueOf(account.getId())))
+                .toList();
+    }
+
+    @Override
+    @Transactional
+    public void saveProjectMember(Map<String, String> accountIds, Long projectId) {
+        if(!AuthUtil.isIsApprovalAvailable()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        Project project = projectRepository.findById(projectId).orElse(null);
+
+        Account account = accountRepository.findById(Long.valueOf(accountIds.get("accountId"))).orElse(null);
+
+        ProjectMember projectMember = ProjectMember.builder()
+                .account(account)
+                .project(project)
+                .isActive(true)
+                .build();
+
+        if(project != null) project.getProjectMembers().add(projectMember);
+
+        projectMemberRepository.save(projectMember);
     }
 }

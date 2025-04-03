@@ -46,6 +46,84 @@ $(document).ready(function () {
     }
 
     /**
+     * 프로젝트 멤버 추가 Dialog를 동적으로 추가한다.
+     */
+    function selectProjectMemberDialog(){
+
+        const selectedId = $("#projectSelector").val();
+
+        $.ajax({
+            url : `/api/getProject/projectMember/${selectedId}`,
+            type : "GET",
+            success : (response) => {
+                if(response.result){
+                    const userList = response.projectMember;
+
+                    const $select = $('<select class="form-control" id="addProjectMemberSelect">');
+                    $select.append('<option value="" disabled selected>추가할 사용자를 선택하세요</option>');
+
+                    userList.forEach(user => {
+                        const option = $('<option>')
+                            .val(user.id)
+                            .text(user.name);
+                        $select.append(option);
+                    });
+
+                    // 저장 버튼 생성
+                    const $saveBtn = $('<button type="button" class="btn btn-primary mt-3">저장</button>');
+
+                    // 저장 버튼 이벤트
+                    $saveBtn.on('click', function () {
+                        const selectedId = $select.val();
+                        saveProjectMember(selectedId);
+                    });
+
+                    const $container = $('<div>')
+                        .append($select)
+                        .append($saveBtn);
+
+                    window.openDialog("div", {
+                        title: "프로젝트 멤버 추가",
+                        content: $container
+                    });
+                }
+            }
+        });
+    }
+
+    /**
+     * 프로젝트 멤버를 추가한다.
+     * @param selectedId
+     */
+    function saveProjectMember(selectedId){
+
+        if (!selectedId) {
+            openAlert("추가할 사용자를 선택해주세요.");
+            return;
+        }
+
+        const projectId = $("#projectSelector").val();
+
+        const url = `/api/saveProject/projectMember/${projectId}`;
+
+        $.ajax({
+            url : url,
+            type : "POST",
+            data : JSON.stringify({accountId : selectedId}),
+            success : (response) => {
+                if(response.result){
+                    openAlert("프로젝트 멤버가 정상적으로 등록되었습니다.", () => {
+                        window.closeDialog("div");
+                        window.searchGrid(tableId);
+                    });
+                }
+            }
+        })
+
+
+    }
+
+    /**
      * 프로젝트를 저장한다.
      */
     function saveProject(){
@@ -56,7 +134,8 @@ $(document).ready(function () {
             id: $form.find('[name="id"]').val(),
             projectName: $form.find('[name="projectName"]').val(),
             isActive: $form.find('[name="isActive"]').is(':checked'),
-            isAutoActive: $form.find('[name="isAutoActive"]').is(':checked')
+            isAutoActive: $form.find('[name="isAutoActive"]').is(':checked'),
+            isUseSwagger: $form.find('[name="isUseSwagger"]').is(':checked'),
         };
 
         if (type === 'U') {
@@ -79,6 +158,52 @@ $(document).ready(function () {
                     });
                 }
             }
+        });
+    }
+
+    /**
+     * 선택 리스트를 기준으로 승인/승인취소한다.
+     * @param isActive
+     */
+    function saveIsActive(isActive){
+        const checkedData = getCheckedDataIsNonNull(tableId);
+
+        openConfirm(`선택한 정보를 ${isActive ? '승인' : '승인취소'} 하시겠습니까?`, () => {
+            $.ajax({
+                url : `/api/saveProject/active/${isActive}`,
+                type : "POST",
+                data : JSON.stringify(checkedData),
+                success : (response) => {
+                    if(response.result){
+                        openAlert(`정상적으로 ${isActive ? "승인되어 활성화" : "승인취소되어 비활성화"}되었습니다.`, () => {
+                            window.closeDialog("div");
+                            window.searchGrid(tableId);
+                        });
+                    }
+                }
+            })
+        })
+    }
+
+    /**
+     * 프로젝트 맴버를 삭제처리한다.
+     */
+    function deleteProjectMember(){
+        const checkedData = getCheckedDataIsNonNull(tableId);
+
+        openConfirm('선택한 정보를 삭제하시겠습니까?', () => {
+            $.ajax({
+                url: "/api/deleteProject/projectMember",
+                type: "DELETE",
+                data: JSON.stringify(checkedData),
+                success: (response) => {
+                    if(response.result){
+                        openAlert("정상적으로 삭제처리 되었습니다.",() => {
+                            window.searchGrid(tableId);
+                        });
+                    }
+                }
+            });
         });
     }
 
@@ -128,6 +253,11 @@ $(document).ready(function () {
             <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
                 <input type="checkbox" id="project-autoactive" name="isAutoActive" class="form-check-input" ${projectData.isAutoActive ? 'checked' : ''} />
                 <label class="form-check-label" for="project-autoactive">사용자 자동 승인 여부</label>
+            </div>
+            
+            <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
+                <input type="checkbox" id="project-swagger" name="isUseSwagger" class="form-check-input" ${projectData.isUseSwagger ? 'checked' : ''} />
+                <label class="form-check-label" for="project-swagger">Swagger 사용 여부</label>
             </div>
 
             ${type === 'C' || projectData.isModified ? '<input type="submit" id="btn-save-project" class="btn btn-primary"/>' : ''}
@@ -229,6 +359,35 @@ $(document).ready(function () {
            })
        });
     });
+
+    /**
+     * 승인버튼 클릭 이벤트
+     */
+    $("#grd-active-projectMemberGrid").on("click", function(){
+        saveIsActive(true);
+    });
+
+    /**
+     * 승인취소 버튼 클릭 이벤트
+     */
+    $("#grd-unactive-projectMemberGrid").on("click", function(){
+        saveIsActive(false);
+    });
+
+    /**
+     * 삭제버튼 클릭 이벤트
+     */
+    $("#grd-delete-projectMemberGrid").on("click", function(){
+        deleteProjectMember();
+    });
+
+    /**
+     * 추가버튼 클릭 이벤트
+     */
+    $("#grd-add-projectMemberGrid").on("click", function(){
+        selectProjectMemberDialog();
+    });
+
 
 });
 

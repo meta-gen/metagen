@@ -30,6 +30,8 @@ public class ProjectDto {
 
     private Boolean isModified;
 
+    private Boolean isUseSwagger;
+
     public static ProjectDto fromEntity(Project project) {
 
         List<ProjectMemberDto> projectMembers = project.getProjectMembers().stream().map(ProjectMemberDto::fromEntity).toList();
@@ -42,6 +44,7 @@ public class ProjectDto {
                 project.getIsActive(),
                 project.getIsAutoActive(),
                 projectMembers,
+                false,
                 false
         );
     }
@@ -60,7 +63,8 @@ public class ProjectDto {
                 project.getIsActive(),
                 project.getIsAutoActive(),
                 projectMembers,
-                isModified
+                isModified,
+                project.getIsUseSwagger()
         );
     }
 }
