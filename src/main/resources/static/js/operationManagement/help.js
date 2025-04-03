@@ -50,4 +50,16 @@ function renderFAQList(data) {
     });
 }
 
+$('#faq-search-btn').on('click', function () {
+    const keyword = $('#faq-search').val().toLowerCase().trim(); // 검색어 입력
 
+    $.getJSON('/jsons/faq.json', function (data) {
+        // keyword가 question 또는 answer에 포함된 것만 필터링
+        const filtered = data.filter(item =>
+            item.question.toLowerCase().includes(keyword) ||
+            item.answer.toLowerCase().includes(keyword)
+        );
+
+        renderFAQList(filtered); // 화면에 다시 그리기
+    });
+});
