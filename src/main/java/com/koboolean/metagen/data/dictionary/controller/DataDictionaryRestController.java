@@ -45,15 +45,15 @@ public class DataDictionaryRestController {
             @Parameter(description = "사용자 인증 정보", hidden = true)
             @AuthenticationPrincipal AccountDto accountDto,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
-            @RequestParam int page,
+            @RequestParam(value = "page") int page,
             @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam int size,
+            @RequestParam(value = "size") int size,
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
-            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, value = "sort") String sort,
             @Parameter(description = "조회 용어명", example = "용어명1")
-            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false, value = "searchQuery") String searchQuery,
             @Parameter(description = "조회컬럼 명", example = "id")
-            @RequestParam(required = false) String searchColumn
+            @RequestParam(required = false, value = "searchColumn") String searchColumn
     ) {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<StandardTermDto> standardTermDataPage = dataDictionaryService.getStandardTermsData(pageable, accountDto, searchColumn, searchQuery);
@@ -72,15 +72,15 @@ public class DataDictionaryRestController {
             @Parameter(description = "사용자 인증 정보", hidden = true)
             @AuthenticationPrincipal AccountDto accountDto,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
-            @RequestParam int page,
+            @RequestParam(value = "page") int page,
             @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam int size,
+            @RequestParam(value = "size") int size,
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
-            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, value = "sort") String sort,
             @Parameter(description = "조회 단어명", example = "단어명1")
-            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false, value = "searchQuery") String searchQuery,
             @Parameter(description = "조회컬럼 명", example = "id")
-            @RequestParam(required = false) String searchColumn
+            @RequestParam(required = false, value = "searchColumn") String searchColumn
     ) {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<StandardWordDto> standardWordsDataPage = dataDictionaryService.getStandardWordsData(pageable, accountDto, searchColumn, searchQuery);
@@ -101,15 +101,15 @@ public class DataDictionaryRestController {
             @Parameter(description = "사용자 인증 정보", hidden = true)
             @AuthenticationPrincipal AccountDto accountDto,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
-            @RequestParam int page,
+            @RequestParam(value = "page") int page,
             @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam int size,
+            @RequestParam(value = "size") int size,
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
-            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, value = "sort") String sort,
             @Parameter(description = "조회 도메인명", example = "도메인명1")
-            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false, value = "searchQuery") String searchQuery,
             @Parameter(description = "조회컬럼 명", example = "id")
-            @RequestParam(required = false) String searchColumn
+            @RequestParam(required = false, value = "searchColumn") String searchColumn
     ) {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<StandardDomainDto> standardDomainsDataPage = dataDictionaryService.getStandardDomainsData(pageable, accountDto, searchColumn, searchQuery);
@@ -133,7 +133,7 @@ public class DataDictionaryRestController {
     @PatchMapping(value = "/approvalStandardDomains/{isChecked}")
     public ResponseEntity<Map<String, Boolean>> approvalStandardDomains(@RequestBody List<StandardDomainDto> standardDomains
             , @AuthenticationPrincipal AccountDto accountDto
-            , @PathVariable boolean isChecked) {
+            , @PathVariable(value = "isChecked") boolean isChecked) {
 
         dataDictionaryService.approvalStandardDomains(standardDomains, accountDto, isChecked);
 
@@ -144,7 +144,7 @@ public class DataDictionaryRestController {
     @PatchMapping(value = "/approvalStandardTerms/{isChecked}")
     public ResponseEntity<Map<String, Boolean>> approvalStandardTerms(@RequestBody List<StandardTermDto> standardTerms
             , @AuthenticationPrincipal AccountDto accountDto
-            , @PathVariable boolean isChecked) {
+            , @PathVariable(value = "isChecked") boolean isChecked) {
 
         dataDictionaryService.approvalStandardTerms(standardTerms, accountDto, isChecked);
 
@@ -155,7 +155,7 @@ public class DataDictionaryRestController {
     @PatchMapping(value = "/approvalStandardWords/{isChecked}")
     public ResponseEntity<Map<String, Boolean>> approvalStandardWords(@RequestBody List<StandardWordDto> standardWords
             , @AuthenticationPrincipal AccountDto accountDto
-            , @PathVariable boolean isChecked) {
+            , @PathVariable(value = "isChecked") boolean isChecked) {
 
         dataDictionaryService.approvalStandardWords(standardWords, accountDto, isChecked);
 
@@ -195,7 +195,7 @@ public class DataDictionaryRestController {
 
     @Operation(summary = "단어/도메인 조회", description = "용어 등록을 위한 단어 및 도메인을 조회한다.")
     @GetMapping(value = "/getStandardTerms/popup/{termNm}")
-    public ResponseEntity<Map<String, Object>> searchStandardTermList(@PathVariable String termNm, @AuthenticationPrincipal AccountDto accountDto) {
+    public ResponseEntity<Map<String, Object>> searchStandardTermList(@PathVariable(value = "termNm") String termNm, @AuthenticationPrincipal AccountDto accountDto) {
         return ResponseEntity.ok(dataDictionaryService.getStandardTermList(termNm, accountDto));
     }
 

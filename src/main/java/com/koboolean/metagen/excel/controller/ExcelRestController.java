@@ -39,7 +39,7 @@ public class ExcelRestController {
             @ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
     @GetMapping("/downloadTemplate/{templateName}")
-    public ResponseEntity<Resource> downloadTemplate(@PathVariable String templateName) {
+    public ResponseEntity<Resource> downloadTemplate(@PathVariable(value = "templateName") String templateName) {
         try {
             return excelService.getExcelFile(templateName);
         } catch (MalformedURLException e) {

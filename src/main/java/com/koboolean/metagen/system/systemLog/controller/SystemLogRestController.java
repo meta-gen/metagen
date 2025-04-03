@@ -41,15 +41,15 @@ public class SystemLogRestController {
             @Parameter(description = "사용자 인증 정보", hidden = true)
             @AuthenticationPrincipal AccountDto accountDto,
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
-            @RequestParam int page,
+            @RequestParam(value = "page") int page,
             @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam int size,
+            @RequestParam(value = "size") int size,
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "timestamp,desc")
-            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, value = "sort") String sort,
             @Parameter(description = "조회 도메인명", example = "도메인명1")
-            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false, value = "searchQuery") String searchQuery,
             @Parameter(description = "조회컬럼 명", example = "id")
-            @RequestParam(required = false) String searchColumn) {
+            @RequestParam(required = false, value = "searchColumn") String searchColumn) {
 
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
 

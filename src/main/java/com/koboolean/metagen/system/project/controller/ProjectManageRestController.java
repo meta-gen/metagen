@@ -35,7 +35,7 @@ public class ProjectManageRestController {
 
     @Operation(summary = "프로젝트 Member 컬럼 조회", description = "프로젝트 Member 테이블의 컬럼 목록을 조회합니다.")
     @GetMapping("/getProject/{projectId}/column")
-    public ResponseEntity<List<ColumnDto>> getProjectColumn(@PathVariable Long projectId) {
+    public ResponseEntity<List<ColumnDto>> getProjectColumn(@PathVariable(value = "projectId") Long projectId) {
         return ResponseEntity.ok(projectManageService.getProjectColumn(projectId));
     }
 
@@ -43,17 +43,17 @@ public class ProjectManageRestController {
     @GetMapping("/getProject/{projectId}/data")
     public ResponseEntity<Map<String,Object>> getProjectData(
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
-            @RequestParam int page,
+            @RequestParam(value = "page") int page,
             @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam int size,
+            @RequestParam(value = "size") int size,
             @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
-            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, value = "sort") String sort,
             @Parameter(description = "조회 용어명", example = "용어명1")
-            @RequestParam(required = false) String searchQuery,
+            @RequestParam(required = false, value = "searchQuery") String searchQuery,
             @Parameter(description = "조회컬럼 명", example = "id")
-            @RequestParam(required = false) String searchColumn,
+            @RequestParam(required = false, value = "searchColumn") String searchColumn,
             @Parameter(description = "프로젝트 ID", example = "0")
-            @PathVariable Long projectId
+            @PathVariable(value = "projectId") Long projectId
     ) {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<ProjectMemberDto> standardTermDataPage = projectManageService.getProjectData(pageable, searchColumn, searchQuery, projectId);
@@ -64,7 +64,7 @@ public class ProjectManageRestController {
     @GetMapping("/getProject/{projectId}/getEditProjectData")
     public ResponseEntity<Map<String,Object>> getEditProjectData(
             @Parameter(description = "프로젝트 ID", example = "0")
-            @PathVariable Long projectId,
+            @PathVariable(value = "projectId") Long projectId,
             @Parameter(description = "현재 로그인된 사용자 정보", hidden = true)
             @AuthenticationPrincipal AccountDto accountDto
     ) {
@@ -89,14 +89,14 @@ public class ProjectManageRestController {
 
     @Operation(summary = "프로젝트 삭제", description = "프로젝트를 삭제합니다.")
     @DeleteMapping("/deleteProject/project/{selectedId}")
-    public ResponseEntity<Map<String,Boolean>> deleteProject(@PathVariable Long selectedId, @AuthenticationPrincipal AccountDto accountDto) {
+    public ResponseEntity<Map<String,Boolean>> deleteProject(@PathVariable(value = "selectedId") Long selectedId, @AuthenticationPrincipal AccountDto accountDto) {
         projectManageService.deleteProject(selectedId, accountDto);
         return ResponseEntity.ok(Map.of("result", true));
     }
 
     @Operation(summary = "프로젝트 멤버 승인/승인취소", description = "프로젝트 멤버의 승인여부(승인/승인취소)로 변경합니다.")
     @PostMapping("/saveProject/active/{isActive}")
-    public ResponseEntity<Map<String, Boolean>> saveActiveProject(@PathVariable Boolean isActive, @RequestBody List<ProjectMemberDto> projectMemberDtos) {
+    public ResponseEntity<Map<String, Boolean>> saveActiveProject(@PathVariable(value = "isActive") Boolean isActive, @RequestBody List<ProjectMemberDto> projectMemberDtos) {
         projectManageService.saveActiveProject(projectMemberDtos, isActive);
         return ResponseEntity.ok(Map.of("result", true));
     }
@@ -110,14 +110,14 @@ public class ProjectManageRestController {
 
     @Operation(summary = "프로젝트 멤버 조회", description = "추가를위한 프로젝트 멤버를 조회합니다.")
     @GetMapping("/getProject/projectMember/{selectedId}")
-    public ResponseEntity<Map<String, Object>> selectProjectMember(@PathVariable Long selectedId, @AuthenticationPrincipal AccountDto accountDto) {
+    public ResponseEntity<Map<String, Object>> selectProjectMember(@PathVariable(value = "selectedId") Long selectedId, @AuthenticationPrincipal AccountDto accountDto) {
         List<AccountDto> addProjectMember = projectManageService.selectProjectMember(selectedId, accountDto);
         return ResponseEntity.ok(Map.of("result", true,"projectMember", addProjectMember));
     }
 
     @PostMapping("/saveProject/projectMember/{projectId}")
 
-    public ResponseEntity<Map<String,Boolean>> saveProjectMember(@RequestBody Map<String, String> accountIds, @PathVariable Long projectId) {
+    public ResponseEntity<Map<String,Boolean>> saveProjectMember(@RequestBody Map<String, String> accountIds, @PathVariable(value = "projectId") Long projectId) {
         projectManageService.saveProjectMember(accountIds, projectId);
         return ResponseEntity.ok(Map.of("result", true));
     }

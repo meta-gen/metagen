@@ -72,7 +72,7 @@ public class LoginRestController {
             @ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
     @GetMapping(value="/checkProjectList/{username}")
-    public ResponseEntity<List<ProjectDto>> checkProjectList(@PathVariable String username) {
+    public ResponseEntity<List<ProjectDto>> checkProjectList(@PathVariable(value = "username") String username) {
         return ResponseEntity.ok(userService.selectProject(username));
     }
 }
