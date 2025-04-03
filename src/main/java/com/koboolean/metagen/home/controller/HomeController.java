@@ -67,7 +67,7 @@ public class HomeController {
 
     @GetMapping("/help")
     public String help() {
-        return "pages/help";
+        return "pages/operation/help";
     }
 
     @GetMapping("/projectManage")
