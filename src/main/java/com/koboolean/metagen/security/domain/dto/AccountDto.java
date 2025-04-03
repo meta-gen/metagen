@@ -30,6 +30,7 @@ public class AccountDto {
         return AccountDto.builder()
                 .id(String.valueOf(account.getId()))
                 .username(account.getUsername())
+                .password(null)
                 .name(account.getName())
                 .build();
     }
