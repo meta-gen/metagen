@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Map;
 
 public interface ProjectManageService {
     List<ColumnDto> getProjectColumn(Long projectId);
@@ -20,4 +21,12 @@ public interface ProjectManageService {
     void deleteProject(Long selectedId, AccountDto accountDto);
 
     boolean selectLoginProject(Long projectId, String id);
+
+    void saveActiveProject(List<ProjectMemberDto> projectMemberDtos, Boolean isActive);
+
+    void deleteProjectMember(List<ProjectMemberDto> projectMemberDtos, AccountDto accountDto);
+
+    List<AccountDto> selectProjectMember(Long selectedId, AccountDto accountDto);
+
+    void saveProjectMember(Map<String, String> accountIds, Long projectId);
 }

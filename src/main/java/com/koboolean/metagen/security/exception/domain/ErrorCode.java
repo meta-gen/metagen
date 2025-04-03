@@ -63,7 +63,12 @@ public enum ErrorCode {
     /**
      * 권한이 없어 작업을 수행할 수 없습니다.
      */
-    DATA_CANNOT_BE_DELETED(HttpStatus.BAD_REQUEST, "DATA_CANNOT_BE_DELETED", "권한이 없어 작업을 수행할 수 없습니다.");
+    DATA_CANNOT_BE_DELETED(HttpStatus.BAD_REQUEST, "DATA_CANNOT_BE_DELETED", "권한이 없어 작업을 수행할 수 없습니다."),
+
+    /**
+     * 프로젝트 관리자는 삭제가 불가능합니다.
+     */
+    PROJECT_MANAGER_NON_DELETED(HttpStatus.BAD_REQUEST, "PROJECT_MANAGER_NON_DELETED", "프로젝트 관리자는 삭제가 불가능합니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

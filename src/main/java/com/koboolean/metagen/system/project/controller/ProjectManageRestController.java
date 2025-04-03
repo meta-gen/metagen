@@ -1,16 +1,20 @@
 package com.koboolean.metagen.system.project.controller;
 
-import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.security.exception.CustomException;
+import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
+import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
 import com.koboolean.metagen.system.project.service.ProjectManageService;
+import com.koboolean.metagen.utils.AuthUtil;
 import com.koboolean.metagen.utils.PageableUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +27,11 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
-@Tag(name = "Data Dictionary API", description = "데이터 사전 관리 API")
+@Tag(name = "Project Manage API", description = "프로젝트 관리 및 프로젝트 멤버 관리를 위한 API")
 public class ProjectManageRestController {
 
     private final ProjectManageService projectManageService;
+    private final ProjectMemberRepository projectMemberRepository;
 
     @Operation(summary = "프로젝트 Member 컬럼 조회", description = "프로젝트 Member 테이블의 컬럼 목록을 조회합니다.")
     @GetMapping("/getProject/{projectId}/column")
@@ -82,10 +87,38 @@ public class ProjectManageRestController {
         return ResponseEntity.ok(Map.of("result", true));
     }
 
-    @Operation(summary = "프로젝트 수정", description = "프로젝트를 수정합니다.")
+    @Operation(summary = "프로젝트 삭제", description = "프로젝트를 삭제합니다.")
     @DeleteMapping("/deleteProject/project/{selectedId}")
     public ResponseEntity<Map<String,Boolean>> deleteProject(@PathVariable Long selectedId, @AuthenticationPrincipal AccountDto accountDto) {
         projectManageService.deleteProject(selectedId, accountDto);
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "프로젝트 멤버 승인/승인취소", description = "프로젝트 멤버의 승인여부(승인/승인취소)로 변경합니다.")
+    @PostMapping("/saveProject/active/{isActive}")
+    public ResponseEntity<Map<String, Boolean>> saveActiveProject(@PathVariable Boolean isActive, @RequestBody List<ProjectMemberDto> projectMemberDtos) {
+        projectManageService.saveActiveProject(projectMemberDtos, isActive);
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "프로젝트 멤버 삭제", description = "프로젝트 멤버를 삭제처리합니다.")
+    @DeleteMapping("/deleteProject/projectMember")
+    public ResponseEntity<Map<String, Boolean>> deleteProjectMember(@RequestBody List<ProjectMemberDto> projectMemberDtos, @AuthenticationPrincipal AccountDto accountDto) {
+        projectManageService.deleteProjectMember(projectMemberDtos, accountDto);
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "프로젝트 멤버 조회", description = "추가를위한 프로젝트 멤버를 조회합니다.")
+    @GetMapping("/getProject/projectMember/{selectedId}")
+    public ResponseEntity<Map<String, Object>> selectProjectMember(@PathVariable Long selectedId, @AuthenticationPrincipal AccountDto accountDto) {
+        List<AccountDto> addProjectMember = projectManageService.selectProjectMember(selectedId, accountDto);
+        return ResponseEntity.ok(Map.of("result", true,"projectMember", addProjectMember));
+    }
+
+    @PostMapping("/saveProject/projectMember/{projectId}")
+
+    public ResponseEntity<Map<String,Boolean>> saveProjectMember(@RequestBody Map<String, String> accountIds, @PathVariable Long projectId) {
+        projectManageService.saveProjectMember(accountIds, projectId);
         return ResponseEntity.ok(Map.of("result", true));
     }
 }
