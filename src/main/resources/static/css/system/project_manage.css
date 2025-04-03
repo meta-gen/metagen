@@ -43,3 +43,7 @@ label[for="projectSelector"] {
     border: 1px solid #ccc;
     font-style: italic;
 }
+
+.edit-form {
+    padding-bottom: 10px;
+}

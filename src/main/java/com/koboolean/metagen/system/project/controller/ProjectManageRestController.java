@@ -6,6 +6,7 @@ import com.koboolean.metagen.security.exception.CustomException;
 import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
+import com.koboolean.metagen.system.project.domain.enums.TemplateType;
 import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
 import com.koboolean.metagen.system.project.service.ProjectManageService;
 import com.koboolean.metagen.utils.AuthUtil;
@@ -70,7 +71,7 @@ public class ProjectManageRestController {
     ) {
         ProjectDto projectDto = projectManageService.getEditProjectData(projectId, accountDto);
 
-        return ResponseEntity.ok(Map.of("project", projectDto, "result", true));
+        return ResponseEntity.ok(Map.of("project", projectDto, "result", true, "templateTypes", TemplateType.values()));
     }
 
     @Operation(summary = "프로젝트 등록", description = "프로젝트를 등록합니다.")

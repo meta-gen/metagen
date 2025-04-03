@@ -136,6 +136,7 @@ $(document).ready(function () {
             isActive: $form.find('[name="isActive"]').is(':checked'),
             isAutoActive: $form.find('[name="isAutoActive"]').is(':checked'),
             isUseSwagger: $form.find('[name="isUseSwagger"]').is(':checked'),
+            templateType: $('#templateTypes').val()
         };
 
         if (type === 'U') {
@@ -213,28 +214,43 @@ $(document).ready(function () {
      * @param projectData
      * @param saveProject
      */
-    function openDialog(type, projectData, saveProject) {
+    function openDialog(type, projectData, saveProject, templateTypes) {
         let managerSelectHtml = '';
+        let templateTypeHtml = '';
 
-        if (type === 'U' && Array.isArray(projectData.projectMembers)) {
-            const options = projectData.projectMembers.filter(p => p.isActive === 'Y').map(member => {
-                const isSelected = member.username === projectData.projectManagerName ? 'selected' : '';
-                return `<option value="${member.accountId}" ${isSelected}>${member.name}</option>`;
-            }).join('');
+        if (type === 'U') {
+            if(Array.isArray(projectData.projectMembers)){
+                const options = projectData.projectMembers.filter(p => p.isActive === 'Y').map(member => {
+                    const isSelected = member.username === projectData.projectManagerName ? 'selected' : '';
+                    return `<option value="${member.accountId}" ${isSelected}>${member.name}</option>`;
+                }).join('');
 
-            managerSelectHtml = `
-            <div class="form-group">
-                <label for="project-manager">프로젝트 관리자</label>
-                <select id="project-manager" name="projectManagerId" class="form-control">
-                    ${options}
-                </select>
-            </div>
-        `;
+                managerSelectHtml = `<div class="form-group">
+                                    <label for="project-manager">프로젝트 관리자</label>
+                                    <select id="project-manager" name="projectManagerId" class="form-control">
+                                        ${options}
+                                    </select>
+                                 </div>`;
+            }
+            if(Array.isArray(templateTypes)){
+                const options = templateTypes.map(template => {
+                    const isSelected = projectData.templateType !== null && projectData.templateType.indexOf(template) !== -1 ? 'selected' : '';
+                    return `<option value="${template}" ${isSelected}>${template}</option>`;
+                }).join('');
+
+                templateTypeHtml = `<div style="margin-top: 10px; margin-bottom: 10px;"><label for="templateTypes">템플릿 타입 선택</label>
+                                        <select id="templateTypes"
+                                                name="templateType"
+                                                multiple
+                                                class="form-select">
+                                            ${options}
+                                        </select>
+                                    </div>`
+            }
         }
 
         const formHtml = `
         <form id="editProjectForm" class="edit-form">
-        
             <input type="hidden" name="type" value="${type}" />
             <input type="hidden" name="id" value="${projectData.id ?? ''}" />
 
@@ -244,7 +260,7 @@ $(document).ready(function () {
             </div>
 
             ${managerSelectHtml}
-
+            
             <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
                 <input type="checkbox" id="project-active" name="isActive" class="form-check-input" ${projectData.isActive ? 'checked' : ''} />
                 <label class="form-check-label" for="project-active">활성화 여부</label>
@@ -259,6 +275,8 @@ $(document).ready(function () {
                 <input type="checkbox" id="project-swagger" name="isUseSwagger" class="form-check-input" ${projectData.isUseSwagger ? 'checked' : ''} />
                 <label class="form-check-label" for="project-swagger">Swagger 사용 여부</label>
             </div>
+
+            ${templateTypeHtml}
 
             ${type === 'C' || projectData.isModified ? '<input type="submit" id="btn-save-project" class="btn btn-primary"/>' : ''}
         </form>
@@ -311,7 +329,7 @@ $(document).ready(function () {
     });
 
     $("#btn-project-add").on("click", function (e){
-        openDialog("C", {}, saveProject);
+        openDialog("C", {}, saveProject, null);
     });
 
     /**
@@ -328,10 +346,11 @@ $(document).ready(function () {
             success : (response) => {
                 if(response.result){
                     const projectData = response.project;
+                    const templateTypes = response.templateTypes;
 
                     const type = "U"
 
-                    openDialog(type, projectData, saveProject);
+                    openDialog(type, projectData, saveProject, templateTypes);
                 }
             }
         })

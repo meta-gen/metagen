@@ -1,8 +1,8 @@
 package com.koboolean.metagen.system.project.domain.entity;
 
-import com.koboolean.metagen.board.domain.entity.Board;
 import com.koboolean.metagen.home.jpa.BaseEntity;
 import com.koboolean.metagen.security.domain.entity.Account;
+import com.koboolean.metagen.system.project.domain.enums.TemplateType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,4 +39,8 @@ public class Project extends BaseEntity implements Serializable {
 
     @Column(name = "is_use_swagger")
     private Boolean isUseSwagger;
+
+    @Column(name = "template_type")
+    @Enumerated(EnumType.STRING)
+    private List<TemplateType> templateType;
 }

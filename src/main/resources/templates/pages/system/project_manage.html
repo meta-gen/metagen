@@ -13,7 +13,7 @@
     <h2>프로젝트 설정</h2>
     <div class="button-project-container">
         <div class="left-group">
-            <label for="projectSelector">프로젝트 선택:</label>
+            <label for="projectSelector">프로젝트 선택</label>
             <select id="projectSelector" class="search-column-select">
                 <option th:each="project : ${projects}"
                         th:value="${project.id}"
@@ -26,7 +26,7 @@
 
         <div class="right-group">
             <button id="btn-project-add" class="btn btn-primary">프로젝트 등록</button>
-            <button id="btn-project-edit" class="btn btn-primary">프로젝트 수정</button>
+            <button id="btn-project-edit" class="btn btn-primary">프로젝트 관리</button>
             <button id="btn-project-delete" class="btn btn-secondary">프로젝트 삭제</button>
         </div>
     </div>

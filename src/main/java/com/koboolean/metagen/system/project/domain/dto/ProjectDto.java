@@ -3,6 +3,7 @@ package com.koboolean.metagen.system.project.domain.dto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.system.project.domain.entity.Project;
+import com.koboolean.metagen.system.project.domain.enums.TemplateType;
 import com.koboolean.metagen.utils.AuthUtil;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,6 +33,8 @@ public class ProjectDto {
 
     private Boolean isUseSwagger;
 
+    private List<TemplateType> templateType;
+
     public static ProjectDto fromEntity(Project project) {
 
         List<ProjectMemberDto> projectMembers = project.getProjectMembers().stream().map(ProjectMemberDto::fromEntity).toList();
@@ -45,7 +48,8 @@ public class ProjectDto {
                 project.getIsAutoActive(),
                 projectMembers,
                 false,
-                false
+                project.getIsUseSwagger(),
+                project.getTemplateType()
         );
     }
 
@@ -64,7 +68,8 @@ public class ProjectDto {
                 project.getIsAutoActive(),
                 projectMembers,
                 isModified,
-                project.getIsUseSwagger()
+                project.getIsUseSwagger(),
+                project.getTemplateType()
         );
     }
 }
