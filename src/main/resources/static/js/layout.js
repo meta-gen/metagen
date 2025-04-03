@@ -5,7 +5,7 @@ window.toggleMenu = function (event, menuId, menuLink) {
     const isOpen = menu.classList.contains('show');
 
     // 상태 저장
-    localStorage.setItem('activeMenu', isOpen ? '' : menuId);
+    sessionStorage.setItem('activeMenu', isOpen ? '' : menuId);
 
     // 모든 메뉴 닫기
     document.querySelectorAll('.list-group .collapse').forEach(item => item.classList.remove('show'));
@@ -20,8 +20,8 @@ window.toggleMenu = function (event, menuId, menuLink) {
 // 활성화된 메뉴 저장 (1-depth 포함)
 window.setActiveMenu = function (event, menuId) {
     event.preventDefault();
-    localStorage.setItem('activeMenu', menuId);
-    localStorage.removeItem('activeSubmenu'); // 2-depth 초기화
+    sessionStorage.setItem('activeMenu', menuId);
+    sessionStorage.removeItem('activeSubmenu'); // 2-depth 초기화
 
     // 모든 메뉴 비활성화
     document.querySelectorAll('.list-group a').forEach(link => link.classList.remove('active'));
@@ -39,16 +39,16 @@ window.setActiveMenu = function (event, menuId) {
 window.setActiveSubmenu = function (event, submenuId) {
     event.preventDefault();
     const parentMenuId = event.target.closest('.collapse').id;
-    localStorage.setItem('activeMenu', parentMenuId);
-    localStorage.setItem('activeSubmenu', submenuId);
+    sessionStorage.setItem('activeMenu', parentMenuId);
+    sessionStorage.setItem('activeSubmenu', submenuId);
 
     // 페이지 이동
     window.location.href = event.target.href;
 };
 
 window.restoreMenuState = function () {
-    const activeMenu = localStorage.getItem('activeMenu');
-    const activeSubmenu = localStorage.getItem('activeSubmenu');
+    const activeMenu = sessionStorage.getItem('activeMenu');
+    const activeSubmenu = sessionStorage.getItem('activeSubmenu');
 
     // 1-depth 활성화
     if (activeMenu) {

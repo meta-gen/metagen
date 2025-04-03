@@ -35,10 +35,16 @@ public class LoginController {
      * @return
      */
     @GetMapping(value="/login")
+
     public String login(@RequestParam(value = "error", required = false) String error,
-                        @RequestParam(value = "exception", required = false) String exception, Model model){
+                        @RequestParam(value = "exception", required = false) String exception, Model model,
+                        @AuthenticationPrincipal AccountDto accountDto){
         model.addAttribute("error",error);
         model.addAttribute("exception",exception);
+
+        if(accountDto != null){
+            return "redirect:/";
+        }
 
         return "pages/login/login";
     }
