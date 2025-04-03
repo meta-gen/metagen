@@ -493,3 +493,11 @@ dialog .btn-primary {
 .close-btn:active {
     color: blue;
 }
+
+section h2 {
+    border-bottom: 2px solid #ccc; /* 구분선 */
+    padding-bottom: 8px;            /* 밑줄과의 간격 */
+    margin-bottom: 16px;            /* 아래 요소와의 간격 */
+    font-size: 1.5em;               /* 제목 크기 조정 */
+    font-weight: bold;             /* 굵게 */
+}
