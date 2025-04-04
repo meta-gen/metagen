@@ -62,3 +62,7 @@ def querydslSrcDir = 'src/main/generated'
 clean {
     delete file(querydslSrcDir)
 }
+
+tasks.withType(JavaCompile) {
+    options.annotationProcessorGeneratedSourcesDirectory = file('src/main/generated')
+}
