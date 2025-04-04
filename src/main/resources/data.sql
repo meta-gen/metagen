@@ -40,7 +40,7 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (7, '*', 0, '/designManage','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
-VALUES (8, '*', 0, '/manage','url', 'SYSTEM', 'SYSTEM')
+VALUES (8, '*', 0, '/userManage','url', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, created_by, updated_by)
 VALUES (9, '*', 0, '/systemLog','url', 'SYSTEM', 'SYSTEM')
