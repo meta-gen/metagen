@@ -45,9 +45,9 @@ public class HomeController {
         return "pages/test_manage";
     }
 
-    @GetMapping("/manage")
+    @GetMapping("/userManage")
     public String manage() {
-        return "pages/manage";
+        return "pages/system/user_manage";
     }
 
     @GetMapping("/systemLog")
