@@ -1,12 +1,12 @@
 package com.koboolean.metagen.security.domain.dto;
 
 import com.koboolean.metagen.security.domain.entity.Account;
-import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
-import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
+import com.koboolean.metagen.security.domain.entity.Role;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @Accessors(chain = true)
@@ -24,6 +24,7 @@ public class AccountDto {
     private String roleName;
     private Long projectId;
     private boolean isPasswdCheck;
+    private String resetButton;
 
     public static AccountDto fromEntity(Account account) {
 
@@ -32,6 +33,9 @@ public class AccountDto {
                 .username(account.getUsername())
                 .password(null)
                 .name(account.getName())
+                .roles(account.getUserRoles().stream().map(Role::getRoleName).collect(Collectors.toList()))
+                .roleName(account.getUserRoles().stream().findFirst().get().getRoleDesc())
+                .resetButton("초기화")
                 .build();
     }
 

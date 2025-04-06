@@ -78,6 +78,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
                 .account(account)
                 .templateType(projectDto.getTemplateType())
                 .isAutoActive(projectDto.getIsAutoActive())
+                .isDicAbbrUsed(projectDto.getIsDicAbbrUsed())
                 .isUseSwagger(projectDto.getIsUseSwagger())
                 .build();
 
@@ -107,6 +108,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
         project.setIsAutoActive(projectDto.getIsAutoActive());
         project.setIsUseSwagger(projectDto.getIsUseSwagger());
         project.setTemplateType(projectDto.getTemplateType());
+        project.setIsDicAbbrUsed(projectDto.getIsDicAbbrUsed());
 
     }
 

@@ -1,6 +1,10 @@
 package com.koboolean.metagen.user.service.impl;
 
 
+import com.koboolean.metagen.grid.domain.dto.ColumnDto;
+import com.koboolean.metagen.grid.enums.ColumnType;
+import com.koboolean.metagen.grid.enums.RowType;
+import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.security.domain.entity.Account;
@@ -16,6 +20,8 @@ import com.koboolean.metagen.system.project.repository.ProjectRepository;
 import com.koboolean.metagen.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -123,5 +129,27 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<ProjectDto> selectAllProjectsIsActive() {
         return projectRepository.findByIsActive(true).stream().map(ProjectDto::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ColumnDto> selectUserColumn() {
+
+        ColumnDto columnDto = new ColumnDto("권한", "roles", ColumnType.STRING, RowType.SELECT, false);
+
+        columnDto.setOptions(roleRepository.findAll().stream().map(Role::getRoleName).collect(Collectors.toList()));
+
+        return List.of(
+                new ColumnDto("","id", ColumnType.NUMBER, RowType.CHECKBOX),
+                new ColumnDto("사용자 ID","username", ColumnType.STRING, true),
+                new ColumnDto("사용자명","name", ColumnType.STRING, true),
+                columnDto,
+                new ColumnDto("권한 명", "roleName", ColumnType.STRING, RowType.TEXT, false),
+                new ColumnDto("비밀번호 초기화", "resetButton", ColumnType.STRING, RowType.BUTTON, false)
+        );
+    }
+
+    @Override
+    public Page<AccountDto> selectUserData(Pageable pageable, AccountDto accountDto, String searchQuery, String searchColumn) {
+        return userRepository.findAll(pageable).map(AccountDto::fromEntity);
     }
 }
