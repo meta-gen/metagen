@@ -134,7 +134,7 @@ insert into role_resources(resource_id, role_id) values (4,3) on CONFLICT (resou
 insert into role_resources(resource_id, role_id) values (5,4) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (6,3) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (7,3) on CONFLICT (resource_id, role_id) DO NOTHING;
-insert into role_resources(resource_id, role_id) values (8,4) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (8,2) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (9,4) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (10,3) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (11,2) on CONFLICT (resource_id, role_id) DO NOTHING;

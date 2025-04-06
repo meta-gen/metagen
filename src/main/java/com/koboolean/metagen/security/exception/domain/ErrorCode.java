@@ -68,7 +68,7 @@ public enum ErrorCode {
     /**
      * 프로젝트 관리자는 삭제가 불가능합니다.
      */
-    PROJECT_MANAGER_NON_DELETED(HttpStatus.BAD_REQUEST, "PROJECT_MANAGER_NON_DELETED", "프로젝트 관리자는 삭제가 불가능합니다.");
+    MANAGER_NON_DELETED(HttpStatus.BAD_REQUEST, "MANAGER_NON_DELETED", "관리자는 변경이 불가능합니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

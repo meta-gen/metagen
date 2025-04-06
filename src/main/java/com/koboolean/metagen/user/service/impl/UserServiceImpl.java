@@ -6,6 +6,7 @@ import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.grid.enums.RowType;
 import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.security.exception.CustomException;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.system.project.domain.entity.Project;
@@ -18,6 +19,7 @@ import com.koboolean.metagen.security.repository.UserRepository;
 import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
 import com.koboolean.metagen.system.project.repository.ProjectRepository;
 import com.koboolean.metagen.user.service.UserService;
+import com.koboolean.metagen.utils.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -134,7 +136,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<ColumnDto> selectUserColumn() {
 
-        ColumnDto columnDto = new ColumnDto("권한", "roles", ColumnType.STRING, RowType.SELECT, false);
+        ColumnDto columnDto = new ColumnDto("권한", "role", ColumnType.STRING, RowType.SELECT, false);
 
         columnDto.setOptions(roleRepository.findAll().stream().map(Role::getRoleName).collect(Collectors.toList()));
 
@@ -151,5 +153,35 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<AccountDto> selectUserData(Pageable pageable, AccountDto accountDto, String searchQuery, String searchColumn) {
         return userRepository.findAll(pageable).map(AccountDto::fromEntity);
+    }
+
+    @Override
+    @Transactional
+    public void saveUser(List<AccountDto> accountDtos) {
+        if(!AuthUtil.isIsApprovalAvailable()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        accountDtos.forEach(accountDto -> {
+
+            Account account = userRepository.findById(Long.parseLong(accountDto.getId())).orElse(null);
+
+            if(account != null){
+                Role role = account.getUserRoles().stream().findFirst().get();
+
+                // 권한이 변경된것을 확인하였으므로, 해당 권한으로 UPDATE한다.
+                if(!role.getRoleName().equals(accountDto.getRole())){
+
+                    if(accountDto.getId().equals("0")){
+                        // admin 계정은 권한 변경이 불가능하다.
+                        throw new CustomException(ErrorCode.MANAGER_NON_DELETED);
+                    }
+
+                    Role byRoleName = roleRepository.findByRoleName(accountDto.getRole());
+                    account.setUserRoles(Set.of(byRoleName));
+                }
+            }
+        });
+
     }
 }

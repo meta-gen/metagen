@@ -21,6 +21,7 @@ public class AccountDto {
     private String password;
     private String currentPassword;
     private List<String> roles;
+    private String role;
     private String roleName;
     private Long projectId;
     private boolean isPasswdCheck;
@@ -34,6 +35,7 @@ public class AccountDto {
                 .password(null)
                 .name(account.getName())
                 .roles(account.getUserRoles().stream().map(Role::getRoleName).collect(Collectors.toList()))
+                .role(account.getUserRoles().stream().findFirst().get().getRoleName())
                 .roleName(account.getUserRoles().stream().findFirst().get().getRoleDesc())
                 .resetButton("초기화")
                 .build();

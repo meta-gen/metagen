@@ -25,4 +25,6 @@ public interface UserService {
     List<ColumnDto> selectUserColumn();
 
     Page<AccountDto> selectUserData(Pageable pageable, AccountDto accountDto, String searchQuery, String searchColumn);
+
+    void saveUser(List<AccountDto> accountDtos);
 }
