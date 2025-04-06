@@ -135,6 +135,7 @@ $(document).ready(function () {
             projectName: $form.find('[name="projectName"]').val(),
             isActive: $form.find('[name="isActive"]').is(':checked'),
             isAutoActive: $form.find('[name="isAutoActive"]').is(':checked'),
+            isDicAbbrUsed : $form.find('[name="isDicAbbrUsed"]').is(':checked'),
             isUseSwagger: $form.find('[name="isUseSwagger"]').is(':checked'),
             templateType: $('#templateTypes').val()
         };
@@ -269,6 +270,11 @@ $(document).ready(function () {
             <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
                 <input type="checkbox" id="project-autoactive" name="isAutoActive" class="form-check-input" ${projectData.isAutoActive ? 'checked' : ''} />
                 <label class="form-check-label" for="project-autoactive">사용자 자동 승인 여부</label>
+            </div>
+            
+            <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
+                <input type="checkbox" id="project-dicAbbrUsed" name="isDicAbbrUsed" class="form-check-input" ${projectData.isDicAbbrUsed ? 'checked' : ''} />
+                <label class="form-check-label" for="project-dicAbbrUsed">데이터 사전 약어 사용 여부</label>
             </div>
             
             <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">

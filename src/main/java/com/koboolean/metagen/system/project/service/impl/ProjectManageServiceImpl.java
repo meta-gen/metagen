@@ -78,6 +78,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
                 .account(account)
                 .templateType(projectDto.getTemplateType())
                 .isAutoActive(projectDto.getIsAutoActive())
+                .isDicAbbrUsed(projectDto.getIsDicAbbrUsed())
                 .isUseSwagger(projectDto.getIsUseSwagger())
                 .build();
 
@@ -107,6 +108,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
         project.setIsAutoActive(projectDto.getIsAutoActive());
         project.setIsUseSwagger(projectDto.getIsUseSwagger());
         project.setTemplateType(projectDto.getTemplateType());
+        project.setIsDicAbbrUsed(projectDto.getIsDicAbbrUsed());
 
     }
 
@@ -175,7 +177,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
             if(projectMember != null){
                 // 프로젝트의 관리자의 경우에는 삭제가 불가능하다.
                 if(projectMember.getAccount().getId().equals(Long.parseLong(accountDto.getId()))){
-                    throw new CustomException(ErrorCode.PROJECT_MANAGER_NON_DELETED);
+                    throw new CustomException(ErrorCode.MANAGER_NON_DELETED);
                 }
 
                 projectMemberRepository.delete(projectMember);

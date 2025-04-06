@@ -31,6 +31,8 @@ public class ProjectDto {
 
     private Boolean isModified;
 
+    private Boolean isDicAbbrUsed;
+
     private Boolean isUseSwagger;
 
     private List<TemplateType> templateType;
@@ -48,6 +50,7 @@ public class ProjectDto {
                 project.getIsAutoActive(),
                 projectMembers,
                 false,
+                project.getIsDicAbbrUsed(),
                 project.getIsUseSwagger(),
                 project.getTemplateType()
         );
@@ -68,6 +71,7 @@ public class ProjectDto {
                 project.getIsAutoActive(),
                 projectMembers,
                 isModified,
+                project.getIsDicAbbrUsed(),
                 project.getIsUseSwagger(),
                 project.getTemplateType()
         );
