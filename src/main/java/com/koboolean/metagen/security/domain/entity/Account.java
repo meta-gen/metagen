@@ -32,6 +32,9 @@ public class Account extends BaseEntity implements Serializable {
     @Column
     private String name;
 
+    @Column
+    private Boolean isActive;
+
     /**
      * 패스워드 변경여부 - 기본적으로 admin에서 접근했을 때 패스워드 변경을 먼저 할 수 있도록 내정보로 redirect한다
      * admin 이외의 계정에서는 true를 반환하여 원하는 위치로 이동할 수 있도록 작업해준다.
