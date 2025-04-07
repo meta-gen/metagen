@@ -216,6 +216,7 @@ public class UserServiceImpl implements UserService {
 
         if(account != null){
             account.setPassword(passwordEncoder.encode(accountDto.getUsername()));
+            account.setPasswdCheck(false);
         }
     }
 }
