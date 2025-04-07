@@ -134,7 +134,7 @@ insert into role_resources(resource_id, role_id) values (4,3) on CONFLICT (resou
 insert into role_resources(resource_id, role_id) values (5,4) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (6,3) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (7,3) on CONFLICT (resource_id, role_id) DO NOTHING;
-insert into role_resources(resource_id, role_id) values (8,2) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (8,0) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (9,4) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (10,3) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (11,2) on CONFLICT (resource_id, role_id) DO NOTHING;
@@ -160,9 +160,9 @@ insert into role_resources(resource_id, role_id) values (30,3) on CONFLICT (reso
 insert into role_resources(resource_id, role_id) values (31,3) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (32,3) on CONFLICT (resource_id, role_id) DO NOTHING;
 insert into role_resources(resource_id, role_id) values (33,3) on CONFLICT (resource_id, role_id) DO NOTHING;
-insert into role_resources(resource_id, role_id) values (34,2) on CONFLICT (resource_id, role_id) DO NOTHING;
-insert into role_resources(resource_id, role_id) values (35,2) on CONFLICT (resource_id, role_id) DO NOTHING;
-insert into role_resources(resource_id, role_id) values (36,2) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (34,0) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (35,0) on CONFLICT (resource_id, role_id) DO NOTHING;
+insert into role_resources(resource_id, role_id) values (36,0) on CONFLICT (resource_id, role_id) DO NOTHING;
 
 /* 유저 정보 생성 */
 insert into account(id, password, username, name, is_password_check,created_by, updated_by, is_active) values(0, '{bcrypt}$2a$10$GN1YfMyJLcWhDuslP6P/UuqRwIfJk2VF5tl9mXsRjLJ18ivQfIAoW', 'admin', '관리자', false, 'SYSTEM', 'SYSTEM', true) ON CONFLICT (id) DO NOTHING;

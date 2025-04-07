@@ -183,7 +183,6 @@ public class UserServiceImpl implements UserService {
                 }
             }
         });
-
     }
 
     @Override
@@ -193,15 +192,28 @@ public class UserServiceImpl implements UserService {
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
 
-        accountDtos.forEach(accountDto -> {
-           Account account = userRepository.findById(Long.parseLong(accountDto.getId())).orElse(null);
-           if(account != null){
-               if(account.getId().equals(0L)){
-                   throw new CustomException(ErrorCode.MANAGER_NON_DELETED);
-               }
+        Role adminRole = roleRepository.findByRoleName("ROLE_ADMIN");
 
-               account.setIsActive(false);
-           }
+        accountDtos.forEach(accountDto -> {
+            Account account = userRepository.findById(Long.parseLong(accountDto.getId()))
+                    .orElse(null);
+
+            if(account != null){
+                boolean isAdmin = account.getUserRoles().contains(adminRole);
+
+                if (isAdmin) {
+                    long activeAdminCount = adminRole.getAccounts().stream()
+                            .filter(Account::getIsActive)
+                            .distinct()
+                            .count();
+
+                    if (activeAdminCount <= 1) {
+                        throw new CustomException(ErrorCode.MANAGER_NON_DELETED);
+                    }
+                }
+
+                account.setIsActive(false); // soft delete
+            }
         });
     }
 
