@@ -44,4 +44,7 @@ public class AccountContext implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+    public Boolean getIsActive() {
+        return accountDto.getIsActive();
+    }
 }

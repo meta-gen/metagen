@@ -37,6 +37,9 @@ public class Project extends BaseEntity implements Serializable {
     @Column(name = "is_auto_active")
     private Boolean isAutoActive; // 자동 승인여부
 
+    @Column(name = "is_dic_abbr_used")
+    private Boolean isDicAbbrUsed; // 데이터 사전 약어 사용 여부
+
     @Column(name = "is_use_swagger")
     private Boolean isUseSwagger;
 

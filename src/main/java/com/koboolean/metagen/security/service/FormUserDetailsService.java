@@ -28,7 +28,7 @@ public class FormUserDetailsService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        Account account = userRepository.findByUsername(username);
+        Account account = userRepository.findByUsernameAndIsActive(username, true);
         if (account == null) {
            throw new UsernameNotFoundException("사용자를 찾을 수 없습니다 : " + username);
         }

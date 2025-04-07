@@ -381,5 +381,54 @@
         }
         window.getCheckedDataIsNonNull = getCheckedDataIsNonNull;
 
+
+        function getSelectedData(tableId) {
+            let data = [];
+
+
+            $(`#${tableId} tbody tr`).each((index, element) => {
+                const row = window.tableInstances[tableId].row(element);
+                const rowData = row.data(); // 기존 데이터
+
+                // 변경된 셀 값을 DOM에서 직접 가져와서 반영
+                $(element).find("select, input").each((i, el) => {
+                    const $el = $(el);
+                    const field = $el.data("field"); // select/input 태그에 data-field 속성 있어야 함
+                    const value = $el.val();
+
+                    if (field) {
+                        rowData[field] = value;
+                    }
+                });
+
+                if (rowData) {
+                    data.push(rowData);
+                }
+            });
+            return data;
+        }
+
+        window.getSelectedData = getSelectedData;
+
+        function getClickedData(tableId, callback){
+            $(`#${tableId}`).on('click', '.action-btn', function () {
+                const $btn = $(this);
+                const field = $btn.data('field');  // ex) "resetButton"
+                const id = $btn.data('id');        // ex) 해당 row의 id (선택 사항)
+                const $row = $btn.closest('tr');
+
+                const table = window.tableInstances['userTable'];
+                const rowData = table.row($row).data();
+
+                if (!rowData) return;
+
+                const result = {field : field, id : id, rowData : rowData};
+
+                callback(result);
+            });
+        }
+
+        window.getClickedData = getClickedData;
+
     </script>
 </div>
