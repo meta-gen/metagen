@@ -63,6 +63,7 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.findByRoleName("ROLE_NOT_APPROVE");
         Set<Role> roles = Set.of(role);
         account.setUserRoles(roles);
+        account.setIsActive(true);
         userRepository.save(account);
 
         Project project = projectRepository.findById(accountDto.getProjectId())
@@ -152,7 +153,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<AccountDto> selectUserData(Pageable pageable, AccountDto accountDto, String searchQuery, String searchColumn) {
-        return userRepository.findAll(pageable).map(AccountDto::fromEntity);
+        return userRepository.findAllByIsActive(true, pageable).map(AccountDto::fromEntity);
     }
 
     @Override
@@ -183,5 +184,38 @@ public class UserServiceImpl implements UserService {
             }
         });
 
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(List<AccountDto> accountDtos) {
+        if(!AuthUtil.isIsApprovalAvailable()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        accountDtos.forEach(accountDto -> {
+           Account account = userRepository.findById(Long.parseLong(accountDto.getId())).orElse(null);
+           if(account != null){
+               if(account.getId().equals(0L)){
+                   throw new CustomException(ErrorCode.MANAGER_NON_DELETED);
+               }
+
+               account.setIsActive(false);
+           }
+        });
+    }
+
+    @Override
+    @Transactional
+    public void saveUserPassword(AccountDto accountDto) {
+        if(!AuthUtil.isIsApprovalAvailable()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        Account account = userRepository.findById(Long.parseLong(accountDto.getId())).orElse(null);
+
+        if(account != null){
+            account.setPassword(passwordEncoder.encode(accountDto.getUsername()));
+        }
     }
 }

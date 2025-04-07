@@ -62,4 +62,19 @@ public class UserRestController {
 
         return ResponseEntity.ok(Map.of("result", true));
     }
+
+    @Operation(summary = "사용자 삭제", description = "사용자 관리 그리드를 통해 사용자를 삭제한다.")
+    @DeleteMapping("/deleteUser/user")
+    public ResponseEntity<Map<String,Boolean>> deleteUser(@RequestBody List<AccountDto> accountDtos) {
+        userService.deleteUser(accountDtos);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @PutMapping("/saveUser/password")
+    public ResponseEntity<Map<String,Boolean>> saveUserPassword(@RequestBody AccountDto accountDto) {
+        userService.saveUserPassword(accountDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
 }

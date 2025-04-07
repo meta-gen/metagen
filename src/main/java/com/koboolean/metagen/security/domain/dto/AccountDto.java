@@ -26,6 +26,7 @@ public class AccountDto {
     private Long projectId;
     private boolean isPasswdCheck;
     private String resetButton;
+    private Boolean isActive;
 
     public static AccountDto fromEntity(Account account) {
 
