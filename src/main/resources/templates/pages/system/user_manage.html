@@ -1,60 +1,37 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorate="~{layout}">
+
+<head>
+    <script type="module" th:src="@{/js/system/user/user_manage.js}"></script>
+</head>
+
 <body>
 <section layout:fragment="content">
     <h2>사용자 관리</h2>
-    <p>• 설명: MetaGen 사용자 계정을 생성하고 관리할 수 있는 관리자 전용 화면. 사용자 권한 및 역할을 설정하고 시스템 접근을 제어할 수 있습니다.</p>
+
+    <div th:replace="~{fragments/grid :: grid('userTable', '/api/selectUser', 'ud', null)}"></div>
+
+    <!--<p>• 설명: MetaGen 사용자 계정을 생성하고 관리할 수 있는 관리자 전용 화면. 사용자 권한 및 역할을 설정하고 시스템 접근을 제어할 수 있습니다.</p>
 
     <p>• 기능:</p>
     <ul>
         <li>사용자 계정 관리
             <ul>
-                <li>사용자 계정 생성, 수정, 삭제</li>
+                <li>사용자 계정 수정, 삭제</li>
                 <li>비밀번호 초기화 및 계정 활성화/비활성화 설정</li>
             </ul>
         </li>
-        <li>권한 및 역할 관리
+        <li>권한 및 역할 관리 -> 작업 완료
             <ul>
                 <li>역할(Role) 및 권한(Permission) 설정</li>
                 <li>관리자(Admin), 일반 사용자(User), 게스트(Guest) 등 역할 정의</li>
                 <li>특정 메뉴 접근 제한 설정</li>
             </ul>
         </li>
-        <li>액세스 로그 관리
-            <ul>
-                <li>사용자 활동 로그 확인 (로그인/로그아웃, 데이터 수정 등)</li>
-                <li>시간별, IP별, 사용자별 로그 조회 기능</li>
-            </ul>
-        </li>
-        <li>그룹 관리 (Optional)
-            <ul>
-                <li>사용자 그룹 생성 및 관리</li>
-                <li>그룹별 권한 설정</li>
-            </ul>
-        </li>
-        <li>승인 프로세스
-            <ul>
-                <li>새 사용자 등록 시 관리자 승인 여부 결정</li>
-                <li>승인 대기 사용자 목록 관리</li>
-                <li><strong>승인 시스템 사용 여부 설정</strong></li>
-            </ul>
-        </li>
-        <li>코드 규칙 관리
-            <ul>
-                <li>새로운 코드 규칙 등록</li>
-                <li>기존 규칙 수정 및 삭제</li>
-                <li><strong>설계서 및 시나리오에 연동될 기본 규칙 설정</strong></li>
-            </ul>
-        </li>
-        <li>템플릿 언어 설정
-            <ul>
-                <li>기본 템플릿 언어 지정 (Java, Python, C++, etc.)</li>
-                <li>다양한 언어 확장을 위한 템플릿 관리</li>
-            </ul>
-        </li>
         <li>알림 설정
             <ul>
+                <li>비밀번호 만료 관련사항은 추후 사항으로 넘기고 일단 승인대기 관련사항 먼저 작업필요 (기본적으로 프로젝트 승인 관련사항은 반영 완 -> 프로젝트 승인 외에 권한별 승인(4(미승인사용자) -> 3(승인사용자)로 변경에 대한부분 처리 필요))</li>
                 <li>계정 관련 알림 제공 (비밀번호 만료, 승인 대기 등)</li>
             </ul>
         </li>
@@ -74,7 +51,7 @@
         <li>사용자 그룹과 역할 관리의 세분화 필요성</li>
         <li>템플릿 언어 설정 시 확장 가능한 언어의 범위</li>
         <li>기본 코드 규칙과 사용자 정의 규칙 간의 충돌 처리 방안</li>
-    </ul>
+    </ul>-->
 </section>
 </body>
 </html>
