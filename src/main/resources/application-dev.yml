@@ -2,7 +2,7 @@ spring:
   application:
     name: meta-gen
   datasource:
-    url: jdbc:postgresql://localhost:15439/meta-gen?charSet=UTF-8
+    url: jdbc:postgresql://192.168.45.49:15439/meta-gen?charSet=UTF-8
     username: meta-gen
     password: meta-gen
   jpa:
@@ -58,7 +58,7 @@ server:
       timeout: 30m
 
 
-  port: 9940
+  port: 8080
 
 secret:
   key: wHlFMltmbMCxR63/G1xueQl5DwtYwUBXXcmeYcSE8ril2FpMqT2VTVPzCJiK7zXY24MlWwWpVfgspISEQdKpnw==
