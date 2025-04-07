@@ -11,6 +11,14 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(17)
     }
+    
+    /* Java version을 Gradle에서 하기 위한 설정.
+     *  프로젝트가 Gradle로 관리 중이라 Eclipse가 설정을 강제로 못 바꾸는 중
+     *  Gradle 프로젝트는 컴파일러 옵션을 build.gradle에서 관리하기 때문에,
+     *  STS (Eclipse)에서는 해당 옵션을 비활성화시켜버리는 경우가 있어
+     */
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 configurations {
