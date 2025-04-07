@@ -5,14 +5,18 @@ import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.system.project.domain.entity.Project;
 import com.koboolean.metagen.system.project.domain.enums.TemplateType;
 import com.koboolean.metagen.utils.AuthUtil;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectDto {
 
     private Long id;
