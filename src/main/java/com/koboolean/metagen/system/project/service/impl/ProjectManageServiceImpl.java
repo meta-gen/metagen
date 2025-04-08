@@ -151,7 +151,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
     @Override
     @Transactional
     public void saveActiveProject(List<ProjectMemberDto> projectMemberDtos, Boolean isActive) {
-        if(!AuthUtil.isIsApprovalAvailable()){
+        if(!AuthUtil.isApprovalAvailable()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
 
@@ -167,7 +167,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
     @Override
     @Transactional
     public void deleteProjectMember(List<ProjectMemberDto> projectMemberDtos, AccountDto accountDto) {
-        if(!AuthUtil.isIsApprovalAvailable()){
+        if(!AuthUtil.isApprovalAvailable()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
 
@@ -204,7 +204,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
     @Override
     @Transactional
     public void saveProjectMember(Map<String, String> accountIds, Long projectId) {
-        if(!AuthUtil.isIsApprovalAvailable()){
+        if(!AuthUtil.isApprovalAvailable()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
 

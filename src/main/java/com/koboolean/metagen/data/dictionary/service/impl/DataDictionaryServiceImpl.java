@@ -119,7 +119,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
         Long projectId = accountDto.getProjectId();
 
         // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
-        boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
+        boolean isApprovalAvailable = AuthUtil.isApprovalAvailable();
 
         standardDomainService.setStandardDomain(file, projectId, isApprovalAvailable);
         standardWordService.setStandardWord(file, projectId, isApprovalAvailable);
@@ -199,7 +199,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
         String domainName = standardTermDto.getCommonStandardTermAbbreviation();
 
         // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
-        boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
+        boolean isApprovalAvailable = AuthUtil.isApprovalAvailable();
 
         standardTermService.saveStandardTerms(accountDto.getProjectId(), isApprovalAvailable, standardTermDto, domainName.split("_"));
     }
@@ -209,7 +209,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
         String domainName = standardTermDto.getCommonStandardTermAbbreviation();
 
         // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
-        boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
+        boolean isApprovalAvailable = AuthUtil.isApprovalAvailable();
 
         standardTermService.updateStandardTerms(accountDto.getProjectId(), isApprovalAvailable, standardTermDto, domainName.split("_"));
     }
@@ -218,7 +218,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     public void insertStandardDomain(AccountDto accountDto, StandardDomainDto standardDomainDto) {
 
         // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
-        boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
+        boolean isApprovalAvailable = AuthUtil.isApprovalAvailable();
 
         standardDomainDto.setProjectId(accountDto.getProjectId());
         standardDomainDto.setIsApprovalYn(isApprovalAvailable ? "Y" : "N");
@@ -244,7 +244,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
     @Override
     public void insertStandardWord(AccountDto accountDto, StandardWordDto standardWordDto) {
         // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
-        boolean isApprovalAvailable = AuthUtil.isIsApprovalAvailable();
+        boolean isApprovalAvailable = AuthUtil.isApprovalAvailable();
 
         standardWordDto.setProjectId(accountDto.getProjectId());
         standardWordDto.setIsApprovalYn(isApprovalAvailable ? "Y" : "N");

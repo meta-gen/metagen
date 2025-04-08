@@ -159,7 +159,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void saveUser(List<AccountDto> accountDtos) {
-        if(!AuthUtil.isIsApprovalAvailable()){
+        if(!AuthUtil.isApprovalAvailable()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
 
@@ -188,7 +188,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(List<AccountDto> accountDtos) {
-        if(!AuthUtil.isIsApprovalAvailable()){
+        if(!AuthUtil.isApprovalAvailable()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
 
@@ -220,7 +220,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void saveUserPassword(AccountDto accountDto) {
-        if(!AuthUtil.isIsApprovalAvailable()){
+        if(!AuthUtil.isApprovalAvailable()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
 
