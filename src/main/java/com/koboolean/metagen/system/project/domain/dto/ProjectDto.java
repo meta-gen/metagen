@@ -64,7 +64,7 @@ public class ProjectDto {
 
         List<ProjectMemberDto> projectMembers = project.getProjectMembers().stream().map(ProjectMemberDto::fromEntity).toList();
         Boolean isModified = project.getAccount() != null && (project.getAccount().getId() == Long.parseLong(accountDto.getId())
-                || AuthUtil.isIsApprovalAvailable());
+                || AuthUtil.isApprovalAvailable());
 
         return new ProjectDto(
                 project.getId(),

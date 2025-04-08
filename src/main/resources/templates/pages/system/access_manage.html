@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<body>
+
+<head>
+    <script type="module" th:src="@{/js/system/access/access_manage.js}"></script>
+</head>
+
+<section layout:fragment="content">
+    <h2>인가 관리</h2>
+
+    <div th:replace="~{fragments/grid :: grid('accessGrid', '/api/selectAccess', 'u', null)}"></div>
+</section>
+</body>
+</html>

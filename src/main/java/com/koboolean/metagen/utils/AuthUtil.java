@@ -22,7 +22,7 @@ public class AuthUtil {
         AuthUtil.projectManageService = projectManageService;
     }
 
-    public static boolean isIsApprovalAvailable() {
+    public static boolean isApprovalAvailable() {
         // 디버깅 로그 추가
         AccountDto accountDto = (AccountDto) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         boolean isLoginManageProject = projectManageService.selectLoginProject(accountDto.getProjectId(), accountDto.getId());
@@ -34,6 +34,14 @@ public class AuthUtil {
                 .anyMatch(role -> role.equals("ROLE_ADMIN") || role.equals("ROLE_MANAGER"));
 
         return isLoginManageProject || isAuthorities;
+    }
+
+    public static boolean isApprovalAdmin() {
+        return SecurityContextHolder.getContext().getAuthentication().getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .peek(log::debug) // 디버깅 로그 추가
+                .anyMatch(role -> role.equals("ROLE_ADMIN"));
     }
 
 
