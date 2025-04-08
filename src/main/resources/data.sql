@@ -28,7 +28,7 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (3, '*', 0, '/api/updatePwd','url', '패스워드수정', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (4, '*', 0, '/meta','url', '메타데이터화면', 'SYSTEM', 'SYSTEM')
+VALUES (4, '*', 0, '/tableDesign','url', '테이블설계화면', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (5, '*', 0, '/api/updateName','url', '사용자명수정', 'SYSTEM', 'SYSTEM')

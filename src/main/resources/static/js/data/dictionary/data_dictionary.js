@@ -36,7 +36,7 @@ $(document).ready(function () {
                 responseType: 'blob'
             },
             success: function (blob, status, xhr) {
-                downloadFile(blob, status, xhr, "템플릿.xlsx");
+                downloadFile(blob, status, xhr, "데이터사전 템플릿.xlsx");
                 closeDialog("div");
             },
             error: function (xhr) {

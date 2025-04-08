@@ -25,9 +25,9 @@ public class HomeController {
         return "pages/notice";
     }
 
-    @GetMapping("/meta")
+    @GetMapping("/tableDesign")
     public String meta() {
-        return "pages/meta";
+        return "pages/data/table-design";
     }
 
     @GetMapping("/codeRule")

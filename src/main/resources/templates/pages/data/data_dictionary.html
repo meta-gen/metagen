@@ -4,7 +4,7 @@
       layout:decorate="~{layout}"
 >
 <head>
-    <script type="module" th:src="@{/js/system/dictionary/data_dictionary.js}"></script>
+    <script type="module" th:src="@{/js/data/dictionary/data_dictionary.js}"></script>
     <script type="module" th:src="@{/js/system/project/project_manage.js}"></script>
 </head>
 
@@ -13,7 +13,7 @@
     <h2>데이터 사전</h2>
     <div class="button-container">
         <button class="btn btn-primary" onclick="openCustomDialog()">템플릿 다운로드</button>
-        <button id="excel-upload" class="btn btn-primary">엑셀 업로드</button>
+        <button id="excel-upload" class="btn btn-primary">데이터사전 업로드</button>
     </div>
 
     <input type="file" id="upload-file" style="display: none" accept=".xlsx, .xls"/>
