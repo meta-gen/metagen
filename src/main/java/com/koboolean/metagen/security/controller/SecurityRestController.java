@@ -22,7 +22,7 @@ public class SecurityRestController {
     private final RoleHierarchyImpl roleHierarchyImpl;
 
     @GetMapping(value = "/api/updateRole")
-    public String updateRole() {
+    public ResponseEntity<Map<String, Boolean>> updateRole() {
         if(!AuthUtil.isApprovalAdmin()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
@@ -32,8 +32,7 @@ public class SecurityRestController {
         // 권한 계층 변경
         roleHierarchyConfig.updateHierarchy(roleHierarchyImpl);
 
-        return "redirect:/";
-
+        return ResponseEntity.ok(Map.of("result", true));
     }
 
     @GetMapping(value = "/isApprovalAvailable")
