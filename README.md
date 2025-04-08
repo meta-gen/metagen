@@ -6,7 +6,6 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 
 [Docker Hub](https://hub.docker.com/repository/docker/koboolean/metagen)
 
-TEST
 ---
 ## 기술 스택
 
