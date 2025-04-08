@@ -1,6 +1,7 @@
 package com.koboolean.metagen.security.domain.entity;
 
 import com.koboolean.metagen.home.jpa.BaseEntity;
+import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -30,6 +31,9 @@ public class Account extends BaseEntity implements Serializable {
 
     @Column
     private String name;
+
+    @Column
+    private Boolean isActive;
 
     /**
      * 패스워드 변경여부 - 기본적으로 admin에서 접근했을 때 패스워드 변경을 먼저 할 수 있도록 내정보로 redirect한다

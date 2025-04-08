@@ -10,7 +10,6 @@
     <link rel="stylesheet" th:href="@{/js/jquery-ui-1.14.1.custom/jquery-ui.css}">
 
     <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
-    <script th:src="@{/js/bootstrap.js}"></script>
     <script th:src="@{/js/bootstrap.bundle.js}"></script>
     <script th:src="@{/js/dataTables.dataTables.min.js}"></script>
     <script th:src="@{/js/dataTables.min.js}"></script>
@@ -33,7 +32,7 @@
 
         <dialog id="myAlert">
             <h3>알림</h3>
-            <p id="alertContent">여기에 내용이 표시됩니다.</p>
+            <p id="alertContent" style="white-space: pre-line">여기에 내용이 표시됩니다.</p>
             <div class="button-container">
                 <button onclick="closeDialog('alert', true)" class="close">닫기</button>
             </div>
@@ -41,7 +40,7 @@
 
         <dialog id="myConfirm">
             <h3>알림</h3>
-            <p id="confirmContent">여기에 내용이 표시됩니다.</p>
+            <p id="confirmContent" style="white-space: pre-line">여기에 내용이 표시됩니다.</p>
             <div class="button-container">
                 <button onclick="closeDialog('confirm', true)" class="confirm">확인</button>
                 <button onclick="closeDialog('confirm', false)" class="close">닫기</button>
@@ -49,13 +48,11 @@
         </dialog>
 
         <dialog id="mainConfirm">
-            <h3 id="mainDialogTitle">알림</h3>
-            <div id="mainDialogContent">
-
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 id="mainDialogTitle">알림</h3>
+                <button onclick="closeDialog('div', true)" class="close-btn" aria-label="닫기">&times;</button>
             </div>
-            <div class="button-container">
-                <button onclick="closeDialog('confirm', true)" class="close">확인</button>
-            </div>
+            <div id="mainDialogContent"></div>
         </dialog>
 
         <!-- Main Section -->
@@ -66,6 +63,10 @@
 
     <!-- Footer -->
     <footer th:replace="~{fragments/footer::footer}"></footer>
+
+    <div id="loading-bar" style="display: none;">
+        <div class="loading-spinner"></div>
+    </div>
 </div>
 </body>
 </html>

@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout}">
+<body>
+<section layout:fragment="content">
+    <h2>시스템로그</h2>
+    <div th:replace="~{fragments/grid :: grid('logTable', '/api/getSystemLog', '', null)}"></div>
+</section>
+</body>
+</html>

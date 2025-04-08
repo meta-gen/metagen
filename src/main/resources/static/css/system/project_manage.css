@@ -1,0 +1,48 @@
+.button-project-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.left-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.right-group button {
+    margin-left: 8px;
+}
+
+label[for="projectSelector"] {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #333;
+}
+
+#projectSelector {
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #fff;
+    min-width: 200px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+#projectSelector:hover {
+    border-color: #007bff;
+    box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
+}
+
+.inactive-project {
+    background-color: #f8f9fa;
+    color: #999;
+    border: 1px solid #ccc;
+}
+
+.edit-form {
+    padding-bottom: 10px;
+}

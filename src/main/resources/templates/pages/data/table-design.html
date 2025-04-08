@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      layout:decorate="~{layout}">
+
+<head>
+    <script type="module" th:src="@{/js/data/table/table-design.js}"></script>
+</head>
+
+<body>
+<section layout:fragment="content">
+    <h2>테이블설계</h2>
+
+    <div class="button-container">
+        <button class="btn btn-primary" id="download-template">템플릿 다운로드</button>
+        <button id="excel-upload" class="btn btn-primary">메타데이터 업로드</button>
+    </div>
+
+</section>
+</body>

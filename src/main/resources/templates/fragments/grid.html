@@ -1,52 +1,228 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MetaGen</title>
-</head>
+<div th:fragment="grid(tableId, dataUrl, crudActions, initCompleteCallback)">
+    <div class="grid-header">
+        <!-- 검색창 + 컬럼 선택 + 조회 버튼 -->
+        <div class="search-container">
+            <!-- 검색 컬럼 선택 드롭다운 -->
+            <select class="search-column-select" th:data-table-id="${tableId}" th:id="'search-column-' + ${tableId}">
+            </select>
 
-<!-- 공통 Grid Fragment -->
-<div th:fragment="grid(tableId, dataUrl)">
-    <button class="btn btn-primary mb-3" onclick="reloadTable()">데이터 새로고침</button>
+            <!-- 검색 입력 필드 (초기 기본값: STRING 타입) -->
+            <input type="text" class="search-input-text search-input" th:data-table-id="${tableId}" th:id="'search-input-text-' + ${tableId}" placeholder="검색어 입력">
+            <input type="number" class="search-input-number search-input" th:data-table-id="${tableId}" th:id="'search-input-number-' + ${tableId}" placeholder="숫자만 입력하세요" style="display: none;">
+
+            <button class="grd-select" th:data-table-id="${tableId}" th:id="'grd-select-' + ${tableId}">조회</button>
+        </div>
+
+        <!-- 승인, 추가, 저장, 삭제 버튼 -->
+        <div class="button-container">
+            <button class="grd-active btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-active-' + ${tableId}" style="display: none;">승인</button>
+            <button class="grd-unactive btn btn-secondary" th:data-table-id="${tableId}" th:id="'grd-unactive-' + ${tableId}" style="display: none;">승인취소</button>
+            <button class="grd-add btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-add-' + ${tableId}" style="display: none;">추가</button>
+            <button class="grd-save btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-save-' + ${tableId}" style="display: none;">저장</button>
+            <button class="grd-delete btn btn-secondary" th:data-table-id="${tableId}" th:id="'grd-delete-' + ${tableId}" style="display: none;">삭제</button>
+        </div>
+    </div>
+
+    <hr class="grid-divider">
 
     <table th:id="${tableId}" class="table table-striped table-bordered">
         <thead>
-        <tr id="tableHeader">
-        </tr>
+        <tr id="tableHeader"></tr>
         </thead>
     </table>
 
     <script th:inline="javascript">
-        /* Thymeleaf 변수를 JavaScript로 변환 */
-        let tableId = /*[[${tableId}]]*/ '';
-        let dataUrl = /*[[${dataUrl}]]*/ '';
+        if (!window.tableInstances) {
+            window.tableInstances = {};  // 여러 개의 DataTable을 저장할 객체
+        }
 
-        /* DataTables AJAX 기반 초기화 */
-        let table;
+        if(!window.gridCallbacks){
+            window.gridCallbacks = {};
+        }
 
-        $(document).ready(function () {
+        // CRUD 코드 매핑 (C = Create(Add), U = Update(Save), D = Delete)
+        if (!window.crudActionMap) {
+            window.crudActionMap = {
+                "C": "add",
+                "U": "save",
+                "D": "delete",
+                "A": "active",
+                "N": "unactive"
+            };
+        }
+
+        window.grid = function (tableId, dataUrl, crudActions = '', initCompleteCallback = '') {
+            let isManager = false;
+
+            if (!tableId || !dataUrl) {
+                console.error("tableId 또는 dataUrl이 없습니다.");
+                return;
+            }
+
+            /* CRUD 버튼 표시 여부 처리 */
+            if (crudActions.trim() !== '') {
+                let actionsArray = crudActions.split("");
+
+                // 관리자 여부 확인 요청 (소문자가 포함되어 있을 때만)
+                const needManagerCheck = actionsArray.some(a => a === a.toLowerCase());
+                let managerCheckPromise = Promise.resolve({ result: true });
+
+                if (needManagerCheck) {
+                    managerCheckPromise = $.ajax({
+                        url: `/isApprovalAvailable`,
+                        type: "GET"
+                    });
+                }
+
+                managerCheckPromise.then(response => {
+                    let isManagerAvailable = response.result === true;
+                    isManager = response.result;
+
+                    actionsArray.forEach(action => {
+                        const upperAction = action.toUpperCase();
+                        const mappedAction = window.crudActionMap[upperAction];
+                        if (!mappedAction) return;
+
+                        const button = document.querySelector(`.grd-${mappedAction}[data-table-id="${tableId}"]`);
+                        if (!button) return;
+
+                        const isLower = action === action.toLowerCase();
+
+                        if (!isLower || (isLower && isManagerAvailable)) {
+                            button.style.display = "inline-block";
+                        }
+                    });
+                }).catch(error => {
+                    console.error("권한 확인 실패:", error);
+                });
+            }
+
+            if (window.tableInstances[tableId]) {
+                return;
+            }
+
             $.ajax({
-                url: `${dataUrl}/column`, // 컬럼과 데이터를 함께 가져오는 API
+                url: `${dataUrl}/column`,
                 type: "GET",
-                success: function (response) {
-                    console.log("서버 응답 데이터:", response);
-
-                    const columns = response; // 데이터 키
-
-                    // 테이블 헤더 동적 생성
-                    let headerRow = $("#tableHeader");
+                success: function (columns) {
+                    let headerRow = $("#" + tableId + " thead tr");
                     headerRow.empty();
-                    columns.forEach(col => {
-                        headerRow.append(`<th>${col.columnName}</th>`); // 화면에 표시할 헤더 이름 사용
+                    let $select = $(`#search-column-${tableId}`);
+                    $select.empty();
+
+                    let hasSearchableColumn = false;
+
+                    columns.forEach((col, index) => {
+                        if (col.rowType === "CHECKBOX") {
+                            headerRow.append(`
+                                <th>
+                                    <input type="checkbox" class="header-checkbox" data-column-index="${index}">
+                                    ${col.columnName}
+                                </th>
+                            `);
+                        } else {
+                            headerRow.append(`<th>${col.columnName}</th>`);
+                        }
+
+
+                        if(col.isSearch){
+                            let optionHtml = `<option value="${col.column}" data-type="${col.columnType}">${col.columnName}</option>`;
+                            $select.append(optionHtml);
+
+                            hasSearchableColumn = true;
+                        }
                     });
 
+                    headerRow.find(".header-checkbox").off("change").on("change", function () {
+                        const isChecked = $(this).is(":checked");
+                        $(`#${tableId} .row-checkbox`).prop("checked", isChecked);
+                    });
+
+                    // 검색 컬럼 변경 시, 입력 타입 변경 (숫자/문자 필드 전환)
+                    $select.on("change", function () {
+                        let selectedType = $(this).find("option:selected").attr("data-type");
+                        let $textInput = $(`#search-input-text-${tableId}`);
+                        let $numberInput = $(`#search-input-number-${tableId}`);
+
+                        if (selectedType === "NUMBER") {
+                            $textInput.hide();
+                            $numberInput.show().val("");
+                        } else {
+                            $numberInput.hide();
+                            $textInput.show().val("");
+                        }
+                    });
+
+                    // 검색 컬럼이 없는 경우 검색어 입력 필드 & 조회 버튼 숨김
+                    if (!hasSearchableColumn) {
+                        $select.hide();
+                        $(`#search-input-text-${tableId}`).hide();
+                        $(`#search-input-number-${tableId}`).hide();
+                        $(`#search-column-${tableId}`).hide();
+                    } else {
+                        $select.show();
+                        $(`#grd-select-${tableId}`).show();
+                        $select.trigger("change"); // 기본 컬럼 선택 적용
+                    }
+
                     // DataTables 초기화
-                    table = $('#' + tableId).DataTable({
+                    window.tableInstances[tableId] = $("#" + tableId).DataTable({
                         "processing": true,
-                        "serverSide": true, // Lazy Loading을 통한 페이징 처리
-                        "searching": false, // 조회창 숨김
+                        "serverSide": true,
+                        "searching": false,
                         "info": false,
+                        "destroy": true,
+                        "headerCallback": function (thead, data, start, end, display) {
+                            $(thead).find("th").each(function (index) {
+                                const col = columns[index];
+
+                                if (col.rowType === "CHECKBOX") {
+                                    $(this).addClass("grid-checkbox-header").html(
+                                        `<input type="checkbox" class="header-checkbox" data-column-index="${index}">`
+                                    );
+                                }
+
+                                // 정렬 비활성화 UI 처리
+                                if (col.isFilter === false || col.isFilter === "false") {
+                                    $(this).removeClass("sorting sorting_asc sorting_desc").addClass("no-sort");
+                                }
+                            });
+
+                            // 체크박스 전체 선택 이벤트 바인딩
+                            $(thead).find(".header-checkbox").off("change").on("change", function () {
+                                const isChecked = $(this).is(":checked");
+                                const $table = $(this).closest("table");
+                                const tableId = $table.attr("id");
+                                $(`#${tableId} .row-checkbox`).prop("checked", isChecked);
+                            });
+                        },
+                        initComplete: function () {
+                            $(`#${tableId} tbody`).on("click", "tr", function (e) {
+                                if ($(e.target).is("input, button, select, label")) {
+                                    return; // row 선택 로직을 타지 않게 함
+                                }
+
+                                const table = window.tableInstances[tableId];
+
+                                table.$("tr.selected").removeClass("selected");
+                                $(this).addClass("selected");
+
+                                /* rowData 가져오기 */
+                                const row = $(this).closest("tr");
+                                const rowData = table.row(row).data();
+
+                                const columnInfo = columns; // 전체 column 배열 넘김
+
+                                if (!rowData) {
+                                    return;
+                                }
+
+                                if (typeof initCompleteCallback === 'string' && typeof window.gridCallbacks?.[initCompleteCallback] === 'function') {
+                                    window.gridCallbacks[initCompleteCallback](rowData, columnInfo, isManager, tableId);
+                                }
+                            });
+                        },
+
                         "language": {
                             "lengthMenu": "페이지당 _MENU_ 행 표시",
                             "zeroRecords": "검색된 데이터가 없습니다.",
@@ -62,69 +238,197 @@
                             }
                         },
                         "ajax": {
-                            "url": `${dataUrl}/data`, // 실제 데이터 요청
+                            "url": `${dataUrl}/data`,
                             "type": "GET",
                             "data": function (d) {
+                                let column = $(`#search-column-${tableId}`).val();
+                                let selectedType = $(`#search-column-${tableId}`).find("option:selected").attr("data-type");
+                                let query = selectedType === "NUMBER"
+                                    ? $(`#search-input-number-${tableId}`).val()
+                                    : $(`#search-input-text-${tableId}`).val();
+
                                 return {
-                                    page: d.start / d.length, // 현재 페이지 번호
-                                    size: d.length, // 한 페이지에 표시할 데이터 개수
+                                    page: d.start / d.length,
+                                    size: d.length,
+                                    searchQuery: query,
+                                    searchColumn: column,
                                     sort: d.order
-                                        .filter(order => columns[order.column]) // undefined 방지
+                                        .filter(order => columns[order.column])
                                         .map(order => {
-                                            let columnName = columns[order.column].column || "timestamp"; // 기본값 설정
+                                            let columnName = columns[order.column].column || "timestamp";
                                             let direction = order.dir === "asc" ? "asc" : "desc";
-                                            return columnName + "," + direction; // "id,asc" 형식으로 변환
+                                            return columnName + "," + direction;
                                         })
-                                        .join(";") // 문자열 리스트 형태로 변환
+                                        .join(";")
                                 };
                             }
                         },
-                        "columns": columns.map(col => ({
-                            "data": col.column,
-                            "render": function (data, type, row) {
-                                // 타입에 따라 동적 UI 생성
-                                switch (col.type) {
-                                    case "TEXT":
-                                        return `<p>${data}</p>`;
-                                    case "INPUT":
-                                        return `<input type="text" class="form-control edit-input" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
-                                    case "BUTTON":
-                                        return `<button class="btn btn-sm ${col.class || 'btn-primary'} action-btn" data-id="${row.id}" data-field="${col.column}">${col.buttonText}</button>`;
-                                    case "SELECT":
-                                        let options = col.options.map(option =>
-                                            `<option value="${option}" ${data === option ? 'selected' : ''}>${option}</option>`
-                                        ).join("");
-                                        return `<select class="form-control edit-select" data-id="${row.id}" data-field="${col.column}">${options}</select>`;
-                                    case "DATE":
-                                        return `<input type="text" class="form-control datepicker" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
-                                    case "CHECKBOX":
-                                        return `<input type="checkbox" class="row-checkbox" data-id="${row.id}">`;
-                                    default:
-                                        return data || "";
-                                }
+                        "columns": columns.map(col => {
+                            const isCheckbox = col.rowType === "CHECKBOX";
+                            const isFilter = col.isFilter !== false && col.isFilter !== "false";
 
-                            }
-                        })),
-                        "initComplete": function () {
-                            // 캘린더(DatePicker) 활성화
-                            $(".datepicker").datepicker({
-                                dateFormat: "yy-mm-dd",
-                                changeMonth: true,
-                                changeYear: true
-                            });
-                        }
+                            return {
+                                data: col.column,
+                                title: isCheckbox ? "" : col.columnName,
+                                orderable: isFilter && !isCheckbox, // 정렬 비활성화
+                                width: isCheckbox ? "40px" : undefined,
+                                className: isCheckbox ? "text-center" : "text-start",
+                                render: function (data, type, row) {
+                                    switch (col.rowType) {
+                                        case "TEXT":
+                                            return `<p>${data}</p>`;
+                                        case "INPUT":
+                                            return `<input type="text" class="form-control edit-input" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
+                                        case "BUTTON":
+                                            return `<button class="btn btn-sm ${col.class || 'btn-primary'} action-btn" data-id="${row.id}" data-field="${col.column}">${data}</button>`;
+                                        case "SELECT":
+                                            let options = col.options.map(option =>
+                                                `<option value="${option}" ${data === option ? 'selected' : ''}>${option}</option>`
+                                            ).join("");
+                                            return `<select class="form-control edit-select" data-id="${row.id}" data-field="${col.column}">${options}</select>`;
+                                        case "DATE":
+                                            return `<input type="text" class="form-control datepicker" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
+                                        case "CHECKBOX":
+                                            return `<input type="checkbox" class="row-checkbox" data-id="${row.id}">`;
+                                        default:
+                                            return data || "";
+                                    }
+                                }
+                            };
+                        })
                     });
+
+
+                    // 초기에 선택된 컬럼 타입 반영 (기본값)
+                    if(hasSearchableColumn) $select.trigger("change");
                 },
                 error: function (error) {
                     console.error("데이터 불러오기 실패:", error);
                 }
             });
+        };
+
+        $(document).on("click", ".grd-select", function () {
+            let tableId = $(this).attr("data-table-id");
+            searchGrid(tableId);
         });
 
-        /* 버튼 클릭 시 데이터 새로고침 */
-        function reloadTable() {
-            table.ajax.reload();
+        function searchGrid(tableId) {
+
+            if (!window.tableInstances[tableId]) {
+                console.warn(`테이블 ${tableId} 인스턴스가 없습니다.`);
+                return;
+            }
+
+            $(`#${tableId} thead .header-checkbox`).prop("checked", false);
+            window.tableInstances[tableId].ajax.reload(null, false);
         }
+
+        window.searchGrid = searchGrid;
+
+        $(document).ready(() => {
+            let tableId = /*[[${tableId}]]*/ '';
+            let dataUrl = /*[[${dataUrl}]]*/ '';
+            let crudActions = /*[[${crudActions} ?: '']]*/ '';
+            let initCompleteCallback = /*[[${initCompleteCallback} ?: '']]*/ '';
+
+            window.grid(tableId, dataUrl, crudActions, initCompleteCallback);
+        });
+
+        $(".search-input-number").on("keydown", function (event) {
+            if (event.key === "e" || event.key === "E" || event.key === "+" || event.key === "-") {
+                event.preventDefault();
+            }
+        });
+
+        /**
+         * 테이블에 체크된 row를 확인한다.
+         * @param tableId
+         * @returns {*[]}
+         */
+        function getCheckedData(tableId){
+
+            let checkedData = [];
+
+            $(`#${tableId} .row-checkbox:checked`).each((index, element) => {
+                const row = element.closest('tr');
+                const rowData = window.tableInstances[tableId].row(row).data();
+
+                if(rowData){
+                    checkedData.push(rowData);
+                }
+            });
+
+            return checkedData;
+        }
+
+        window.getCheckedData = getCheckedData;
+
+        /**
+         * Check Data가 존재하면 Array를, 존재하지 않으면 null을 반환한다.
+         * Window.openAlert으로 Alert을 보여준다.
+         */
+        function getCheckedDataIsNonNull(tableId){
+            const checkedData = getCheckedData(tableId);
+
+            if(checkedData.length !== 0){
+                return checkedData;
+            }
+
+            window.openAlert("체크된 데이터가 존재하지 않습니다.");
+
+            return null;
+        }
+        window.getCheckedDataIsNonNull = getCheckedDataIsNonNull;
+
+
+        function getSelectedData(tableId) {
+            let data = [];
+
+
+            $(`#${tableId} tbody tr`).each((index, element) => {
+                const row = window.tableInstances[tableId].row(element);
+                const rowData = row.data(); // 기존 데이터
+
+                // 변경된 셀 값을 DOM에서 직접 가져와서 반영
+                $(element).find("select, input").each((i, el) => {
+                    const $el = $(el);
+                    const field = $el.data("field"); // select/input 태그에 data-field 속성 있어야 함
+                    const value = $el.val();
+
+                    if (field) {
+                        rowData[field] = value;
+                    }
+                });
+
+                if (rowData) {
+                    data.push(rowData);
+                }
+            });
+            return data;
+        }
+
+        window.getSelectedData = getSelectedData;
+
+        function getClickedData(tableId, callback){
+            $(`#${tableId}`).on('click', '.action-btn', function () {
+                const $btn = $(this);
+                const field = $btn.data('field');  // ex) "resetButton"
+                const id = $btn.data('id');        // ex) 해당 row의 id (선택 사항)
+                const $row = $btn.closest('tr');
+
+                const table = window.tableInstances['userTable'];
+                const rowData = table.row($row).data();
+
+                if (!rowData) return;
+
+                const result = {field : field, id : id, rowData : rowData};
+
+                callback(result);
+            });
+        }
+
+        window.getClickedData = getClickedData;
+
     </script>
 </div>
-</html>

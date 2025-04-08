@@ -6,7 +6,6 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 
 [Docker Hub](https://hub.docker.com/repository/docker/koboolean/metagen)
 
-
 ---
 ## 기술 스택
 
@@ -20,7 +19,7 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 - **Rest API (Spring Web)** 6.2.1 → RESTful API 엔드포인트 제공
 - **ModelMapper** 3.1.0 → DTO와 엔티티 간 변환 자동화
 - **Spring Batch** 5.2.1 → 시간이 소요되는 Backend 로직 수행
-- 
+
 ### **Frontend** (UI 렌더링, 사용자 인터페이스, 동적 콘텐츠 처리)
 - **Thymeleaf** 3.1.2 → 서버 사이드 템플릿 엔진, HTML 기반 화면 렌더링
 - **Thymeleaf Layout Dialect** 3.2.1 → 레이아웃 관리, 템플릿 구성 효율화
@@ -55,6 +54,9 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 
 ### **반영 고민 중** (추가 기능 개발 검토)
 - **Redis Pub/Sub** → 승인관리 시스템 비동기 메시징 처리
+#### **Search & Indexing** (검색 및 인덱싱)
+- **Elasticsearch** 8.11.0 → 대량 데이터 검색 및 실시간 분석
+- **Spring Data Elasticsearch** 5.2.1 → Elasticsearch와의 연동 및 데이터 저장/검색 관리
 
 ---
 
@@ -97,18 +99,22 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 
 ## 데이터베이스 관리
 
-- 데이터베이스는 **PostgreSQL**을 사용합니다.
+- 데이터베이스는 **PostgreSQL**과 **Elasticsearch**를 사용합니다.
 
 ### 개발 서버에 직접 설치
-- 기본 포트 `5432`를 사용하지 않으며, **15439** 포트를 사용합니다.
+- PostgreSQL은 **15439** 포트를 사용하며, Elasticsearch는 **19200** 포트를 사용합니다.
 
 1. **PostgreSQL 설치**  
    PostgreSQL 공식 웹사이트에서 설치: [https://www.postgresql.org/download/](https://www.postgresql.org/download/)
 
-2. **포트 변경**  
-   `postgresql.conf` 파일을 편집하여 포트를 **15439**로 변경한 후 재시작합니다:
+2. **Elasticsearch 설치**  
+   Elasticsearch 공식 웹사이트에서 설치: [https://www.elastic.co/downloads/elasticsearch](https://www.elastic.co/downloads/elasticsearch)
+
+3. **포트 변경 및 실행**  
+   PostgreSQL과 Elasticsearch를 실행하여 각각의 서비스를 시작합니다.
    ```shell
    systemctl restart postgresql
+   systemctl restart elasticsearch
    ```
 
 ---
@@ -126,6 +132,7 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 1. volume을 생성합니다.
     ```shell
     docker volume create metagen
+    docker volume create metagen-elasticsearch 
     ```
 
 2. network를 생성합니다.
@@ -136,14 +143,24 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 3. PostgreSQL을 실행합니다.
     ```shell
     docker run -d \
-      --name meta-gen-postgres \
-      --network meta-network \
-      -e POSTGRES_PASSWORD=meta-gen \
-      -e POSTGRES_DB=meta-gen \
-      -e POSTGRES_USER=meta-gen \
-      -p 15439:5432 \
-      -v metagen:/var/lib/postgresql/data \
-      postgres:16.3
+    --name meta-gen-postgres \
+    --network meta-network \
+    -e POSTGRES_PASSWORD=meta-gen \
+    -e POSTGRES_DB=meta-gen \
+    -e POSTGRES_USER=meta-gen \
+    -p 15439:5432 \
+    -v metagen:/var/lib/postgresql/data \
+    postgres:16.3
+    
+    docker run -d \
+    --name meta-gen-elasticsearch \
+    --network meta-network \
+    -e "discovery.type=single-node" \
+    -e "xpack.security.enabled=false" \
+    -e "ES_JAVA_OPTS=-Xms512m -Xmx512m" \
+    -p 19200:9200 \
+    -v metagen-elasticsearch:/usr/share/elasticsearch/data \
+    elasticsearch:8.11.0
     ```
 
 ---

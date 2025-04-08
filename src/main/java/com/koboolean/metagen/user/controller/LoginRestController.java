@@ -1,13 +1,14 @@
 package com.koboolean.metagen.user.controller;
 
 import com.koboolean.metagen.security.domain.dto.AccountDto;
-import com.koboolean.metagen.security.domain.dto.ProjectDto;
+import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.user.service.LoginService;
 import com.koboolean.metagen.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,6 +20,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api")
+@Tag(name = "Login Rest API", description = "사용자 로그인 관련 API")
 public class LoginRestController {
 
     private final LoginService loginService;
@@ -70,7 +72,7 @@ public class LoginRestController {
             @ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
     @GetMapping(value="/checkProjectList/{username}")
-    public ResponseEntity<List<ProjectDto>> checkProjectList(@PathVariable String username) {
+    public ResponseEntity<List<ProjectDto>> checkProjectList(@PathVariable(value = "username") String username) {
         return ResponseEntity.ok(userService.selectProject(username));
     }
 }

@@ -1,0 +1,82 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+}
+
+.popup-container {
+    padding: 20px;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+}
+
+.popup-header h1 {
+    font-size: 24px;
+    margin: 0;
+    font-weight: bold;
+}
+
+.popup-form label {
+    font-weight: 500;
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 4px;
+}
+
+.popup-form input[type="text"],
+.popup-form input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 16px;
+    font-size: 14px;
+}
+
+.popup-form {
+    max-width: 600px;
+    margin: auto;
+}
+
+.popup-form .form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+.input-button-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.input-button-group input[type="text"] {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.input-button-group button {
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 16px;
+}
+
+.input-button-group button:hover {
+    background-color: #0056b3;
+}

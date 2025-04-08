@@ -13,18 +13,33 @@ export function getCsrfToken(cookieName = 'XSRF-TOKEN') {
 }
 
 /**
- * CSRF 헤더와 토큰을 추가하는 AJAX 설정
+ * CSRF 헤더와 토큰을 추가하고 로딩 바를 설정하는 AJAX 설정
  */
 export function setupAjaxCsrf() {
     const csrfToken = getCsrfToken();
 
     if (csrfToken) {
         $.ajaxSetup({
-            beforeSend: function (xhr) {
-                xhr.setRequestHeader('X-XSRF-TOKEN', csrfToken); // CSRF 토큰 헤더 추가
-                xhr.setRequestHeader('Content-Type', 'application/json'); // Content-Type 설정
+            beforeSend: function (xhr, settings) {
+                xhr.setRequestHeader('X-XSRF-TOKEN', csrfToken); // CSRF 토큰 추가
+
+                if (settings.contentType !== false) {
+                    xhr.setRequestHeader('Content-Type', 'application/json'); // Content-Type 설정
+                }
+
+                // AJAX 요청이 시작될 때 로딩 바 표시
+                $("#loading-bar").show();
+            },
+            complete: function () {
+                // AJAX 요청이 완료되면 로딩 바 숨김
+                $("#loading-bar").hide();
+            },
+            error: function (xhr) {
+                const errorMessage = xhr.responseJSON?.message;
+                window.openAlert(errorMessage);
             }
         });
+
     } else {
         console.warn("CSRF 토큰이 쿠키에서 발견되지 않았습니다.");
     }

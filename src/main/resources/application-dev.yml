@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: meta-gen
+  datasource:
+    url: jdbc:postgresql://192.168.45.49:15439/meta-gen?charSet=UTF-8
+    username: meta-gen
+    password: meta-gen
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    generate-ddl: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        ejb:
+          metamodel:
+            population: enabled
+          format_sql: true
+          jdbc:
+            lob:
+              non_contextual_creation: true
+    mapping-resources: META-INF/orm.xml
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  sql:
+    init:
+      mode: always
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+logging:
+  level:
+    root: INFO
+    org.springframework: DEBUG
+    com.koboolean.metagen: TRACE
+    org.hibernate.SQL: DEBUG
+    org.springframework.jdbc: DEBUG
+    org.springframework.security: DEBUG
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: false
+        same-site: Lax
+#        max-age: 1800
+      timeout: 30m
+
+
+  port: 18080
+
+secret:
+  key: wHlFMltmbMCxR63/G1xueQl5DwtYwUBXXcmeYcSE8ril2FpMqT2VTVPzCJiK7zXY24MlWwWpVfgspISEQdKpnw==
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui
+    url: /v3/api-docs # API 문서 파일 경로 설정
+  info:
+    title: "MetaGen API 문서"
+    description: "MetaGen 프로젝트의 API 문서"
+    version: "1.0.0"

@@ -1,7 +1,5 @@
 <aside th:fragment="sidebar">
     <div class="list-group list-group-flush" style="height: 100%; background-color: #f8f9fa;">
-
-
         <!-- 1뎁스: 대시보드 -->
         <a href="/" class="list-group-item list-group-item-action"
            onclick="setActiveMenu(event, 'dashboard')"
@@ -16,20 +14,20 @@
             시스템 관리
         </a>
         <div id="system-management" class="collapse">
-            <a href="/projectManage" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'system-log')"
-               data-submenu-id="project-manage">
-                프로젝트 설정
-            </a>
-            <a href="/manage" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'manage')"
-               data-submenu-id="manage">
+            <a href="/userManage" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'user-manage')"
+               data-submenu-id="user-manage">
                 사용자관리
             </a>
-            <a href="/accessControl" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'access-control')"
-               data-submenu-id="access-control">
+            <a href="/accessManage" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'access-manage')"
+               data-submenu-id="access-manage">
                 인가관리
+            </a>
+            <a href="/projectManage" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'project-manage')"
+               data-submenu-id="project-manage">
+                프로젝트관리
             </a>
             <a href="/systemLog" class="list-group-item list-group-item-action ps-4"
                onclick="setActiveSubmenu(event, 'system-log')"
@@ -56,7 +54,7 @@
             <!-- 2뎁스: 도움말 -->
             <a href="/help" class="list-group-item list-group-item-action ps-4"
                 onclick="setActiveSubmenu(event, 'help')"
-                data-menu-id="help">
+                data-submenu-id="help">
                 도움말
             </a>
         </div>
@@ -73,10 +71,10 @@
                data-submenu-id="data-dictionary">
                 데이터사전
             </a>
-            <a href="/meta" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'meta')"
-               data-submenu-id="meta">
-                메타데이터
+            <a href="/tableDesign" class="list-group-item list-group-item-action ps-4"
+               onclick="setActiveSubmenu(event, 'table-design')"
+               data-submenu-id="table-design">
+                테이블설계
             </a>
             <a href="/codeRule" class="list-group-item list-group-item-action ps-4"
                onclick="setActiveSubmenu(event, 'code-rule')"

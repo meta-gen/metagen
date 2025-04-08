@@ -42,4 +42,7 @@ public class Resources extends BaseEntity implements Serializable {
     @ToString.Exclude
     private Set<Role> roleSet = new HashSet<>();
 
+    @Column(name = "resource_desc")
+    private String resourceDesc;
+
 }

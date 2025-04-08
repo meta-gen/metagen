@@ -1,10 +1,19 @@
 package com.koboolean.metagen.home.controller;
 
+import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
+import com.koboolean.metagen.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
+
+    private final UserService userService;
 
     @GetMapping(value="/")
     public String dashboard() {
@@ -16,9 +25,9 @@ public class HomeController {
         return "pages/notice";
     }
 
-    @GetMapping("/meta")
+    @GetMapping("/tableDesign")
     public String meta() {
-        return "pages/meta";
+        return "pages/data/table-design";
     }
 
     @GetMapping("/codeRule")
@@ -36,28 +45,39 @@ public class HomeController {
         return "pages/test_manage";
     }
 
-    @GetMapping("/manage")
+    @GetMapping("/userManage")
     public String manage() {
-        return "pages/manage";
+        return "pages/system/user_manage";
     }
 
     @GetMapping("/systemLog")
     public String systemLog() {
-        return "pages/system_log";
+        return "pages/system/system_log";
     }
 
     @GetMapping("/dataDictionary")
     public String dataDictionary() {
-        return "pages/data_dictionary";
+        return "pages/data/data_dictionary";
     }
 
-    @GetMapping("/accessControl")
+    @GetMapping("/accessManage")
     public String accessControl() {
-        return "pages/access_control";
+        return "pages/system/access_manage";
     }
 
     @GetMapping("/help")
     public String help() {
-        return "pages/help";
+        return "pages/operation/help";
+    }
+
+    @GetMapping("/projectManage")
+    public String projectManage(Model model) {
+
+        List<ProjectDto> projectDtos = userService.selectAllProjects();
+
+        model.addAttribute("projects", projectDtos);
+        model.addAttribute("crudActions", projectDtos.get(0).getIsAutoActive()? "cd" : "ancd");
+
+        return "pages/system/project_manage";
     }
 }

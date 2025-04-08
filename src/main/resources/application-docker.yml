@@ -2,7 +2,7 @@ spring:
   application:
     name: meta-gen
   datasource:
-    url: jdbc:postgresql://meta-gen-postgres:5432/meta-gen?charSet=UTF-8
+    url: jdbc:postgresql://meta-gen-postgres:15439/meta-gen?charSet=UTF-8
     username: meta-gen
     password: meta-gen
   jpa:
