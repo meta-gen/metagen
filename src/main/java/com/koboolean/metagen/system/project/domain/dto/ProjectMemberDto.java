@@ -1,13 +1,13 @@
 package com.koboolean.metagen.system.project.domain.dto;
 
 import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Builder
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectMemberDto {
 
     private Long id;

@@ -5,7 +5,10 @@ import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.system.project.domain.entity.Project;
 import com.koboolean.metagen.system.project.domain.enums.TemplateType;
 import com.koboolean.metagen.utils.AuthUtil;
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0641e93ee9c8d2f8c1bff7f5f62feaf8a53e5e32
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +21,10 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0641e93ee9c8d2f8c1bff7f5f62feaf8a53e5e32
 public class ProjectDto {
 
     private Long id;
@@ -66,7 +72,7 @@ public class ProjectDto {
 
         List<ProjectMemberDto> projectMembers = project.getProjectMembers().stream().map(ProjectMemberDto::fromEntity).toList();
         Boolean isModified = project.getAccount() != null && (project.getAccount().getId() == Long.parseLong(accountDto.getId())
-                || AuthUtil.isIsApprovalAvailable());
+                || AuthUtil.isApprovalAvailable());
 
         return new ProjectDto(
                 project.getId(),

@@ -63,6 +63,7 @@ public class UserServiceImpl implements UserService {
         Role role = roleRepository.findByRoleName("ROLE_NOT_APPROVE");
         Set<Role> roles = Set.of(role);
         account.setUserRoles(roles);
+        account.setIsActive(true);
         userRepository.save(account);
 
         Project project = projectRepository.findById(accountDto.getProjectId())
@@ -152,13 +153,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<AccountDto> selectUserData(Pageable pageable, AccountDto accountDto, String searchQuery, String searchColumn) {
-        return userRepository.findAll(pageable).map(AccountDto::fromEntity);
+        return userRepository.findAllByIsActive(true, pageable).map(AccountDto::fromEntity);
     }
 
     @Override
     @Transactional
     public void saveUser(List<AccountDto> accountDtos) {
-        if(!AuthUtil.isIsApprovalAvailable()){
+        if(!AuthUtil.isApprovalAvailable()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
 
@@ -182,6 +183,52 @@ public class UserServiceImpl implements UserService {
                 }
             }
         });
+    }
 
+    @Override
+    @Transactional
+    public void deleteUser(List<AccountDto> accountDtos) {
+        if(!AuthUtil.isApprovalAvailable()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        Role adminRole = roleRepository.findByRoleName("ROLE_ADMIN");
+
+        accountDtos.forEach(accountDto -> {
+            Account account = userRepository.findById(Long.parseLong(accountDto.getId()))
+                    .orElse(null);
+
+            if(account != null){
+                boolean isAdmin = account.getUserRoles().contains(adminRole);
+
+                if (isAdmin) {
+                    long activeAdminCount = adminRole.getAccounts().stream()
+                            .filter(Account::getIsActive)
+                            .distinct()
+                            .count();
+
+                    if (activeAdminCount <= 1) {
+                        throw new CustomException(ErrorCode.MANAGER_NON_DELETED);
+                    }
+                }
+
+                account.setIsActive(false); // soft delete
+            }
+        });
+    }
+
+    @Override
+    @Transactional
+    public void saveUserPassword(AccountDto accountDto) {
+        if(!AuthUtil.isApprovalAvailable()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        Account account = userRepository.findById(Long.parseLong(accountDto.getId())).orElse(null);
+
+        if(account != null){
+            account.setPassword(passwordEncoder.encode(accountDto.getUsername()));
+            account.setPasswdCheck(false);
+        }
     }
 }

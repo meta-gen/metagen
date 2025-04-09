@@ -25,9 +25,9 @@ public class HomeController {
         return "pages/notice";
     }
 
-    @GetMapping("/meta")
+    @GetMapping("/tableDesign")
     public String meta() {
-        return "pages/meta";
+        return "pages/data/table-design";
     }
 
     @GetMapping("/codeRule")
@@ -60,9 +60,9 @@ public class HomeController {
         return "pages/data/data_dictionary";
     }
 
-    @GetMapping("/accessControl")
+    @GetMapping("/accessManage")
     public String accessControl() {
-        return "pages/access_control";
+        return "pages/system/access_manage";
     }
 
     @GetMapping("/help")

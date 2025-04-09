@@ -42,9 +42,9 @@ server:
     session:
       cookie:
         http-only: true
-        secure: true
-        same-site: Strict
-#        max-age: 1800
+        secure: false
+        same-site: Lax
+      #        max-age: 1800
       timeout: 30m
 
 
