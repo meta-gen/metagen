@@ -63,20 +63,6 @@ clean {
     delete file(querydslSrcDir)
 }
 
-querydsl {
-	library = "com. querydsl: querydsl-apt"
-	jpa = true
-	querydsSourcesDir = querydslSrcDir
-}
-
-sourceSets {
-	main.java.srcDirs = ['src/main/java', querydslSrcDir]
-	
-	compileQuerydsl {
-		options.annotationProcessorPath = configurations.querydsl
-	}
-}
-
-configurations {
-	querydsl.extendsFrom compileClasspath
+tasks.withType(JavaCompile) {
+    options.annotationProcessorGeneratedSourcesDirectory = file('src/main/generated')
 }
