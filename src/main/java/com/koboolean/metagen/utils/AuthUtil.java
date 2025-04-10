@@ -10,6 +10,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.regex.Pattern;
+
 @Component
 @RequiredArgsConstructor
 public class AuthUtil {
@@ -42,6 +44,11 @@ public class AuthUtil {
                 .map(GrantedAuthority::getAuthority)
                 .peek(log::debug) // 디버깅 로그 추가
                 .anyMatch(role -> role.equals("ROLE_ADMIN"));
+    }
+
+    public static boolean isValidPassword(String password) {
+        String pattern = "^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{8,}$";
+        return Pattern.matches(pattern, password);
     }
 
 

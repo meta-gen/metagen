@@ -30,13 +30,23 @@ public enum ErrorCode {
     USERNAME_IS_DUPLICATION(HttpStatus.BAD_REQUEST, "USERNAME_IS_DUPLICATION", "등록된 아이디가 존재합니다."),
 
     /**
-     * 등록된 아이디가 존재합니다.
+     * 비밀번호는 8자 이상, 대문자 및 특수문자를 각각 하나 이상 포함해야 합니다.
+     */
+    PASSWORD_IS_NON_VALIDATOR(HttpStatus.BAD_REQUEST, "PASSWORD_IS_NON_VALIDATOR", "비밀번호는 8자 이상, 대문자 및 특수문자를 각각 하나 이상 포함해야 합니다."),
+
+    /**
+     * 아이디는 5~20자의 소문자와 숫자만 사용할 수 있습니다.
+     */
+    USERNAME_IS_NON_VALIDATOR(HttpStatus.BAD_REQUEST, "USERNAME_IS_NON_VALIDATOR", "아이디는 5~20자의 소문자와 숫자만 사용할 수 있습니다."),
+
+    /**
+     * 동일한 형식의 표준 용어와 표준 도메인이 존재합니다. 중복된 용어는 등록이 불가능합니다.
      */
     DUPLICATE_TERM_DATA(HttpStatus.BAD_REQUEST, "DUPLICATE_TERM_DATA", "동일한 형식의 표준 용어와 표준 도메인이 존재합니다. 중복된 용어는 등록이 불가능합니다."),
 
 
     /**
-     * 등록된 아이디가 존재합니다.
+     * 해당 용어를 찾을 수 없습니다.
      */
     NOT_FOUND_TERM_DATA(HttpStatus.BAD_REQUEST, "NOT_FOUND_TERM_DATA", "해당 용어를 찾을 수 없습니다."),
 
