@@ -4,7 +4,11 @@
 <body>
 <section layout:fragment="content">
     <h2>시스템로그</h2>
-    <div th:replace="~{fragments/grid :: grid('logTable', '/api/getSystemLog', '', null)}"></div>
+
+    <!-- 그리드 영역 -->
+    <div id="gridContainer">
+        <div th:replace="~{fragments/grid :: grid('logTable', '/api/getSystemLog', '', null)}"></div>
+    </div>
 </section>
 </body>
 </html>

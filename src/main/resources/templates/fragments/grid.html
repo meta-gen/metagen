@@ -18,6 +18,7 @@
             <button class="grd-active btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-active-' + ${tableId}" style="display: none;">승인</button>
             <button class="grd-unactive btn btn-secondary" th:data-table-id="${tableId}" th:id="'grd-unactive-' + ${tableId}" style="display: none;">승인취소</button>
             <button class="grd-add btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-add-' + ${tableId}" style="display: none;">추가</button>
+            <button class="grd-modified btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-modified-' + ${tableId}" style="display: none;">수정</button>
             <button class="grd-save btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-save-' + ${tableId}" style="display: none;">저장</button>
             <button class="grd-delete btn btn-secondary" th:data-table-id="${tableId}" th:id="'grd-delete-' + ${tableId}" style="display: none;">삭제</button>
         </div>
@@ -45,6 +46,7 @@
             window.crudActionMap = {
                 "C": "add",
                 "U": "save",
+                "M": "modified",
                 "D": "delete",
                 "A": "active",
                 "N": "unactive"

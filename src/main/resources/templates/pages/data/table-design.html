@@ -15,5 +15,10 @@
         <button id="excel-upload" class="btn btn-primary">메타데이터 업로드</button>
     </div>
 
+    <!-- 그리드 영역 -->
+    <div id="gridContainer">
+        <div th:replace="~{fragments/grid :: grid('tableDesignGrid', '/api/selectTable', 'anCMD', null)}"></div>
+    </div>
+
 </section>
 </body>
