@@ -228,6 +228,8 @@ MetaGen의 주요 엔티티와 관계를 시각적으로 확인할 수 있습니
 
 ## Dokcer Hub에 올라간 이미지 사용하여 빌드하기
 1. docker run 명령어로 실행하기
+   - docker hub에는 기본적으로 https를 기준으로 사용되도록 설정되어있습니다.
+   - http형식을 사용하기 위해서는 http버전을 사용해주시면 됩니다.
 1) 네트워크 생성
 ```bash
 docker network create meta-network

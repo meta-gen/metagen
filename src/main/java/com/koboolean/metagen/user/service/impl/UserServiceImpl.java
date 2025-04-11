@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -58,6 +59,14 @@ public class UserServiceImpl implements UserService {
 
         if(user != null){
             throw new CustomFormException(ErrorCode.USERNAME_IS_DUPLICATION);
+        }
+
+        if(!AuthUtil.isValidPassword(accountDto.getPassword())){
+            throw new CustomFormException(ErrorCode.PASSWORD_IS_NON_VALIDATOR);
+        }
+
+        if(!Pattern.matches("^[a-z0-9]{5,20}$", accountDto.getUsername())){
+            throw new CustomFormException(ErrorCode.USERNAME_IS_NON_VALIDATOR);
         }
 
         Role role = roleRepository.findByRoleName("ROLE_NOT_APPROVE");
@@ -231,4 +240,6 @@ public class UserServiceImpl implements UserService {
             account.setPasswdCheck(false);
         }
     }
+
+
 }

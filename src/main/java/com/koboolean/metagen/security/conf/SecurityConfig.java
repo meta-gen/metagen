@@ -68,7 +68,19 @@ public class SecurityConfig {
                 //.csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider)
                 .exceptionHandling(exception -> exception
-                        .accessDeniedHandler(new FormAccessDeniedHandler("/denied"))
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            String requestedWith = request.getHeader("X-Requested-With");
+                            boolean isAjax = "XMLHttpRequest".equals(requestedWith);
+
+                            if (isAjax) {
+                                response.setStatus(HttpServletResponse.SC_FORBIDDEN); // 403
+                                response.setContentType("application/json;charset=UTF-8");
+                                response.getWriter().write("{\"message\": \"접근 권한이 없습니다.\"}");
+                            } else {
+                                // 일반 브라우저 요청은 기존처럼 /denied로 리다이렉트
+                                response.sendRedirect("/denied?exception=Access Denied");
+                            }
+                        })
                 ).sessionManagement(session -> session
                         .sessionFixation(SessionManagementConfigurer.SessionFixationConfigurer::migrateSession)
                         .invalidSessionUrl("/login")

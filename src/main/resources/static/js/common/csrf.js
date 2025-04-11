@@ -22,6 +22,7 @@ export function setupAjaxCsrf() {
         $.ajaxSetup({
             beforeSend: function (xhr, settings) {
                 xhr.setRequestHeader('X-XSRF-TOKEN', csrfToken); // CSRF 토큰 추가
+                xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
                 if (settings.contentType !== false) {
                     xhr.setRequestHeader('Content-Type', 'application/json'); // Content-Type 설정
@@ -35,8 +36,20 @@ export function setupAjaxCsrf() {
                 $("#loading-bar").hide();
             },
             error: function (xhr) {
-                const errorMessage = xhr.responseJSON?.message;
-                window.openAlert(errorMessage);
+                let message = "알 수 없는 오류가 발생했습니다.";
+
+                if (xhr.status === 401) {
+                    message = "로그인이 필요합니다.";
+                } else if (xhr.status === 403 || xhr.status === 405) {
+                    message = "해당 작업을 수행할 접근 권한이 없습니다.";
+                } else if (xhr.responseJSON?.message) {
+                    message = xhr.responseJSON.message;
+                }
+
+                window.openAlert(message);
+            },
+            success: function (response){
+                debugger
             }
         });
 

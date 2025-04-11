@@ -1,18 +1,24 @@
 package com.koboolean.metagen.board.domain.dto;
 
-import groovy.transform.builder.Builder;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
+
+import com.koboolean.metagen.board.domain.entity.Board;
+
 import lombok.experimental.Accessors;
 
 @Data
 @Builder
+@Getter
 @Accessors(chain = true)
+@NoArgsConstructor
 @AllArgsConstructor
 public class BoardDto {
 
     /* 게시글 번호 */
     private long id;
+
+    /* 프로젝트 아이디 */
+    private Long projectId;
 
     /* 회원 아이디 */
     private String username;
@@ -29,9 +35,21 @@ public class BoardDto {
     /* 조회수 */
     private int hitCount;
 
-    /* 게시글 상태 */
-    private String status;
-
     /* 삭제 여부 */
-    private String deleteYn;
+    private char deleteYn;
+
+    /* 빌더 호출 */
+    public static BoardDto fromEntity(Board entity) {
+
+        return BoardDto.builder()
+                       .id       (entity.getId()       )
+                       .projectId(entity.getProjectId())
+                       .username (entity.getUsername() )
+                       .title    (entity.getTitle()    )
+                       .content  (entity.getContent()  )
+                       .hitCount (entity.getHitCount() )
+                       .deleteYn (entity.getDeleteYn() )
+                       .build()
+        ;
+    }
 }

@@ -1,4 +1,5 @@
 package com.koboolean.metagen.data.dictionary.domain.entity;
+import com.koboolean.metagen.data.table.domain.entity.TableDesign;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,4 +47,7 @@ public class StandardTerm {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "standard_domain_id")
     private StandardDomain standardDomain;
+
+    @ManyToMany(mappedBy = "standardTerms")
+    private List<TableDesign> tableDesigns;
 }
