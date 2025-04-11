@@ -3,16 +3,21 @@
       layout:decorate="~{layout}">
 
 <head>
-    <script type="module" th:src="@{/js/data/table/table-design.js}"></script>
+    <script type="module" th:src="@{/js/data/column/column_manage.js}"></script>
 </head>
 
 <body>
 <section layout:fragment="content">
-    <h2>테이블설계</h2>
+    <h2>컬럼 관리</h2>
 
     <div class="button-container">
         <button class="btn btn-primary" id="download-template">템플릿 다운로드</button>
         <button id="excel-upload" class="btn btn-primary">메타데이터 업로드</button>
+    </div>
+
+    <!-- 그리드 영역 -->
+    <div id="gridContainer">
+        <div th:replace="~{fragments/grid :: grid('tableDesignGrid', '/api/selectColumn', 'anCD', null)}"></div>
     </div>
 
 </section>

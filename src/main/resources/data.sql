@@ -31,7 +31,7 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (3, '*', 0, '/api/updatePwd','url', '패스워드수정', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (4, '*', 0, '/tableDesign','url', '테이블설계화면', 'SYSTEM', 'SYSTEM')
+VALUES (4, '*', 0, '/columnManage','url', '컬럼관리화면', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (5, '*', 0, '/api/updateName','url', '사용자명수정', 'SYSTEM', 'SYSTEM')
@@ -133,16 +133,28 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (37, '*', 0, '/api/updateAccess/**','url', '인가수정', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (38, '*', 0, '/api/selectTable/**','url', '테이블설계 조회', 'SYSTEM', 'SYSTEM')
+VALUES (38, '*', 0, '/api/selectTable/**','url', '테이블 조회', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (39, '*', 0, '/api/updateTable/**','url', '테이블설계 수정', 'SYSTEM', 'SYSTEM')
+VALUES (39, '*', 0, '/api/updateTable/**','url', '테이블 수정', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (40, '*', 0, '/api/deleteTable/**','url', '테이블설계 삭제', 'SYSTEM', 'SYSTEM')
+VALUES (40, '*', 0, '/api/deleteTable/**','url', '테이블 삭제', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (41, '*', 0, '/api/uploadMetadata/**','url', '메타데이터 업로드', 'SYSTEM', 'SYSTEM')
+VALUES (41, '*', 0, '/api/selectColumn/**','url', '테이블컬럼 조회', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (42, '*', 0, '/api/updateColumn/**','url', '테이블컬럼 수정', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (43, '*', 0, '/api/deleteColumn/**','url', '테이블컬럼 삭제', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (44, '*', 0, '/api/uploadMetadata/**','url', '메타데이터 업로드', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (45, '*', 0, '/tableManage','url', '테이블관리화면', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 
 -- ROLE_NOT_APPROVE
@@ -153,7 +165,7 @@ insert into role_resources(resource_id, role_id) values (5,5) on CONFLICT DO NOT
 insert into role_resources(resource_id, role_id) values (13,5) on CONFLICT DO NOTHING; -- 공지사항화면
 
 -- ROLE_VIEWER
-insert into role_resources(resource_id, role_id) values (4,4) on CONFLICT DO NOTHING; -- 테이블설계화면
+insert into role_resources(resource_id, role_id) values (4,4) on CONFLICT DO NOTHING; -- 컬럼관리화면
 insert into role_resources(resource_id, role_id) values (6,4) on CONFLICT DO NOTHING; -- 코드규칙화면
 insert into role_resources(resource_id, role_id) values (7,4) on CONFLICT DO NOTHING; -- 설계서화면
 insert into role_resources(resource_id, role_id) values (8,4) on CONFLICT DO NOTHING; -- 사용자관리화면
@@ -169,6 +181,7 @@ insert into role_resources(resource_id, role_id) values (33,4) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (36,4) on CONFLICT DO NOTHING; -- 인가조회
 insert into role_resources(resource_id, role_id) values (30,4) on CONFLICT DO NOTHING; -- 프로젝트조회
 insert into role_resources(resource_id, role_id) values (38,4) on CONFLICT DO NOTHING; -- 테이블설계 조회
+insert into role_resources(resource_id, role_id) values (45,4) on CONFLICT DO NOTHING; -- 테이블관리화면
 
 -- ROLE_USER
 insert into role_resources(resource_id, role_id) values (15,3) on CONFLICT DO NOTHING; -- 템플릿다운로드
@@ -178,6 +191,9 @@ insert into role_resources(resource_id, role_id) values (28,3) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (29,3) on CONFLICT DO NOTHING; -- 데이터사전수정
 insert into role_resources(resource_id, role_id) values (39,3) on CONFLICT DO NOTHING; -- 테이블설계 수정
 insert into role_resources(resource_id, role_id) values (40,3) on CONFLICT DO NOTHING; -- 테이블설계 삭제
+insert into role_resources(resource_id, role_id) values (41,3) on CONFLICT DO NOTHING; -- 테이블컬럼 조회
+insert into role_resources(resource_id, role_id) values (42,3) on CONFLICT DO NOTHING; -- 테이블컬럼 수정
+insert into role_resources(resource_id, role_id) values (43,3) on CONFLICT DO NOTHING; -- 테이블컬럼 삭제
 
 -- ROLE_DBA
 insert into role_resources(resource_id, role_id) values (31,2) on CONFLICT DO NOTHING; -- 프로젝트저장
@@ -193,7 +209,7 @@ insert into role_resources(resource_id, role_id) values (14,0) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (34,0) on CONFLICT DO NOTHING; -- 사용자저장
 insert into role_resources(resource_id, role_id) values (35,0) on CONFLICT DO NOTHING; -- 사용자삭제
 insert into role_resources(resource_id, role_id) values (37,0) on CONFLICT DO NOTHING; -- 인가수정
-insert into role_resources(resource_id, role_id) values (41,0) on CONFLICT DO NOTHING; -- 메타데이터 업로드
+insert into role_resources(resource_id, role_id) values (44,0) on CONFLICT DO NOTHING; -- 메타데이터 업로드
 
 -- ROLE_ANONYMOUS
 insert into role_resources(resource_id, role_id) values (17,6) on CONFLICT DO NOTHING; -- 접근가능프로젝트 조회
