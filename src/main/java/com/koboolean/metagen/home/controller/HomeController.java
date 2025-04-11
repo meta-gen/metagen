@@ -25,9 +25,14 @@ public class HomeController {
         return "pages/notice";
     }
 
-    @GetMapping("/tableDesign")
-    public String meta() {
-        return "pages/data/table-design";
+    @GetMapping("/tableManage")
+    public String tableManage() {
+        return "pages/data/table-manage";
+    }
+
+    @GetMapping("/columnManage")
+    public String columnManage() {
+        return "pages/data/column_manage";
     }
 
     @GetMapping("/codeRule")

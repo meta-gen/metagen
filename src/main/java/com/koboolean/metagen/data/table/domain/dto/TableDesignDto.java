@@ -79,6 +79,9 @@ public class TableDesignDto {
     /** 연결된 표준 단어 리스트 */
     private List<StandardTerm> standardTerms;
 
+    /** 승인여부 **/
+    private String isApproval;
+
     public static TableDesignDto fromEntity(TableDesign entity) {
         return TableDesignDto.builder()
                 .id(entity.getId())
@@ -103,6 +106,7 @@ public class TableDesignDto {
                 .excelHeader(entity.getExcelHeader())
                 .example(entity.getExample())
                 .standardTerms(entity.getStandardTerms())
+                .isApproval(toYN(entity.getIsApproval()))
                 .build();
     }
 
@@ -130,6 +134,7 @@ public class TableDesignDto {
                 .excelHeader(this.excelHeader)
                 .example(this.example)
                 .standardTerms(this.standardTerms)
+                .isApproval(fromYN(this.isApproval))
                 .build();
     }
 
