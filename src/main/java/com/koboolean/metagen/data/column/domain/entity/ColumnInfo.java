@@ -1,6 +1,7 @@
-package com.koboolean.metagen.data.table.domain.entity;
+package com.koboolean.metagen.data.column.domain.entity;
 
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
+import com.koboolean.metagen.data.table.domain.entity.TableInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -8,17 +9,17 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
-@Table(name = "table_desgin")
+@Table(name = "column_info")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class TableDesign {
+public class ColumnInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "table_design_id", nullable = false, unique = true)
+    @Column(name = "column_info_id", nullable = false, unique = true)
     private Long id;
 
     @Column
@@ -107,7 +108,7 @@ public class TableDesign {
     @ManyToMany
     @JoinTable(
             name = "table_design_standard_term",
-            joinColumns = @JoinColumn(name = "table_design_id"),
+            joinColumns = @JoinColumn(name = "column_info_id"),
             inverseJoinColumns = @JoinColumn(name = "standard_term_id")
 
     )

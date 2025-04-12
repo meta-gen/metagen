@@ -4,8 +4,7 @@ import {downloadFile} from "../../common/common.js";
 
 $(document).ready(() => {
     setupAjaxCsrf();
-    const tableId = "tableDesignGrid";
-
+    const tableId = "columnManageGrid";
 
     /**
      * 템플릿 다운로드 버튼 클릭 이벤트
