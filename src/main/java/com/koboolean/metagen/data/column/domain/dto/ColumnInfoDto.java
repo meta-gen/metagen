@@ -1,6 +1,6 @@
-package com.koboolean.metagen.data.table.domain.dto;
+package com.koboolean.metagen.data.column.domain.dto;
 
-import com.koboolean.metagen.data.table.domain.entity.TableDesign;
+import com.koboolean.metagen.data.column.domain.entity.ColumnInfo;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
 import lombok.*;
 import java.math.BigDecimal;
@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TableDesignDto {
+public class ColumnInfoDto {
 
     /** 식별자 (PK) */
     private Long id;
@@ -82,8 +82,8 @@ public class TableDesignDto {
     /** 승인여부 **/
     private String isApproval;
 
-    public static TableDesignDto fromEntity(TableDesign entity) {
-        return TableDesignDto.builder()
+    public static ColumnInfoDto fromEntity(ColumnInfo entity) {
+        return ColumnInfoDto.builder()
                 .id(entity.getId())
                 .projectId(entity.getProjectId())
                 .tableName(entity.getTableName())
@@ -110,8 +110,8 @@ public class TableDesignDto {
                 .build();
     }
 
-    public TableDesign toEntity() {
-        return TableDesign.builder()
+    public ColumnInfo toEntity() {
+        return ColumnInfo.builder()
                 .id(this.id)
                 .projectId(this.projectId)
                 .tableName(this.tableName)

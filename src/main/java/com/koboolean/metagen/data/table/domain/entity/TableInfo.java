@@ -1,5 +1,6 @@
 package com.koboolean.metagen.data.table.domain.entity;
 
+import com.koboolean.metagen.data.column.domain.entity.ColumnInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,5 +45,5 @@ public class TableInfo {
     private Boolean isApproval;
 
     @OneToMany(mappedBy = "tableInfo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TableDesign> columns;
+    private List<ColumnInfo> columns;
 }

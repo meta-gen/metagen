@@ -45,9 +45,8 @@ public class TableInfoDto {
 
     public TableInfo toEntity() {
         return TableInfo.builder()
-                .id(this.id)
                 .projectId(this.projectId)
-                .tableName(this.tableName)
+                .tableName(this.tableName.toUpperCase())
                 .tableDescription(this.tableDescription)
                 .isMasterTable(fromYN(this.isMasterTable))
                 .sortOrder(this.sortOrder)

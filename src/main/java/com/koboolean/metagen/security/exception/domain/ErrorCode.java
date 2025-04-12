@@ -76,6 +76,16 @@ public enum ErrorCode {
     DATA_CANNOT_BE_DELETED(HttpStatus.BAD_REQUEST, "DATA_CANNOT_BE_DELETED", "권한이 없어 작업을 수행할 수 없습니다."),
 
     /**
+     * 저장된 데이터가 존재합니다.
+     */
+    SAVED_DATA_EXISTS(HttpStatus.BAD_REQUEST, "SAVED_DATA_EXISTS", "저장된 데이터가 존재합니다."),
+
+    /**
+     * 컬럼으로 등록된 정보가 존재하기 때문에 삭제가 불가능합니다.
+     */
+    COLUMN_DEPENDENCY_EXISTS(HttpStatus.BAD_REQUEST, "COLUMN_DEPENDENCY_EXISTS", "컬럼으로 등록된 정보가 존재하기 때문에 삭제가 불가능합니다."),
+
+    /**
      * 프로젝트 관리자는 삭제가 불가능합니다.
      */
     MANAGER_NON_DELETED(HttpStatus.BAD_REQUEST, "MANAGER_NON_DELETED", "관리자는 변경이 불가능합니다.");

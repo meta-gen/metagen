@@ -273,6 +273,8 @@ function addStandardTerms(){
  */
 export function selectRow(rowData, columnList, isManager, tableId) {
 
+    if(rowData.isApprovalYn === 'Y') return;
+
     const dialogContent = $("<div></div>");
     const form = $("<form></form>").attr("id", `edit-${tableId}`);
 

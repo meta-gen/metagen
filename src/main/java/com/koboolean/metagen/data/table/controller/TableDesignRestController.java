@@ -1,9 +1,6 @@
 package com.koboolean.metagen.data.table.controller;
 
-import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
-import com.koboolean.metagen.data.table.domain.dto.TableDesignDto;
 import com.koboolean.metagen.data.table.domain.dto.TableInfoDto;
-import com.koboolean.metagen.data.table.domain.entity.TableDesign;
 import com.koboolean.metagen.data.table.service.TableDesignService;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
@@ -16,10 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -59,33 +53,33 @@ public class TableDesignRestController {
         return PageableUtil.getGridPageableMap(tableDesigns);
     }
 
-    @Operation(summary = "테이블 내 컬럼 조회", description = "테이블 내 컬럼 목록을 조회합니다.")
-    @GetMapping("/selectColumn/column")
-    public ResponseEntity<List<ColumnDto>> selectTableColumn() {
-        return ResponseEntity.ok(tableDesignService.selectTableColumn());
+    @Operation(summary = "테이블 관리 테이블 등록", description = "테이블 관리 테이블 데이터를 등록합니다.")
+    @PostMapping("/updateTable")
+    public ResponseEntity<Map<String, Boolean>> saveTable(@RequestBody TableInfoDto tableInfoDto, @AuthenticationPrincipal AccountDto accountDto) {
+        tableDesignService.saveTable(tableInfoDto, accountDto);
+        return ResponseEntity.ok(Map.of("result", true));
     }
 
-    @Operation(summary = "테이블 내 데이터 조회", description = "테이블 내 데이터를 조회합니다.")
-    @GetMapping("/selectColumn/data")
-    public ResponseEntity<Map<String,Object>> selectTableColumnData(
-            @Parameter(description = "사용자 인증 정보", hidden = true)
-            @AuthenticationPrincipal AccountDto accountDto,
-            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
-            @RequestParam(value = "page") int page,
-            @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam(value = "size") int size,
-            @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
-            @RequestParam(required = false, value = "sort") String sort,
-            @Parameter(description = "조회 용어명", example = "용어명1")
-            @RequestParam(required = false, value = "searchQuery") String searchQuery,
-            @Parameter(description = "조회컬럼 명", example = "id")
-            @RequestParam(required = false, value = "searchColumn") String searchColumn,
-            @Parameter(description = "테이블 ID", example = "0")
-            @RequestParam(required = false, value = "tableId") Long tableId
-    ) {
-        Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
-        Page<TableDesignDto> tableDesigns = tableDesignService.selectTableData(pageable, accountDto, searchColumn, searchQuery, tableId);
-        return PageableUtil.getGridPageableMap(tableDesigns);
+    @Operation(summary = "테이블 관리 테이블 수정", description = "테이블 관리 테이블 데이터를 수정합니다.")
+    @PutMapping("/updateTable")
+    public ResponseEntity<Map<String, Boolean>> updateTable(@RequestBody TableInfoDto tableInfoDto, @AuthenticationPrincipal AccountDto accountDto) {
+        tableDesignService.updateTable(tableInfoDto, accountDto);
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "테이블 관리 테이블 승인/승인취소", description = "테이블 관리 테이블 데이터를  승인/승인취소합니다.")
+    @PatchMapping("/updateTable/{isApproval}")
+    public ResponseEntity<Map<String, Boolean>> updateTableIsApproval(@PathVariable(value = "isApproval") boolean isApproval, @AuthenticationPrincipal AccountDto accountDto, @RequestBody List<TableInfoDto> tableInfoDtos) {
+        tableDesignService.updateTableIsApproval(isApproval, accountDto, tableInfoDtos);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "테이블 관리 테이블 삭제", description = "테이블 관리 테이블 데이터를  삭제합니다.")
+    @DeleteMapping("/deleteTable")
+    public ResponseEntity<Map<String, Boolean>> deleteTable(@AuthenticationPrincipal AccountDto accountDto, @RequestBody List<TableInfoDto> tableInfoDtos) {
+        tableDesignService.deleteTable(tableInfoDtos, accountDto);
+        return ResponseEntity.ok(Map.of("result", true));
     }
 
 

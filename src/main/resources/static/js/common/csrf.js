@@ -47,9 +47,6 @@ export function setupAjaxCsrf() {
                 }
 
                 window.openAlert(message);
-            },
-            success: function (response){
-                debugger
             }
         });
 

@@ -229,6 +229,9 @@ function addStandardWords(){
  * 그리드 선택 callback Function
  */
 export function selectRow(rowData, columnList, isManager, tableId) {
+
+    if(rowData.isApprovalYn === 'Y') return;
+
     const dialog = $("#mainConfirm")[0];
     const dialogTitle = $("#mainDialogTitle");
     const dialogContent = $("#mainDialogContent");
