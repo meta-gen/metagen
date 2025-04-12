@@ -32,6 +32,7 @@ spring:
   sql:
     init:
       mode: always
+      data-locations: classpath:data.sql
   servlet:
     multipart:
       enabled: true
