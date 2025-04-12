@@ -2,24 +2,28 @@ spring:
   application:
     name: meta-gen
   datasource:
-    url: jdbc:postgresql://meta-gen-postgres:15439/meta-gen?charSet=UTF-8
+    url: jdbc:h2:file:./data/meta-gen;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
     username: meta-gen
     password: meta-gen
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     generate-ddl: true
     defer-datasource-initialization: true
     properties:
       hibernate:
-        ejb:
-          metamodel:
-            population: enabled
-          format_sql: true
-          jdbc:
-            lob:
-              non_contextual_creation: true
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    database-platform: org.hibernate.dialect.H2Dialect
     mapping-resources: META-INF/orm.xml
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
   thymeleaf:
     cache: false
     prefix: classpath:/templates/
@@ -27,7 +31,17 @@ spring:
   sql:
     init:
       mode: always
-      data-locations: classpath:data.sql
+      data-locations: classpath:data-h2.sql
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 20MB
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
 logging:
   level:
     root: INFO
@@ -42,11 +56,10 @@ server:
     session:
       cookie:
         http-only: true
-        secure: false
-        same-site: Lax
+        secure: true
+        same-site: Strict
       #        max-age: 1800
       timeout: 30m
-
 
   port: 9940
 
