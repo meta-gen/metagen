@@ -1,7 +1,10 @@
 
 $(document).ready(function () {
-    getFaqData();
+    $.getJSON('/jsons/faq.json', function (data) {
+        renderTabs(data);
+        renderTabContents(data);
 
+<<<<<<< HEAD
 })
 
 function getFaqData(){
@@ -17,36 +20,63 @@ function getFaqData(){
         }
     })
 
+=======
+        // 검색 이벤트
+        $('#faq-form').on('submit', function (e) {
+            e.preventDefault();
+            const keyword = $('#faq-search').val().toLowerCase().trim();
+
+            const filtered = data.map(item => ({
+                ...item,
+                questions: item.questions.filter(q => q.toLowerCase().includes(keyword))
+            })).filter(item => item.questions.length > 0);
+
+            renderTabs(filtered);
+            renderTabContents(filtered);
+        });
+    });
+});
+
+function renderTabs(data) {
+    const tabMenu = document.getElementById("faqTabMenu");
+    tabMenu.innerHTML = '';
+
+    data.forEach((item, index) => {
+        const tabId = 'tab-' + index;
+
+        const li = document.createElement("li");
+        li.className = 'nav-item';
+        li.innerHTML = `
+            <a class="nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#${tabId}">
+                ${item.category}
+            </a>
+        `;
+        tabMenu.appendChild(li);
+    });
+>>>>>>> e2a7769 (FAQ 화면 탭 기능 추가)
 }
 
-// 초기 렌더링
-function renderFAQList(data) {
-    const listContainer = document.getElementById("faq-list");
-    listContainer.innerHTML = '';
+function renderTabContents(data) {
+    const tabContent = document.getElementById("faqTabContent");
+    tabContent.innerHTML = '';
 
-    data.forEach(item => {
-        const questionDiv = document.createElement("div");
-        questionDiv.className = "faq-item";
-        questionDiv.style.borderBottom = "1px solid #ddd";
-        questionDiv.style.padding = "10px 0";
+    data.forEach((item, index) => {
+        const tabId = 'tab-' + index;
 
-        const questionTitle = document.createElement("div");
-        questionTitle.innerHTML = `<strong>${item.question}</strong>`;
-        questionTitle.style.cursor = "pointer";
+        const div = document.createElement("div");
+        div.className = `tab-pane fade ${index === 0 ? 'show active' : ''}`;
+        div.id = tabId;
 
-        const answerDiv = document.createElement("div");
-        answerDiv.textContent = item.answer;
-        answerDiv.style.display = "none";
-        answerDiv.style.marginTop = "5px";
-        answerDiv.style.color = "#555";
-
-        questionTitle.addEventListener("click", () => {
-            answerDiv.style.display = (answerDiv.style.display === "none") ? "block" : "none";
+        const ul = document.createElement("ul");
+        item.questions.forEach(q => {
+            const li = document.createElement("li");
+            li.textContent = q;
+            li.className = "mb-2";
+            ul.appendChild(li);
         });
 
-        questionDiv.appendChild(questionTitle);
-        questionDiv.appendChild(answerDiv);
-        listContainer.appendChild(questionDiv);
+        div.appendChild(ul);
+        tabContent.appendChild(div);
     });
 }
 
