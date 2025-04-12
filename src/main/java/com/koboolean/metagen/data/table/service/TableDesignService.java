@@ -13,4 +13,12 @@ public interface TableDesignService {
     List<ColumnDto> selectTableInfoColumn();
 
     Page<TableInfoDto> selectTableInfoData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery);
+
+    void saveTable(TableInfoDto tableInfoDto, AccountDto accountDto);
+
+    void updateTable(TableInfoDto tableInfoDto, AccountDto accountDto);
+
+    void updateTableIsApproval(boolean isApproval, AccountDto accountDto, List<TableInfoDto> tableInfoDtos);
+
+    void deleteTable(List<TableInfoDto> tableInfoDtos, AccountDto accountDto);
 }
