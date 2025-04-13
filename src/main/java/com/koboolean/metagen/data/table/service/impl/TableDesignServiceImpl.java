@@ -13,19 +13,24 @@ import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
 import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
 import com.koboolean.metagen.utils.AuthUtil;
+import com.koboolean.metagen.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 public class TableDesignServiceImpl implements TableDesignService {
 
     private final TableInfoRepository tableInfoRepository;
+    private static final int FIRST_ROW = 1;
 
     @Override
     public List<ColumnDto> selectTableInfoColumn() {
@@ -143,6 +148,52 @@ public class TableDesignServiceImpl implements TableDesignService {
             }
 
             tableInfoRepository.delete(tableInfo);
+        });
+    }
+
+    @Override
+    @Transactional
+    public void uploadTableExcelFile(MultipartFile file, AccountDto accountDto) throws IOException {
+        Long projectId = accountDto.getProjectId();
+
+        // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
+        boolean isApprovalAvailable = AuthUtil.isApprovalAvailable();
+
+        List<String> tableExcelHeaders = List.of(
+                "tableName",
+                "tableDescription",
+                "isMasterTable",
+                "sortOrder"
+        );
+
+        List<Map<String, String>> tableExcelData = ExcelUtils.parseExcelFile(file, 0, tableExcelHeaders, false, FIRST_ROW);
+
+        tableExcelData.forEach(map -> {
+
+            String s = map.get("sortOrder").replaceAll("[^0-9]", "");
+
+            // 값이 입력되어있지 않으면 0을 입력한다.
+            if(s.isEmpty()){
+                s = "0";
+            }
+
+            String tableName = map.get("tableName");
+
+            TableInfo tableInfo = TableInfo.builder()
+                    .projectId(projectId)
+                    .tableName(tableName)
+                    .tableDescription(map.get("tableDescription"))
+                    .isMasterTable(map.get("isMasterTable").equals("Y"))
+                    .sortOrder(Integer.parseInt(s))
+                    .isApproval(isApprovalAvailable)
+                    .build();
+
+            List<TableInfo> allByTableNameAndProjectId = tableInfoRepository.findAllByTableNameAndProjectId(tableName, projectId);
+
+            if(!tableName.isEmpty() && (allByTableNameAndProjectId == null || allByTableNameAndProjectId.isEmpty())){
+                tableInfoRepository.save(tableInfo);
+            }
+
         });
     }
 }

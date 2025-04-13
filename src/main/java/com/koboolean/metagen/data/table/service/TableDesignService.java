@@ -5,7 +5,9 @@ import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface TableDesignService {
@@ -21,4 +23,6 @@ public interface TableDesignService {
     void updateTableIsApproval(boolean isApproval, AccountDto accountDto, List<TableInfoDto> tableInfoDtos);
 
     void deleteTable(List<TableInfoDto> tableInfoDtos, AccountDto accountDto);
+
+    void uploadTableExcelFile(MultipartFile file, AccountDto accountDto) throws IOException;
 }

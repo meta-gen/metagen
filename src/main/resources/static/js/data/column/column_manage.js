@@ -11,13 +11,13 @@ $(document).ready(() => {
      */
     $("#download-template").on("click", function () {
         $.ajax({
-            url: '/api/downloadTemplate/tableTemplate',
+            url: '/api/downloadTemplate/columnTemplate',
             type: 'GET',
             xhrFields: {
                 responseType: 'blob'
             },
             success: function (blob, status, xhr) {
-                downloadFile(blob, status, xhr, "테이블설계 템플릿.xlsx");
+                downloadFile(blob, status, xhr, "컬럼 템플릿.xlsx");
                 closeDialog("div");
             },
             error: function (xhr) {
