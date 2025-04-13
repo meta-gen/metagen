@@ -1,26 +1,8 @@
-
 $(document).ready(function () {
     $.getJSON('/jsons/faq.json', function (data) {
         renderTabs(data);
         renderTabContents(data);
 
-<<<<<<< HEAD
-})
-
-function getFaqData(){
-    $.ajax({
-        url: `/jsons/faq.json`,
-        type: "GET",
-        dataType: "json",
-        success : function (response){
-
-            renderFAQList(response);
-
-
-        }
-    })
-
-=======
         // 검색 이벤트
         $('#faq-form').on('submit', function (e) {
             e.preventDefault();
@@ -53,7 +35,6 @@ function renderTabs(data) {
         `;
         tabMenu.appendChild(li);
     });
->>>>>>> e2a7769 (FAQ 화면 탭 기능 추가)
 }
 
 function renderTabContents(data) {
@@ -79,4 +60,3 @@ function renderTabContents(data) {
         tabContent.appendChild(div);
     });
 }
-
