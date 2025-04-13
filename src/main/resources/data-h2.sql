@@ -145,6 +145,7 @@ merge into RESOURCES (resource_id, http_method, order_num, resource_name, resour
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (43, '*', 0, '/api/deleteColumn/**','url', '테이블컬럼 삭제', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (44, '*', 0, '/api/uploadMetadata/**','url', '메타데이터 업로드', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (45, '*', 0, '/tableManage','url', '테이블관리화면', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (46, '*', 0, '/api/uploadTableExcelFile','url', '테이블 업로드', 'SYSTEM', 'SYSTEM');
 
 -- ROLE_NOT_APPROVE
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (1,5); -- 로그아웃
@@ -183,6 +184,8 @@ merge into role_resources(resource_id, role_id) key(resource_id, role_id) values
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (41,3); -- 테이블컬럼 조회
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (42,3); -- 테이블컬럼 수정
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (43,3); -- 테이블컬럼 삭제
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (44,3); -- 메타데이터 업로드
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (46,3); -- 메타데이터 업로드
 
 -- ROLE_DBA
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (31,2) ; -- 프로젝트저장
@@ -198,7 +201,6 @@ merge into role_resources(resource_id, role_id) key(resource_id, role_id) values
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (34,0); -- 사용자저장
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (35,0); -- 사용자삭제
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (37,0); -- 인가수정
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (44,0); -- 메타데이터 업로드
 
 -- ROLE_ANONYMOUS
 merge into role_resources(resource_id, role_id) values (17,6); -- 접근가능프로젝트 조회

@@ -1,9 +1,32 @@
-import {setupAjaxCsrf} from "../../common/csrf.js";
+import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
+import {downloadFile} from "../../common/common.js";
 
 setupAjaxCsrf();
 const tableId = "tableManageGrid";
 
 $(document).ready(() => {
+
+    /**
+     * 템플릿 다운로드 버튼 클릭 이벤트
+     */
+    $("#download-template").on("click", function () {
+        $.ajax({
+            url: '/api/downloadTemplate/tableTemplate',
+            type: 'GET',
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (blob, status, xhr) {
+                downloadFile(blob, status, xhr, "테이블 템플릿.xlsx");
+                closeDialog("div");
+            },
+            error: function (xhr) {
+                const errorMessage = xhr.responseJSON?.message || '파일 다운로드 중 문제가 발생했습니다.';
+                openAlert(errorMessage);
+            }
+        });
+    });
+
     /**
      * 추가버튼 선택 시 테이블을 생성한다.
      */
@@ -68,6 +91,56 @@ $(document).ready(() => {
     $("#grd-unactive-tableManageGrid").on("click", () => {
         updateActive(false);
     });
+
+    $("#excel-upload").on("click", () => {
+        $("#upload-file").click();
+    });
+
+    /**
+     * 엑셀 파일이 업로드 된 이후 서버에 전송 및 파싱처리
+     */
+    $("#upload-file").on("change", () => {
+        window.openConfirm("업로드 하시겠습니까?", () => {
+            const file = $("#upload-file")[0].files[0]; // 선택한 파일 가져오기
+            if (!file) {
+                alert("업로드할 파일을 선택해주세요.");
+                return;
+            }
+
+            // FormData 생성 후 파일 추가
+            const formData = new FormData();
+            formData.append("file", file);
+
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ', ' + pair[1]);
+            }
+
+            $.ajax({
+                url: "/api/uploadTableExcelFile",
+                type: "POST",
+                data: formData,
+                processData: false,  // FormData를 쿼리 스트링으로 변환하지 않음
+                contentType: false,  // `multipart/form-data`가 자동 설정되도록 false로 설정
+                beforeSend: function (xhr) {  // setupAjaxCsrf() 영향 방지
+                    xhr.setRequestHeader('X-XSRF-TOKEN', getCsrfToken()); // CSRF 토큰만 추가
+                    // AJAX 요청이 시작될 때 로딩 바 표시
+                    $("#loading-bar").show();
+                },
+                success: function (response) {
+                    if(response.result === "success"){
+                        window.openAlert("업로드가 완료되었습니다.");
+                        window.searchGrid(tableId);
+                        $("#upload-file").val('');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert("파일 업로드 중 오류가 발생했습니다.");
+                    console.error("업로드 실패:", status, error);
+                }
+            });
+        });
+    });
+
 });
 
 function updateActive(type){

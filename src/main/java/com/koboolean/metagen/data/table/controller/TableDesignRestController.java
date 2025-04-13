@@ -11,10 +11,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -80,6 +85,19 @@ public class TableDesignRestController {
     public ResponseEntity<Map<String, Boolean>> deleteTable(@AuthenticationPrincipal AccountDto accountDto, @RequestBody List<TableInfoDto> tableInfoDtos) {
         tableDesignService.deleteTable(tableInfoDtos, accountDto);
         return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "테이블 템플릿 엑셀 업로드", description = "테이블 템플릿 엑셀을 파싱하여 테이블에 저장한다.")
+    @PostMapping(value = "/uploadTableExcelFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, String>> uploadTableExcelFile(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal AccountDto accountDto) throws IOException {
+
+        try {
+            tableDesignService.uploadTableExcelFile(file, accountDto);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 읽을 수 없습니다.", e);
+        }
+
+        return ResponseEntity.ok(Map.of("result", "success"));
     }
 
 
