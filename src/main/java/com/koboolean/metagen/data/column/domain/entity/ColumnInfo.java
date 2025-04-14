@@ -93,10 +93,6 @@ public class ColumnInfo {
     @Column
     private Boolean isEncrypted;
 
-    /** 엑셀 컬럼 헤더 표시명: 사용자ID */
-    @Column
-    private String excelHeader;
-
     /** 데이터 예시: test@test.com */
     @Column
     private String example;
