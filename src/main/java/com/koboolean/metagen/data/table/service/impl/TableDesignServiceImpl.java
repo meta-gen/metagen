@@ -177,7 +177,7 @@ public class TableDesignServiceImpl implements TableDesignService {
                 s = "0";
             }
 
-            String tableName = map.get("tableName");
+            String tableName = map.get("tableName").toUpperCase();
 
             TableInfo tableInfo = TableInfo.builder()
                     .projectId(projectId)
