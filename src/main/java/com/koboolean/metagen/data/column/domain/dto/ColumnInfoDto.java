@@ -70,9 +70,6 @@ public class ColumnInfoDto {
     /** 암호화 필요 여부 */
     private String isEncrypted;
 
-    /** 엑셀 컬럼 헤더 표시명 */
-    private String excelHeader;
-
     /** 데이터 예시 */
     private String example;
 
@@ -103,7 +100,6 @@ public class ColumnInfoDto {
                 .isUnique(toYN(entity.getIsUnique()))
                 .isIndex(toYN(entity.getIsIndex()))
                 .isEncrypted(toYN(entity.getIsEncrypted()))
-                .excelHeader(entity.getExcelHeader())
                 .example(entity.getExample())
                 .standardTerms(entity.getStandardTerms())
                 .isApproval(toYN(entity.getIsApproval()))
@@ -131,7 +127,6 @@ public class ColumnInfoDto {
                 .isUnique(fromYN(this.isUnique))
                 .isIndex(fromYN(this.isIndex))
                 .isEncrypted(fromYN(this.isEncrypted))
-                .excelHeader(this.excelHeader)
                 .example(this.example)
                 .standardTerms(this.standardTerms)
                 .isApproval(fromYN(this.isApproval))
