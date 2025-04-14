@@ -241,7 +241,11 @@ function saveColumn(type){
  * 승인된 테이블만 조회가 가능하도록 한다.
  */
 function openTableSelectPopup(){
-    debugger
+    const popup = window.open(
+        "/popup/columTableSearch",  // 팝업으로 띄울 URL
+        "테이블 조회",     // 팝업 이름 (중복 방지용)
+        "width=600,height=800,resizable=yes,scrollbars=yes"
+    );
 }
 
 window.toggleExtraInfo = function () {
