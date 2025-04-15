@@ -15,11 +15,13 @@ public interface TableInfoRepository extends JpaRepository<TableInfo, Long> {
 
     TableInfo findByIdAndProjectId(Long id, Long projectId);
 
-    List<TableInfo> findAllByIdAndProjectId(Long id, Long projectId);
-
     List<TableInfo> findAllByTableNameAndProjectId(String tableName, Long projectId);
 
     Page<TableInfo> findAllByProjectIdAndTableNameLike(Long projectId, String tableName, Pageable pageable);
 
+    List<TableInfo> findAllByProjectIdAndTableNameLike(Long projectId, String tableName);
+
     Page<TableInfo> findAllByProjectIdAndTableDescriptionLike(Long projectId, String tableDescription, Pageable pageable);
+
+    List<TableInfo> findAllByProjectIdAndTableNameLikeAndIsApproval(Long projectId, String tableName, Boolean isApproval);
 }

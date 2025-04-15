@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+
+<head>
+    <title>MetaGen</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/dataTables.dataTables.min.css}">
+    <link rel="stylesheet" th:href="@{/js/jquery-ui-1.14.1.custom/jquery-ui.css}">
+    <link rel="stylesheet" th:href="@{/css/popup.css}">
+
+    <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.js}"></script>
+    <script th:src="@{/js/dataTables.min.js}"></script>
+    <script th:src="@{/js/jquery-ui-1.14.1.custom/jquery-ui.js}"></script>
+    <script th:src="@{/js/popup/column_table_search.js}"></script>
+
+    <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="popup-container">
+    <div class="popup-header">
+        <h1>테이블 조회</h1>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 4px;">
+            조회조건을 기준으로 승인완료된 테이블 정보를 조회합니다.
+        </p>
+    </div>
+
+    <form class="popup-form">
+        <div class="form-row">
+            <div class="input-button-group">
+                <input type="text" id="table_name_text" class="form-control" placeholder="예: TEST_TABLE" style="flex: 1;" />
+                <button type="button" class="button btn btn-primary" id="search-btn">검색</button>
+            </div>
+        </div>
+
+        <div class="form-group mt-3">
+            <label for="table-select">테이블 선택</label>
+            <select id="table-select" class="form-control">
+            </select>
+        </div>
+
+        <div class="popup-actions" style="margin-top: 20px; text-align: right;">
+            <button type="button" class="btn btn-secondary" onclick="window.close();">닫기</button>
+            <button type="button" class="btn btn-primary" id="confirm-btn" disabled style="display: none">확인</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

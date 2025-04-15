@@ -3,6 +3,7 @@ package com.koboolean.metagen.data.column.controller;
 import com.koboolean.metagen.data.column.domain.dto.ColumnInfoDto;
 import com.koboolean.metagen.data.column.repository.ColumnInfoRepository;
 import com.koboolean.metagen.data.column.service.ColumnManageService;
+import com.koboolean.metagen.data.table.domain.dto.TableInfoDto;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.utils.PageableUtil;
@@ -14,10 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -57,5 +55,14 @@ public class ColumnManageRestController {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<ColumnInfoDto> tableDesigns = columnManageService.selectTableData(pageable, accountDto, searchColumn, searchQuery, tableId);
         return PageableUtil.getGridPageableMap(tableDesigns);
+    }
+
+    @GetMapping("/selectColumn/table/{tableName}")
+    public ResponseEntity<Map<String, Object>> selectTable(@AuthenticationPrincipal AccountDto accountDto
+            , @PathVariable(value = "tableName") String tableName) {
+
+        List<TableInfoDto> tableInfoDtos = columnManageService.selectTable(accountDto, tableName);
+
+        return ResponseEntity.ok(Map.of("result", true, "tableInfos", tableInfoDtos));
     }
 }
