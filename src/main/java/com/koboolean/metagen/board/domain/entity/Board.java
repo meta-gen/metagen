@@ -28,7 +28,7 @@ public class Board extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue
     @Column(nullable = false)
-    private long id;
+    private Long id;
 
     /* 프로젝트 아이디 */
     @Column(name = "project_id")
@@ -48,7 +48,7 @@ public class Board extends BaseEntity implements Serializable {
 
     /* 조회수 */
     @Column(name = "hit_count", nullable = false)
-    private int hitCount;
+    private Integer hitCount;
 
     /* 삭제 여부 */
     @Column(name = "delete_yn", length = 1, nullable = false)

@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 public class BoardDto {
 
     /* 게시글 번호 */
-    private long id;
+    private Long id;
 
     /* 프로젝트 아이디 */
     private Long projectId;
@@ -25,6 +25,9 @@ public class BoardDto {
 
     /* 게시판 카테고리 아이디 */
     private String categoryId;
+    
+    /* 게시판 카테고리 명 */
+    private String categoryName;
 
     /* 게시글 제목 */
     private String title;
@@ -33,22 +36,23 @@ public class BoardDto {
     private String content;
 
     /* 조회수 */
-    private int hitCount;
+    private Integer hitCount;
 
     /* 삭제 여부 */
     private char deleteYn;
-
+    
     /* 빌더 호출 */
     public static BoardDto fromEntity(Board entity) {
 
         return BoardDto.builder()
-                       .id       (entity.getId()       )
-                       .projectId(entity.getProjectId())
-                       .username (entity.getUsername() )
-                       .title    (entity.getTitle()    )
-                       .content  (entity.getContent()  )
-                       .hitCount (entity.getHitCount() )
-                       .deleteYn (entity.getDeleteYn() )
+                       .id          (entity.getId()       )
+                       .projectId   (entity.getProjectId())
+                       .username    (entity.getUsername() )
+                       .title       (entity.getTitle()    )
+                       .content     (entity.getContent()  )
+                       .hitCount    (entity.getHitCount() )
+                       .deleteYn    (entity.getDeleteYn() )
+                       .categoryName(entity.getBoardCategory().getCategoryName())
                        .build()
         ;
     }

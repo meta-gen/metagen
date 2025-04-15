@@ -22,7 +22,7 @@ public class HomeController {
 
     @GetMapping(value="/notice")
     public String notice() {
-        return "pages/notice";
+        return "pages/operation/notice/noticeList";
     }
 
     @GetMapping("/tableManage")

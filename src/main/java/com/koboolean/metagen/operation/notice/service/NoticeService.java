@@ -1,4 +1,4 @@
-package com.koboolean.metagen.operationManagement.notice.service;
+package com.koboolean.metagen.operation.notice.service;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.koboolean.metagen.operationManagement.notice.repository;
+package com.koboolean.metagen.operation.notice.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
