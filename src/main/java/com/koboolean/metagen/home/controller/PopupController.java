@@ -12,4 +12,9 @@ public class PopupController {
     public String standardTermSearch(){
         return "popup/standard_term_search";
     }
+
+    @GetMapping("/columTableSearch")
+    public String columTableSearch(){
+        return "popup/column_table_search";
+    }
 }

@@ -3,6 +3,9 @@ package com.koboolean.metagen.data.column.service.impl;
 import com.koboolean.metagen.data.column.service.ColumnManageService;
 import com.koboolean.metagen.data.column.domain.dto.ColumnInfoDto;
 import com.koboolean.metagen.data.column.repository.ColumnInfoRepository;
+import com.koboolean.metagen.data.table.domain.dto.TableInfoDto;
+import com.koboolean.metagen.data.table.domain.entity.TableInfo;
+import com.koboolean.metagen.data.table.repository.TableInfoRepository;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.grid.enums.RowType;
@@ -19,6 +22,7 @@ import java.util.List;
 public class ColumnManageServiceImpl implements ColumnManageService {
 
     private final ColumnInfoRepository columnInfoRepository;
+    private final TableInfoRepository tableInfoRepository;
 
     @Override
     public List<ColumnDto> selectTableColumn() {
@@ -51,5 +55,21 @@ public class ColumnManageServiceImpl implements ColumnManageService {
         Long projectId = accountDto.getProjectId();
 
         return columnInfoRepository.findByTableInfo_IdAndProjectId(tableId, projectId, pageable).map(ColumnInfoDto::fromEntity);
+    }
+
+    @Override
+    public List<TableInfoDto> selectTable(AccountDto accountDto, String tableName) {
+
+        Long projectId = accountDto.getProjectId();
+
+        String searchTableName = null;
+
+        if(!tableName.isEmpty()){
+            searchTableName = "%" + tableName.toUpperCase() + "%";
+        }
+
+        List<TableInfo> tableInfos = tableInfoRepository.findAllByProjectIdAndTableNameLikeAndIsApproval(projectId, searchTableName, true);
+
+        return tableInfos.stream().map(TableInfoDto::fromEntity).toList();
     }
 }
