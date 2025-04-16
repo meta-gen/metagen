@@ -1,69 +1,76 @@
 $(document).ready(function () {
-    getFaqData();
+    $.getJSON('/jsons/faq.json', function (data) {
+        renderTabs(data);
+        renderTabContents(data);
 
-    /**
-     * 검색버튼을 선택 시 조회를 수행한다.
-     */
-    $('#faq-search-btn').on('click', function (e) {
+        // 검색 이벤트
+        $('#faq-form').on('submit', function (e) {
+            e.preventDefault();
+            const keyword = $('#faq-search').val().toLowerCase().trim();
 
-        e.preventDefault();
+            const filtered = data.map(item => ({
+                ...item,
+                questions: item.questions.filter(q => q.toLowerCase().includes(keyword))
+            })).filter(item => item.questions.length > 0);
 
-        const keyword = $('#faq-search').val().toLowerCase().trim(); // 검색어 입력
-
-        $.getJSON('/jsons/faq.json', function (data) {
-            // keyword가 question 또는 answer에 포함된 것만 필터링
-            const filtered = data.filter(item =>
-                item.question.toLowerCase().includes(keyword) ||
-                item.answer.toLowerCase().includes(keyword)
-            );
-
-            renderFAQList(filtered); // 화면에 다시 그리기
+            renderTabs(filtered);
+            renderTabContents(filtered);
         });
     });
+});
 
-})
+function renderTabs(data) {
+    const tabMenu = document.getElementById("faqTabMenu");
+    tabMenu.innerHTML = '';
 
-/**
- * FAQ 데이터를 가져온다.
- */
-function getFaqData(){
-    $.ajax({
-        url: `/jsons/faq.json`,
-        type: "GET",
-        dataType: "json",
-        success : function (response){
-            renderFAQList(response);
-        }
+    data.forEach((item, index) => {
+        const tabId = 'tab-' + index;
+
+        const li = document.createElement("li");
+        li.className = 'nav-item';
+        li.innerHTML = `
+            <a class="nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#${tabId}">
+                ${item.category}
+            </a>
+        `;
+        tabMenu.appendChild(li);
     });
 }
 
-// 초기 렌더링
-function renderFAQList(data) {
-    const listContainer = document.getElementById("faq-list");
-    listContainer.innerHTML = '';
+function renderTabContents(data) {
+    const tabContent = document.getElementById("faqTabContent");
+    tabContent.innerHTML = '';
 
-    data.forEach(item => {
-        const questionDiv = document.createElement("div");
-        questionDiv.className = "faq-item";
-        questionDiv.style.borderBottom = "1px solid #ddd";
-        questionDiv.style.padding = "10px 0";
+    data.forEach((item, index) => {
+        const tabId = 'tab-' + index;
 
-        const questionTitle = document.createElement("div");
-        questionTitle.innerHTML = `<strong>${item.question}</strong>`;
-        questionTitle.style.cursor = "pointer";
+        const div = document.createElement("div");
+        div.className = `tab-pane fade ${index === 0 ? 'show active' : ''}`;
+        div.id = tabId;
 
-        const answerDiv = document.createElement("div");
-        answerDiv.textContent = item.answer;
-        answerDiv.style.display = "none";
-        answerDiv.style.marginTop = "5px";
-        answerDiv.style.color = "#555";
+        item.questions.forEach(q => {
+            const questionDiv = document.createElement("div");
+            questionDiv.style.cursor = "pointer";
+            questionDiv.style.fontWeight = "bold";
+            questionDiv.style.marginTop = "15px";
+            questionDiv.textContent = q.question;
 
-        questionTitle.addEventListener("click", () => {
-            answerDiv.style.display = (answerDiv.style.display === "none") ? "block" : "none";
+            const answerDiv = document.createElement("div");
+            answerDiv.textContent = q.answer;
+            answerDiv.style.display = "none";
+            answerDiv.style.marginLeft = "15px";
+            answerDiv.style.marginTop = "5px";
+            answerDiv.style.color = "#555";
+
+            questionDiv.addEventListener("click", () => {
+                answerDiv.style.display = (answerDiv.style.display === "none") ? "block" : "none";
+            });
+
+            div.appendChild(questionDiv);
+            div.appendChild(answerDiv);
         });
 
-        questionDiv.appendChild(questionTitle);
-        questionDiv.appendChild(answerDiv);
-        listContainer.appendChild(questionDiv);
+        tabContent.appendChild(div);
     });
 }
+
