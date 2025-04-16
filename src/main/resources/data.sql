@@ -168,6 +168,9 @@ ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (49, '*', 0, '/api/deleteNotice/**','url', '공지사항 삭제', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (50, '*', 0, '/popup/columTableSearch/**','url', '테이블조회 팝업화면', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
 
 
 -- ROLE_NOT_APPROVE
@@ -196,6 +199,7 @@ insert into role_resources(resource_id, role_id) values (36,4) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (30,4) on CONFLICT DO NOTHING; -- 프로젝트조회
 insert into role_resources(resource_id, role_id) values (38,4) on CONFLICT DO NOTHING; -- 테이블설계 조회
 insert into role_resources(resource_id, role_id) values (45,4) on CONFLICT DO NOTHING; -- 테이블관리화면
+insert into role_resources(resource_id, role_id) values (50,4) on CONFLICT DO NOTHING; -- 테이블조회 팝업화면
 
 -- ROLE_USER
 insert into role_resources(resource_id, role_id) values (15,3) on CONFLICT DO NOTHING; -- 템플릿다운로드
