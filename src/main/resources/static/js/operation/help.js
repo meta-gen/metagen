@@ -48,15 +48,29 @@ function renderTabContents(data) {
         div.className = `tab-pane fade ${index === 0 ? 'show active' : ''}`;
         div.id = tabId;
 
-        const ul = document.createElement("ul");
         item.questions.forEach(q => {
-            const li = document.createElement("li");
-            li.textContent = q;
-            li.className = "mb-2";
-            ul.appendChild(li);
+            const questionDiv = document.createElement("div");
+            questionDiv.style.cursor = "pointer";
+            questionDiv.style.fontWeight = "bold";
+            questionDiv.style.marginTop = "15px";
+            questionDiv.textContent = q.question;
+
+            const answerDiv = document.createElement("div");
+            answerDiv.textContent = q.answer;
+            answerDiv.style.display = "none";
+            answerDiv.style.marginLeft = "15px";
+            answerDiv.style.marginTop = "5px";
+            answerDiv.style.color = "#555";
+
+            questionDiv.addEventListener("click", () => {
+                answerDiv.style.display = (answerDiv.style.display === "none") ? "block" : "none";
+            });
+
+            div.appendChild(questionDiv);
+            div.appendChild(answerDiv);
         });
 
-        div.appendChild(ul);
         tabContent.appendChild(div);
     });
 }
+
