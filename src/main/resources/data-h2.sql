@@ -146,6 +146,10 @@ merge into RESOURCES (resource_id, http_method, order_num, resource_name, resour
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (44, '*', 0, '/api/uploadMetadata/**','url', '메타데이터 업로드', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (45, '*', 0, '/tableManage','url', '테이블관리화면', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (46, '*', 0, '/api/uploadTableExcelFile','url', '테이블 업로드', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (47, '*', 0, '/api/saveNotice/**','url', '공지사항 등록/수정', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (48, '*', 0, '/api/selectNotice/**','url', '공지사항 조회', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (49, '*', 0, '/api/deleteNotice/**','url', '공지사항 삭제', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (50, '*', 0, '/popup/columTableSearch/**','url', '테이블조회 팝업화면', 'SYSTEM', 'SYSTEM');
 
 -- ROLE_NOT_APPROVE
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (1,5); -- 로그아웃
@@ -153,6 +157,7 @@ merge into role_resources(resource_id, role_id) key(resource_id, role_id) values
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (3,5); -- 패스워드수정
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (5,5); -- 사용자명수정
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (13,5); -- 공지사항화면
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (48,5); -- 공지사항 조회
 
 -- ROLE_VIEWER
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (4,4); -- 컬럼관리화면
@@ -172,6 +177,7 @@ merge into role_resources(resource_id, role_id) key(resource_id, role_id) values
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (30,4); -- 프로젝트조회
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (38,4); -- 테이블설계 조회
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (45,4); -- 테이블관리화면
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (50,4); -- 테이블조회 팝업화면
 
 -- ROLE_USER
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (15,3); -- 템플릿다운로드
@@ -195,6 +201,10 @@ merge into role_resources(resource_id, role_id) key(resource_id, role_id) values
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (24,2) ; -- 표준도메인승인/승인취소
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (25,2) ; -- 표준단어승인/승인취소
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (26,2) ; -- 표준용어승인/승인취소
+
+-- ROLE_MANAGER
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (47,1) ; -- 공지사항 등록/수정
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (49,1) ; -- 공지사항 삭제
 
 -- ROLE_ADMIN
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (14,0); -- 권한수정
