@@ -48,5 +48,5 @@ public class StandardTerm {
     private StandardDomain standardDomain;
 
     @ManyToMany(mappedBy = "standardTerms")
-    private List<ColumnInfo> tableDesigns;
+    private List<ColumnInfo> columnInfos;
 }

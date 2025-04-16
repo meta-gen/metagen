@@ -30,23 +30,58 @@
 
     <form class="popup-form">
         <div class="form-row">
+            <label for="table_name_text" style="margin-bottom: 6px;">테이블 선택</label>
             <div class="input-button-group">
                 <input type="text" id="table_name_text" class="form-control" placeholder="예: TEST_TABLE" style="flex: 1;" />
-                <button type="button" class="button btn btn-primary" id="search-btn">검색</button>
+                <button type="submit" class="button btn btn-primary" id="search-btn">검색</button>
             </div>
         </div>
 
         <div class="form-group mt-3">
-            <label for="table-select">테이블 선택</label>
             <select id="table-select" class="form-control">
             </select>
         </div>
+
+        <div class="form-row" id="term-search-box" style="display: none">
+            <label for="term-search-text" style="margin-bottom: 6px;">용어 검색</label>
+
+            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: nowrap;">
+                <select id="term-search-type"
+                        class="form-control"
+                        style="width: 140px; height: 38px; margin-bottom: 0;">
+                    <option value="termName">표준용어명</option>
+                    <option value="termAbbreviation">영문약어명</option>
+                </select>
+
+                <input type="text"
+                       id="term-search-text"
+                       class="form-control"
+                       placeholder="검색어 입력"
+                       style="flex: 1; height: 38px; margin-bottom: 0;" />
+
+                <button type="button"
+                        class="btn btn-primary"
+                        id="search-term-btn"
+                        style="white-space: nowrap; height: 38px; margin-bottom: 0;">
+                    검색
+                </button>
+            </div>
+
+            <div class="form-group mt-3">
+                <select id="term-select" class="form-control">
+                </select>
+            </div>
+        </div>
+
+
 
         <div class="popup-actions" style="margin-top: 20px; text-align: right;">
             <button type="button" class="btn btn-secondary" onclick="window.close();">닫기</button>
             <button type="button" class="btn btn-primary" id="confirm-btn" disabled style="display: none">확인</button>
         </div>
     </form>
+
+    <div id="term-desc-box"></div>
 </div>
 </body>
 </html>

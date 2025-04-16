@@ -4,6 +4,7 @@ import com.koboolean.metagen.data.column.domain.entity.ColumnInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -45,5 +46,5 @@ public class TableInfo {
     private Boolean isApproval;
 
     @OneToMany(mappedBy = "tableInfo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ColumnInfo> columns;
+    private List<ColumnInfo> columns = new ArrayList<>();
 }

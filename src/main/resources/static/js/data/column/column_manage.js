@@ -2,9 +2,10 @@ import {setupAjaxCsrf} from "../../common/csrf.js";
 import {downloadFile} from "../../common/common.js";
 
 
+const tableId = "columnManageGrid";
+
 $(document).ready(() => {
     setupAjaxCsrf();
-    const tableId = "columnManageGrid";
 
     /**
      * 템플릿 다운로드 버튼 클릭 이벤트
@@ -31,7 +32,7 @@ $(document).ready(() => {
        const type = "C";
        const form = createForm({}, type);
 
-        window.openDialog('div', { title: type === 'C' ? '테이블 등록' : '테이블 수정', content: form });
+        window.openDialog('div', { title: type === 'C' ? '컬럼 등록' : '컬럼 수정', content: form });
 
         /**
          * 저장버튼 클릭
@@ -74,6 +75,8 @@ function createForm(rowData, type) {
     return `<form id="editTableForm" class="edit-form">
         <input type="hidden" name="id" value="${rowData.id ?? 0}"/>
         <input type="hidden" name="type" value="${type}" />
+        <input type="hidden" name="tableInfoId" id="tableInfoId" value=""/>
+        <input type="hidden" name="termId" id="termId" value=""/>
         
         <!-- 필수 정보 -->
         <div class="form-group">
@@ -88,7 +91,7 @@ function createForm(rowData, type) {
         <div class="form-group">
             <label for="columnName">컬럼명</label>
             <input type="text" class="form-control" name="columnName" id="columnName"
-                   value="${rowData.columnName ?? ''}" required />
+                   value="${rowData.columnName ?? ''}" readonly disabled required />
         </div>
 
         <div class="form-group">
@@ -109,6 +112,18 @@ function createForm(rowData, type) {
                    ${rowData.isNullable === 'Y' ? 'checked' : ''} />
             <label class="form-check-label" for="isNullable">NULL 허용 여부</label>
         </div>
+        
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" name="isNullable" id="isPk"
+                   ${rowData.isPk === 'Y' ? 'checked' : ''} />
+            <label class="form-check-label" for="isPk">PK 여부</label>
+        </div>
+        
+        <div class="form-group">
+            <label for="maxLength">최대 길이</label>
+            <input type="number" class="form-control" name="maxLength" id="maxLength"
+                   value="${rowData.maxLength ?? ''}" />
+        </div>        
 
         <!-- 부가 정보 펼치기 -->
         <div class="form-group mt-3">
@@ -116,13 +131,7 @@ function createForm(rowData, type) {
         </div>
 
         <div id="extra-info-section" style="display: none; margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px;">
-
-            <div class="form-group">
-                <label for="maxLength">최대 길이</label>
-                <input type="number" class="form-control" name="maxLength" id="maxLength"
-                       value="${rowData.maxLength ?? ''}" />
-            </div>
-
+            
             <div class="form-group">
                 <label for="precision">정밀도</label>
                 <input type="number" class="form-control" name="precision" id="precision"
@@ -209,6 +218,8 @@ function saveColumn(type){
     // 데이터 수집
     const data = {
         id: Number(form.id?.value || 0),
+        tableInfoId: Number(form.tableInfoId?.value),
+        termId: Number(form.termId?.value),
         tableName: form.tableName.value.trim(),
         columnName: form.columnName.value.trim(),
         dataType: form.dataType.value.trim(),
@@ -220,6 +231,7 @@ function saveColumn(type){
         sortOrder: form.sortOrder?.value ? Number(form.sortOrder.value) : null,
         refTableName: form.refTableName?.value?.trim() || "",
         example: form.example?.value?.trim() || "",
+        isPk: form.isPk?.checked ? "Y" : "N",
         isNullable: form.isNullable?.checked ? "Y" : "N",
         isMasterData: form.isMasterData?.checked ? "Y" : "N",
         isRequired: form.isRequired?.checked ? "Y" : "N",
@@ -231,8 +243,22 @@ function saveColumn(type){
 
     const msg = type === "C"? "추가" : "저장";
 
+    const restType = type === "C" ? "POST" : "PUT";
+
     openConfirm(`${msg}하시겠습니까?`, () => {
-        console.log("저장할 데이터:", data);
+        $.ajax({
+            url: "/api/updateColumn",
+            type: restType,
+            data: JSON.stringify(data),
+            success: (response) => {
+                if(response.result){
+                    openAlert(`정상적으로 ${msg}되었습니다.`, () => {
+                        window.closeDialog("div");
+                        window.searchGrid(tableId);
+                    });
+                }
+            }
+        });
     });
 }
 
@@ -244,7 +270,7 @@ function openTableSelectPopup(){
     const popup = window.open(
         "/popup/columTableSearch",  // 팝업으로 띄울 URL
         "테이블 조회",     // 팝업 이름 (중복 방지용)
-        "width=600,height=800,resizable=yes,scrollbars=yes"
+        "width=700,height=800,resizable=yes,scrollbars=yes"
     );
 }
 
@@ -256,3 +282,20 @@ window.toggleExtraInfo = function () {
         section.style.display = "none";
     }
 };
+
+function receiveTableInfo(data){
+
+    const term = data.termValue.split("(");
+
+    const replaceData = term[1].replace(")","").split(" ");
+
+    $("#tableName").val(data.value);
+    $("#tableInfoId").val(data.key);
+    $("#columnName").val(term[0].trim());
+    $("#dataType").val(replaceData[1]);
+    $("#columnDesc").val(replaceData[0]);
+    $("#termId").val(data.term);
+}
+
+window.popupFunction = window.popupFunction || {}; // 혹시 없을 경우 방지
+window.popupFunction['receiveTableInfo'] = receiveTableInfo;

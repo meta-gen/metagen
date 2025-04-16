@@ -463,7 +463,6 @@ function approvalSubmitClick(e){
         "allowedValues",
         "storageFormat",
         "displayFormat",
-        "synonyms",
         "commonStandardTermName",
         "commonStandardTermDescription"
     ];

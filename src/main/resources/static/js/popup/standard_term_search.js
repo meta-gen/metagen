@@ -50,26 +50,30 @@ $(document).ready(function () {
                         domainAbbreviation = abbr;
 
                         // 기본 선택용 도메인명 저장
-                        const data = matched.synonyms.split(",");
+                        if(matched.synonyms !== "-" && matched.synonyms !== ""){
+                            const data = matched.synonyms.split(",");
 
-                        let standard = [];
+                            let standard = [];
 
-                        words.forEach((i, e) => {
-                           standard[e] = i;
-                        });
+                            words.forEach((i, e) => {
+                                standard[e] = i;
+                            });
 
-                        standard[standard.length -1] = "";
-                        const domainNonData = standard.join("");
+                            standard[standard.length -1] = "";
+                            const domainNonData = standard.join("");
 
-                        let synonyms = [];
+                            let synonyms = [];
 
-                        for(let d = 0; d < data.length; d++){
-                            synonyms[d] = domainNonData + data[d].trim();
+                            for(let d = 0; d < data.length; d++){
+                                synonyms[d] = domainNonData + data[d].trim();
+                            }
+
+                            $("#hidden-synonyms").val(synonyms.join());
                         }
 
-                        $("#hidden-synonyms").val(synonyms.join());
                     } else {
                         abbreviationList.push(abbr);
+                        $("#hidden-synonyms").val("");
                     }
 
                     const title = isDomain
@@ -149,8 +153,10 @@ $(document).ready(function () {
 
         const missingKey = Object.entries(resultData).find(([key, value]) => !value?.trim());
         if (missingKey) {
-            alert(`필수값이 누락되었습니다.`);
-            return;
+            if(missingKey[0] !== "synonyms"){
+                alert(`필수값이 누락되었습니다.`);
+                return;
+            }
         }
 
         // 부모로 데이터 전달

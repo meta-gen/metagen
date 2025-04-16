@@ -278,7 +278,7 @@
                                 render: function (data, type, row) {
                                     switch (col.rowType) {
                                         case "TEXT":
-                                            return `<p>${data}</p>`;
+                                            return `<p>${data ?? ""}</p>`;
                                         case "INPUT":
                                             return `<input type="text" class="form-control edit-input" value="${data}" data-id="${row.id}" data-field="${col.column}">`;
                                         case "BUTTON":

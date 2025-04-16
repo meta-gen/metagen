@@ -126,6 +126,12 @@ public class StandardWordService {
                     .isApproval(isApprovalAvailable)
                     .build();
 
+            List<StandardWord> nameIsDupl = standardWordRepository.findAllByProjectIdAndCommonStandardWordName(standardWord.getProjectId(), standardWord.getCommonStandardWordName());
+
+            if(!nameIsDupl.isEmpty()){
+                throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+            }
+
             standardWordRepository.save(standardWord);
         });
     }
@@ -140,7 +146,14 @@ public class StandardWordService {
 
     @Transactional
     public void insertStandardWords(StandardWord standardWord) {
-        standardWordRepository.save(standardWord);
+        List<StandardWord> nameIsDupl = standardWordRepository.findAllByProjectIdAndCommonStandardWordName(standardWord.getProjectId(), standardWord.getCommonStandardWordName());
+
+        if(nameIsDupl.isEmpty()){
+            standardWordRepository.save(standardWord);
+        }else{
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+        }
+
     }
 
     @Transactional
