@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -81,6 +82,10 @@ public class ColumnInfo {
     @Column
     private Boolean isSensitive;
 
+    /** PK 여부: Y */
+    @Column
+    private Boolean isPk;
+
     /** 고유값 여부: Y */
     @Column
     private Boolean isUnique;
@@ -108,7 +113,7 @@ public class ColumnInfo {
             inverseJoinColumns = @JoinColumn(name = "standard_term_id")
 
     )
-    private List<StandardTerm> standardTerms;
+    private List<StandardTerm> standardTerms = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_info_id")

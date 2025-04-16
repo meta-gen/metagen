@@ -177,8 +177,8 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                 list.add(StandardWordDto.fromEntity(standardWord));
             }
 
-            if(i == splitData.length - 1) {
-                List<StandardDomain> standardDomains = standardDomainService.getStandardDomains(splitData[i], standardWord.getCommonStandardDomainCategory(), projectId);
+            if(i == splitData.length - 1 && standardWord != null) {
+                List<StandardDomain> standardDomains = standardDomainService.getStandardDomains(standardWord.getCommonStandardDomainCategory(), projectId);
                 List<StandardDomainDto> standardDomainDtos = standardDomains.stream()
                         .map(StandardDomainDto::fromEntity)
                         .toList();

@@ -1,7 +1,7 @@
 package com.koboolean.metagen.data.table.repository;
 
-import com.koboolean.metagen.data.table.domain.dto.TableInfoDto;
 import com.koboolean.metagen.data.table.domain.entity.TableInfo;
+import com.koboolean.metagen.security.domain.dto.AccountDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,9 +19,9 @@ public interface TableInfoRepository extends JpaRepository<TableInfo, Long> {
 
     Page<TableInfo> findAllByProjectIdAndTableNameLike(Long projectId, String tableName, Pageable pageable);
 
-    List<TableInfo> findAllByProjectIdAndTableNameLike(Long projectId, String tableName);
-
     Page<TableInfo> findAllByProjectIdAndTableDescriptionLike(Long projectId, String tableDescription, Pageable pageable);
 
     List<TableInfo> findAllByProjectIdAndTableNameLikeAndIsApproval(Long projectId, String tableName, Boolean isApproval);
+
+    TableInfo findALlByProjectIdAndId(Long projectId, Long tableId);
 }

@@ -1,10 +1,12 @@
 package com.koboolean.metagen.data.column.domain.dto;
 
 import com.koboolean.metagen.data.column.domain.entity.ColumnInfo;
+import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
 import lombok.*;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -18,6 +20,9 @@ public class ColumnInfoDto {
 
     /** 프로젝트 ID **/
     private Long projectId;
+
+    private Long termId;
+    private Long tableInfoId;
 
     /** 테이블명 */
     private String tableName;
@@ -61,6 +66,9 @@ public class ColumnInfoDto {
     /** 민감정보 여부 */
     private String isSensitive;
 
+    /** PK 여부 */
+    private String isPk;
+
     /** 고유값 여부 */
     private String isUnique;
 
@@ -74,7 +82,7 @@ public class ColumnInfoDto {
     private String example;
 
     /** 연결된 표준 단어 리스트 */
-    private List<StandardTerm> standardTerms;
+    private List<StandardTermDto> standardTerms;
 
     /** 승인여부 **/
     private String isApproval;
@@ -95,20 +103,20 @@ public class ColumnInfoDto {
                 .sortOrder(entity.getSortOrder())
                 .isMasterData(toYN(entity.getIsMasterData()))
                 .refTableName(entity.getRefTableName())
+                .isPk(toYN(entity.getIsPk()))
                 .isRequired(toYN(entity.getIsRequired()))
                 .isSensitive(toYN(entity.getIsSensitive()))
                 .isUnique(toYN(entity.getIsUnique()))
                 .isIndex(toYN(entity.getIsIndex()))
                 .isEncrypted(toYN(entity.getIsEncrypted()))
                 .example(entity.getExample())
-                .standardTerms(entity.getStandardTerms())
+                .standardTerms(entity.getStandardTerms().stream().map(StandardTermDto::fromEntity).collect(Collectors.toList()))
                 .isApproval(toYN(entity.getIsApproval()))
                 .build();
     }
 
     public ColumnInfo toEntity() {
         return ColumnInfo.builder()
-                .id(this.id)
                 .projectId(this.projectId)
                 .tableName(this.tableName)
                 .columnName(this.columnName)
@@ -122,13 +130,13 @@ public class ColumnInfoDto {
                 .sortOrder(this.sortOrder)
                 .isMasterData(fromYN(this.isMasterData))
                 .refTableName(this.refTableName)
+                .isPk(fromYN(this.isPk))
                 .isRequired(fromYN(this.isRequired))
                 .isSensitive(fromYN(this.isSensitive))
                 .isUnique(fromYN(this.isUnique))
                 .isIndex(fromYN(this.isIndex))
                 .isEncrypted(fromYN(this.isEncrypted))
                 .example(this.example)
-                .standardTerms(this.standardTerms)
                 .isApproval(fromYN(this.isApproval))
                 .build();
     }
