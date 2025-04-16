@@ -159,6 +159,18 @@ ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (46, '*', 0, '/api/uploadTableExcelFile/**','url', '테이블 업로드', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (47, '*', 0, '/api/saveNotice/**','url', '공지사항 등록/수정', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (48, '*', 0, '/api/selectNotice/**','url', '공지사항 조회', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (49, '*', 0, '/api/deleteNotice/**','url', '공지사항 삭제', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (50, '*', 0, '/popup/columTableSearch/**','url', '테이블조회 팝업화면', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
 
 
 -- ROLE_NOT_APPROVE
@@ -167,6 +179,7 @@ insert into role_resources(resource_id, role_id) values (2,5) on CONFLICT DO NOT
 insert into role_resources(resource_id, role_id) values (3,5) on CONFLICT DO NOTHING; -- 패스워드수정
 insert into role_resources(resource_id, role_id) values (5,5) on CONFLICT DO NOTHING; -- 사용자명수정
 insert into role_resources(resource_id, role_id) values (13,5) on CONFLICT DO NOTHING; -- 공지사항화면
+insert into role_resources(resource_id, role_id) values (48,5) on CONFLICT DO NOTHING; -- 공지사항조회
 
 -- ROLE_VIEWER
 insert into role_resources(resource_id, role_id) values (4,4) on CONFLICT DO NOTHING; -- 컬럼관리화면
@@ -186,6 +199,7 @@ insert into role_resources(resource_id, role_id) values (36,4) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (30,4) on CONFLICT DO NOTHING; -- 프로젝트조회
 insert into role_resources(resource_id, role_id) values (38,4) on CONFLICT DO NOTHING; -- 테이블설계 조회
 insert into role_resources(resource_id, role_id) values (45,4) on CONFLICT DO NOTHING; -- 테이블관리화면
+insert into role_resources(resource_id, role_id) values (50,4) on CONFLICT DO NOTHING; -- 테이블조회 팝업화면
 
 -- ROLE_USER
 insert into role_resources(resource_id, role_id) values (15,3) on CONFLICT DO NOTHING; -- 템플릿다운로드
@@ -215,6 +229,10 @@ insert into role_resources(resource_id, role_id) values (14,0) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (34,0) on CONFLICT DO NOTHING; -- 사용자저장
 insert into role_resources(resource_id, role_id) values (35,0) on CONFLICT DO NOTHING; -- 사용자삭제
 insert into role_resources(resource_id, role_id) values (37,0) on CONFLICT DO NOTHING; -- 인가수정
+
+-- ROLE_MANAGER
+insert into role_resources(resource_id, role_id) values (47,1) on CONFLICT DO NOTHING; -- 공지사항 등록/수정
+insert into role_resources(resource_id, role_id) values (49,1) on CONFLICT DO NOTHING; -- 공지사항 삭제
 
 
 -- ROLE_ANONYMOUS
