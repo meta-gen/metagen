@@ -23,4 +23,8 @@ public interface ColumnManageService {
     void insertColumn(AccountDto accountDto, ColumnInfoDto columnInfoDto);
 
     List<StandardTermDto> selectTermData(AccountDto accountDto, String type, String data);
+
+    void updateColumnApproval(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos, String type);
+
+    void deleteColumn(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos);
 }

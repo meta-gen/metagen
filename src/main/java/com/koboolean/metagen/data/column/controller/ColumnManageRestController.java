@@ -92,4 +92,19 @@ public class ColumnManageRestController {
 
         return ResponseEntity.ok(Map.of("result", true, "termDtos", termDtos));
     }
+
+    @Operation(summary = "컬럼 승인여부 승인/미승인 수정", description = "컬럼의 승인여부를 승인/미승인 처리를 진행한다.")
+    @PatchMapping("/updateColumn/{type}")
+    public ResponseEntity<Map<String, Object>> updateColumnApproval(@AuthenticationPrincipal AccountDto accountDto, @PathVariable(value = "type") String type, @RequestBody List<ColumnInfoDto> columnInfoDtos) {
+        columnManageService.updateColumnApproval(accountDto, columnInfoDtos, type);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "컬럼 삭제", description = "등록된 컬럼정보를 삭제한다.")
+    @DeleteMapping("/deleteColumn")
+    public ResponseEntity<Map<String, Object>> deleteColumn(@AuthenticationPrincipal AccountDto accountDto, @RequestBody List<ColumnInfoDto> columnInfoDtos) {
+        columnManageService.deleteColumn(accountDto, columnInfoDtos);
+        return ResponseEntity.ok(Map.of("result", true));
+    }
 }

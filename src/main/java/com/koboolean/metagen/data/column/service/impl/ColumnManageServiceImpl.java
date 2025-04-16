@@ -159,4 +159,42 @@ public class ColumnManageServiceImpl implements ColumnManageService {
 
         return terms.stream().map(StandardTermDto::fromEntity).collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public void updateColumnApproval(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos, String type) {
+        if(!AuthUtil.isApprovalAvailable()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        Long projectId = accountDto.getProjectId();
+
+        columnInfoDtos.forEach(columnInfoDto -> {
+            ColumnInfo columnInfo = columnInfoRepository.findByProjectIdAndId(projectId, columnInfoDto.getId());
+
+            columnInfo.setIsApproval(Boolean.parseBoolean(type));
+        });
+
+    }
+
+    @Override
+    @Transactional
+    public void deleteColumn(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos) {
+        if(!AuthUtil.isApprovalAvailable()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        Long projectId = accountDto.getProjectId();
+
+        columnInfoDtos.forEach(columnInfoDto -> {
+            ColumnInfo columnInfo = columnInfoRepository.findByProjectIdAndId(projectId, columnInfoDto.getId());
+
+            if(columnInfo.getIsApproval()){
+                throw new CustomException(ErrorCode.APPROVED_DATA_CANNOT_BE_DELETED);
+            }
+
+            columnInfoRepository.delete(columnInfo);
+        });
+
+    }
 }

@@ -50,6 +50,24 @@ $(document).ready(() => {
         });
     });
 
+    /**
+     * 승인버튼 클릭 시
+     */
+    $("#grd-active-columnManageGrid").on("click", () => {
+        updateActive(true);
+    });
+
+    /**
+     * 승인취소버튼 클릭 시
+     */
+    $("#grd-unactive-columnManageGrid").on("click", () => {
+        updateActive(false);
+    });
+
+    $("#grd-delete-columnManageGrid").on("click", () => {
+       deleteColumns();
+    });
+
 });
 
 /**
@@ -299,3 +317,73 @@ function receiveTableInfo(data){
 
 window.popupFunction = window.popupFunction || {}; // 혹시 없을 경우 방지
 window.popupFunction['receiveTableInfo'] = receiveTableInfo;
+
+
+function updateActive(type){
+    const checkedData = getCheckedDataIsNonNull(tableId);
+    if(!checkedData) return;
+
+    const msg = type ? "승인" : "승인취소";
+
+    window.openConfirm(`체크된 테이블 정보를 ${msg}하시겠습니까?`, () => {
+        // 승인 필요 대상이 하나라도 존재한다면 true로 반환되어 승인로직을 탈 수 있게 된다.
+        let isApproval = false;
+
+        checkedData.forEach(e => {
+            if(e.isApproval === (type ? 'N' : 'Y')){
+                isApproval = true;
+            }
+        });
+
+        if(!isApproval){
+            window.openAlert(`${msg} 필요한 정보가 선택되지 않았습니다.`);
+            return;
+        }
+
+        $.ajax({
+            url: `/api/updateColumn/${type}`,
+            type: 'PATCH',
+            data: JSON.stringify(checkedData),
+            success : (response) => {
+                if(response.result){
+                    window.openAlert(`정상적으로 ${msg}처리 되었습니다.`, () => {
+                        window.searchGrid(tableId);
+                    });
+                }
+            }
+        });
+    });
+}
+
+function deleteColumns(){
+    const checkedData = getCheckedDataIsNonNull(tableId);
+
+    if(!checkedData) return;
+
+    let isApproval = true;
+    checkedData.forEach((e) => {
+        if(e.isApproval === 'Y'){
+            isApproval = false;
+        }
+    });
+
+    if(!isApproval){
+        window.openAlert("체크된 데이터에 승인된 정보도 포함되어있습니다. 승인이 완료된 경우, 삭제가 불가능합니다.");
+        return;
+    }
+
+    window.openConfirm("체크된 데이터를 삭제하시겠습니까?", () => {
+        $.ajax({
+            url: "/api/deleteColumn",
+            type: "DELETE",
+            data: JSON.stringify(checkedData),
+            success: (response) => {
+                if(response.result){
+                    openAlert("정상적으로 삭제되었습니다.", () => {
+                        window.searchGrid(tableId);
+                    });
+                }
+            }
+        })
+    });
+}
