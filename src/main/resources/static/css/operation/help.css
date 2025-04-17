@@ -16,3 +16,11 @@
     border-color: #dee2e6 !important;
     outline: none !important;
 }
+
+.accordion-body img {
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    display: block;
+    margin: 10px 0;
+}

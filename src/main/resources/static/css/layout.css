@@ -40,7 +40,13 @@ header {
 
 /* 오른쪽 정렬 */
 .navbar-nav {
-    margin-left: auto; /* 네비게이션 메뉴를 오른쪽으로 정렬 */
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px; /* 메뉴 사이 간격 */
+    margin: 0;
+    padding: 0;
+    margin-right: 5px;
 }
 
 /* 네비게이션 링크 스타일 */
@@ -400,6 +406,25 @@ dialog .btn-primary {
     margin-left: 3px;
 }
 
+.popup-button-container{
+    display: table;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto; /* 오른쪽 정렬 */
+}
+
+.popup-button-container button {
+    padding: 10px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    min-width: 70px;
+    text-align: center;
+    margin-left: 3px;
+}
+
 .grd-delete:hover {
     opacity: 1;
 }
@@ -500,4 +525,56 @@ section h2 {
     margin-bottom: 16px;            /* 아래 요소와의 간격 */
     font-size: 1.5em;               /* 제목 크기 조정 */
     font-weight: bold;             /* 굵게 */
+}
+
+/* 모바일용 사이드바 스타일 */
+.sidebar.mobile-sidebar {
+    position: fixed;
+    top: 70px; /* header 아래 */
+    left: 0;
+    width: 220px;
+    background-color: #f8f9fa; /* 회색 */
+    padding: 15px;
+    border-radius: 0 8px 8px 0;
+    z-index: 1050;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+    height: auto;
+}
+
+.sidebar-toggle-btn {
+    display: none;
+}
+
+/* 모바일 화면일 때만 보이도록 설정 */
+@media (max-width: 767.98px) {
+    .sidebar.mobile-sidebar.d-md-block {
+        display: none !important; /* PC 전용 숨기기 */
+    }
+
+    .sidebar-toggle-btn {
+        position: fixed;
+        top: 65px;
+        left: 5px;
+        width: 36px;
+        height: 36px;
+        z-index: 1060;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        background-color: #f8f9fa;
+        font-size: 20px;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 1;
+        border-radius: 10%;
+        border: 0;
+    }
+
+    .sidebar-toggle-btn::before {
+        content: '☰';
+        font-size: 18px;
+        line-height: 1;
+        display: block;
+        text-align: center;
+    }
 }

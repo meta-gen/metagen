@@ -222,3 +222,14 @@ function makeDialogDraggable(dialogId) {
         document.body.style.userSelect = "";
     });
 }
+
+function toggleSidebar() {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar.classList.contains('d-none')) {
+        sidebar.classList.remove('d-none');
+        sidebar.classList.add('d-block');
+    } else {
+        sidebar.classList.remove('d-block');
+        sidebar.classList.add('d-none');
+    }
+}

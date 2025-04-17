@@ -10,33 +10,27 @@
     <nav class="navbar navbar-expand-lg navbar-custom">
         <div class="containers">
             <a class="navbar-brand" href="/" onclick="setActiveMenu(event, 'dashboard')">MetaGen</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
 
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto"> <!-- 오른쪽 정렬 -->
-                    <!-- For anonymous users -->
-                    <li class="nav-item" sec:authorize="isAnonymous()">
-                        <a class="nav-link" href="/login">로그인</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAnonymous()">
-                        <a class="nav-link" href="/signup">회원가입</a>
-                    </li>
+            <ul class="navbar-nav ms-auto"> <!-- 오른쪽 정렬 -->
+                <!-- For anonymous users -->
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link" href="/login">로그인</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link" href="/signup">회원가입</a>
+                </li>
 
-                    <!-- For authenticated users -->
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" href="#" id="project-info-link"></a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" href="/account">내정보</a>
-                    </li>
-                    <li class="nav-item" sec:authorize="isAuthenticated()">
-                        <a class="nav-link" href="/logout" onclick="localStorage.removeItem('selectedProject')">로그아웃</a>
-                    </li>
-                </ul>
-            </div>
+                <!-- For authenticated users -->
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="#" id="project-info-link"></a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="/account">내정보</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="nav-link" href="/logout" onclick="localStorage.removeItem('selectedProject')">로그아웃</a>
+                </li>
+            </ul>
         </div>
     </nav>
 

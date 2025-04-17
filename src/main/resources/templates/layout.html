@@ -38,13 +38,16 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Sidebar -->
-        <aside class="sidebar" th:replace="~{fragments/sidebar::sidebar}"></aside>
+        <!-- 모바일 사이드바 (처음엔 숨김 상태) -->
+        <aside class="sidebar mobile-sidebar d-none d-md-block" th:replace="~{fragments/sidebar::sidebar}"></aside>
+
+        <!-- 모바일용 토글 버튼 -->
+        <button id="sidebarToggleBtn" class="sidebar-toggle-btn" onclick="toggleSidebar()"></button>
 
         <dialog id="myAlert">
             <h3>알림</h3>
             <p id="alertContent" style="white-space: pre-line">여기에 내용이 표시됩니다.</p>
-            <div class="button-container">
+            <div class="popup-button-container">
                 <button onclick="closeDialog('alert', true)" class="close">닫기</button>
             </div>
         </dialog>
@@ -52,7 +55,7 @@
         <dialog id="myConfirm">
             <h3>알림</h3>
             <p id="confirmContent" style="white-space: pre-line">여기에 내용이 표시됩니다.</p>
-            <div class="button-container">
+            <div class="popup-button-container">
                 <button onclick="closeDialog('confirm', true)" class="confirm">확인</button>
                 <button onclick="closeDialog('confirm', false)" class="close">닫기</button>
             </div>
