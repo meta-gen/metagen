@@ -60,12 +60,12 @@ $(document).ready(function () {
                             });
 
                             standard[standard.length -1] = "";
-                            const domainNonData = standard.join("");
+                            const domainNonData = standard.join(" ");
 
                             let synonyms = [];
 
                             for(let d = 0; d < data.length; d++){
-                                synonyms[d] = domainNonData + data[d].trim();
+                                synonyms[d] = domainNonData+ data[d].trim();
                             }
 
                             $("#hidden-synonyms").val(synonyms.join());
@@ -142,7 +142,7 @@ $(document).ready(function () {
         }
 
         const resultData = {
-            termWordText : $("#term_word_text").val().replaceAll(" ", ""),
+            termWordText : $("#term_word_text").val(),
             abbreviation: $("#hidden-abbreviation").val(),
             domainName: $("#hidden-domain-name").val(),
             allowedValues: $("#hidden-allowed-values").val(),
