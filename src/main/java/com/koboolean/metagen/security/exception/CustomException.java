@@ -19,7 +19,7 @@ public class CustomException extends RuntimeException {
     public CustomException(ErrorCode errorCode, String customMessage) {
         super(errorCode.getMessage() + " - " + customMessage);
         this.errorCode = errorCode;
-        this.customMessage = customMessage;
+        this.customMessage = errorCode.getMessage() + " \n[" + customMessage + "]";
     }
 
     public String getCustomMessage() {

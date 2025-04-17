@@ -86,6 +86,21 @@ public enum ErrorCode {
     COLUMN_DEPENDENCY_EXISTS(HttpStatus.BAD_REQUEST, "COLUMN_DEPENDENCY_EXISTS", "컬럼으로 등록된 정보가 존재하기 때문에 삭제가 불가능합니다."),
 
     /**
+     * 등록된 테이블 정보가 존재하지 않습니다.
+     */
+    TABLE_IS_NOT_DEFINED(HttpStatus.BAD_REQUEST, "TABLE_IS_NOT_DEFINED", "등록된 테이블 정보가 존재하지 않습니다."),
+
+    /**
+     * NULL 허용여부, 필수 입력 여부, 민감정보 여부, PK 여부, 고유값 여부, 인덱스 생성 여부, 암호화 필요 여부는 Y 또는 N 값이어야합니다.
+     */
+    COLUMN_BOOLEAN_TYPE_DEF(HttpStatus.BAD_REQUEST, "COLUMN_BOOLEAN_TYPE_DEF", "NULL 허용여부, 필수 입력 여부, 민감정보 여부, PK 여부, 고유값 여부, 인덱스 생성 여부, 암호화 필요 여부는 Y 또는 N 값이어야합니다."),
+
+    /**
+     * 등록된 테이블 정보가 존재하지 않습니다.
+     */
+    TERM_IS_NOT_DEFINED(HttpStatus.BAD_REQUEST, "TERM_IS_NOT_DEFINED", "등록된 표준용어 정보가 존재하지 않습니다."),
+
+    /**
      * 프로젝트 관리자는 삭제가 불가능합니다.
      */
     MANAGER_NON_DELETED(HttpStatus.BAD_REQUEST, "MANAGER_NON_DELETED", "관리자는 변경이 불가능합니다.");

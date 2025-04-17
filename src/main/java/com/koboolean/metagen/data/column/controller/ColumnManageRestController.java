@@ -14,10 +14,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -106,5 +111,18 @@ public class ColumnManageRestController {
     public ResponseEntity<Map<String, Object>> deleteColumn(@AuthenticationPrincipal AccountDto accountDto, @RequestBody List<ColumnInfoDto> columnInfoDtos) {
         columnManageService.deleteColumn(accountDto, columnInfoDtos);
         return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "컬럼 템플릿 엑셀 업로드", description = "컬럼 템플릿 엑셀을 파싱하여 테이블에 저장한다.")
+    @PostMapping(value = "/uploadColumnExcelFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Map<String, String>> uploadTableExcelFile(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal AccountDto accountDto) throws IOException {
+
+        try {
+            columnManageService.uploadColumnExcelFile(file, accountDto);
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 읽을 수 없습니다.", e);
+        }
+
+        return ResponseEntity.ok(Map.of("result", "success"));
     }
 }

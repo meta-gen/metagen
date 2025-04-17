@@ -17,12 +17,16 @@ import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.exception.CustomException;
 import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.utils.AuthUtil;
+import com.koboolean.metagen.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +39,7 @@ public class ColumnManageServiceImpl implements ColumnManageService {
     private final ColumnInfoRepository columnInfoRepository;
     private final TableInfoRepository tableInfoRepository;
     private final StandardTermRepository standardTermRepository;
+    private static final int FIRST_ROW = 1;
 
     @Override
     public List<ColumnDto> selectTableColumn() {
@@ -196,5 +201,126 @@ public class ColumnManageServiceImpl implements ColumnManageService {
             columnInfoRepository.delete(columnInfo);
         });
 
+    }
+
+    @Override
+    @Transactional
+    public void uploadColumnExcelFile(MultipartFile file, AccountDto accountDto) throws IOException {
+        Long projectId = accountDto.getProjectId();
+
+        // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
+        boolean isApprovalAvailable = AuthUtil.isApprovalAvailable();
+
+        List<String> tableExcelHeaders = List.of(
+                "tableName",
+                "columnName",
+                "columnDesc",
+                "dataType",
+                "maxLength",
+                "precision",
+                "scale",
+                "isNullable",
+                "defaultValue",
+                "sortOrder",
+                "isMasterData",
+                "refTableName",
+                "isRequired",
+                "isSensitive",
+                "isPk",
+                "isUnique",
+                "isIndex",
+                "isEncrypted",
+                "example"
+        );
+
+        List<Map<String, String>> tableExcelData = ExcelUtils.parseExcelFile(file, 0, tableExcelHeaders, false, FIRST_ROW);
+
+        tableExcelData.forEach(map -> {
+
+            if(map.get("tableName").isEmpty()){
+                return;
+            }
+
+            // 검증수행
+            String[] numberData = {"maxLength", "precision", "scale", "sortOrder"};
+
+            for(int i = 0; i < numberData.length; i++) {
+                String trim = map.get(numberData[i]).replaceAll("[^0-9]", "").trim();
+
+                if(trim.isEmpty()){
+                    trim = "0";
+                }
+
+                map.put(numberData[i], trim);
+            }
+
+            String[] booleanData = {"isNullable", "isMasterData", "isRequired", "isSensitive", "isPk", "isUnique", "isIndex", "isEncrypted"};
+
+            for(int i = 0; i < booleanData.length; i++) {
+                if(map.get(booleanData[i]).isEmpty()){
+                    map.put(booleanData[i], "N");
+                }
+
+                if(!map.get(booleanData[i]).equals("Y") && !map.get(booleanData[i]).equals("N")){
+                    throw new CustomException(ErrorCode.COLUMN_BOOLEAN_TYPE_DEF);
+                }
+            }
+
+            String tableName = map.get("tableName").toUpperCase();
+
+            // 테이블 정보 확인 및 테이블 정보 조회
+            List<TableInfo> allByTableNameAndProjectId = tableInfoRepository.findAllByTableNameAndProjectId(tableName, projectId);
+
+            if(allByTableNameAndProjectId.isEmpty()){
+                throw new CustomException(ErrorCode.TABLE_IS_NOT_DEFINED, tableName);
+            }
+
+            TableInfo tableInfo = allByTableNameAndProjectId.get(0);
+
+            // 표준용어 등록여부 확인 및 표준용어 정보 조회
+            String columnName = map.get("columnName");
+            List<StandardTerm> terms = standardTermRepository.findALlByProjectIdAndCommonStandardTermAbbreviation(projectId, columnName.toUpperCase());
+
+            if(terms.isEmpty()){
+                terms = standardTermRepository.findALlByProjectIdAndCommonStandardTermAbbreviation(projectId, columnName);
+            }
+
+            if(terms.isEmpty()){
+                throw new CustomException(ErrorCode.TERM_IS_NOT_DEFINED, columnName);
+            }
+
+            StandardTerm standardTerm = terms.get(0);
+
+            ColumnInfo columnInfo = ColumnInfo.builder()
+                    .projectId(projectId)
+                    .tableName(tableName)
+                    .columnName(columnName)
+                    .columnDesc(map.get("columnDesc"))
+                    .dataType(map.get("dataType"))
+                    .maxLength(Integer.parseInt(map.get("maxLength")))
+                    .precision(new BigDecimal(map.get("precision")))
+                    .scale(Integer.parseInt(map.get("scale")))
+                    .isNullable(map.get("isNullable").equals("Y"))
+                    .defaultValue(map.get("defaultValue"))
+                    .sortOrder(Integer.parseInt(map.get("sortOrder")))
+                    .isMasterData(map.get("isMasterData").equals("Y"))
+                    .refTableName(map.get("refTableName"))
+                    .isRequired(map.get("isRequired").equals("Y"))
+                    .isSensitive(map.get("isSensitive").equals("Y"))
+                    .isPk(map.get("isPk").equals("Y"))
+                    .isUnique(map.get("isUnique").equals("Y"))
+                    .isIndex(map.get("isIndex").equals("Y"))
+                    .isEncrypted(map.get("isEncrypted").equals("Y"))
+                    .example(map.get("example"))
+                    .standardTerms(List.of(standardTerm))
+                    .tableInfo(tableInfo)
+                    .isApproval(isApprovalAvailable)
+                    .build();
+
+            columnInfoRepository.save(columnInfo);
+
+            tableInfo.getColumns().add(columnInfo);
+            standardTerm.getColumnInfos().add(columnInfo);
+        });
     }
 }

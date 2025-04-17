@@ -151,7 +151,7 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (43, '*', 0, '/api/deleteColumn/**','url', '테이블컬럼 삭제', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (44, '*', 0, '/api/uploadMetadata/**','url', '메타데이터 업로드', 'SYSTEM', 'SYSTEM')
+VALUES (44, '*', 0, '/api/uploadColumnExcelFile/**','url', '컬럼 업로드', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (45, '*', 0, '/tableManage','url', '테이블관리화면', 'SYSTEM', 'SYSTEM')
@@ -212,8 +212,8 @@ insert into role_resources(resource_id, role_id) values (40,3) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (41,3) on CONFLICT DO NOTHING; -- 테이블컬럼 조회
 insert into role_resources(resource_id, role_id) values (42,3) on CONFLICT DO NOTHING; -- 테이블컬럼 수정
 insert into role_resources(resource_id, role_id) values (43,3) on CONFLICT DO NOTHING; -- 테이블컬럼 삭제
-insert into role_resources(resource_id, role_id) values (44,3) on CONFLICT DO NOTHING; -- 메타데이터 업로드
-insert into role_resources(resource_id, role_id) values (46,3) on CONFLICT DO NOTHING; -- 메타데이터 업로드
+insert into role_resources(resource_id, role_id) values (44,3) on CONFLICT DO NOTHING; -- 컬럼 업로드
+insert into role_resources(resource_id, role_id) values (46,3) on CONFLICT DO NOTHING; -- 테이블 업로드
 
 -- ROLE_DBA
 insert into role_resources(resource_id, role_id) values (31,2) on CONFLICT DO NOTHING; -- 프로젝트저장
