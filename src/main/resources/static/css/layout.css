@@ -374,6 +374,10 @@ dialog .btn-primary {
     border-radius: 6px;
 }
 
+.grid-header .button-container .btn {
+    max-width: 77px;
+}
+
 /* 조회 버튼 */
 .grd-select {
     padding: 10px 16px;
@@ -383,6 +387,7 @@ dialog .btn-primary {
     border: none;
     color: white;
     background-color: #007bff;
+    max-width: 70px;
 }
 
 /* 버튼 컨테이너 (승인, 추가, 저장, 삭제 버튼) */
@@ -391,11 +396,13 @@ dialog .btn-primary {
     align-items: center;
     gap: 8px;
     margin-left: auto; /* 오른쪽 정렬 */
+    margin-top:3px;
+    margin-bottom:3px;
 }
 
 /* 버튼 공통 */
 .button-container button {
-    padding: 10px 14px;
+    padding: 10px 10px;
     font-size: 14px;
     font-weight: bold;
     border-radius: 6px;
