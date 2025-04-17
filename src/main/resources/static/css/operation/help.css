@@ -1,23 +1,18 @@
-.faq-item {
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 12px;
-    margin-bottom: 12px;
-    background-color: #f9f9f9;
-    transition: background-color 0.2s;
+.question-label {
+    color: #0d6efd; /* Bootstrap 기본 primary 색상 */
+    font-weight: 600;
+    margin-right: 6px;
 }
 
-.faq-item:hover {
-    background-color: #f1f1f1;
+.accordion-button:not(.collapsed) {
+    background-color: #fff !important;
+    color: #212529 !important;
+    box-shadow: none !important;
+    border-color: #dee2e6; /* 기본 테두리로 */
 }
 
-.faq-question {
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.faq-answer {
-    margin-top: 8px;
-    color: #444;
-    display: none;
+.accordion-button:focus {
+    box-shadow: none !important;
+    border-color: #dee2e6 !important;
+    outline: none !important;
 }

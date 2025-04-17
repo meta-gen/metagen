@@ -4,7 +4,7 @@
     "questions": [
        {
       "question": "명명 규칙은 어떻게 등록하나요?",
-      "answer": "설정 탭에서 등록할 수 있습니다."
+      "answer": "설정 탭에서 등록할 수 있습니다.<br/><img src='/images/favicon.png' alt='favicon'/><br/>TEST"
     },
     {
       "question": "규칙 수정/삭제는 가능한가요?",
