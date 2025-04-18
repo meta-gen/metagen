@@ -339,7 +339,7 @@ public class ColumnManageServiceImpl implements ColumnManageService {
 
         for(ColumnInfoDto dto : collect){
             if(dto.getIsApproval().equals("Y")){
-                return null;
+                return List.of();
             }
         }
 

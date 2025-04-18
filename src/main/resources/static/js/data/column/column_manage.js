@@ -451,8 +451,10 @@ export function columnSelectRow(rowData, columnList, isManager, tableId){
         type: "GET",
         success: (response) => {
             if(response.result){
-
-                if(!response.columnInfos) return;
+                if(!(response.columnInfos?.length)){
+                    openAlert("승인된 컬럼이 존재하여 수정이 불가능합니다.");
+                    return;
+                }
 
                 const popup = window.open(
                     "/popup/columTableSearch/detail",  // 팝업으로 띄울 URL
