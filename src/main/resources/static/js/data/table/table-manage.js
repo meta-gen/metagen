@@ -266,7 +266,7 @@ function saveTable(type){
     });
 }
 
-export function selectRow(rowData, columnList, isManager, tableId){
+export function tableSelectRow(rowData, columnList, isManager, tableId){
     if(rowData.isApproval === "Y") return;
 
     const type = "U";
@@ -284,4 +284,4 @@ export function selectRow(rowData, columnList, isManager, tableId){
 }
 
 
-window.gridCallbacks["tableManageGrid_selectRow"] = selectRow;
+window.gridCallbacks["tableManageGrid_selectRow"] = tableSelectRow;

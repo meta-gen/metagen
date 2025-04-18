@@ -99,7 +99,7 @@ public class ColumnManageRestController {
     }
 
     @Operation(summary = "컬럼 승인여부 승인/미승인 수정", description = "컬럼의 승인여부를 승인/미승인 처리를 진행한다.")
-    @PatchMapping("/updateColumn/{type}")
+    @PatchMapping("/updateColumn/approval/{type}")
     public ResponseEntity<Map<String, Object>> updateColumnApproval(@AuthenticationPrincipal AccountDto accountDto, @PathVariable(value = "type") String type, @RequestBody List<ColumnInfoDto> columnInfoDtos) {
         columnManageService.updateColumnApproval(accountDto, columnInfoDtos, type);
 
@@ -125,4 +125,21 @@ public class ColumnManageRestController {
 
         return ResponseEntity.ok(Map.of("result", "success"));
     }
+
+    @Operation(summary = "컬럼이 속하는 테이블 컬럼내역 조회", description = "컬럼 그리드 선택 시 테이블 컬럼내역 조회")
+    @GetMapping(value = "/selectColumn/detail/{id}")
+    public ResponseEntity<Map<String, Object>> selectColumnDetail(@PathVariable(value = "id") Long id, @AuthenticationPrincipal AccountDto accountDto) {
+        List<ColumnInfoDto> columnInfoDtos = columnManageService.selectColumnDetail(accountDto, id);
+
+        return ResponseEntity.ok(Map.of("result", true, "columnInfos", columnInfoDtos));
+    }
+
+    @Operation(summary = "컬럼 정렬순서 변경", description = "컬럼 목록의 정렬순서를 변경한다.")
+    @PatchMapping(value = "/updateColumn/sortOrder")
+    public ResponseEntity<Map<String, Boolean>> updateSortOrder(@RequestBody List<ColumnInfoDto> columnInfoDtos, @AuthenticationPrincipal AccountDto accountDto) {
+        columnManageService.updateSortOrder(accountDto, columnInfoDtos);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
 }

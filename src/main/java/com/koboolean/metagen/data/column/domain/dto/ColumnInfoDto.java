@@ -82,7 +82,7 @@ public class ColumnInfoDto {
     private String example;
 
     /** 연결된 표준 단어 리스트 */
-    private List<StandardTermDto> standardTerms;
+    private StandardTermDto standardTerms;
 
     /** 승인여부 **/
     private String isApproval;
@@ -104,13 +104,13 @@ public class ColumnInfoDto {
                 .isMasterData(toYN(entity.getIsMasterData()))
                 .refTableName(entity.getRefTableName())
                 .isPk(toYN(entity.getIsPk()))
-                .isRequired(toYN(entity.getIsRequired()))
+                .isRequired(toYN(entity.getIsPk() || entity.getIsRequired()))
                 .isSensitive(toYN(entity.getIsSensitive()))
-                .isUnique(toYN(entity.getIsUnique()))
+                .isUnique(toYN(entity.getIsPk() || entity.getIsUnique()))
                 .isIndex(toYN(entity.getIsIndex()))
                 .isEncrypted(toYN(entity.getIsEncrypted()))
                 .example(entity.getExample())
-                .standardTerms(entity.getStandardTerms().stream().map(StandardTermDto::fromEntity).collect(Collectors.toList()))
+                .standardTerms(StandardTermDto.fromEntity(entity.getStandardTerms()))
                 .isApproval(toYN(entity.getIsApproval()))
                 .build();
     }
@@ -131,9 +131,9 @@ public class ColumnInfoDto {
                 .isMasterData(fromYN(this.isMasterData))
                 .refTableName(this.refTableName)
                 .isPk(fromYN(this.isPk))
-                .isRequired(fromYN(this.isRequired))
+                .isRequired(fromYN(this.isPk) || fromYN(this.isRequired))
                 .isSensitive(fromYN(this.isSensitive))
-                .isUnique(fromYN(this.isUnique))
+                .isUnique(fromYN(this.isPk) || fromYN(this.isUnique))
                 .isIndex(fromYN(this.isIndex))
                 .isEncrypted(fromYN(this.isEncrypted))
                 .example(this.example)

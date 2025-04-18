@@ -47,6 +47,6 @@ public class StandardTerm {
     @JoinColumn(name = "standard_domain_id")
     private StandardDomain standardDomain;
 
-    @ManyToMany(mappedBy = "standardTerms")
+    @OneToMany
     private List<ColumnInfo> columnInfos;
 }

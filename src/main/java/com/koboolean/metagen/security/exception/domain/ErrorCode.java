@@ -101,6 +101,11 @@ public enum ErrorCode {
     TERM_IS_NOT_DEFINED(HttpStatus.BAD_REQUEST, "TERM_IS_NOT_DEFINED", "등록된 표준용어 정보가 존재하지 않습니다."),
 
     /**
+     * 승인된 정보는 수정이 불가능합니다.
+     */
+    APPROVED_DATA_CANNOT_BE_UPDATE(HttpStatus.BAD_REQUEST, "APPROVED_DATA_CANNOT_BE_UPDATE", "승인된 정보는 수정이 불가능합니다."),
+
+    /**
      * 프로젝트 관리자는 삭제가 불가능합니다.
      */
     MANAGER_NON_DELETED(HttpStatus.BAD_REQUEST, "MANAGER_NON_DELETED", "관리자는 변경이 불가능합니다.");

@@ -44,7 +44,7 @@ public class ColumnManageServiceImpl implements ColumnManageService {
     @Override
     public List<ColumnDto> selectTableColumn() {
         return List.of(
-                new ColumnDto("", "id", ColumnType.NUMBER, RowType.CHECKBOX),
+                new ColumnDto("", "sortOrder", ColumnType.NUMBER, RowType.CHECKBOX),
                 new ColumnDto("테이블명", "tableName", ColumnType.STRING, RowType.TEXT, true, true),
                 new ColumnDto("컬럼명", "columnName", ColumnType.STRING, RowType.TEXT, true, true),
                 new ColumnDto("컬럼 설명", "columnDesc", ColumnType.STRING, RowType.TEXT, true, false),
@@ -136,11 +136,7 @@ public class ColumnManageServiceImpl implements ColumnManageService {
         columnInfo.setTableInfo(tableInfo);
         columnInfo.setProjectId(projectId);
 
-        if (columnInfo.getStandardTerms() == null) {
-            columnInfo.setStandardTerms(List.of(standardTerm));
-        }else{
-            columnInfo.getStandardTerms().add(standardTerm);
-        }
+        columnInfo.setStandardTerms(standardTerm);
 
         columnInfo.setIsApproval(true);
 
@@ -198,7 +194,13 @@ public class ColumnManageServiceImpl implements ColumnManageService {
                 throw new CustomException(ErrorCode.APPROVED_DATA_CANNOT_BE_DELETED);
             }
 
+            TableInfo tableInfo = tableInfoRepository.findByTableNameAndProjectId(columnInfoDto.getTableName(), projectId);
+            StandardTerm standardTerm = standardTermRepository.findByIdAndProjectId(columnInfoDto.getTermId(), projectId);
+
             columnInfoRepository.delete(columnInfo);
+
+            tableInfo.getColumns().remove(columnInfo);
+            standardTerm.getColumnInfos().remove(columnInfo);
         });
 
     }
@@ -305,14 +307,14 @@ public class ColumnManageServiceImpl implements ColumnManageService {
                     .sortOrder(Integer.parseInt(map.get("sortOrder")))
                     .isMasterData(map.get("isMasterData").equals("Y"))
                     .refTableName(map.get("refTableName"))
-                    .isRequired(map.get("isRequired").equals("Y"))
+                    .isRequired(map.get("isPk").equals("Y") || map.get("isRequired").equals("Y"))
                     .isSensitive(map.get("isSensitive").equals("Y"))
                     .isPk(map.get("isPk").equals("Y"))
-                    .isUnique(map.get("isUnique").equals("Y"))
+                    .isUnique(map.get("isPk").equals("Y") || map.get("isUnique").equals("Y"))
                     .isIndex(map.get("isIndex").equals("Y"))
                     .isEncrypted(map.get("isEncrypted").equals("Y"))
                     .example(map.get("example"))
-                    .standardTerms(List.of(standardTerm))
+                    .standardTerms(standardTerm)
                     .tableInfo(tableInfo)
                     .isApproval(isApprovalAvailable)
                     .build();
@@ -321,6 +323,42 @@ public class ColumnManageServiceImpl implements ColumnManageService {
 
             tableInfo.getColumns().add(columnInfo);
             standardTerm.getColumnInfos().add(columnInfo);
+        });
+    }
+
+    @Override
+    public List<ColumnInfoDto> selectColumnDetail(AccountDto accountDto, Long id) {
+
+        Long projectId = accountDto.getProjectId();
+
+        ColumnInfo columnInfo = columnInfoRepository.findByProjectIdAndId(projectId, id);
+
+        TableInfo tableInfo = columnInfo.getTableInfo();
+
+        List<ColumnInfoDto> collect = tableInfo.getColumns().stream().map(ColumnInfoDto::fromEntity).collect(Collectors.toList());
+
+        for(ColumnInfoDto dto : collect){
+            if(dto.getIsApproval().equals("Y")){
+                return null;
+            }
+        }
+
+        return collect;
+    }
+
+    @Override
+    @Transactional
+    public void updateSortOrder(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos) {
+        Long projectId = accountDto.getProjectId();
+
+        columnInfoDtos.forEach(columnInfoDto -> {
+            ColumnInfo columnInfo = columnInfoRepository.findByIdAndProjectId(columnInfoDto.getId(), projectId);
+
+            if(columnInfo.getIsApproval()){
+                throw new CustomException(ErrorCode.APPROVED_DATA_CANNOT_BE_UPDATE);
+            }
+
+            columnInfo.setSortOrder(columnInfoDto.getSortOrder());
         });
     }
 }

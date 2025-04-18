@@ -24,4 +24,8 @@ public interface ColumnInfoRepository extends JpaRepository<ColumnInfo, Long> {
     Page<ColumnInfo> findAllByProjectIdAndDataTypeLike(Long projectId, String dataType, Pageable pageable);
 
     ColumnInfo findByProjectIdAndId(Long projectId, Long id);
+
+    List<ColumnInfo> findAllByProjectIdAndId(Long projectId, Long id);
+
+    ColumnInfo findByIdAndProjectId(Long id, Long projectId);
 }

@@ -106,14 +106,8 @@ public class ColumnInfo {
     @Column
     private Boolean isApproval;
 
-    @ManyToMany
-    @JoinTable(
-            name = "table_design_standard_term",
-            joinColumns = @JoinColumn(name = "column_info_id"),
-            inverseJoinColumns = @JoinColumn(name = "standard_term_id")
-
-    )
-    private List<StandardTerm> standardTerms = new ArrayList<>();
+    @ManyToOne
+    private StandardTerm standardTerms;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "table_info_id")

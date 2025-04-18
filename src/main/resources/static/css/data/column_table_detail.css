@@ -1,0 +1,83 @@
+.column-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.column-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.column-row.full {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6px;
+}
+
+.column-grid-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 6px;
+}
+
+.column-grid-row .pair {
+    flex: 1 1 22%; /* 4개씩 한 줄에 꽉 차도록 */
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #333;
+}
+
+.label {
+    font-weight: 600;
+    color: #555;
+}
+
+.value {
+    color: #222;
+    text-align: right;
+}
+
+.value.highlight {
+    font-weight: bold;
+    color: #d6336c;
+}
+
+.sort-buttons {
+    display: flex;
+    gap: 4px;
+    margin-left: 10px;
+}
+
+.sort-buttons button {
+    background: #e9ecef;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    height: 24px;
+}
+
+.sort-buttons button:hover {
+    background-color: #ced4da;
+}
+
+/* 정렬 버튼이 컬럼명 라인 옆으로 잘 붙도록 조정 */
+.column-row.full {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 6px;
+}

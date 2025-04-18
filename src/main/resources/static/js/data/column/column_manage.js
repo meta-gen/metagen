@@ -1,7 +1,6 @@
 import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
 import {downloadFile} from "../../common/common.js";
 
-
 const tableId = "columnManageGrid";
 
 $(document).ready(() => {
@@ -389,7 +388,7 @@ function updateActive(type){
         }
 
         $.ajax({
-            url: `/api/updateColumn/${type}`,
+            url: `/api/updateColumn/approval/${type}`,
             type: 'PATCH',
             data: JSON.stringify(checkedData),
             success : (response) => {
@@ -435,3 +434,56 @@ function deleteColumns(){
         })
     });
 }
+
+/**
+ *
+ * 컬럼관리 목록 조회
+ * @param rowData
+ * @param columnList
+ * @param isManager
+ * @param tableId
+ */
+export function columnSelectRow(rowData, columnList, isManager, tableId){
+    if(rowData.isApproval === "Y") return;
+
+    $.ajax({
+        url: `/api/selectColumn/detail/${rowData.id}`,
+        type: "GET",
+        success: (response) => {
+            if(response.result){
+
+                if(!response.columnInfos) return;
+
+                const popup = window.open(
+                    "/popup/columTableSearch/detail",  // 팝업으로 띄울 URL
+                    "컬럼 상세",     // 팝업 이름 (중복 방지용)
+                    "width=700,height=800,resizable=yes,scrollbars=yes"
+                );
+
+                const sendData = () => {
+                    if (popup && popup.receiveColumnDetailData) {
+                        popup.receiveColumnDetailData(response.columnInfos);
+                    } else {
+                        // 로딩 안 끝났을 수 있으므로 재시도
+                        setTimeout(sendData, 100);
+                    }
+                };
+
+                // 약간의 delay를 주고 전송 시도
+                setTimeout(sendData, 200);
+            }
+        }
+    })
+}
+
+window.gridCallbacks["columnManageGrid_selectRow"] = columnSelectRow;
+
+
+function columnManageGridSuccess(){
+    openConfirm("정상적으로 순서가 저장되었습니다.", () => {
+        window.searchGrid(tableId);
+    });
+}
+
+window.popupFunction = window.popupFunction || {}; // 혹시 없을 경우 방지
+window.popupFunction['columnManageGridSuccess'] = columnManageGridSuccess;

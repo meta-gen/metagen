@@ -17,4 +17,9 @@ public class PopupController {
     public String columTableSearch(){
         return "popup/column_table_search";
     }
+
+    @GetMapping("/columTableSearch/detail")
+    public String columTableSearchDetail(){
+        return "popup/column_table_detail";
+    }
 }

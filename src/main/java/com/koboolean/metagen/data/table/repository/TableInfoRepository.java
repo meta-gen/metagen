@@ -24,4 +24,6 @@ public interface TableInfoRepository extends JpaRepository<TableInfo, Long> {
     List<TableInfo> findAllByProjectIdAndTableNameLikeAndIsApproval(Long projectId, String tableName, Boolean isApproval);
 
     TableInfo findALlByProjectIdAndId(Long projectId, Long tableId);
+
+    TableInfo findByTableNameAndProjectId(String tableName, Long projectId);
 }

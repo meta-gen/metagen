@@ -31,4 +31,8 @@ public interface ColumnManageService {
     void deleteColumn(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos);
 
     void uploadColumnExcelFile(MultipartFile file, AccountDto accountDto) throws IOException;
+
+    List<ColumnInfoDto> selectColumnDetail(AccountDto accountDto, Long id);
+
+    void updateSortOrder(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos);
 }
