@@ -116,8 +116,9 @@ public class StandardTermService {
         standardTermData.forEach(standardTermEntry -> {
 
             String[] split = standardTermEntry.get("standardTermAbbreviation").split("_");
+            String standardTermName = standardTermEntry.get("standardTermName");
 
-            saveTermWordMappings(projectId, isApprovalAvailable, standardTermEntry, split);
+            saveTermWordMappings(projectId, isApprovalAvailable, standardTermEntry, split, standardTermName);
         });
     }
 
@@ -128,10 +129,10 @@ public class StandardTermService {
      * @param standardTermEntry
      * @param split
      */
-    private void saveTermWordMappings(Long projectId, boolean isApprovalAvailable, Map<String, String> standardTermEntry, String[] split) {
+    private void saveTermWordMappings(Long projectId, boolean isApprovalAvailable, Map<String, String> standardTermEntry, String[] split, String standardTermName) {
         List<StandardTermWordMapping> mappings = new ArrayList<>();
 
-        getStandardTermDomain(projectId, split, mappings);
+        getStandardTermDomain(projectId, split, mappings, standardTermName);
 
         StandardTerm standardTerm = getStandardTerm(projectId, isApprovalAvailable, standardTermEntry, mappings);
 
@@ -166,10 +167,20 @@ public class StandardTermService {
                 .build();
     }
 
-    private void getStandardTermDomain(Long projectId, String[] split, List<StandardTermWordMapping> mappings) {
+    private void getStandardTermDomain(Long projectId, String[] split, List<StandardTermWordMapping> mappings, String standardTermName) {
         for (int i = 0; i < split.length; i++) {
             String s = split[i];
-            StandardWord word = standardWordService.findByCommonStandardWordAbbreviation(s, projectId);
+            List<StandardWord> words = standardWordService.findByCommonStandardWordAbbreviation(s, projectId);
+
+            StandardWord word = null;
+
+            // standardWord에 포함된 형식의 값만 불러온다.
+            for (StandardWord standardWord : words) {
+                if(standardTermName.contains(standardWord.getCommonStandardWordName())){
+                    word = standardWord;
+                }
+            }
+
             if (word != null) {
                 // 일단 매핑 객체는 나중에 StandardTerm set
                 StandardTermWordMapping mapping = new StandardTermWordMapping();
@@ -194,7 +205,7 @@ public class StandardTermService {
 
         List<StandardTermWordMapping> mappings = new ArrayList<>();
 
-        getStandardTermDomain(projectId, split, mappings);
+        getStandardTermDomain(projectId, split, mappings,standardTermDto.getCommonStandardTermName());
 
         StandardTerm standardTerm = getStandardTerm(projectId, isApprovalAvailable, standardTermDto, mappings);
 
