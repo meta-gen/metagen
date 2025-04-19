@@ -4,6 +4,8 @@ import com.koboolean.metagen.home.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Builder
 @Getter
@@ -14,6 +16,7 @@ public class Template extends BaseEntity{
 
     @Id
     @GeneratedValue
+    @Column(name = "template_id")
     private Long id;
 
     private Long projectId;
@@ -24,5 +27,8 @@ public class Template extends BaseEntity{
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Project project;
+
+    @OneToMany
+    private List<CodeRule> codeRules;
 
 }

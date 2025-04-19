@@ -12,15 +12,18 @@
     <h2>코드규칙 관리</h2>
     <div class="button-rule-container">
         <div class="left-group">
+
             <label for="projectSelector">프로젝트 선택</label>
             <select id="projectSelector" class="search-column-select">
                 <option th:each="project : ${projects}"
                         th:value="${project.id}"
                         th:data-active="${project.isActive}"
                         th:text="${project.projectName}"
-                        th:data-autoactive="${project.isAutoActive}">
+                        th:data-autoactive="${project.isAutoActive}"
+                        th:data-isuseswagger="${project.isUseSwagger}">
                 </option>
             </select>
+            <p id="projectSelectorSwaggerText" class="is-swagger"></p>
         </div>
 
         <div class="right-group">

@@ -5,6 +5,36 @@ const tableId = 'codeRuleManageGrid';
 $(document).ready(function () {
     setupAjaxCsrf();
 
+    const $selector = $("#projectSelector");
+
+    // 초기 표시
+    const selectedOption = $selector.find("option:selected");
+    const isUseSwagger = selectedOption.data("isuseswagger");
+    setSwaggerText(isUseSwagger);
+
+    // 선택 변경 시
+    $selector.on("change", function () {
+        const selectedOption = $(this).find("option:selected");
+        const isUseSwagger = selectedOption.data("isuseswagger");
+        setSwaggerText(isUseSwagger);
+
+        const dataUrl = '/api/selectCodeRuleManage/' + $(this).val();
+
+        window.grid(tableId, dataUrl, 'cd');
+    });
+
+    function setSwaggerText(isUseSwagger) {
+        let text = "";
+
+        if (isUseSwagger === true || isUseSwagger === "true") {
+            text = "📘 Swagger 사용 중인 프로젝트입니다.";
+        } else {
+            text = "📕 Swagger 사용 안 함";
+        }
+
+        $("#projectSelectorSwaggerText").text(text);
+    }
+
     /**
      * 템플릿 등록
      */

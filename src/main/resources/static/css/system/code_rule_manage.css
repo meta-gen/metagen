@@ -11,6 +11,8 @@
     gap: 10px;
 }
 
-.right-group button {
-    margin-left: 8px;
+
+.is-swagger {
+    margin-top: auto;
+    margin-bottom: auto;
 }
