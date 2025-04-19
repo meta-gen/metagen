@@ -20,11 +20,14 @@
                         th:data-active="${project.isActive}"
                         th:text="${project.projectName}"
                         th:data-autoactive="${project.isAutoActive}"
-                        th:data-isuseswagger="${project.isUseSwagger}">
+                        th:data-isuseswagger="${project.isUseSwagger}"
+                        th:data-isdicabbrused="${project.isDicAbbrUsed}">
                 </option>
             </select>
             <p id="projectSelectorSwaggerText" class="is-swagger"></p>
         </div>
+
+        <p id="mProjectSelectorSwaggerText" class="is-swagger-m"></p>
 
         <div class="right-group">
             <button id="btn-project-add" class="btn btn-primary">템플릿 등록</button>
