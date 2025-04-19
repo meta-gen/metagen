@@ -8,6 +8,7 @@ import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.security.exception.CustomException;
 import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.security.repository.AccountRepository;
+import com.koboolean.metagen.system.code.repository.TemplateRepository;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
 import com.koboolean.metagen.system.project.domain.entity.Project;
@@ -34,6 +35,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
     private final ProjectMemberRepository projectMemberRepository;
     private final ProjectRepository projectRepository;
     private final AccountRepository accountRepository;
+    private final TemplateRepository templateRepository;
 
     @Override
     public List<ColumnDto> getProjectColumn(Long projectId) {
@@ -131,6 +133,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED, "기본 프로젝트는 삭제가 불가능합니다.");
         }
 
+        templateRepository.deleteByProjectId(project.getId());
         projectMemberRepository.deleteAll(project.getProjectMembers());
 
         projectRepository.delete(project);
