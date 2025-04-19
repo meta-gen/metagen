@@ -312,7 +312,7 @@ function saveColumn(type){
 
     openConfirm(`${msg}하시겠습니까?`, () => {
         $.ajax({
-            url: "/api/updateColumn",
+            url: "/api/saveColumn",
             type: restType,
             data: JSON.stringify(data),
             success: (response) => {
@@ -388,7 +388,7 @@ function updateActive(type){
         }
 
         $.ajax({
-            url: `/api/updateColumn/approval/${type}`,
+            url: `/api/saveColumn/approval/${type}`,
             type: 'PATCH',
             data: JSON.stringify(checkedData),
             success : (response) => {

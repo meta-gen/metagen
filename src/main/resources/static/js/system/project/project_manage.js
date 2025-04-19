@@ -215,7 +215,7 @@ $(document).ready(function () {
      * @param projectData
      * @param saveProject
      */
-    function openDialog(type, projectData, saveProject, templateTypes) {
+    function openDialog(type, projectData, saveProject) {
         let managerSelectHtml = '';
         let templateTypeHtml = '';
 
@@ -232,21 +232,6 @@ $(document).ready(function () {
                                         ${options}
                                     </select>
                                  </div>`;
-            }
-            if(Array.isArray(templateTypes)){
-                const options = templateTypes.map(template => {
-                    const isSelected = projectData.templateType !== null && projectData.templateType.indexOf(template) !== -1 ? 'selected' : '';
-                    return `<option value="${template}" ${isSelected}>${template}</option>`;
-                }).join('');
-
-                templateTypeHtml = `<div style="margin-top: 10px; margin-bottom: 10px;"><label for="templateTypes">템플릿 타입 선택</label>
-                                        <select id="templateTypes"
-                                                name="templateType"
-                                                multiple
-                                                class="form-select">
-                                            ${options}
-                                        </select>
-                                    </div>`
             }
         }
 
@@ -352,11 +337,10 @@ $(document).ready(function () {
             success : (response) => {
                 if(response.result){
                     const projectData = response.project;
-                    const templateTypes = response.templateTypes;
 
                     const type = "U"
 
-                    openDialog(type, projectData, saveProject, templateTypes);
+                    openDialog(type, projectData, saveProject);
                 }
             }
         })

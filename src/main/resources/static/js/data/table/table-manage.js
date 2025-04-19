@@ -165,7 +165,7 @@ function updateActive(type){
         }
 
         $.ajax({
-            url: `/api/updateTable/${type}`,
+            url: `/api/saveTable/${type}`,
             type: 'PATCH',
             data: JSON.stringify(checkedData),
             success : (response) => {
@@ -251,7 +251,7 @@ function saveTable(type){
 
     openConfirm(`${msg}하시겠습니까?`, () => {
         $.ajax({
-            url: "/api/updateTable", // 필요 시 type에 따라 URL 분기 가능
+            url: "/api/saveTable", // 필요 시 type에 따라 URL 분기 가능
             type: method,
             data: JSON.stringify(tableData),
             success: (response) => {

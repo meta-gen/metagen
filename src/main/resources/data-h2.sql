@@ -138,10 +138,10 @@ merge into RESOURCES (resource_id, http_method, order_num, resource_name, resour
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (36, '*', 0, '/api/selectAccess/**','url', '인가조회', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (37, '*', 0, '/api/updateAccess/**','url', '인가수정', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (38, '*', 0, '/api/selectTable/**','url', '테이블 조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (39, '*', 0, '/api/updateTable/**','url', '테이블 수정', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (39, '*', 0, '/api/saveTable/**','url', '테이블 수정', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (40, '*', 0, '/api/deleteTable/**','url', '테이블 삭제', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (41, '*', 0, '/api/selectColumn/**','url', '테이블컬럼 조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (42, '*', 0, '/api/updateColumn/**','url', '테이블컬럼 수정', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (42, '*', 0, '/api/saveColumn/**','url', '테이블컬럼 수정', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (43, '*', 0, '/api/deleteColumn/**','url', '테이블컬럼 삭제', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (44, '*', 0, '/api/uploadColumnExcelFile/**','url', '컬럼 업로드', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (45, '*', 0, '/tableManage','url', '테이블관리화면', 'SYSTEM', 'SYSTEM');
@@ -151,6 +151,9 @@ merge into RESOURCES (resource_id, http_method, order_num, resource_name, resour
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (49, '*', 0, '/api/deleteNotice/**','url', '공지사항 삭제', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (50, '*', 0, '/popup/columTableSearch/**','url', '테이블조회 팝업화면', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (51, '*', 0, '/popup/codeRule/**','url', '코드규칙 화면', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (52, '*', 0, '/api/selectCodeRuleManage/**','url', '코드규칙관리 조회', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (53, '*', 0, '/api/saveCodeRuleManage/**','url', '코드규칙관리 저장', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (54, '*', 0, '/api/deleteCodeRuleManage/**','url', '코드규칙관리 삭제', 'SYSTEM', 'SYSTEM');
 
 -- ROLE_NOT_APPROVE
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (1,5); -- 로그아웃
@@ -180,6 +183,7 @@ merge into role_resources(resource_id, role_id) key(resource_id, role_id) values
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (45,4); -- 테이블관리화면
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (50,4); -- 테이블조회 팝업화면
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (51,4); -- 코드규칙 화면
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (52,4); -- 코드규칙관리 조회
 
 -- ROLE_USER
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (15,3); -- 템플릿다운로드
@@ -207,6 +211,8 @@ merge into role_resources(resource_id, role_id) key(resource_id, role_id) values
 -- ROLE_MANAGER
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (47,1) ; -- 공지사항 등록/수정
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (49,1) ; -- 공지사항 삭제
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (53,1) ; -- 코드규칙관리 저장
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (54,1) ; -- 코드규칙관리 삭제
 
 -- ROLE_ADMIN
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (14,0); -- 권한수정

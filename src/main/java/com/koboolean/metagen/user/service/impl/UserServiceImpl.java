@@ -4,7 +4,6 @@ package com.koboolean.metagen.user.service.impl;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.grid.enums.RowType;
-import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.exception.CustomException;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;

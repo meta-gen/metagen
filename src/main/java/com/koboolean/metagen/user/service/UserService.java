@@ -1,7 +1,6 @@
 package com.koboolean.metagen.user.service;
 
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
-import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import org.springframework.data.domain.Page;
@@ -31,4 +30,5 @@ public interface UserService {
     void deleteUser(List<AccountDto> accountDtos);
 
     void saveUserPassword(AccountDto accountDto);
+
 }
