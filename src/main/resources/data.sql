@@ -37,7 +37,7 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (5, '*', 0, '/api/updateName','url', '사용자명수정', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (6, '*', 0, '/codeRule','url', '코드규칙화면', 'SYSTEM', 'SYSTEM')
+VALUES (6, '*', 0, '/codeRuleManage','url', '코드규칙관리 화면', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (7, '*', 0, '/designManage','url', '설계서화면', 'SYSTEM', 'SYSTEM')
@@ -171,6 +171,9 @@ ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (50, '*', 0, '/popup/columTableSearch/**','url', '테이블조회 팝업화면', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (51, '*', 0, '/codeRule','url', '코드규칙 화면', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
 
 
 -- ROLE_NOT_APPROVE
@@ -183,7 +186,7 @@ insert into role_resources(resource_id, role_id) values (48,5) on CONFLICT DO NO
 
 -- ROLE_VIEWER
 insert into role_resources(resource_id, role_id) values (4,4) on CONFLICT DO NOTHING; -- 컬럼관리화면
-insert into role_resources(resource_id, role_id) values (6,4) on CONFLICT DO NOTHING; -- 코드규칙화면
+insert into role_resources(resource_id, role_id) values (6,4) on CONFLICT DO NOTHING; -- 코드규칙관리 화면
 insert into role_resources(resource_id, role_id) values (7,4) on CONFLICT DO NOTHING; -- 설계서화면
 insert into role_resources(resource_id, role_id) values (8,4) on CONFLICT DO NOTHING; -- 사용자관리화면
 insert into role_resources(resource_id, role_id) values (10,4) on CONFLICT DO NOTHING; -- 데이터사전화면
@@ -200,6 +203,7 @@ insert into role_resources(resource_id, role_id) values (30,4) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (38,4) on CONFLICT DO NOTHING; -- 테이블설계 조회
 insert into role_resources(resource_id, role_id) values (45,4) on CONFLICT DO NOTHING; -- 테이블관리화면
 insert into role_resources(resource_id, role_id) values (50,4) on CONFLICT DO NOTHING; -- 테이블조회 팝업화면
+insert into role_resources(resource_id, role_id) values (51,4) on CONFLICT DO NOTHING; -- 코드규칙 화면
 
 -- ROLE_USER
 insert into role_resources(resource_id, role_id) values (15,3) on CONFLICT DO NOTHING; -- 템플릿다운로드

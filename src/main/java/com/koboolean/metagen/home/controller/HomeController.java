@@ -37,7 +37,12 @@ public class HomeController {
 
     @GetMapping("/codeRule")
     public String codeRule() {
-        return "pages/code_rule";
+        return "pages/data/code_rule";
+    }
+
+    @GetMapping("/codeRuleManage")
+    public String codeRuleManage() {
+        return "pages/system/code_rule_manage";
     }
 
     @GetMapping("/designManage")
