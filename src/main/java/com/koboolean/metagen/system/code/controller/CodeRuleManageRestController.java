@@ -1,11 +1,18 @@
 package com.koboolean.metagen.system.code.controller;
 
+import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.system.code.service.CodeRuleManageService;
+import com.koboolean.metagen.system.project.domain.dto.CodeRuleDto;
+import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
 import com.koboolean.metagen.system.project.domain.dto.TemplateDto;
+import com.koboolean.metagen.utils.PageableUtil;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -44,4 +51,32 @@ public class CodeRuleManageRestController {
 
         return ResponseEntity.ok(Map.of("result", true));
     }
+
+    @Operation(summary = "코드규칙관리 컬럼조회", description = "코드규칙관리 컬럼을 조회한다.")
+    @GetMapping("/selectCodeRuleManage/{projectId}/column")
+    public ResponseEntity<List<ColumnDto>> getCodeRuleManageColumn(@PathVariable(value = "projectId") Long projectId) {
+        return ResponseEntity.ok(codeRuleManageService.getCodeRuleManageColumn());
+    }
+
+    @Operation(summary = "코드규칙관리 데이터조회", description = "코드규칙관리 데이터를 조회한다.")
+    @GetMapping("/selectCodeRuleManage/{projectId}/data")
+    public ResponseEntity<Map<String,Object>> getCodeRuleManageData(
+            @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
+            @RequestParam(value = "page") int page,
+            @Parameter(description = "페이지 크기", example = "10")
+            @RequestParam(value = "size") int size,
+            @Parameter(description = "정렬 조건 (예: timestamp,desc;id,asc)", example = "id,desc")
+            @RequestParam(required = false, value = "sort") String sort,
+            @Parameter(description = "조회 용어명", example = "용어명1")
+            @RequestParam(required = false, value = "searchQuery") String searchQuery,
+            @Parameter(description = "조회컬럼 명", example = "id")
+            @RequestParam(required = false, value = "searchColumn") String searchColumn,
+            @Parameter(description = "프로젝트 ID", example = "0")
+            @PathVariable(value = "projectId") Long projectId){
+
+        Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
+        Page<CodeRuleDto> standardTermDataPage = codeRuleManageService.getCodeRuleManageData(pageable, searchColumn, searchQuery, projectId);
+        return PageableUtil.getGridPageableMap(standardTermDataPage);
+    }
+
 }

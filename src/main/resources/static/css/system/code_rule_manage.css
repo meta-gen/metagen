@@ -8,9 +8,42 @@
 .left-group {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 10px;
 }
 
-.right-group button {
-    margin-left: 8px;
+.is-swagger-m{
+    display: none;
+}
+
+.is-swagger {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .button-rule-container {
+        flex-direction: column;
+        align-items: flex-start; /* 왼쪽 정렬 */
+        gap: 12px;
+    }
+
+    .is-swagger-m{
+        display: block;
+    }
+
+    .is-swagger{
+        display: none;
+    }
+
+    .right-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .right-group button {
+        margin-left: 0; /* 좌측 마진 제거 */
+    }
 }

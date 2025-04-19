@@ -5,6 +5,46 @@ const tableId = 'codeRuleManageGrid';
 $(document).ready(function () {
     setupAjaxCsrf();
 
+    const $selector = $("#projectSelector");
+
+    // 초기 표시
+    const selectedOption = $selector.find("option:selected");
+    const isUseSwagger = selectedOption.data("isuseswagger");
+    const isDicAbbrUsed = selectedOption.data("isdicabbrused");
+    setSwaggerText(isUseSwagger, isDicAbbrUsed);
+
+    // 선택 변경 시
+    $selector.on("change", function () {
+        const selectedOption = $(this).find("option:selected");
+        const isUseSwagger = selectedOption.data("isuseswagger");
+        const isDicAbbrUsed = selectedOption.data("isdicabbrused");
+
+        setSwaggerText(isUseSwagger, isDicAbbrUsed);
+
+        const dataUrl = '/api/selectCodeRuleManage/' + $(this).val();
+
+        window.grid(tableId, dataUrl, 'cd');
+    });
+
+    function setSwaggerText(isUseSwagger, isDicAbbrUsed) {
+        let text = "";
+
+        if (isUseSwagger === true || isUseSwagger === "true") {
+            text = "📘 Swagger를 사용 중이며, ";
+        } else {
+            text = "📕 Swagger를 사용하지 않고 있으며, ";
+        }
+
+        if (isDicAbbrUsed === true || isDicAbbrUsed === "true") {
+            text += "등록된 표준용어 약어를 기준으로 메소드 이름이 생성됩니다.";
+        } else {
+            text += "데이터 이름의 띄어쓰기를 기준으로 표준단어의 영문명을 조합해 메소드 이름이 생성됩니다.";
+        }
+
+        $("#projectSelectorSwaggerText").text(text);
+        $("#mProjectSelectorSwaggerText").text(text);
+    }
+
     /**
      * 템플릿 등록
      */

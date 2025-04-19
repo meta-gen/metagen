@@ -11,9 +11,6 @@
     gap: 10px;
 }
 
-.right-group button {
-    margin-left: 8px;
-}
 
 label[for="projectSelector"] {
     font-weight: bold;
