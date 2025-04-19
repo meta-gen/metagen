@@ -347,7 +347,7 @@ $(document).ready(function () {
     });
 
     $("#btn-project-delete").on("click", function(){
-       window.openConfirm("해당 프로젝트를 삭제하시겠습니까?", function(){
+       window.openConfirm("프로젝트 삭제 시 복구가 불가합니다.\n해당 프로젝트를 삭제하시겠습니까?", function(){
            const selectedId = $("#projectSelector").val();
 
            if(selectedId === 0){
