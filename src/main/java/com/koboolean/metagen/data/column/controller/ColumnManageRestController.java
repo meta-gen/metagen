@@ -83,7 +83,7 @@ public class ColumnManageRestController {
     }
 
     @Operation(summary = "테이블 내 컬럼 등록", description = "테이블 조회 팝업 내 테이블 내 컬럼을 등록합니다.")
-    @PostMapping("/updateColumn")
+    @PostMapping("/saveColumn")
     public ResponseEntity<Map<String, Object>> insertColumn(@AuthenticationPrincipal AccountDto accountDto, @RequestBody ColumnInfoDto columnInfoDto) {
         columnManageService.insertColumn(accountDto, columnInfoDto);
         return ResponseEntity.ok(Map.of("result", true));
@@ -99,7 +99,7 @@ public class ColumnManageRestController {
     }
 
     @Operation(summary = "컬럼 승인여부 승인/미승인 수정", description = "컬럼의 승인여부를 승인/미승인 처리를 진행한다.")
-    @PatchMapping("/updateColumn/approval/{type}")
+    @PatchMapping("/saveColumn/approval/{type}")
     public ResponseEntity<Map<String, Object>> updateColumnApproval(@AuthenticationPrincipal AccountDto accountDto, @PathVariable(value = "type") String type, @RequestBody List<ColumnInfoDto> columnInfoDtos) {
         columnManageService.updateColumnApproval(accountDto, columnInfoDtos, type);
 
@@ -135,7 +135,7 @@ public class ColumnManageRestController {
     }
 
     @Operation(summary = "컬럼 정렬순서 변경", description = "컬럼 목록의 정렬순서를 변경한다.")
-    @PatchMapping(value = "/updateColumn/sortOrder")
+    @PatchMapping(value = "/saveColumn/sortOrder")
     public ResponseEntity<Map<String, Boolean>> updateSortOrder(@RequestBody List<ColumnInfoDto> columnInfoDtos, @AuthenticationPrincipal AccountDto accountDto) {
         columnManageService.updateSortOrder(accountDto, columnInfoDtos);
 

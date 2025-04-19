@@ -41,7 +41,12 @@ public class HomeController {
     }
 
     @GetMapping("/codeRuleManage")
-    public String codeRuleManage() {
+    public String codeRuleManage(Model model) {
+
+        List<ProjectDto> projectDtos = userService.selectAllProjects();
+
+        model.addAttribute("projects", projectDtos);
+
         return "pages/system/code_rule_manage";
     }
 

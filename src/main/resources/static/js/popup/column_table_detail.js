@@ -120,7 +120,7 @@ $(document).ready(function () {
         console.log("정렬 순서 저장 데이터:", sortData);
 
         $.ajax({
-            url: "/api/updateColumn/sortOrder",
+            url: "/api/saveColumn/sortOrder",
             type: "PATCH",
             data: JSON.stringify(sortData),
             success: (response) => {

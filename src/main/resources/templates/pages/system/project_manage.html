@@ -35,7 +35,7 @@
 
     <!-- 그리드 영역 -->
     <div id="gridContainer">
-        <div th:replace="~{fragments/grid :: grid('projectMemberGrid', '/api/getProject/0', ${crudActions}, null)}"></div>
+        <div th:replace="~{fragments/grid :: grid('projectMemberGrid', '/api/getProject/' + ${projects[0].id}, ${crudActions}, null)}"></div>
     </div>
 
 </section>

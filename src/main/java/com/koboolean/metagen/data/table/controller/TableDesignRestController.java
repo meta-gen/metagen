@@ -59,21 +59,21 @@ public class TableDesignRestController {
     }
 
     @Operation(summary = "테이블 관리 테이블 등록", description = "테이블 관리 테이블 데이터를 등록합니다.")
-    @PostMapping("/updateTable")
+    @PostMapping("/saveTable")
     public ResponseEntity<Map<String, Boolean>> saveTable(@RequestBody TableInfoDto tableInfoDto, @AuthenticationPrincipal AccountDto accountDto) {
         tableDesignService.saveTable(tableInfoDto, accountDto);
         return ResponseEntity.ok(Map.of("result", true));
     }
 
     @Operation(summary = "테이블 관리 테이블 수정", description = "테이블 관리 테이블 데이터를 수정합니다.")
-    @PutMapping("/updateTable")
+    @PutMapping("/saveTable")
     public ResponseEntity<Map<String, Boolean>> updateTable(@RequestBody TableInfoDto tableInfoDto, @AuthenticationPrincipal AccountDto accountDto) {
         tableDesignService.updateTable(tableInfoDto, accountDto);
         return ResponseEntity.ok(Map.of("result", true));
     }
 
     @Operation(summary = "테이블 관리 테이블 승인/승인취소", description = "테이블 관리 테이블 데이터를  승인/승인취소합니다.")
-    @PatchMapping("/updateTable/{isApproval}")
+    @PatchMapping("/saveTable/{isApproval}")
     public ResponseEntity<Map<String, Boolean>> updateTableIsApproval(@PathVariable(value = "isApproval") boolean isApproval, @AuthenticationPrincipal AccountDto accountDto, @RequestBody List<TableInfoDto> tableInfoDtos) {
         tableDesignService.updateTableIsApproval(isApproval, accountDto, tableInfoDtos);
 
