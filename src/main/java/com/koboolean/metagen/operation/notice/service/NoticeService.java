@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.koboolean.metagen.board.domain.dto.BoardDto;
+import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 
@@ -22,4 +23,11 @@ public interface NoticeService {
      * @return
      */
     List<ColumnDto> getNoticeListColumn();
+    
+    /**
+     * 공지사항 등록
+     * @param accountDto
+     * @param boardDto
+     */
+    void insertNotice(AccountDto accountDto, BoardDto boardDto);
 }

@@ -35,7 +35,7 @@ $(document).ready(function() {
 	function createForm(rowData, type) {
 
 		return `
-			<form id="editTableForm" class="edit-form">
+			<form id="editNoticeForm" class="edit-form">
 		        <input type="hidden" name="id" value="${rowData.id ?? 0}"/>
 		        <input type="hidden" name="type" value="${type}" />
 	        
@@ -45,14 +45,14 @@ $(document).ready(function() {
 		        </div>
 				<div class="form-group">
 		            <label for="noticeContent">공지사항 내용</label>
-		            <input type="textarea" id="noticeContent" class="form-control" name="noticeContent" rows="5" value="${rowData.noticeContent ?? ''}" required/>
+		            <textarea id="noticeContent" class="form-control" name="noticeContent" style="height: 300px;"></textarea>
 		        </div>
 				<div class="form-group">
 		            <label for="noticeFile">파일 등록</label>
 		            <input type="file" class="form-control" name="noticeFile" id="noticeFile" value="${rowData.noticeContent ?? ''}" required/>
 		        </div>
 
-	        	<button type="submit" class="btn btn-primary" id="btn-save-table">저장</button>
+	        	<button type="submit" class="btn btn-primary" id="btn-save-notice">저장</button>
 	    	</form>
 		`
 	}
@@ -78,11 +78,11 @@ $(document).ready(function() {
 
 			window.openDialog('div', { title: type === 'C' ? '공지사항 등록' : '공지사항 수정', content: form });
 
-			$("#btn-save-table").on("click", (e) => {
+			$("#btn-save-notice").on("click", (e) => {
 
 				e.preventDefault();
 
-				debugger;
+				saveNotice(type);
 			});
 		}
 		else {
@@ -93,6 +93,67 @@ $(document).ready(function() {
 	}
 
 	window.gridCallbacks["noticeList_selectRow"] = selectRow;
+	
 });
 
+
+/**
+ * 공지사항 등록
+ */
+function saveNotice(type) {
+	
+    const $form = $("#editNoticeForm");
+
+    const msg = type === "C" ? "저장" : "수정";
+
+	// 필수값 설정
+    const requiredFields = [
+		
+        { name: "noticeTitle"  , label: "공지사항 제목" }
+      , { name: "noticeContent", label: "공지사항 내용" }
+    ];
+
+    // 필수값 검증
+    for (const field of requiredFields) {
+		
+        const value = $form.find(`[name='${field.name}']`).val();
+		
+        if (!value || value.trim() === "") {
+			
+            openAlert(`${field.label}은(는) 필수 입력 항목입니다.`);
+			
+            return;
+        }
+    }
+
+    const noticeData = {
+		
+        id            : $form.find("[name='id']").val()
+      , type          : $form.find("[name='type']").val()
+      , noticeTitle   : $form.find("[name='noticeTitle']").val()
+      , noticeContent : $form.find("[name='noticeContent']").val()
+    };
+
+    const method = type === "C" ? "POST" : "PUT";
+
+    openConfirm(`${msg}하시겠습니까?`, () => {
+		
+        $.ajax({
+            url     : "/api/insertNotice" // 필요 시 type에 따라 URL 분기 가능
+          , type    : method
+          , data    : JSON.stringify(noticeData)
+          , success : (response) => {
+			
+                if (response.result) {
+					
+                    openAlert(`정상적으로 ${msg}되었습니다.`, () => {
+						
+                        window.closeDialog("div");
+                        window.searchGrid(tableId);
+                    });
+                }
+            }
+        });
+    });
+}
 

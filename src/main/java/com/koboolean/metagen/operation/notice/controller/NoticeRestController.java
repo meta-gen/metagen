@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.koboolean.metagen.board.domain.dto.BoardDto;
+import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.operation.notice.service.NoticeService;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
@@ -23,6 +24,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
 @Tag(name = "공지사항 API", description = "공지사항 조회 및 관리 API")
@@ -34,6 +37,12 @@ public class NoticeRestController {
 
     /**
      * 공지사항 리스트 데이터 조회
+     * @param accountDto
+     * @param page
+     * @param size
+     * @param sort
+     * @param searchQuery
+     * @param searchColumn
      * @return String
      */
     @Operation(summary = "공지사항 리스트 조회", description = "공지사항 리스트를 조회한다.")
@@ -61,5 +70,21 @@ public class NoticeRestController {
     public ResponseEntity<List<ColumnDto>> getNoticeListColumn() {
 
         return ResponseEntity.ok(noticeService.getNoticeListColumn());
+    }
+    
+    /**
+     * 공지사항 게시글 등록
+     * @param accountDto
+     * @param boardDto
+     * @return
+     */
+    @Operation(summary = "공지사항 게시글 등록", description = "공지사항을 등록한다.")
+    @PostMapping(value = "/insertNotice/notice")
+    public ResponseEntity<Map<String, Boolean>> insertNotice(@AuthenticationPrincipal AccountDto accountDto
+    		                                                      , @RequestBody BoardDto boardDto) {
+
+    	noticeService.insertNotice(accountDto, boardDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
     }
 }
