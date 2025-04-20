@@ -55,7 +55,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                 new ColumnDto("표현 형식", "displayFormat", ColumnType.STRING),
                 new ColumnDto("행정표준코드명", "administrativeStandardCodeName", ColumnType.STRING),
                 new ColumnDto("소관기관명", "responsibleOrganization", ColumnType.STRING),
-                new ColumnDto("용어 이음동의어 목록", "synonyms", ColumnType.STRING),
+                new ColumnDto("용어 이음동의어 목록", "synonyms", ColumnType.STRING, RowType.TEXT, false, false),
                 new ColumnDto("승인여부", "isApprovalYn", ColumnType.STRING)
         );
     }
