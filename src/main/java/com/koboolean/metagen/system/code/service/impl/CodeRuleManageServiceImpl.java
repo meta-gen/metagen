@@ -53,6 +53,12 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
                 .project(project)
                 .build();
 
+        List<Template> templates = templateRepository.findAllByProjectIdAndTemplateName(projectId, template.getTemplateName());
+
+        if(!templates.isEmpty()){
+            throw new CustomException(ErrorCode.TEMPLATE_NAME_IN_PROJECT_DUPLICATE);
+        }
+
         templateRepository.save(templateEntity);
     }
 
@@ -88,8 +94,7 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
                 , new ColumnDto("코드규칙 명", "codeRuleName", ColumnType.STRING, RowType.TEXT, true, true)
                 , new ColumnDto("코드규칙 내용", "codeRuleDescription", ColumnType.STRING, RowType.TEXT, false)
                 , new ColumnDto("접두사", "prefix", ColumnType.STRING, RowType.TEXT, false)
-                , new ColumnDto("접미사", "suffix", ColumnType.STRING, RowType.TEXT, false)
-                , new ColumnDto("승인여부", "isApproval", ColumnType.STRING, RowType.TEXT, false));
+                , new ColumnDto("접미사", "suffix", ColumnType.STRING, RowType.TEXT, false));
     }
 
     @Override
@@ -113,6 +118,43 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
         };
 
         return codeRules.map(CodeRuleDto::fromEntity);
+    }
+
+    @Override
+    @Transactional
+    public void saveCodeRuleManage(CodeRuleDto codeRuleDto) {
+        if(!AuthUtil.isApprovalAdmin()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        CodeRule codeRule = CodeRule.builder()
+                .projectId(codeRuleDto.getProjectId())
+                .codeRuleName(codeRuleDto.getCodeRuleName())
+                .codeRuleDescription(codeRuleDto.getCodeRuleDescription())
+                .prefix(codeRuleDto.getPrefix())
+                .suffix(codeRuleDto.getSuffix())
+                .methodForm(codeRuleDto.getMethodForm())
+                .build();
+
+        Template template = templateRepository.findById(codeRuleDto.getTemplateId()).orElse(null);
+        Project project = projectRepository.findById(codeRuleDto.getProjectId()).orElse(null);
+
+        if(template == null || project == null){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        codeRule.setTemplate(template);
+        codeRule.setTemplateName(template.getTemplateName());
+
+        List<CodeRule> isCodeDupl = codeRuleRepository.findAllByProjectIdAndCodeRuleNameAndTemplate_Id(codeRuleDto.getProjectId(), codeRuleDto.getCodeRuleName(), template.getId());
+
+        if(!isCodeDupl.isEmpty()){
+            throw new CustomException(ErrorCode.TEMPLATE_CODE_RULE_NAME_IN_PROJECT_DUPLICATE);
+        }
+
+        codeRuleRepository.save(codeRule);
+
+        template.getCodeRules().add(codeRule);
     }
 
 

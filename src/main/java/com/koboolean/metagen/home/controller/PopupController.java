@@ -22,4 +22,9 @@ public class PopupController {
     public String columTableSearchDetail(){
         return "popup/column_table_detail";
     }
+
+    @GetMapping("/codeRulePopup")
+    public String codeRulePopup(){
+        return "popup/code_rule_popup";
+    }
 }

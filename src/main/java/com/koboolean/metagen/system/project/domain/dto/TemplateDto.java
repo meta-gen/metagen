@@ -25,8 +25,6 @@ public class TemplateDto {
 
     private ProjectDto project;
 
-    private List<CodeRuleDto> codeRules;
-
     public static TemplateDto fromEntity(Template template) {
         return builder()
                 .id(template.getId())
@@ -34,7 +32,6 @@ public class TemplateDto {
                 .templateName(template.getTemplateName())
                 .templateDescription(template.getTemplateDescription())
                 .project(ProjectDto.fromEntity(template.getProject()))
-                .codeRules(template.getCodeRules().stream().map(CodeRuleDto::fromEntity).collect(Collectors.toList()))
                 .build();
     }
 }

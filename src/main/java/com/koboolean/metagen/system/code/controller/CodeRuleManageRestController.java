@@ -1,10 +1,8 @@
 package com.koboolean.metagen.system.code.controller;
 
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
-import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.system.code.service.CodeRuleManageService;
 import com.koboolean.metagen.system.project.domain.dto.CodeRuleDto;
-import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
 import com.koboolean.metagen.system.project.domain.dto.TemplateDto;
 import com.koboolean.metagen.utils.PageableUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -77,6 +74,14 @@ public class CodeRuleManageRestController {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<CodeRuleDto> standardTermDataPage = codeRuleManageService.getCodeRuleManageData(pageable, searchColumn, searchQuery, projectId);
         return PageableUtil.getGridPageableMap(standardTermDataPage);
+    }
+
+    @Operation(summary = "코드규칙관리 등록", description = "코드규칙관리 데이터를 등록한다.")
+    @PostMapping("/saveCodeRuleManage")
+    public ResponseEntity<Map<String, Object>> saveCodeRuleManage(@RequestBody CodeRuleDto codeRuleDto){
+        codeRuleManageService.saveCodeRuleManage(codeRuleDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
     }
 
 }

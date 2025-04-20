@@ -111,6 +111,16 @@ public enum ErrorCode {
     DOMAIN_IS_NOT_DEFINED(HttpStatus.BAD_REQUEST, "DOMAIN_IS_NOT_DEFINED", "입력하신 표준도메인분류명을 찾을 수 없습니다."),
 
     /**
+     * 해당 프로젝트의 템플릿 내 동일한 코드규칙명을 가진 코드규칙이 존재합니다.
+     */
+    TEMPLATE_CODE_RULE_NAME_IN_PROJECT_DUPLICATE(HttpStatus.BAD_REQUEST, "TEMPLATE_CODE_RULE_NAME_IN_PROJECT_DUPLICATE", "해당 프로젝트의 템플릿 내 동일한 코드규칙명을 가진 코드규칙이 존재합니다."),
+
+    /**
+     * 해당 프로젝트에 동일한 템플릿명을 가진 템플릿이 존재합니다.
+     */
+    TEMPLATE_NAME_IN_PROJECT_DUPLICATE(HttpStatus.BAD_REQUEST, "TEMPLATE_NAME_IN_PROJECT_DUPLICATE", "해당 프로젝트에 동일한 템플릿명을 가진 템플릿이 존재합니다."),
+
+    /**
      * 프로젝트 관리자는 삭제가 불가능합니다.
      */
     MANAGER_NON_DELETED(HttpStatus.BAD_REQUEST, "MANAGER_NON_DELETED", "관리자는 변경이 불가능합니다.");

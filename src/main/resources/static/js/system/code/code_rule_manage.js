@@ -100,52 +100,21 @@ $(document).ready(function () {
             type: "GET",
             success: (response) => {
                 if(response.result){
-                    const templateList = response.templates || [];
-
-                    if (templateList.length === 0) {
-                        openAlert("삭제할 수 있는 템플릿이 없습니다.");
-                        return;
-                    }
-
-                    const dialogContent = $("<div></div>");
-                    const form = $("<form></form>").attr("id", "delete-template-form");
-
-                    // 템플릿 선택 셀렉트 박스
-                    const selectBox = $(`
-                        <div class="form-group">
-                            <label for="templateSelect">삭제할 템플릿 선택</label>
-                            <select id="templateSelect" class="form-control">
-                                <option value="">템플릿을 선택하세요</option>
-                            </select>
-                        </div>
-                    `);
-
-                    templateList.forEach(template => {
-                        const option = $("<option></option>")
-                            .val(template.id)
-                            .text(template.templateName);
-                        selectBox.find("select").append(option);
-                    });
-
-                    // 삭제 버튼
-                    const deleteBtn = $("<button></button>")
-                        .attr("type", "submit")
-                        .text("삭제")
-                        .addClass("btn btn-secondary")
-                        .css("margin-top", "20px")
-                        .css("width", "100%")
-                        .on("click", codeRuleSelectorDelete);
-
-                    form.append(selectBox).append(deleteBtn);
-                    dialogContent.append(form);
-
-                    openDialog("div", {
-                        title: "템플릿 삭제",
-                        content: dialogContent
-                    });
+                    deleteTemplate(response);
                 }
             }
         })
+    });
+
+    $("#grd-add-codeRuleManageGrid").on("click", () => {
+        const projectId = $('#projectSelector').val();
+
+        // 팝업 열기
+        const popup = window.open(
+            `/popup/codeRulePopup?projectId=${projectId}&type=add`,  // 전달 파라미터
+            "addCodeRuleWindow",
+            "width=800,height=900,resizable=yes,scrollbars=yes"
+        );
     });
 
 });
@@ -188,6 +157,52 @@ function codeRuleSubmitClick(e){
     })
 }
 
+function deleteTemplate(response){
+    const templateList = response.templates || [];
+
+    if (templateList.length === 0) {
+        openAlert("삭제할 수 있는 템플릿이 없습니다.");
+        return;
+    }
+
+    const dialogContent = $("<div></div>");
+    const form = $("<form></form>").attr("id", "delete-template-form");
+
+    // 템플릿 선택 셀렉트 박스
+    const selectBox = $(`
+                        <div class="form-group">
+                            <label for="templateSelect">삭제할 템플릿 선택</label>
+                            <select id="templateSelect" class="form-control">
+                                <option value="">템플릿을 선택하세요</option>
+                            </select>
+                        </div>
+                    `);
+
+    templateList.forEach(template => {
+        const option = $("<option></option>")
+            .val(template.id)
+            .text(template.templateName);
+        selectBox.find("select").append(option);
+    });
+
+    // 삭제 버튼
+    const deleteBtn = $("<button></button>")
+        .attr("type", "submit")
+        .text("삭제")
+        .addClass("btn btn-secondary")
+        .css("margin-top", "20px")
+        .css("width", "100%")
+        .on("click", codeRuleSelectorDelete);
+
+    form.append(selectBox).append(deleteBtn);
+    dialogContent.append(form);
+
+    openDialog("div", {
+        title: "템플릿 삭제",
+        content: dialogContent
+    });
+}
+
 function codeRuleSelectorDelete(e) {
 
     e.preventDefault();
@@ -213,3 +228,12 @@ function codeRuleSelectorDelete(e) {
         });
     });
 }
+
+function codeRuleManageSuccess(){
+    openConfirm("정상적으로 코드규칙이 저장되었습니다.", () => {
+        window.searchGrid(tableId);
+    });
+}
+
+window.popupFunction = window.popupFunction || {}; // 혹시 없을 경우 방지
+window.popupFunction['codeRuleManageSuccess'] = codeRuleManageSuccess;
