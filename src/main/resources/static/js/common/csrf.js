@@ -13,6 +13,7 @@ export function getCsrfToken(cookieName = 'XSRF-TOKEN') {
 }
 
 /**
+ *
  * CSRF 헤더와 토큰을 추가하고 로딩 바를 설정하는 AJAX 설정
  */
 export function setupAjaxCsrf() {
@@ -46,11 +47,21 @@ export function setupAjaxCsrf() {
                     message = xhr.responseJSON.message;
                 }
 
-                window.openAlert(message);
+                showAlert(message);
             }
         });
 
     } else {
-        console.warn("CSRF 토큰이 쿠키에서 발견되지 않았습니다.");
+        showAlert("CSRF 토큰이 쿠키에서 발견되지 않았습니다.")
+    }
+}
+
+
+function showAlert(message) {
+
+    if (typeof window.openAlert === "function") {
+        window.openAlert(message); // 부모창 경고창 사용
+    } else {
+        alert(message); // 팝업 내부에서 기본 alert 사용
     }
 }

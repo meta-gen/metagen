@@ -32,8 +32,6 @@ public class CodeRule extends BaseEntity {
 
     private String methodForm;
 
-    private Boolean isApproval;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "template_id")
     private Template template;

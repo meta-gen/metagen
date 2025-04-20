@@ -19,4 +19,6 @@ public interface CodeRuleManageService {
     List<ColumnDto> getCodeRuleManageColumn();
 
     Page<CodeRuleDto> getCodeRuleManageData(Pageable pageable, String searchColumn, String searchQuery, Long projectId);
+
+    void saveCodeRuleManage(CodeRuleDto codeRuleDto);
 }

@@ -15,6 +15,8 @@ public class CodeRuleDto {
 
     private Long projectId;
 
+    private Long templateId;
+
     private String codeRuleName;
 
     private String codeRuleDescription;
@@ -48,7 +50,6 @@ public class CodeRuleDto {
                 .prefix(codeRule.getPrefix())
                 .suffix(codeRule.getSuffix())
                 .methodForm(codeRule.getMethodForm())
-                .isApproval(codeRule.getIsApproval() ? "Y" : "N")
                 .build();
     }
 }
