@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.koboolean.metagen.board.domain.dto.BoardDto;
 import com.koboolean.metagen.home.jpa.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -71,15 +70,4 @@ public class Board extends BaseEntity implements Serializable {
      */
     @OneToMany(mappedBy = "board")
     private List<File> file = new ArrayList<>();
-    
-    
-    public static Board fromEntity(BoardDto boardDto) {
-    	
-        return Board.builder()
-                .projectId(boardDto.getProjectId())
-                .title    (boardDto.getTitle()    )
-                .content  (boardDto.getContent()  )
-                .hitCount (boardDto.getHitCount() )
-                .build();
-    }
 }

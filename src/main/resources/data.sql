@@ -265,3 +265,8 @@ insert into account_roles(account_id, role_id) values(0,0) on CONFLICT (account_
 insert into project(is_active, project_id, created_by, project_name, updated_by, is_auto_active, account_id) values(true, 0, 'SYSTEM', 'MAIN', 'SYSTEM', true, 0) ON CONFLICT (project_id) DO NOTHING;
 
 insert into project_member(account_id, id, project_id, created_by, updated_by, is_active) values (0, 0, 0, 'SYSTEM', 'SYSTEM', true) on CONFLICT (ID) do nothing;
+
+/* 게시판 카테고리 */
+INSERT INTO boardCategory(category_id, category_name, order_number, useYn)
+VALUES ('NOTICE', '공지사항', 0, 'Y') ON CONFLICT (category_id) do nothing;
+;

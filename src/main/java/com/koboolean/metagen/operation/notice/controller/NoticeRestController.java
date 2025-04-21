@@ -79,9 +79,9 @@ public class NoticeRestController {
      * @return
      */
     @Operation(summary = "공지사항 게시글 등록", description = "공지사항을 등록한다.")
-    @PostMapping(value = "/insertNotice/notice")
+    @PostMapping(value = "/saveNotice")
     public ResponseEntity<Map<String, Boolean>> insertNotice(@AuthenticationPrincipal AccountDto accountDto
-    		                                                      , @RequestBody BoardDto boardDto) {
+    		                                               , @RequestBody BoardDto boardDto) {
 
     	noticeService.insertNotice(accountDto, boardDto);
 

@@ -41,8 +41,13 @@ public class BoardDto {
     /* 삭제 여부 */
     private char deleteYn;
     
+    /*  */
+    private BoardCategoryDto boardCategoryDto;
+    
     /* 빌더 호출 */
     public static BoardDto fromEntity(Board entity) {
+    	
+    	BoardCategoryDto boardCategoryDto = BoardCategoryDto.fromEntity(entity.getBoardCategory());
 
         return BoardDto.builder()
                        .id          (entity.getId()       )
@@ -52,7 +57,8 @@ public class BoardDto {
                        .content     (entity.getContent()  )
                        .hitCount    (entity.getHitCount() )
                        .deleteYn    (entity.getDeleteYn() )
-                       .categoryName(entity.getBoardCategory().getCategoryName())
+                       .categoryName(boardCategoryDto.getCategoryName())
+                       .categoryId  (boardCategoryDto.getCategoryId())
                        .build()
         ;
     }

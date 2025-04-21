@@ -4,20 +4,25 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.koboolean.metagen.board.domain.dto.BoardDto;
 import com.koboolean.metagen.board.domain.entity.Board;
+import com.koboolean.metagen.board.domain.entity.BoardCategory;
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardDomainDto;
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardDomain;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.grid.enums.RowType;
-import com.koboolean.metagen.operation.notice.repository.NoticeRepository;
+import com.koboolean.metagen.operation.notice.repository.BoardCategoryRepository;
+import com.koboolean.metagen.operation.notice.repository.BoardRepository;
 import com.koboolean.metagen.operation.notice.service.NoticeService;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.security.exception.CustomException;
+import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.utils.AuthUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +31,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class NoticeServiceImpl implements NoticeService {
 
-	private final NoticeRepository noticeRepository;
+	private final BoardRepository boardRepository;
+	private final BoardCategoryRepository boardCategoryRepository;
 
 	/**
 	 * [공지사항 컬럼 조회] 공지사항 그리드에 표시할 컬럼을 조회한다.
@@ -52,7 +58,7 @@ public class NoticeServiceImpl implements NoticeService {
 	@Override
 	public Page<BoardDto> getNoticeList(Pageable pageable, AccountDto accountDto) {
 
-		Page<Board> allByProjectId = noticeRepository.findAllByProjectId(accountDto.getProjectId(), pageable);
+		Page<Board> allByProjectId = boardRepository.findAllByProjectId(accountDto.getProjectId(), pageable);
 
 
 		return allByProjectId.map(BoardDto::fromEntity);
@@ -65,12 +71,30 @@ public class NoticeServiceImpl implements NoticeService {
 	 * @param boardDto
 	 */
     @Override
+    @Transactional
     public void insertNotice(AccountDto accountDto, BoardDto boardDto) {
 
         boardDto.setProjectId(accountDto.getProjectId());
         
-        Board board = Board.fromEntity(boardDto);
+        BoardCategory boardCategory = boardCategoryRepository.findById("NOTICE").orElse(null);
+        
+        /* DB 데이터가 없는 경우 객체가 비어서 Error 발생하기 때문에 */
+        if(boardCategory == null) {
 
-        noticeRepository.save(board);
+        	// 예외 처리
+        	throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+        
+        Board board = Board.builder()
+        		.projectId(boardDto.getProjectId())
+        		.boardCategory(boardCategory)		// RDB에서 join의 개념으로 본다.
+        		.title(boardDto.getTitle())
+        		.content(boardDto.getContent())
+        		.username(accountDto.getUsername())
+        		.deleteYn('Y')
+        		.hitCount(0)
+        		.build();
+        
+        boardRepository.save(board);
     }
 }
