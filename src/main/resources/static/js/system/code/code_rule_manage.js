@@ -23,7 +23,7 @@ $(document).ready(function () {
 
         const dataUrl = '/api/selectCodeRuleManage/' + $(this).val();
 
-        window.grid(tableId, dataUrl, 'cd');
+        window.grid(tableId, dataUrl, 'cd', 'codeRuleManageGrid_selectRow');
     });
 
     function setSwaggerText(isUseSwagger, isDicAbbrUsed) {
@@ -112,10 +112,37 @@ $(document).ready(function () {
         // 팝업 열기
         const popup = window.open(
             `/popup/codeRulePopup?projectId=${projectId}&type=add`,  // 전달 파라미터
-            "addCodeRuleWindow",
+            "코드규칙관리 등록/수정",
             "width=800,height=900,resizable=yes,scrollbars=yes"
         );
     });
+
+    $("#grd-delete-codeRuleManageGrid").on("click", () => {
+       const projectId = $('#projectSelector').val();
+
+        const checkedData = getCheckedDataIsNonNull(tableId);
+
+        if(checkedData.length === 0){
+            return;
+        }
+
+       openConfirm("선택한 코드규칙을 삭제하시겠습니까?", () => {
+           $.ajax({
+               url: `/api/deleteCodeRuleManage/${projectId}`,
+               type: "DELETE",
+               data: JSON.stringify(checkedData),
+               success: (response) => {
+                   if(response.result){
+                       openAlert("선택한 코드규칙을 정상적으로 삭제하였습니다.", () => {
+                          window.searchGrid(tableId);
+                       });
+                   }
+               }
+           })
+       });
+    });
+
+
 
 });
 
@@ -230,10 +257,34 @@ function codeRuleSelectorDelete(e) {
 }
 
 function codeRuleManageSuccess(){
-    openConfirm("정상적으로 코드규칙이 저장되었습니다.", () => {
+    openAlert("정상적으로 코드규칙이 저장되었습니다.", () => {
         window.searchGrid(tableId);
     });
 }
 
 window.popupFunction = window.popupFunction || {}; // 혹시 없을 경우 방지
 window.popupFunction['codeRuleManageSuccess'] = codeRuleManageSuccess;
+
+
+/**
+ *
+ * 코드규칙관리 상세 조회
+ * @param rowData
+ * @param columnList
+ * @param isManager
+ * @param tableId
+ */
+export function codeRuleManageDetail(rowData, columnList, isManager, tableId){
+
+    const projectId = $('#projectSelector').val();
+    const codeRuleId = rowData.id;
+
+    // 팝업 열기
+    const popup = window.open(
+        `/popup/codeRulePopup?projectId=${projectId}&type=modified&id=${codeRuleId}`,  // 전달 파라미터
+        "코드규칙관리 등록/수정",
+        "width=800,height=900,resizable=yes,scrollbars=yes"
+    );
+}
+
+window.gridCallbacks["codeRuleManageGrid_selectRow"] = codeRuleManageDetail;

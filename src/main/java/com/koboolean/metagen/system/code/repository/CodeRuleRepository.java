@@ -19,4 +19,8 @@ public interface CodeRuleRepository extends JpaRepository<CodeRule, Long> {
     Page<CodeRule> findAllByProjectIdAndCodeRuleNameLike(Long projectId, String codeRuleName, Pageable pageable);
 
     List<CodeRule> findAllByProjectIdAndCodeRuleNameAndTemplate_Id(Long projectId, String codeRuleName, Long templateId);
+
+    void deleteByIdAndProjectId(Long id, Long projectId);
+
+    CodeRule findByIdAndProjectId(Long id, Long projectId);
 }

@@ -42,6 +42,7 @@ public class CodeRuleDto {
         return builder()
                 .id(codeRule.getId())
                 .projectId(codeRule.getProjectId())
+                .templateId(templateDto.getId())
                 .codeRuleName(codeRule.getCodeRuleName())
                 .codeRuleDescription(codeRule.getCodeRuleDescription())
                 .template(templateDto)

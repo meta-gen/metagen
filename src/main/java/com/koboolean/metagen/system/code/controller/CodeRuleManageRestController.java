@@ -84,4 +84,27 @@ public class CodeRuleManageRestController {
         return ResponseEntity.ok(Map.of("result", true));
     }
 
+    @Operation(summary = "코드규칙관리 삭제", description = "코드규칙관리 데이터를 삭제한다.")
+    @DeleteMapping("/deleteCodeRuleManage/{projectId}")
+    public ResponseEntity<Map<String, Boolean>> deleteCodeRuleManage(@PathVariable(value = "projectId") Long projectId, @RequestBody List<CodeRuleDto> codeRuleDtos) {
+        codeRuleManageService.deleteCodeRuleManage(projectId, codeRuleDtos);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @Operation(summary = "코드규칙관리 상세조회", description = "코드규칙관리 데이터를 상세 조회한다.")
+    @GetMapping("/selectCodeRuleManage/detail/{projectId}/{id}")
+    public ResponseEntity<Map<String, Object>> selectCodeRuleManageDetail(@PathVariable(value = "projectId") Long projectId, @PathVariable(value = "id") Long id) {
+        CodeRuleDto codeRuleDto = codeRuleManageService.selectCodeRuleManageDetail(projectId, id);
+
+        return ResponseEntity.ok(Map.of("result", true, "codeRuleDto", codeRuleDto));
+    }
+
+    @Operation(summary = "코드규칙관리 수정", description = "코드규칙관리 데이터를 수정한다.")
+    @PutMapping("/saveCodeRuleManage")
+    public ResponseEntity<Map<String, Object>> updateCodeRuleManage(@RequestBody CodeRuleDto codeRuleDto){
+        codeRuleManageService.updateCodeRuleManage(codeRuleDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
 }
