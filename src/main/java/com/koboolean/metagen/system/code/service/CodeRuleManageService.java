@@ -21,4 +21,10 @@ public interface CodeRuleManageService {
     Page<CodeRuleDto> getCodeRuleManageData(Pageable pageable, String searchColumn, String searchQuery, Long projectId);
 
     void saveCodeRuleManage(CodeRuleDto codeRuleDto);
+
+    void deleteCodeRuleManage(Long projectId, List<CodeRuleDto> codeRuleDtos);
+
+    CodeRuleDto selectCodeRuleManageDetail(Long projectId, Long id);
+
+    void updateCodeRuleManage(CodeRuleDto codeRuleDto);
 }

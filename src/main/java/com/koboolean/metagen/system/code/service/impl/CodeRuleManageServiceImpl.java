@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -154,6 +155,70 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
 
         codeRuleRepository.save(codeRule);
 
+        template.getCodeRules().add(codeRule);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCodeRuleManage(Long projectId, List<CodeRuleDto> codeRuleDtos) {
+        if(!AuthUtil.isApprovalAdmin()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        codeRuleDtos.forEach(codeRuleDto -> {
+
+            CodeRule codeRule = codeRuleRepository.findById(codeRuleDto.getId()).orElse(null);
+
+            if(codeRule != null){
+                Template template = templateRepository.findById(codeRule.getTemplate().getId()).orElse(null);
+
+                Objects.requireNonNull(template).getCodeRules().remove(codeRule);
+
+                codeRuleRepository.delete(codeRule);
+            }
+
+        });
+    }
+
+    @Override
+    public CodeRuleDto selectCodeRuleManageDetail(Long projectId, Long id) {
+        CodeRule codeRule = codeRuleRepository.findByIdAndProjectId(id, projectId);
+
+        if(codeRule == null){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        return CodeRuleDto.fromEntity(codeRule);
+    }
+
+    @Override
+    @Transactional
+    public void updateCodeRuleManage(CodeRuleDto codeRuleDto) {
+        if(!AuthUtil.isApprovalAdmin()){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        CodeRule codeRule = codeRuleRepository.findById(codeRuleDto.getId()).orElse(null);
+
+        if(codeRule == null){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        codeRule.setCodeRuleName(codeRuleDto.getCodeRuleName());
+        codeRule.setCodeRuleDescription(codeRuleDto.getCodeRuleDescription());
+        codeRule.setPrefix(codeRuleDto.getPrefix());
+        codeRule.setSuffix(codeRuleDto.getSuffix());
+        codeRule.setMethodForm(codeRuleDto.getMethodForm());
+
+        Template template = templateRepository.findById(codeRuleDto.getTemplateId()).orElse(null);
+
+        if(template == null){
+            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+
+        codeRule.setTemplate(template);
+
+        template.getCodeRules().remove(codeRule);
         template.getCodeRules().add(codeRule);
     }
 

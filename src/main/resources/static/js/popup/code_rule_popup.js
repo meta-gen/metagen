@@ -14,18 +14,53 @@ $(document).ready(function () {
     const projectId = params.get("projectId");
     const type = params.get("type");
 
-    if (type === "add" && projectId) {
+    $.ajax({
+        url: `/api/selectCodeRuleManage/template/${projectId}`,
+        type: "GET",
+        success: function (response) {
+            if (response.result) {
+                setCodeRuleTemplates(response.templates || [], type);
+                $("#projectId").val(projectId);
+            }
+        }
+    });
+
+    if (type === "modified" && projectId) {
+        const id = params.get("id");
+
         $.ajax({
-            url: `/api/selectCodeRuleManage/template/${projectId}`,
+
+            url: `/api/selectCodeRuleManage/detail/${projectId}/${id}`,
             type: "GET",
-            success: function (response) {
-                if (response.result) {
-                    setCodeRuleTemplates(response.templates || [], type);
-                    $("#projectId").val(projectId);
+            success: (response) => {
+                if(response.result){
+                    const codeRule = response.codeRuleDto;
+                    $("#id").val(codeRule.id);
+                    $("#codeRuleName").val(codeRule.codeRuleName);
+                    $("#codeRuleDescription").val(codeRule.codeRuleDescription);
+                    $("#prefix").val(codeRule.prefix);
+                    $("#suffix").val(codeRule.suffix);
+                    $("#methodForm").val(codeRule.methodForm);
+                    $("#templateSelect").val(String(codeRule.templateId)).prop("disabled", true);
                 }
             }
         });
     }
+
+    $("#methodForm").on("keydown", function(e) {
+        if (e.key === "Tab") {
+            e.preventDefault();
+
+            const start = this.selectionStart;
+            const end = this.selectionEnd;
+
+            $(this).val(function(i, val) {
+                return val.substring(0, start) + "\t" + val.substring(end);
+            });
+
+            this.selectionStart = this.selectionEnd = start + 1;
+        }
+    });
 });
 
 function setCodeRuleTemplates(templateList, type) {
@@ -77,6 +112,8 @@ function submitForm() {
     let type = "PUT";
     if($("#type").val() === "add"){
         type = "POST";
+    }else{
+        data.id = $("#id").val();
     }
 
     $.ajax({
