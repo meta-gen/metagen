@@ -21,8 +21,14 @@ $(document).ready(function () {
 
         setSwaggerText(isUseSwagger, isDicAbbrUsed);
 
+        if (window.tableInstances[tableId]) {
+            window.tableInstances[tableId].destroy();
+            delete window.tableInstances[tableId];
+        }
+
         const dataUrl = '/api/selectCodeRuleManage/' + $(this).val();
 
+        $('#' + tableId + ' thead tr').empty();
         window.grid(tableId, dataUrl, 'cd', 'codeRuleManageGrid_selectRow');
     });
 
