@@ -1,8 +1,7 @@
 package com.koboolean.metagen.system.code.repository;
 
-import aj.org.objectweb.asm.commons.Remapper;
-import com.koboolean.metagen.system.project.domain.entity.CodeRule;
-import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
+import com.koboolean.metagen.system.code.domain.dto.CodeRuleDto;
+import com.koboolean.metagen.system.code.domain.entity.CodeRule;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,7 +19,7 @@ public interface CodeRuleRepository extends JpaRepository<CodeRule, Long> {
 
     List<CodeRule> findAllByProjectIdAndCodeRuleNameAndTemplate_Id(Long projectId, String codeRuleName, Long templateId);
 
-    void deleteByIdAndProjectId(Long id, Long projectId);
-
     CodeRule findByIdAndProjectId(Long id, Long projectId);
+
+    List<CodeRule> findAllByProjectIdAndTemplate_Id(Long projectId, Long codeRuleId);
 }

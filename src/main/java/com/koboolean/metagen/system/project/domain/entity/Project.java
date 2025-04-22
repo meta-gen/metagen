@@ -39,9 +39,6 @@ public class Project extends BaseEntity implements Serializable {
     @Column(name = "is_dic_abbr_used")
     private Boolean isDicAbbrUsed; // 데이터 사전 약어 사용 여부
 
-    @Column(name = "is_use_swagger")
-    private Boolean isUseSwagger;
-
     @OneToMany
     private List<Template> templateType;
 }

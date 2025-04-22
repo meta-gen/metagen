@@ -2,6 +2,7 @@ package com.koboolean.metagen.data.column.domain.entity;
 
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
 import com.koboolean.metagen.data.table.domain.entity.TableInfo;
+import com.koboolean.metagen.home.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class ColumnInfo {
+public class ColumnInfo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

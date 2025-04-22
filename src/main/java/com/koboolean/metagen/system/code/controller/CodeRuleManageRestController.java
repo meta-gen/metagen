@@ -1,8 +1,9 @@
 package com.koboolean.metagen.system.code.controller;
 
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
+import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.system.code.service.CodeRuleManageService;
-import com.koboolean.metagen.system.project.domain.dto.CodeRuleDto;
+import com.koboolean.metagen.system.code.domain.dto.CodeRuleDto;
 import com.koboolean.metagen.system.project.domain.dto.TemplateDto;
 import com.koboolean.metagen.utils.PageableUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +38,16 @@ public class CodeRuleManageRestController {
     @Operation(summary = "템플릿 목록 조회", description = "프로젝트에 해당하는 템플릿 목록을 조회한다.")
     @GetMapping("/selectCodeRuleManage/template/{projectId}")
     public ResponseEntity<Map<String, Object>> selectCodeRuleManageTemplate(@PathVariable(value = "projectId") Long projectId) {
+        List<TemplateDto> templateDtos = codeRuleManageService.selectCodeRuleManageTemplate(projectId);
+
+        return ResponseEntity.ok(Map.of("result", true, "templates", templateDtos));
+    }
+
+    @Operation(summary = "템플릿 목록 조회", description = "프로젝트에 해당하는 템플릿 목록을 조회한다.")
+    @GetMapping("/selectCodeRuleManage/template")
+    public ResponseEntity<Map<String, Object>> selectCodeRuleManageTemplate(@AuthenticationPrincipal AccountDto accountDto) {
+        Long projectId = accountDto.getProjectId();
+
         List<TemplateDto> templateDtos = codeRuleManageService.selectCodeRuleManageTemplate(projectId);
 
         return ResponseEntity.ok(Map.of("result", true, "templates", templateDtos));

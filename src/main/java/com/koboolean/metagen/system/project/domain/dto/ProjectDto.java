@@ -35,8 +35,6 @@ public class ProjectDto {
 
     private Boolean isDicAbbrUsed;
 
-    private Boolean isUseSwagger;
-
     private List<TemplateDto> templates;
 
     public static ProjectDto fromEntity(Project project) {
@@ -53,7 +51,6 @@ public class ProjectDto {
                 projectMembers,
                 false,
                 project.getIsDicAbbrUsed(),
-                project.getIsUseSwagger(),
                 project.getTemplateType().stream().map(TemplateDto::fromEntity).toList()
         );
     }
@@ -74,7 +71,6 @@ public class ProjectDto {
                 projectMembers,
                 isModified,
                 project.getIsDicAbbrUsed(),
-                project.getIsUseSwagger(),
                 project.getTemplateType().stream().map(TemplateDto::fromEntity).toList()
         );
     }

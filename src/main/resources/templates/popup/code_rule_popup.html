@@ -51,7 +51,7 @@
 
             <div class="form-group">
                 <label for="codeRuleDescription">코드규칙 내용</label>
-                <input type="text" id="codeRuleDescription" class="form-control" />
+                <input type="text" id="codeRuleDescription" class="form-control" placeholder="${1}을 조회한다. (${1}을 입력 시 코드규칙 명칭 키워드로 치환됩니다.)"/>
             </div>
 
             <div class="form-group">
@@ -70,6 +70,7 @@
                           placeholder='▶ **\${0}** : 메소드 또는 함수 이름이 들어가는 부분입니다.
 ▶ **\${1}** : 코드 규칙에 따라 작성된 메소드의 간단한 명칭입니다.
 ▶ **\${2}** : 메소드의 기능 또는 목적에 대한 설명이 들어갑니다.
+▶ **\${3}** : 코드규칙에 등록한 기타 설명이 들어갑니다.
 ▶ **\${USER_NAME}** : 사용자 명이 입력됩니다.
 ▶ Operation 어노테이션을 통한 Swagger 설명은 메소드 형식에 직접 입력하지 않아도, 프로젝트 관리 내 Swagger 사용 설정 시 자동으로 적용됩니다.
 /**

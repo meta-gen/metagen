@@ -1,6 +1,7 @@
 package com.koboolean.metagen.system.project.domain.entity;
 
 import com.koboolean.metagen.home.jpa.BaseEntity;
+import com.koboolean.metagen.system.code.domain.entity.CodeRule;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,7 +29,7 @@ public class Template extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private Project project;
 
-    @OneToMany
+    @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CodeRule> codeRules;
 
 }

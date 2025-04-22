@@ -14,4 +14,6 @@ public interface TemplateRepository extends JpaRepository<Template, Long> {
     void deleteByProjectId(Long projectId);
 
     List<Template> findAllByProjectIdAndTemplateName(Long projectId, String templateName);
+
+    Template findByIdAndProjectId(Long id, Long projectId);
 }

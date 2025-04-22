@@ -27,4 +27,9 @@ public class PopupController {
     public String codeRulePopup(){
         return "popup/code_rule_popup";
     }
+
+    @GetMapping("/codeRuleDetailPopup")
+    public String codeRuleDetailPopup(){
+        return "popup/code_rule_detail_popup";
+    }
 }
