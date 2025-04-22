@@ -5,6 +5,10 @@ spring:
     url: jdbc:postgresql://localhost:15439/meta-gen?charSet=UTF-8
     username: meta-gen
     password: meta-gen
+  data:
+    redis:
+      host: redis
+      port: 16379
   jpa:
     hibernate:
       ddl-auto: create-drop
