@@ -23,6 +23,21 @@ $(document).ready(() => {
         const checkedData = getCheckedDataIsNonNull(tableId);
 
         if(!checkedData) return;
+
+        window.openConfirm("선택한 코드 규칙을 삭제하시겠습니까?", () => {
+            $.ajax({
+                url: "/api/deleteCodeRule",
+                type : "DELETE",
+                data: JSON.stringify(checkedData),
+                success: (response) => {
+                    if(response.result){
+                        openAlert("선택한 코드규칙이 삭제되었습니다.", () => {
+                            window.searchGrid(tableId);
+                        })
+                    }
+                }
+            });
+        });
     });
 
 });

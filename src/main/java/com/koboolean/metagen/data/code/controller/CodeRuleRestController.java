@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -92,5 +93,15 @@ public class CodeRuleRestController {
     public ResponseEntity<Map<String, Object>> selectCodeRuleDetail(@AuthenticationPrincipal AccountDto accountDto, @PathVariable(value = "id") Long id) {
         CodeRuleDetailDto dto = codeRuleService.selectCodeRuleDetailDataById(accountDto, id);
         return ResponseEntity.ok(Map.of("result", true, "codeRule", dto));
+    }
+
+
+    @Operation(summary = "코드규칙 삭제", description = "선택한 코드규칙 목록을 삭제한다.")
+    @DeleteMapping("/deleteCodeRule")
+    public ResponseEntity<Map<String, Object>> deleteCodeRule(@AuthenticationPrincipal AccountDto accountDto, @RequestBody List<CodeRuleDetailDto> dtos) {
+
+        codeRuleService.deleteCodeRule(accountDto, dtos);
+
+        return ResponseEntity.ok(Map.of("result", true));
     }
 }

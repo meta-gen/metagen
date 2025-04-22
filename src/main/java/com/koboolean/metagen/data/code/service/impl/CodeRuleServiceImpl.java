@@ -193,6 +193,14 @@ public class CodeRuleServiceImpl implements CodeRuleService {
         return codeRuleDetailDto;
     }
 
+    @Override
+    @Transactional
+    public void deleteCodeRule(AccountDto accountDto, List<CodeRuleDetailDto> dtos) {
+        dtos.forEach(dto -> {
+            codeRuleDetailRepository.deleteById(dto.getId());
+        });
+    }
+
     private void selectCodeRuleDetail(AccountDto accountDto, CodeRuleDetailDto codeRuleDetailDto, CodeRule codeRule, Long projectId, Project project) {
         String[] methodKeyword = codeRuleDetailDto.getMethodKeyword().split(" ");
 

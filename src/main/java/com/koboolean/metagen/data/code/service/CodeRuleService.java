@@ -23,4 +23,6 @@ public interface CodeRuleService {
     void updateCodeRule(AccountDto accountDto, CodeRuleDetailDto codeRuleDetailDto);
 
     CodeRuleDetailDto selectCodeRuleDetailDataById(AccountDto accountDto, Long id);
+
+    void deleteCodeRule(AccountDto accountDto, List<CodeRuleDetailDto> dtos);
 }
