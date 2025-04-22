@@ -267,6 +267,6 @@ insert into project(is_active, project_id, created_by, project_name, updated_by,
 insert into project_member(account_id, id, project_id, created_by, updated_by, is_active) values (0, 0, 0, 'SYSTEM', 'SYSTEM', true) on CONFLICT (ID) do nothing;
 
 /* 게시판 카테고리 */
-INSERT INTO boardCategory(category_id, category_name, order_number, useYn)
+INSERT INTO board_category(category_id, category_name, order_number, use_yn)
 VALUES ('NOTICE', '공지사항', 0, 'Y') ON CONFLICT (category_id) do nothing;
 ;
