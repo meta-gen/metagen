@@ -136,7 +136,6 @@ $(document).ready(function () {
             isActive: $form.find('[name="isActive"]').is(':checked'),
             isAutoActive: $form.find('[name="isAutoActive"]').is(':checked'),
             isDicAbbrUsed : $form.find('[name="isDicAbbrUsed"]').is(':checked'),
-            isUseSwagger: $form.find('[name="isUseSwagger"]').is(':checked'),
             templateType: $('#templateTypes').val()
         };
 
@@ -260,11 +259,6 @@ $(document).ready(function () {
             <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
                 <input type="checkbox" id="project-dicAbbrUsed" name="isDicAbbrUsed" class="form-check-input" ${projectData.isDicAbbrUsed ? 'checked' : ''} />
                 <label class="form-check-label" for="project-dicAbbrUsed">데이터 사전 약어 사용 여부</label>
-            </div>
-            
-            <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
-                <input type="checkbox" id="project-swagger" name="isUseSwagger" class="form-check-input" ${projectData.isUseSwagger ? 'checked' : ''} />
-                <label class="form-check-label" for="project-swagger">Swagger 사용 여부</label>
             </div>
 
             ${templateTypeHtml}

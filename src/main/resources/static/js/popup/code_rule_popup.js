@@ -21,31 +21,32 @@ $(document).ready(function () {
             if (response.result) {
                 setCodeRuleTemplates(response.templates || [], type);
                 $("#projectId").val(projectId);
+
+                if (type === "modified" && projectId) {
+                    const id = params.get("id");
+
+                    $.ajax({
+
+                        url: `/api/selectCodeRuleManage/detail/${projectId}/${id}`,
+                        type: "GET",
+                        success: (response) => {
+                            if(response.result){
+                                const codeRule = response.codeRuleDto;
+
+                                $("#id").val(codeRule.id);
+                                $("#codeRuleName").val(codeRule.codeRuleName);
+                                $("#codeRuleDescription").val(codeRule.codeRuleDescription);
+                                $("#prefix").val(codeRule.prefix);
+                                $("#suffix").val(codeRule.suffix);
+                                $("#methodForm").val(codeRule.methodForm);
+                                $("#templateSelect").val(String(codeRule.templateId)).prop("disabled", true);
+                            }
+                        }
+                    });
+                }
             }
         }
     });
-
-    if (type === "modified" && projectId) {
-        const id = params.get("id");
-
-        $.ajax({
-
-            url: `/api/selectCodeRuleManage/detail/${projectId}/${id}`,
-            type: "GET",
-            success: (response) => {
-                if(response.result){
-                    const codeRule = response.codeRuleDto;
-                    $("#id").val(codeRule.id);
-                    $("#codeRuleName").val(codeRule.codeRuleName);
-                    $("#codeRuleDescription").val(codeRule.codeRuleDescription);
-                    $("#prefix").val(codeRule.prefix);
-                    $("#suffix").val(codeRule.suffix);
-                    $("#methodForm").val(codeRule.methodForm);
-                    $("#templateSelect").val(String(codeRule.templateId)).prop("disabled", true);
-                }
-            }
-        });
-    }
 
     $("#methodForm").on("keydown", function(e) {
         if (e.key === "Tab") {

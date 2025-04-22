@@ -80,7 +80,6 @@ public class ProjectManageServiceImpl implements ProjectManageService {
                 .account(account)
                 .isAutoActive(projectDto.getIsAutoActive())
                 .isDicAbbrUsed(projectDto.getIsDicAbbrUsed())
-                .isUseSwagger(projectDto.getIsUseSwagger())
                 .build();
 
         ProjectMember projectMember = ProjectMember.builder()
@@ -107,7 +106,6 @@ public class ProjectManageServiceImpl implements ProjectManageService {
         project.setAccount(account);
         project.setIsActive(projectDto.getIsActive());
         project.setIsAutoActive(projectDto.getIsAutoActive());
-        project.setIsUseSwagger(projectDto.getIsUseSwagger());
         project.setIsDicAbbrUsed(projectDto.getIsDicAbbrUsed());
 
     }

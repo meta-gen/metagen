@@ -1,0 +1,94 @@
+<!-- 예: public/popup/add-code-rule.html -->
+<html>
+<head>
+    <title>MetaGen</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/dataTables.dataTables.min.css}">
+    <link rel="stylesheet" th:href="@{/js/jquery-ui-1.14.1.custom/jquery-ui.css}">
+    <link rel="stylesheet" th:href="@{/css/popup.css}">
+
+    <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.js}"></script>
+    <script th:src="@{/js/dataTables.min.js}"></script>
+    <script th:src="@{/js/jquery-ui-1.14.1.custom/jquery-ui.js}"></script>
+    <script type="module" th:src="@{/js/popup/code_rule_detail_popup.js}"></script>
+
+    <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
+</head>
+
+<body>
+<div class="popup-container">
+    <div class="popup-header">
+        <h1>코드규칙</h1>
+        <p style="font-size: 0.9rem; color: #666; margin-top: 4px;">
+            코드규칙을 등록/수정합니다.
+        </p>
+    </div>
+
+    <form class="popup-form">
+        <input type="hidden" id="type" />
+        <input type="hidden" id="id" />
+        <input type="hidden" id="isDicAbbrUsed" />
+        <input type="hidden" id="dummyData" />
+
+        <div class="form-group">
+            <label for="templateSelect">템플릿 선택</label>
+            <select id="templateSelect" class="form-control">
+                <option value="">템플릿을 선택하세요</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="codeRule">코드규칙 선택</label>
+            <select id="codeRule" class="form-control">
+                <option value="">코드규칙을 선택하세요</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="functionGroup">그룹명</label>
+            <input type="text" id="functionGroup" class="form-control" placeholder="예: 회원관리, 게시판, 인증 등 기능 그룹 이름을 입력하세요"/>
+        </div>
+
+        <div class="form-group">
+            <label for="methodKeyword">명칭 키워드</label>
+            <input type="text" id="methodKeyword" class="form-control" placeholder="예: 사용자 아이디 → userId, 주문 내역 조회 → orderHistory (띄어쓰기를 통해 조회를 수행합니다.)"/>
+        </div>
+
+        <div class="form-group">
+            <label for="methodPurpose">명칭 설명</label>
+            <input type="text" id="methodPurpose" class="form-control" placeholder="예: 사용자 아이디 정보를 반환하는 메소드입니다. (미입력 시 명칭 키워드 와 코드규칙의 코드규칙 내용이 입력됩니다.)"/>
+        </div>
+
+        <div class="form-group">
+            <label for="description">기타 설명</label>
+            <input type="text" id="description" class="form-control" placeholder="선택 사항: 코드 규칙에 대한 추가 설명을 입력하세요"/>
+        </div>
+    </form>
+
+    <div class="form-group form-check">
+        <input type="checkbox" class="form-check-input" id="useSwagger">
+        <label class="form-check-label" for="useSwagger">Swagger 사용 여부</label>
+    </div>
+
+    <div class="button-container" style="justify-content:flex-end; display: flex;">
+        <button class="btn btn-primary" id="set-button">변환</button>
+        <button class="btn btn-primary" id="save-button" style="display: none">저장</button>
+    </div>
+
+    <form class="popup-form">
+        <div class="form-group">
+            <label for="methodName">변환된 메소드명</label>
+            <input type="text" id="methodName" class="form-control" placeholder="" readonly disabled/>
+        </div>
+
+        <div class="form-group">
+            <label for="methodForm">메소드 양식</label>
+            <textarea id="methodForm" class="form-control" rows="7" readonly disabled></textarea>
+        </div>
+    </form>
+</div>
+</body>
+</html>

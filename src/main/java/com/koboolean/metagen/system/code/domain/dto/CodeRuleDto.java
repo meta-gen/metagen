@@ -1,7 +1,7 @@
-package com.koboolean.metagen.system.project.domain.dto;
+package com.koboolean.metagen.system.code.domain.dto;
 
-import com.koboolean.metagen.system.project.domain.entity.CodeRule;
-import com.koboolean.metagen.system.project.domain.entity.Template;
+import com.koboolean.metagen.system.code.domain.entity.CodeRule;
+import com.koboolean.metagen.system.project.domain.dto.TemplateDto;
 import lombok.*;
 
 @Builder
