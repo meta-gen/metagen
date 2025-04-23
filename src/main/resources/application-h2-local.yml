@@ -6,6 +6,10 @@ spring:
     driver-class-name: org.h2.Driver
     username: meta-gen
     password: meta-gen
+  data:
+    redis:
+      host: redis
+      port: 16379
   jpa:
     hibernate:
       ddl-auto: create-drop

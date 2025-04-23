@@ -16,7 +16,10 @@ export function getCsrfToken(cookieName = 'XSRF-TOKEN') {
  *
  * CSRF 헤더와 토큰을 추가하고 로딩 바를 설정하는 AJAX 설정
  */
-export function setupAjaxCsrf() {
+export function setupAjaxCsrf(type) {
+
+    if(type === undefined) type = true;
+
     const csrfToken = getCsrfToken();
 
     if (csrfToken) {
@@ -30,11 +33,11 @@ export function setupAjaxCsrf() {
                 }
 
                 // AJAX 요청이 시작될 때 로딩 바 표시
-                $("#loading-bar").show();
+                if(type) $("#loading-bar").show();
             },
             complete: function () {
                 // AJAX 요청이 완료되면 로딩 바 숨김
-                $("#loading-bar").hide();
+                if(type) $("#loading-bar").hide();
             },
             error: function (xhr) {
                 let message = "알 수 없는 오류가 발생했습니다.";

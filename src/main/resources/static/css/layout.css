@@ -585,3 +585,38 @@ section h2 {
         text-align: center;
     }
 }
+
+.user-list {
+ list-style: none;
+ padding-left: 0;
+ margin: 0;
+}
+
+.user-item {
+display: flex;
+flex-direction: column;
+gap: 2px;
+margin-bottom: 8px;
+padding: 8px 10px;
+border-radius: 6px;
+transition: background-color 0.2s;
+cursor: pointer;
+}
+
+.user-item:hover {
+background-color: #f0f2f5;
+}
+
+.user-name {
+font-weight: 600;
+}
+
+.user-project {
+font-size: 0.8rem;
+color: #666;
+}
+
+.user-role {
+font-size: 0.75rem;
+color: #999;
+}

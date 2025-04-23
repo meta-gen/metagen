@@ -1,5 +1,6 @@
 package com.koboolean.metagen.system.project.repository;
 
+import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
 import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,4 +16,6 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
     List<ProjectMember> findAllByProject_Id(Long projectId);
 
     Page<ProjectMember> findAllByIsActiveAndProject_id(Pageable pageable, boolean y, Long projectId);
+
+    ProjectMember findAllByProject_IdAndAccount_Username(Long projectId, String username);
 }

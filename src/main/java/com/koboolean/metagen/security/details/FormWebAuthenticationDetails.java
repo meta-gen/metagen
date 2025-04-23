@@ -9,9 +9,11 @@ public class FormWebAuthenticationDetails extends WebAuthenticationDetails {
 
     private final String secretKey;
     private final Long projectId;
+    private final HttpServletRequest request;
 
     public FormWebAuthenticationDetails(HttpServletRequest request) {
         super(request);
+        this.request = request;
         secretKey = request.getParameter("secret_key");
         projectId = Long.parseLong(request.getParameter("project_id"));
     }
