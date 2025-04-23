@@ -3,6 +3,7 @@ package com.koboolean.metagen.user.service;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
+import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -31,4 +32,9 @@ public interface UserService {
 
     void saveUserPassword(AccountDto accountDto);
 
+    List<AccountDto> getAccountList();
+
+    String getProjectName(Long projectId);
+
+    ProjectMemberDto getProjectRoleName(Long projectId, String username);
 }

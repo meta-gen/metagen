@@ -3,6 +3,7 @@ package com.koboolean.metagen.system.user.controller;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
 import com.koboolean.metagen.user.service.UserService;
 import com.koboolean.metagen.utils.PageableUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,12 +12,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Tag(name = "User Manage API", description = "사용자 관련 API")
 @RestController
@@ -25,6 +27,7 @@ import java.util.Map;
 public class UserRestController {
 
     private final UserService userService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Operation(summary = "사용자 관리 컬럼 조회", description = "사용자 관리 컬럼 목록을 조회합니다.")
     @GetMapping("/selectUser/column")
@@ -76,5 +79,67 @@ public class UserRestController {
         userService.saveUserPassword(accountDto);
 
         return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @GetMapping("/activeUsers")
+    public ResponseEntity<Map<String,Object>> getActiveUsers() {
+        List<AccountDto> accountDtos = userService.getAccountList(); // 전체 사용자
+        Set<String> keys = redisTemplate.keys("login:user:*");
+
+        Map<String, Map<Object, Object>> redisDataMap = new HashMap<>();
+
+        if (keys != null) {
+            for (String key : keys) {
+                Map<Object, Object> data = redisTemplate.opsForHash().entries(key);
+                if (!data.isEmpty()) {
+                    redisDataMap.put(key, data);
+                }
+            }
+        }
+
+        List<Map<String, String>> loggedIn = new ArrayList<>();
+        List<Map<String, String>> loggedOut = new ArrayList<>();
+
+        for (AccountDto dto : accountDtos) {
+            String redisKey = "login:user:" + dto.getId();
+
+            if (redisDataMap.containsKey(redisKey)) {
+                Map<Object, Object> redisData = redisDataMap.get(redisKey);
+
+                Long projectId = Long.parseLong(String.valueOf(redisData.get("projectId")));
+
+                String username = dto.getUsername();
+                String projectName = userService.getProjectName(projectId);
+                ProjectMemberDto projectRole = userService.getProjectRoleName(projectId, username);
+
+                Map<String, String> user = new HashMap<>();
+
+                if ("O".equals(projectRole.getProjectManagerYn())) {
+                    user.put("role", "매니저");
+                } else {
+                    user.put("role", "사용자");
+                }
+
+
+                user.put("name", dto.getName());
+                user.put("project", projectName);
+                user.put("status", "active");
+
+                loggedIn.add(user);
+            } else {
+                Map<String, String> user = new HashMap<>();
+                user.put("username", dto.getUsername());
+                user.put("name", dto.getName());
+                user.put("status", "inactive");
+
+                loggedOut.add(user);
+            }
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "result", true,
+                "activeUsers", loggedIn,
+                "inactiveUsers", loggedOut
+        ));
     }
 }

@@ -7,7 +7,7 @@ spring:
     password: meta-gen
   data:
     redis:
-      host: redis
+      host: localhost
       port: 16379
   jpa:
     hibernate:

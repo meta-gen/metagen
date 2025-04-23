@@ -1,10 +1,13 @@
 package com.koboolean.metagen.security.conf;
 
+import com.koboolean.metagen.security.domain.dto.AccountDto;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -13,9 +16,13 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
+import java.time.Duration;
 
 @Component
+@RequiredArgsConstructor
 public class CustomOncePerRequestFilter extends OncePerRequestFilter {
+
+    private final RedisTemplate<String, Object> redisTemplate;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -45,6 +52,17 @@ public class CustomOncePerRequestFilter extends OncePerRequestFilter {
         // 요청 본문을 강제적으로 캐싱하지 않고 그대로 유지
         request.setAttribute("CACHED_REQUEST", requestToUse);
         request.setAttribute("CACHED_RESPONSE", responseToUse);
+
+        AccountDto accountDto = (AccountDto) request.getSession().getAttribute("account");
+
+        if (accountDto != null && accountDto.getId() != null) {
+            String key = "login:user:" + accountDto.getId();
+            Boolean exists = redisTemplate.hasKey(key);
+            if (exists) {
+                // TTL 연장
+                redisTemplate.expire(key, Duration.ofMinutes(30));
+            }
+        }
 
         // 필터 체인 실행 (중요: 감싼 요청과 응답을 사용해야 함)
         filterChain.doFilter(requestToUse, responseToUse);

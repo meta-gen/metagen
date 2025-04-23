@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +28,7 @@ import java.util.Map;
 public class LoginController {
 
     private final UserService userService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     /**
      * 로그인
@@ -63,8 +65,12 @@ public class LoginController {
      * @return
      */
     @GetMapping(value = "/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response) {
+    public String logout(@AuthenticationPrincipal AccountDto accountDto, HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
+
+        String key = "login:user:" + accountDto.getId();
+        redisTemplate.delete(key);
+
         if (authentication != null) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }

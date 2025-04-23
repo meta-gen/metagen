@@ -8,6 +8,7 @@ import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.exception.CustomException;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.security.domain.entity.Account;
+import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
 import com.koboolean.metagen.system.project.domain.entity.Project;
 import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
 import com.koboolean.metagen.security.domain.entity.Role;
@@ -238,6 +239,21 @@ public class UserServiceImpl implements UserService {
             account.setPassword(passwordEncoder.encode(accountDto.getUsername()));
             account.setPasswdCheck(false);
         }
+    }
+
+    @Override
+    public List<AccountDto> getAccountList() {
+        return userRepository.findAll().stream().map(AccountDto::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public String getProjectName(Long projectId) {
+        return projectRepository.findById(projectId).orElse(Project.builder().projectName("NAN").build()).getProjectName();
+    }
+
+    @Override
+    public ProjectMemberDto getProjectRoleName(Long projectId, String username) {
+        return ProjectMemberDto.fromEntity(projectMemberRepository.findAllByProject_IdAndAccount_Username(projectId, username));
     }
 
 
