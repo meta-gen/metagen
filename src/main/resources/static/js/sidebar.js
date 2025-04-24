@@ -38,17 +38,27 @@ function fetchActiveUsers() {
             $inactiveList.empty();
 
             (response.activeUsers || []).forEach(user => {
-                const $li = $(`
-                    <li class="user-item">
-                        ${user.name} ${user.project}(${user.role})
-                    </li>
-                `);
+                let li;
 
-                $li.on("click", function () {
-                    console.log("메시지 대상:", user);
+                if(user.isMyData === "true"){
+                    li = $(`
+                            <li class="user-my-item">
+                                ${user.name} ${user.project}(${user.role})
+                            </li>
+                        `);
+                }else{
+                   li = $(`
+                            <li class="user-item">
+                                ${user.name} ${user.project}(${user.role})
+                            </li>
+                        `);
+                }
+
+                li.on("click", function () {
+                    submitMessage(user);
                 });
 
-                $("#user-list-active").append($li);
+                $("#user-list-active").append(li);
             });
 
             (response.inactiveUsers || []).forEach(user => {
@@ -64,3 +74,8 @@ function fetchActiveUsers() {
     });
 }
 
+function submitMessage(user){
+    if(user.isMyData === "false"){
+        console.log(user);
+    }
+}

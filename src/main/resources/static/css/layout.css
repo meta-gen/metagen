@@ -81,6 +81,7 @@ header {
     position: sticky;
     top: 56px; /* 헤더 높이만큼 아래로 배치 */
     border-right: 1px solid #dee2e6; /* 사이드바 분리선 */
+    overflow-y: auto;
 }
 
 .content {
@@ -593,14 +594,31 @@ section h2 {
 }
 
 .user-item {
-display: flex;
-flex-direction: column;
-gap: 2px;
-margin-bottom: 8px;
-padding: 8px 10px;
-border-radius: 6px;
-transition: background-color 0.2s;
-cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+
+    border-bottom: 1px solid #eee; /* 구분선 추가 */
+}
+
+.user-item:last-child {
+    border-bottom: none;
+}
+
+.user-my-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    cursor: pointer;
 }
 
 .user-item:hover {
