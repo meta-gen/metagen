@@ -82,7 +82,7 @@ public class UserRestController {
     }
 
     @GetMapping("/activeUsers")
-    public ResponseEntity<Map<String,Object>> getActiveUsers() {
+    public ResponseEntity<Map<String,Object>> getActiveUsers(@AuthenticationPrincipal AccountDto accountDto) {
         List<AccountDto> accountDtos = userService.getAccountList(); // 전체 사용자
         Set<String> keys = redisTemplate.keys("login:user:*");
 
@@ -120,7 +120,8 @@ public class UserRestController {
                     user.put("role", "사용자");
                 }
 
-
+                user.put("isMyData", dto.getId().equals(accountDto.getId()) ? "true" : "false");
+                user.put("id", dto.getId());
                 user.put("name", dto.getName());
                 user.put("project", projectName);
                 user.put("status", "active");
