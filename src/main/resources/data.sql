@@ -246,10 +246,10 @@ insert into role_resources(resource_id, role_id) values (42,3) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (43,3) on CONFLICT DO NOTHING; -- 테이블컬럼 삭제
 insert into role_resources(resource_id, role_id) values (44,3) on CONFLICT DO NOTHING; -- 컬럼 업로드
 insert into role_resources(resource_id, role_id) values (46,3) on CONFLICT DO NOTHING; -- 테이블 업로드
-insert into role_resources(resource_id, role_id) values (56,3) on CONFLICT DO NOTHING; -- 테이블 업로드
-insert into role_resources(resource_id, role_id) values (57,3) on CONFLICT DO NOTHING; -- 테이블 업로드
-insert into role_resources(resource_id, role_id) values (58,3) on CONFLICT DO NOTHING; -- 테이블 업로드
-insert into role_resources(resource_id, role_id) values (59,3) on CONFLICT DO NOTHING; -- 테이블 업로드
+insert into role_resources(resource_id, role_id) values (56,3) on CONFLICT DO NOTHING; -- 코드규칙 조회
+insert into role_resources(resource_id, role_id) values (57,3) on CONFLICT DO NOTHING; -- 코드규칙 저장
+insert into role_resources(resource_id, role_id) values (58,3) on CONFLICT DO NOTHING; -- 코드규칙 삭제
+insert into role_resources(resource_id, role_id) values (59,3) on CONFLICT DO NOTHING; -- 코드규칙 팝업
 
 -- ROLE_DBA
 insert into role_resources(resource_id, role_id) values (31,2) on CONFLICT DO NOTHING; -- 프로젝트저장
