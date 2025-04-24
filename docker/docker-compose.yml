@@ -16,8 +16,6 @@ services:
   meta-gen-redis:
     image: redis:7.4
     container_name: redis
-    ports:
-      - 16379:6379
     restart: always
     networks:
       - meta-network

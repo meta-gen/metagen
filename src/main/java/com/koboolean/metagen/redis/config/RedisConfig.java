@@ -1,5 +1,6 @@
 package com.koboolean.metagen.redis.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,8 +15,9 @@ public class RedisConfig {
 
     @Bean
     @ConfigurationProperties(prefix = "spring.data.redis")
-    public LettuceConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory();
+    public LettuceConnectionFactory redisConnectionFactory( @Value("${spring.data.redis.host}") String host,
+                                                            @Value("${spring.data.redis.port}") int port) {
+        return new LettuceConnectionFactory(host, port);
     }
 
     @Bean
