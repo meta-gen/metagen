@@ -6,6 +6,15 @@ $(document).ready(function(){
     if ($activeUserList.length > 0 && $activeUserList.is(":visible")) {
         fetchActiveUsers(); // 최초 1회
         setInterval(fetchActiveUsers, 30_000); // 30초마다 갱신
+    }else if($("#sidebarToggleBtn").length > 0){
+        // 토글 버튼을 클릭해서 모바일로 접근했을 때
+        $("#sidebarToggleBtn").on("click", function () {
+            const sidebar = $(".sidebar");
+
+            if(sidebar.length > 0 && sidebar.is(":visible")){
+                fetchActiveUsers();
+            }
+        });
     }
 });
 
