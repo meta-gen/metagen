@@ -86,10 +86,10 @@
             <button onclick="closeChat()" class="close-btn">×</button>
         </div>
         <div class="chat-messages" id="chat-messages"></div>
-        <div class="chat-input">
-            <input type="text" id="chat-input" placeholder="메시지를 입력하세요" onkeydown="handleChatInput(event)">
-            <button class="btn btn-primary" onclick="sendChatMessage()">전송</button>
-        </div>
+        <form class="chat-input" id="chat-form">
+            <input type="text" id="chat-input" placeholder="메시지를 입력하세요" />
+            <button type="submit" class="btn btn-primary" id="submit-btn">전송</button>
+        </form>
     </div>
 
     <!-- Footer -->
