@@ -112,12 +112,22 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("WebSocket 연결됨:", frame);
     });
 
+    let isComposing = false;
+
     const $input = document.getElementById("chat-input");
 
+    $input.addEventListener("compositionstart", () => {
+        isComposing = true; // 한글 조합 시작
+    });
+
+    $input.addEventListener("compositionend", () => {
+        isComposing = false; // 한글 조합 끝
+    });
+
     $input.addEventListener("keydown", function (event) {
-        if (event.key === "Enter" && !event.shiftKey) {
-            event.preventDefault(); // 줄바꿈 막기
-            sendChatMessage(); // 너가 정의한 메시지 전송 함수
+        if (event.key === "Enter" && !event.shiftKey && !isComposing) {
+            event.preventDefault(); // 줄바꿈 방지
+            sendChatMessage(); // 메시지 전송
         }
     });
 });
