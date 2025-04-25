@@ -41,7 +41,7 @@ export function setupAjaxCsrf(type) {
             },
             error: function (xhr) {
                 let message = "알 수 없는 오류가 발생했습니다.";
-                debugger
+
                 if (xhr.status === 401) {
                     message = "세션이 만료되어 로그인 화면으로 이동합니다.";
 
