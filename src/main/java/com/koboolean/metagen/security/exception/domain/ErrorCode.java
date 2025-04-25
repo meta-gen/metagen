@@ -35,9 +35,9 @@ public enum ErrorCode {
     PASSWORD_IS_NON_VALIDATOR(HttpStatus.BAD_REQUEST, "PASSWORD_IS_NON_VALIDATOR", "비밀번호는 8자 이상, 대문자 및 특수문자를 각각 하나 이상 포함해야 합니다."),
 
     /**
-     * 아이디는 5~20자의 소문자와 숫자만 사용할 수 있습니다.
+     * 아이디는 5~20자 사이의 소문자, 숫자, 밑줄(_)로 구성할 수 있습니다. 단, 밑줄은 처음과 끝에 사용할 수 없으며 연속된 밑줄도 허용되지 않습니다.
      */
-    USERNAME_IS_NON_VALIDATOR(HttpStatus.BAD_REQUEST, "USERNAME_IS_NON_VALIDATOR", "아이디는 5~20자의 소문자와 숫자만 사용할 수 있습니다."),
+    USERNAME_IS_NON_VALIDATOR(HttpStatus.BAD_REQUEST, "USERNAME_IS_NON_VALIDATOR", "아이디는 5~20자 사이의 소문자, 숫자, 밑줄(_)로 구성할 수 있습니다. 단, 밑줄은 처음과 끝에 사용할 수 없으며 연속된 밑줄도 허용되지 않습니다."),
 
     /**
      * 동일한 형식의 표준 용어와 표준 도메인이 존재합니다. 중복된 용어는 등록이 불가능합니다.
