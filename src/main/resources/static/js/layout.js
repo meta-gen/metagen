@@ -332,7 +332,6 @@ function loadChatHistory(user) {
 }
 
 function showPreviewOrBadge(fromId, content) {
-    debugger
     const userElement = document.querySelector(`.user-item[data-id="${fromId}"]`);
 
     if (userElement) {
