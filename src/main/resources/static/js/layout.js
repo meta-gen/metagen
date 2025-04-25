@@ -1,3 +1,5 @@
+let stompClient = null;
+
 // 메뉴 상태 저장
 window.toggleMenu = function (event, menuId, menuLink) {
     event.preventDefault(); // 기본 동작 방지
@@ -98,6 +100,26 @@ document.addEventListener('DOMContentLoaded', function () {
     makeDialogDraggable("myAlert");
     makeDialogDraggable("myConfirm");
     makeDialogDraggable("mainConfirm", "#mainDialogTitle");
+
+    if (typeof Stomp === 'undefined') {
+        console.error('STOMP 라이브러리가 로딩되지 않았습니다.');
+        return;
+    }
+
+    const socket = new SockJS("/ws-chat");
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+        console.log("WebSocket 연결됨:", frame);
+    });
+
+    const $input = document.getElementById("chat-input");
+
+    $input.addEventListener("keydown", function (event) {
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault(); // 줄바꿈 막기
+            sendChatMessage(); // 너가 정의한 메시지 전송 함수
+        }
+    });
 });
 
 function callableFunction() {
@@ -231,5 +253,100 @@ function toggleSidebar() {
     } else {
         sidebar.classList.remove('d-block');
         sidebar.classList.add('d-none');
+    }
+}
+
+let currentTarget = null;
+
+function openChat(user) {
+    currentTarget = user.id;
+    $("#chat-target").text(`${user.name}님과의 채팅`);
+    $("#chat-box").show();
+    $("#chat-messages").empty();
+
+    const loginUserId = $("#hidden-user-id").val();
+
+    stompClient.subscribe("/sub/chat/" + loginUserId, function (messageOutput) {
+        const message = JSON.parse(messageOutput.body);
+        const isCurrentChat = message.from === currentTarget;
+
+        if (isCurrentChat) {
+            appendMessage(message.from, message.content);
+        } else {
+            showPreviewOrBadge(message.from, message.content);
+        }
+    });
+
+    loadChatHistory(user.id);
+}
+
+function closeChat() {
+    $("#chat-box").hide();
+    currentTarget = null;
+}
+
+function handleChatInput(event) {
+    if (event.key === "Enter") {
+        sendChatMessage();
+    }
+}
+
+function sendChatMessage() {
+    const content = $("#chat-input").val();
+    if (!content.trim()) return;
+
+    const userId = $("#hidden-user-id").val();
+
+    stompClient.send("/pub/chat.send", {}, JSON.stringify({
+        from: userId,
+        to: currentTarget,
+        content: content,
+        timestamp: new Date()
+    }));
+
+    $("#chat-input").val("");
+    appendMessage(userId, content);
+}
+
+function appendMessage(sender, content) {
+    const loginUserId = $("#hidden-user-id").val();
+    const className = sender === loginUserId ? "me" : "you";
+    $("#chat-messages").append(
+        `<div class="chat-message ${className}">${content}</div>`
+    );
+
+    const chatMessages = document.getElementById("chat-messages");
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function loadChatHistory(user) {
+    $.ajax({
+        url: `/api/chat/history?user=${user}`,
+        type: "GET",
+        success: function (messages) {
+            messages.forEach(msg => {
+                appendMessage(msg.sender, msg.content);
+            });
+        }
+    });
+}
+
+function showPreviewOrBadge(fromId, content) {
+    const userElement = document.querySelector(`.user-item[data-id="${fromId}"]`);
+
+    if (userElement) {
+        // 간단히 뱃지 표시
+        let badge = userElement.querySelector(".new-badge");
+        if (badge) {
+            badge.style.display = "inline"; // 숨겨진 뱃지를 보여줌
+        }
+
+        // 또는 미리보기 업데이트
+        /*const preview = userElement.querySelector(".preview");
+        if (preview) {
+            preview.textContent = content;
+        }*/
+    } else {
+        console.warn("해당 유저 요소를 찾을 수 없습니다:", fromId);
     }
 }

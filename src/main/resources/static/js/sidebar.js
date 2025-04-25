@@ -51,20 +51,36 @@ function fetchActiveUsers() {
 
                 if(user.isMyData === "true"){
                     li = $(`
-                            <li class="user-my-item">
+                            <li class="user-my-item" data-id="${user.id}">
                                 ${user.name} ${user.project}(${user.role})
                             </li>
                         `);
+                    $("#hidden-user-id").val(user.id);
+
+                    stompClient.subscribe("/sub/chat/" + user.id, function (messageOutput) {
+                        const message = JSON.parse(messageOutput.body);
+
+                        showPreviewOrBadge(message.from, message.content);
+                    });
+
                 }else{
                    li = $(`
-                            <li class="user-item">
-                                ${user.name} ${user.project}(${user.role})
+                            <li class="user-item" data-id="${user.id}">
+                                <div>
+                                    <span class="name">${user.name}</span>
+                                    <span class="project">${user.project}</span>
+                                    <span class="role">(${user.role})</span>
+                                    <span class="new-badge" style="display: none; color: red; font-weight: bold;">●</span>
+                                </div>
+                                <!--<span class="preview" style="margin-left: 6px; color: #aaa;"></span>-->
                             </li>
                         `);
                 }
 
                 li.on("click", function () {
                     submitMessage(user);
+                    const badge = li.find(".new-badge");
+                    if (badge.length) badge.hide(); // 클릭 시 뱃지 숨김
                 });
 
                 $("#user-list-active").append(li);
@@ -85,6 +101,6 @@ function fetchActiveUsers() {
 
 function submitMessage(user){
     if(user.isMyData === "false"){
-        console.log(user);
+        openChat(user);
     }
 }
