@@ -119,8 +119,10 @@
                 <div style="font-weight: 600; margin-bottom: 6px;">🟢 현재 로그인 사용자</div>
                 <ul id="user-list-active" class="user-list mb-3"></ul>
 
-                <div style="border-top: 1px solid #ddd; padding-top: 10px; font-weight: 600;">⚪️ 비로그인 사용자</div>
-                <ul id="user-list-inactive" class="user-list" style="opacity: 0.5;"></ul>
+                <div id="inactive-toggle" style="border-top: 1px solid #ddd; padding-top: 10px; font-weight: 600; cursor: pointer;">
+                    ⚪️ 비로그인 사용자 <span id="toggle-arrow" style="font-size: 0.8rem;">▼</span>
+                </div>
+                <ul id="user-list-inactive" class="user-list" style="opacity: 0.5; display: none;"></ul>
             </div>
 
         </div>
