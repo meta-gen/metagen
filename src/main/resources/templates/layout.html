@@ -25,12 +25,15 @@
     <script th:src="@{/js/dataTables.dataTables.min.js}"></script>
     <script th:src="@{/js/dataTables.min.js}"></script>
     <script th:src="@{/js/jquery-ui-1.14.1.custom/jquery-ui.js}"></script>
+    <script th:src="@{/js/sockjs.min.js}"></script>
+    <script th:src="@{/js/stomp.min.js}"></script>
 
     <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
     <link th:href="@{/css/bootstrap-grid.css}" rel="stylesheet">
 
     <script type="module" th:src="@{/js/sidebar.js}"></script>
     <script th:src="@{/js/layout.js}"></script>
+
 </head>
 <body>
 <div class="page-container">
@@ -39,6 +42,7 @@
 
     <!-- Main Content -->
     <div class="main-content">
+        <input type="hidden" id="hidden-user-id">
         <!-- 모바일 사이드바 (처음엔 숨김 상태) -->
         <aside class="sidebar mobile-sidebar d-none d-md-block" th:replace="~{fragments/sidebar::sidebar}"></aside>
 
@@ -73,6 +77,18 @@
         <!-- Main Section -->
         <div class="content">
             <section layout:fragment="content"></section>
+        </div>
+    </div>
+
+    <div id="chat-box" class="chat-box" style="display: none;">
+        <div class="chat-header">
+            <span id="chat-target">채팅</span>
+            <button onclick="closeChat()" class="close-btn">×</button>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="chat-input" placeholder="메시지를 입력하세요" onkeydown="handleChatInput(event)">
+            <button class="btn btn-primary" onclick="sendChatMessage()">전송</button>
         </div>
     </div>
 

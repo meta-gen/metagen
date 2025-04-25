@@ -45,6 +45,10 @@ dependencies {
     implementation 'org.apache.poi:poi-ooxml:5.3.0'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
     implementation 'org.apache.xmlbeans:xmlbeans:5.1.1'
     implementation 'org.apache.commons:commons-collections4:4.4'
     compileOnly 'org.projectlombok:lombok'
