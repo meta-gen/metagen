@@ -68,6 +68,18 @@ public class SecurityConfig {
                 //.csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider)
                 .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            String requestedWith = request.getHeader("X-Requested-With");
+                            boolean isAjax = "XMLHttpRequest".equals(requestedWith);
+
+                            if (isAjax) {
+                                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401
+                                response.setContentType("application/json;charset=UTF-8");
+                                response.getWriter().write("{\"message\": \"로그인이 필요합니다.\"}");
+                            } else {
+                                response.sendRedirect("/login");
+                            }
+                        })
                         .accessDeniedHandler((request, response, accessDeniedException) -> {
                             String requestedWith = request.getHeader("X-Requested-With");
                             boolean isAjax = "XMLHttpRequest".equals(requestedWith);
