@@ -16,6 +16,15 @@ $(document).ready(function(){
             }
         });
     }
+
+    $("#inactive-toggle").on("click", function () {
+        const $list = $("#user-list-inactive");
+        const $arrow = $("#toggle-arrow");
+
+        $list.slideToggle(150); // 부드럽게 열리고 닫힘
+        const isOpen = $arrow.text() === "▲";
+        $arrow.text(isOpen ? "▼" : "▲");
+    });
 });
 
 function fetchActiveUsers() {
