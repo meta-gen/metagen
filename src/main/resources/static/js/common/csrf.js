@@ -41,16 +41,23 @@ export function setupAjaxCsrf(type) {
             },
             error: function (xhr) {
                 let message = "알 수 없는 오류가 발생했습니다.";
-
+                debugger
                 if (xhr.status === 401) {
-                    message = "로그인이 필요합니다.";
-                } else if (xhr.status === 403 || xhr.status === 405) {
-                    message = "해당 작업을 수행할 접근 권한이 없습니다.";
-                } else if (xhr.responseJSON?.message) {
-                    message = xhr.responseJSON.message;
+                    message = "세션이 만료되어 로그인 화면으로 이동합니다.";
+
+                    openAlert(message, () => {
+                        window.location.href = "/login";
+                    });
+                }else{
+                    if (xhr.status === 403 || xhr.status === 405) {
+                        message = "해당 작업을 수행할 접근 권한이 없습니다.";
+                    } else if (xhr.responseJSON?.message) {
+                        message = xhr.responseJSON.message;
+                    }
+
+                    openAlert(message);
                 }
 
-                showAlert(message);
             }
         });
 
