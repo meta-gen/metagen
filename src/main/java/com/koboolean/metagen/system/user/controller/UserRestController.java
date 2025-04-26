@@ -27,7 +27,6 @@ import java.util.*;
 public class UserRestController {
 
     private final UserService userService;
-    private final RedisTemplate<String, Object> redisTemplate;
 
     @Operation(summary = "사용자 관리 컬럼 조회", description = "사용자 관리 컬럼 목록을 조회합니다.")
     @GetMapping("/selectUser/column")
@@ -83,64 +82,12 @@ public class UserRestController {
 
     @GetMapping("/activeUsers")
     public ResponseEntity<Map<String,Object>> getActiveUsers(@AuthenticationPrincipal AccountDto accountDto) {
-        List<AccountDto> accountDtos = userService.getAccountList(); // 전체 사용자
-        Set<String> keys = redisTemplate.keys("login:user:*");
-
-        Map<String, Map<Object, Object>> redisDataMap = new HashMap<>();
-
-        if (keys != null) {
-            for (String key : keys) {
-                Map<Object, Object> data = redisTemplate.opsForHash().entries(key);
-                if (!data.isEmpty()) {
-                    redisDataMap.put(key, data);
-                }
-            }
-        }
-
-        List<Map<String, String>> loggedIn = new ArrayList<>();
-        List<Map<String, String>> loggedOut = new ArrayList<>();
-
-        for (AccountDto dto : accountDtos) {
-            String redisKey = "login:user:" + dto.getId();
-
-            if (redisDataMap.containsKey(redisKey)) {
-                Map<Object, Object> redisData = redisDataMap.get(redisKey);
-
-                Long projectId = Long.parseLong(String.valueOf(redisData.get("projectId")));
-
-                String username = dto.getUsername();
-                String projectName = userService.getProjectName(projectId);
-                ProjectMemberDto projectRole = userService.getProjectRoleName(projectId, username);
-
-                Map<String, String> user = new HashMap<>();
-
-                if ("O".equals(projectRole.getProjectManagerYn())) {
-                    user.put("role", "매니저");
-                } else {
-                    user.put("role", "사용자");
-                }
-
-                user.put("isMyData", dto.getId().equals(accountDto.getId()) ? "true" : "false");
-                user.put("id", dto.getId());
-                user.put("name", dto.getName());
-                user.put("project", projectName);
-                user.put("status", "active");
-
-                loggedIn.add(user);
-            } else {
-                Map<String, String> user = new HashMap<>();
-                user.put("username", dto.getUsername());
-                user.put("name", dto.getName());
-                user.put("status", "inactive");
-
-                loggedOut.add(user);
-            }
-        }
+        Map<String, Object> result = userService.getActiveUser(accountDto);
 
         return ResponseEntity.ok(Map.of(
                 "result", true,
-                "activeUsers", loggedIn,
-                "inactiveUsers", loggedOut
+                "activeUsers", result.get("loggedIn"),
+                "inactiveUsers", result.get("loggedOut")
         ));
     }
 }

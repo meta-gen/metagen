@@ -1,17 +1,17 @@
 package com.koboolean.metagen.redis.controller;
 
 import com.koboolean.metagen.redis.config.RedisSubscriberManager;
-import com.koboolean.metagen.redis.domain.entity.ChatMessageEntity;
+import com.koboolean.metagen.redis.domain.entity.ChatMessage;
 import com.koboolean.metagen.redis.repository.ChatMessageRepository;
+import com.koboolean.metagen.redis.service.MessageSaveService;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,11 +20,11 @@ import java.util.stream.Stream;
 @RequestMapping("/api/chat")
 public class ChatHistoryRestController {
 
-    private final ChatMessageRepository chatMessageRepository;
+    private final MessageSaveService messageSaveService;
     private final RedisSubscriberManager redisSubscriberManager;
 
     @GetMapping("/history")
-    public List<ChatMessageEntity> getChatHistory(@RequestParam(value = "user") String user, @AuthenticationPrincipal AccountDto accountDto) {
+    public List<ChatMessage> getChatHistory(@RequestParam(value = "user") String user, @AuthenticationPrincipal AccountDto accountDto) {
 
         String myId = accountDto.getId();
 
@@ -33,6 +33,14 @@ public class ChatHistoryRestController {
 
         redisSubscriberManager.subscribeChannel(userA, userB);
 
-        return chatMessageRepository.findBySenderAndReceiver(userA, userB);
+        return messageSaveService.findBySenderAndReceiver(userA, userB);
+    }
+
+    @DeleteMapping("/history/{sender}")
+    public ResponseEntity<Map<String, Boolean>> deleteChatHistory(@PathVariable(value = "sender") String sender, @AuthenticationPrincipal AccountDto accountDto) {
+
+        messageSaveService.deleteSenderAndReceiver(sender, accountDto.getId());
+
+        return ResponseEntity.ok(Map.of("result", true));
     }
 }

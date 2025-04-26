@@ -17,7 +17,6 @@ public class RedisPublisher {
     public void publishToChannel(String from, String to, ChatMessage message) {
         String channel = Stream.of(from, to).sorted().collect(Collectors.joining("-"));
 
-        System.out.println("publishToChannel = " + channel);
         redisTemplate.convertAndSend(channel, message);
     }
 }

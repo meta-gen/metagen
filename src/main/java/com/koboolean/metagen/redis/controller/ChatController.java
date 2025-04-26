@@ -18,7 +18,6 @@ public class ChatController {
 
     @MessageMapping("/chat.send") // /pub/chat.send
     public void sendMessage(ChatMessage message) {
-        log.debug("WebSocket 수신: {}", message);
         redisPublisher.publishToChannel(message.getFrom(), message.getTo(), message);
     }
 }

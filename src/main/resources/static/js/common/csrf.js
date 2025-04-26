@@ -12,6 +12,8 @@ export function getCsrfToken(cookieName = 'XSRF-TOKEN') {
     return csrfCookie ? decodeURIComponent(csrfCookie.split('=')[1]) : null;
 }
 
+window.getCsrfTokenFromWindow = getCsrfToken;
+
 /**
  *
  * CSRF 헤더와 토큰을 추가하고 로딩 바를 설정하는 AJAX 설정
