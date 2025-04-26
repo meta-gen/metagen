@@ -28,6 +28,7 @@ public class RedisSubscriber implements org.springframework.data.redis.connectio
             ChatMessage chat = objectMapper.readValue(body, ChatMessage.class);
 
             messageSaveService.save(chat);
+
             messagingTemplate.convertAndSend("/sub/chat/" + chat.getTo(), chat);
         } catch (Exception e) {
             log.error("Redis 수신 실패", e);

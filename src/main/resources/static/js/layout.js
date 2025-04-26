@@ -266,6 +266,8 @@ function openChat(user) {
         const message = JSON.parse(messageOutput.body);
         const isCurrentChat = message.from === currentTarget;
 
+        fetchActiveUsers();
+
         if (isCurrentChat) {
             appendMessage(message.from, message.content);
         } else {
@@ -307,6 +309,32 @@ function appendMessage(sender, content) {
 
     const chatMessages = document.getElementById("chat-messages");
     chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    $.ajax({
+        url: `/api/chat/history/${sender}`,
+        type: "DELETE",
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader('X-XSRF-TOKEN', window.getCsrfTokenFromWindow());
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.setRequestHeader('Content-Type', 'application/json');
+        },
+        complete: function () {
+            // 로딩바 없이 작업수행
+        },
+        success: function (response) {
+            if(response.result){
+                const userElement = document.querySelector(`.user-item[data-id="${sender}"]`);
+
+                if (userElement) {
+                    // 간단히 뱃지 표시
+                    let badge = userElement.querySelector(".new-badge");
+                    if (badge) {
+                        badge.style.display = "none"; // 숨겨진 뱃지를 숨김
+                    }
+                }
+            }
+        }
+    })
 }
 
 function loadChatHistory(user) {
