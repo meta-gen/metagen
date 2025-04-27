@@ -14,7 +14,7 @@ public class GlobalExceptionHandler {
         ErrorResponse response = new ErrorResponse(
                 errorCode.getHttpStatus().value(),
                 errorCode.getCode(),
-                errorCode.getMessage()
+                ex.getCustomMessage() // customMessage를 우선 사용
         );
         return new ResponseEntity<>(response, errorCode.getHttpStatus());
     }

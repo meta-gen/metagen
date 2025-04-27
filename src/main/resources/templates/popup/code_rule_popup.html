@@ -1,0 +1,88 @@
+<!-- 예: public/popup/add-code-rule.html -->
+<html>
+<head>
+    <title>MetaGen</title>
+    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
+    <link rel="stylesheet" th:href="@{/css/layout.css}">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/css/dataTables.dataTables.min.css}">
+    <link rel="stylesheet" th:href="@{/js/jquery-ui-1.14.1.custom/jquery-ui.css}">
+    <link rel="stylesheet" th:href="@{/css/popup.css}">
+
+    <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
+    <script th:src="@{/js/bootstrap.bundle.js}"></script>
+    <script th:src="@{/js/dataTables.min.js}"></script>
+    <script th:src="@{/js/jquery-ui-1.14.1.custom/jquery-ui.js}"></script>
+    <script type="module" th:src="@{/js/popup/code_rule_popup.js}"></script>
+
+    <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
+</head>
+
+<body>
+    <div class="popup-container">
+        <div class="popup-header">
+            <h1>코드규칙 관리</h1>
+            <p style="font-size: 0.9rem; color: #666; margin-top: 4px;">
+                코드규칙을 등록/수정합니다.
+            </p>
+        </div>
+
+        <div class="button-container" style="justify-content:flex-end; display: flex;">
+            <button class="btn btn-primary" id="save-button">저장</button>
+        </div>
+
+
+        <form class="popup-form">
+            <input type="hidden" id="type" />
+            <input type="hidden" id="projectId" />
+            <input type="hidden" id="id" />
+
+            <div class="form-group">
+                <label for="templateSelect">등록할 템플릿 선택</label>
+                <select id="templateSelect" class="form-control">
+                    <option value="">템플릿을 선택하세요</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="codeRuleName">코드규칙 명</label>
+                <input type="text" id="codeRuleName" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="codeRuleDescription">코드규칙 내용</label>
+                <input type="text" id="codeRuleDescription" class="form-control" placeholder="${1}을 조회한다. (${1}을 입력 시 코드규칙 명칭 키워드로 치환됩니다.)"/>
+            </div>
+
+            <div class="form-group">
+                <label for="prefix">접두사</label>
+                <input type="text" id="prefix" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="suffix">접미사</label>
+                <input type="text" id="suffix" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label for="methodForm">메소드 형식 예시</label>
+                <textarea id="methodForm" class="form-control" style="height: 400px"
+                          placeholder='▶ **\${0}** : 메소드 또는 함수 이름이 들어가는 부분입니다.
+▶ **\${1}** : 코드 규칙에 따라 작성된 메소드의 간단한 명칭입니다.
+▶ **\${2}** : 메소드의 기능 또는 목적에 대한 설명이 들어갑니다.
+▶ **\${3}** : 코드규칙에 등록한 기타 설명이 들어갑니다.
+▶ **\${USER_NAME}** : 사용자 명이 입력됩니다.
+▶ Operation 어노테이션을 통한 Swagger 설명은 메소드 형식에 직접 입력하지 않아도, 프로젝트 관리 내 Swagger 사용 설정 시 자동으로 적용됩니다.
+/**
+ * \${2}
+ */
+@Operation(summary = "\${1}", description = "\${2}")
+@GetMapping("")
+public ResponseEntity<Map<String, Boolean>> \${0}() {
+    return ResponseEntity.ok(Map.of("result", true));
+}'></textarea>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

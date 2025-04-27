@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+>
+	<head>
+	    <script type="module" th:src="@{/js/operation/notice/notice_list.js}"></script>
+	</head>
+	
+	<body>
+		<section layout:fragment="content">
+			<h2>공지사항</h2>
+			
+		    <div th:replace="~{fragments/grid :: grid('noticeList', '/api/selectNotice', 'cd', 'noticeList_selectRow')}"></div>
+		</section>
+	</body>
+</html>

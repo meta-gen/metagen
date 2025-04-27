@@ -2,20 +2,15 @@ package com.koboolean.metagen.system.project.controller;
 
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
-import com.koboolean.metagen.security.exception.CustomException;
-import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
-import com.koboolean.metagen.system.project.domain.enums.TemplateType;
 import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
 import com.koboolean.metagen.system.project.service.ProjectManageService;
-import com.koboolean.metagen.utils.AuthUtil;
 import com.koboolean.metagen.utils.PageableUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -71,7 +66,7 @@ public class ProjectManageRestController {
     ) {
         ProjectDto projectDto = projectManageService.getEditProjectData(projectId, accountDto);
 
-        return ResponseEntity.ok(Map.of("project", projectDto, "result", true, "templateTypes", TemplateType.values()));
+        return ResponseEntity.ok(Map.of("project", projectDto, "result", true));
     }
 
     @Operation(summary = "프로젝트 등록", description = "프로젝트를 등록합니다.")

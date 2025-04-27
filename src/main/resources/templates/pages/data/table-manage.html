@@ -10,9 +10,16 @@
 <section layout:fragment="content">
     <h2>테이블 관리</h2>
 
+    <input type="file" id="upload-file" style="display: none" accept=".xlsx, .xls"/>
+
+    <div class="button-container">
+        <button class="btn btn-primary" id="download-template">템플릿 다운로드</button>
+        <button id="excel-upload" class="btn btn-primary">테이블 업로드</button>
+    </div>
+
     <!-- 그리드 영역 -->
     <div id="gridContainer">
-        <div th:replace="~{fragments/grid :: grid('tableDesignGrid', '/api/selectTable', 'anCD', null)}"></div>
+        <div th:replace="~{fragments/grid :: grid('tableManageGrid', '/api/selectTable', 'anCD', 'tableManageGrid_selectRow')}"></div>
     </div>
 
 </section>

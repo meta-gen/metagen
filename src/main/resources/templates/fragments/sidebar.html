@@ -1,111 +1,130 @@
-<aside th:fragment="sidebar">
-    <div class="list-group list-group-flush" style="height: 100%; background-color: #f8f9fa;">
-        <!-- 1뎁스: 대시보드 -->
-        <a href="/" class="list-group-item list-group-item-action"
-           onclick="setActiveMenu(event, 'dashboard')"
-           data-menu-id="dashboard">
-            대시보드
-        </a>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
-        <!-- 1뎁스: 시스템 관리 -->
-        <a href="#system-management" class="list-group-item list-group-item-action"
-           onclick="toggleMenu(event, 'system-management', this)"
-           data-menu-id="system-management">
-            시스템 관리
-        </a>
-        <div id="system-management" class="collapse">
-            <a href="/userManage" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'user-manage')"
-               data-submenu-id="user-manage">
-                사용자 관리
+    <aside class="sidebar d-none d-md-block" th:fragment="sidebar">
+        <div class="list-group list-group-flush" style="height: 100%; background-color: #f8f9fa;">
+            <!-- 1뎁스: 대시보드 -->
+            <a href="/" class="list-group-item list-group-item-action"
+               onclick="setActiveMenu(event, 'dashboard')"
+               data-menu-id="dashboard">
+                대시보드
             </a>
-            <a href="/accessManage" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'access-manage')"
-               data-submenu-id="access-manage">
-                인가 관리
+
+            <!-- 1뎁스: 시스템 관리 -->
+            <a href="#system-management" class="list-group-item list-group-item-action"
+               onclick="toggleMenu(event, 'system-management', this)"
+               data-menu-id="system-management">
+                시스템 관리
             </a>
-            <a href="/projectManage" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'project-manage')"
-               data-submenu-id="project-manage">
-                프로젝트 관리
+            <div id="system-management" class="collapse">
+                <a href="/userManage" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'user-manage')"
+                   data-submenu-id="user-manage">
+                    사용자 관리
+                </a>
+                <a href="/accessManage" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'access-manage')"
+                   data-submenu-id="access-manage">
+                    인가 관리
+                </a>
+                <a href="/projectManage" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'project-manage')"
+                   data-submenu-id="project-manage">
+                    프로젝트 관리
+                </a>
+                <a href="/codeRuleManage" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'code-rule-manage')"
+                   data-submenu-id="code-rule-manage">
+                    코드규칙 관리
+                </a>
+                <a href="/systemLog" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'system-log')"
+                   data-submenu-id="system-log">
+                    시스템 로그
+                </a>
+            </div>
+
+            <!-- 1뎁스: 데이터 관리 -->
+            <a href="#operation-management" class="list-group-item list-group-item-action"
+               onclick="toggleMenu(event, 'operation-management', this)"
+               data-menu-id="operation-management">
+                운영 관리
             </a>
-            <a href="/systemLog" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'system-log')"
-               data-submenu-id="system-log">
-                시스템 로그
+            <div id="operation-management" class="collapse">
+
+                <!-- 2뎁스: 공지사항 -->
+                <a href="/notice" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'notice')"
+                   data-submenu-id="notice">
+                    공지사항
+                </a>
+
+                <!-- 2뎁스: 도움말 -->
+                <a href="/help" class="list-group-item list-group-item-action ps-4"
+                    onclick="setActiveSubmenu(event, 'help')"
+                    data-submenu-id="help">
+                    도움말
+                </a>
+            </div>
+
+            <!-- 1뎁스: 데이터 관리 -->
+            <a href="#data-management" class="list-group-item list-group-item-action"
+               onclick="toggleMenu(event, 'data-management', this)"
+               data-menu-id="data-management">
+                데이터 관리
             </a>
+            <div id="data-management" class="collapse">
+                <a href="/dataDictionary" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'data-dictionary')"
+                   data-submenu-id="data-dictionary">
+                    데이터 사전
+                </a>
+                <a href="/tableManage" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'table-manage')"
+                   data-submenu-id="table-manage">
+                    테이블 관리
+                </a>
+                <a href="/columnManage" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'column-manage')"
+                   data-submenu-id="column-manage">
+                    컬럼 관리
+                </a>
+                <a href="/codeRule" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'code-rule')"
+                   data-submenu-id="code-rule">
+                    코드 규칙
+                </a>
+            </div>
+
+            <!-- 1뎁스: 설계 및 테스트 -->
+            <a href="#design-test" class="list-group-item list-group-item-action"
+               onclick="toggleMenu(event, 'design-test', this)"
+               data-menu-id="design-test">
+                설계 및 테스트
+            </a>
+            <div id="design-test" class="collapse">
+                <a href="/designManage" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'design-manage')"
+                   data-submenu-id="design-manage">
+                    설계서
+                </a>
+                <a href="/testManage" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'test-manage')"
+                   data-submenu-id="test-manage">
+                    시나리오
+                </a>
+            </div>
+
+            <div id="active-user-list" class="p-3 border-top active-user-list" style="font-size: 0.9rem;" sec:authorize="isAuthenticated()">
+                <div style="font-weight: 600; margin-bottom: 6px;">🟢 현재 로그인 사용자</div>
+                <ul id="user-list-active" class="user-list mb-3"></ul>
+
+                <div id="inactive-toggle" style="border-top: 1px solid #ddd; padding-top: 10px; font-weight: 600; cursor: pointer;">
+                    ⚪️ 비로그인 사용자 <span id="toggle-arrow" style="font-size: 0.8rem;">▼</span>
+                </div>
+                <ul id="user-list-inactive" class="user-list" style="opacity: 0.5; display: none;"></ul>
+            </div>
+
         </div>
-
-        <!-- 1뎁스: 데이터 관리 -->
-        <a href="#operation-management" class="list-group-item list-group-item-action"
-           onclick="toggleMenu(event, 'operation-management', this)"
-           data-menu-id="operation-management">
-            운영 관리
-        </a>
-        <div id="operation-management" class="collapse">
-
-            <!-- 2뎁스: 공지사항 -->
-            <a href="/notice" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'notice')"
-               data-submenu-id="notice">
-                공지사항
-            </a>
-            
-            <!-- 2뎁스: 도움말 -->
-            <a href="/help" class="list-group-item list-group-item-action ps-4"
-                onclick="setActiveSubmenu(event, 'help')"
-                data-submenu-id="help">
-                도움말
-            </a>
-        </div>
-
-        <!-- 1뎁스: 데이터 관리 -->
-        <a href="#data-management" class="list-group-item list-group-item-action"
-           onclick="toggleMenu(event, 'data-management', this)"
-           data-menu-id="data-management">
-            데이터 관리
-        </a>
-        <div id="data-management" class="collapse">
-            <a href="/dataDictionary" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'data-dictionary')"
-               data-submenu-id="data-dictionary">
-                데이터 사전
-            </a>
-            <a href="/tableManage" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'table-manage')"
-               data-submenu-id="table-manage">
-                테이블 관리
-            </a>
-            <a href="/columnManage" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'column-manage')"
-               data-submenu-id="column-manage">
-                컬럼 관리
-            </a>
-            <a href="/codeRule" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'code-rule')"
-               data-submenu-id="code-rule">
-                코드 규칙
-            </a>
-        </div>
-
-        <!-- 1뎁스: 설계 및 테스트 -->
-        <a href="#design-test" class="list-group-item list-group-item-action"
-           onclick="toggleMenu(event, 'design-test', this)"
-           data-menu-id="design-test">
-            설계 및 테스트
-        </a>
-        <div id="design-test" class="collapse">
-            <a href="/designManage" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'design-manage')"
-               data-submenu-id="design-manage">
-                설계서
-            </a>
-            <a href="/testManage" class="list-group-item list-group-item-action ps-4"
-               onclick="setActiveSubmenu(event, 'test-manage')"
-               data-submenu-id="test-manage">
-                시나리오
-            </a>
-        </div>
-
-    </div>
-</aside>
+    </aside>
+</html>

@@ -1,69 +1,116 @@
 $(document).ready(function () {
-    getFaqData();
+    $.getJSON('/jsons/faq.json', function (data) {
+        renderTabs(data);
+        renderTabContents(data);
 
-    /**
-     * 검색버튼을 선택 시 조회를 수행한다.
-     */
-    $('#faq-search-btn').on('click', function (e) {
+        // 검색 이벤트
+        $('#faq-form').on('submit', function (e) {
+            e.preventDefault();
+            const keyword = $('#faq-search').val().toLowerCase().trim();
 
-        e.preventDefault();
+            const filtered = data.map(item => ({
+                ...item,
+                questions: item.questions.filter(q =>
+                    q.question.toLowerCase().includes(keyword) ||
+                    q.answer.toLowerCase().includes(keyword)
+                )
+            })).filter(item => item.questions.length > 0);
 
-        const keyword = $('#faq-search').val().toLowerCase().trim(); // 검색어 입력
-
-        $.getJSON('/jsons/faq.json', function (data) {
-            // keyword가 question 또는 answer에 포함된 것만 필터링
-            const filtered = data.filter(item =>
-                item.question.toLowerCase().includes(keyword) ||
-                item.answer.toLowerCase().includes(keyword)
-            );
-
-            renderFAQList(filtered); // 화면에 다시 그리기
+            renderTabs(filtered);
+            renderTabContents(filtered);
         });
     });
+});
 
-})
+function renderTabs(data) {
+    const tabMenu = document.getElementById("faqTabMenu");
+    tabMenu.innerHTML = '';
 
-/**
- * FAQ 데이터를 가져온다.
- */
-function getFaqData(){
-    $.ajax({
-        url: `/jsons/faq.json`,
-        type: "GET",
-        dataType: "json",
-        success : function (response){
-            renderFAQList(response);
-        }
+    data.forEach((item, index) => {
+        const tabId = 'tab-' + index;
+
+        const li = document.createElement("li");
+        li.className = 'nav-item';
+        li.innerHTML = `
+            <a class="nav-link ${index === 0 ? 'active' : ''}" data-bs-toggle="tab" href="#${tabId}">
+                ${item.category}
+            </a>
+        `;
+        tabMenu.appendChild(li);
     });
 }
 
-// 초기 렌더링
-function renderFAQList(data) {
-    const listContainer = document.getElementById("faq-list");
-    listContainer.innerHTML = '';
+function renderTabContents(data) {
+    const tabContent = document.getElementById("faqTabContent");
+    tabContent.innerHTML = '';
 
-    data.forEach(item => {
-        const questionDiv = document.createElement("div");
-        questionDiv.className = "faq-item";
-        questionDiv.style.borderBottom = "1px solid #ddd";
-        questionDiv.style.padding = "10px 0";
+    data.forEach((item, index) => {
+        const tabId = 'tab-' + index;
 
-        const questionTitle = document.createElement("div");
-        questionTitle.innerHTML = `<strong>${item.question}</strong>`;
-        questionTitle.style.cursor = "pointer";
+        // 1. 각 tab-pane 생성
+        const div = document.createElement("div");
+        div.className = `tab-pane fade ${index === 0 ? 'show active' : ''}`;
+        div.id = tabId;
 
-        const answerDiv = document.createElement("div");
-        answerDiv.textContent = item.answer;
-        answerDiv.style.display = "none";
-        answerDiv.style.marginTop = "5px";
-        answerDiv.style.color = "#555";
+        // 2. 탭 안에 들어갈 accordion 컨테이너 생성
+        const accordionId = `faqAccordion-${index}`;
+        const accordion = document.createElement("div");
+        accordion.className = "accordion";
+        accordion.id = accordionId;
 
-        questionTitle.addEventListener("click", () => {
-            answerDiv.style.display = (answerDiv.style.display === "none") ? "block" : "none";
+        // 3. 질문 목록 렌더링
+        item.questions.forEach((q, qIndex) => {
+            const itemId = `${accordionId}-item-${qIndex}`;
+
+            const accordionItem = document.createElement('div');
+            accordionItem.className = 'accordion-item';
+
+            accordionItem.innerHTML = `
+                <h2 class="accordion-header" id="heading-${itemId}">
+                    <button class="accordion-button collapsed" type="button"
+                            aria-expanded="false"
+                            aria-controls="collapse-${itemId}">
+                        <span class="question-label">Q.</span> ${q.question}
+                    </button>
+                </h2>
+                <div id="collapse-${itemId}" class="accordion-collapse collapse"
+                     aria-labelledby="heading-${itemId}"
+                     data-bs-parent="#${accordionId}">
+                    <div class="accordion-body">
+                        ${q.answer}
+                    </div>
+                </div>
+            `;
+
+            accordion.appendChild(accordionItem);
+
+            const btn = accordionItem.querySelector('.accordion-button');
+            const collapseEl = accordionItem.querySelector('.accordion-collapse');
+            const bsCollapse = new bootstrap.Collapse(collapseEl, { toggle: false });
+
+            btn.addEventListener('click', () => {
+                if (collapseEl.classList.contains('show')) {
+                    bsCollapse.hide();
+                    btn.classList.add('collapsed'); // 닫히니까 collapsed 클래스 추가
+                } else {
+                    bsCollapse.show();
+                    btn.classList.remove('collapsed'); // 열리니까 collapsed 제거
+                }
+            });
+
+            btn.addEventListener('click', () => {
+                if (collapseEl.classList.contains('show')) {
+                    bsCollapse.hide();
+                } else {
+                    bsCollapse.show();
+                }
+            });
+
+            accordion.appendChild(accordionItem);
         });
 
-        questionDiv.appendChild(questionTitle);
-        questionDiv.appendChild(answerDiv);
-        listContainer.appendChild(questionDiv);
+        // 4. 탭에 accordion 추가 후 tabContent에 추가
+        div.appendChild(accordion);
+        tabContent.appendChild(div);
     });
 }

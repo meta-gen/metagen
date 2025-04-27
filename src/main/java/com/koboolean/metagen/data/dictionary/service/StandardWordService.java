@@ -1,7 +1,9 @@
 package com.koboolean.metagen.data.dictionary.service;
 
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardWordDto;
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardDomain;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
+import com.koboolean.metagen.data.dictionary.repository.StandardDomainRepository;
 import com.koboolean.metagen.data.dictionary.repository.StandardWordRepository;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.exception.CustomException;
@@ -27,6 +29,7 @@ public class StandardWordService {
 
     private static final int FIRST_ROW = 1;
     private final StandardWordRepository standardWordRepository;
+    private final StandardDomainRepository standardDomainRepository;
 
     public Page<StandardWordDto> getStandardWordsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery) {
         if (searchQuery == null || searchQuery.trim().isEmpty()) {
@@ -126,12 +129,20 @@ public class StandardWordService {
                     .isApproval(isApprovalAvailable)
                     .build();
 
+            List<StandardWord> nameIsDupl = standardWordRepository.findAllByProjectIdAndCommonStandardWordName(standardWord.getProjectId(), standardWord.getCommonStandardWordName());
+
+            if(!nameIsDupl.isEmpty()){
+                throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+            }
+
+            domainIsNotDefinedCheck(standardWord);
+
             standardWordRepository.save(standardWord);
         });
     }
 
-    public StandardWord findByCommonStandardWordAbbreviation(String s, Long projectId) {
-        return standardWordRepository.findByCommonStandardWordAbbreviationAndProjectId(s, projectId);
+    public List<StandardWord> findByCommonStandardWordAbbreviation(String s, Long projectId) {
+        return standardWordRepository.findAllByCommonStandardWordAbbreviationAndProjectId(s, projectId);
     }
 
     public StandardWord commonStandardWordName(String s, Long projectId) {
@@ -140,7 +151,32 @@ public class StandardWordService {
 
     @Transactional
     public void insertStandardWords(StandardWord standardWord) {
-        standardWordRepository.save(standardWord);
+        List<StandardWord> nameIsDupl = standardWordRepository.findAllByProjectIdAndCommonStandardWordName(standardWord.getProjectId(), standardWord.getCommonStandardWordName());
+
+        if(nameIsDupl.isEmpty()){
+            domainIsNotDefinedCheck(standardWord);
+
+            standardWordRepository.save(standardWord);
+        }else{
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+        }
+
+    }
+
+    /**
+     * 도메인이 등록되어 있는경우, 도메인 정보를 조회해와 일치하는 도메인이 존재하지 않으면 Error
+     * @param standardWord
+     */
+    private void domainIsNotDefinedCheck(StandardWord standardWord) {
+        String domainCategory = standardWord.getCommonStandardDomainCategory();
+
+        if(!domainCategory.isEmpty() && !domainCategory.equals("-")){
+            List<StandardDomain> standardDomains = standardDomainRepository.findAllByProjectIdAndCommonStandardDomainCategory(standardWord.getProjectId(), domainCategory);
+
+            if(standardDomains.isEmpty()){
+                throw new CustomException(ErrorCode.DOMAIN_IS_NOT_DEFINED, domainCategory);
+            }
+        }
     }
 
     @Transactional

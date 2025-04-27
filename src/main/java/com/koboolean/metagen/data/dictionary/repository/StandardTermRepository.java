@@ -37,5 +37,11 @@ public interface StandardTermRepository extends JpaRepository<StandardTerm, Long
     List<StandardTerm> findByCommonStandardTermAbbreviationAndStandardDomain_CommonStandardDomainNameAndProjectId(String abbr, String domainName, Long projectId);
 
 
+    List<StandardTerm> findAllByProjectIdAndCommonStandardTermAbbreviationContaining(Long projectId, String commonStandardTermAbbreviation);
 
+    List<StandardTerm> findAllByProjectIdAndCommonStandardTermNameContaining(Long projectId, String commonStandardTermName);
+
+    List<StandardTerm> findALlByProjectIdAndCommonStandardTermName(Long projectId, String commonStandardTermName);
+
+    List<StandardTerm> findALlByProjectIdAndCommonStandardTermAbbreviation(Long projectId, String commonStandardTermAbbreviation);
 }

@@ -1,16 +1,14 @@
 package com.koboolean.metagen.system.project.domain.dto;
 
 import com.koboolean.metagen.security.domain.dto.AccountDto;
-import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.system.project.domain.entity.Project;
-import com.koboolean.metagen.system.project.domain.enums.TemplateType;
+import com.koboolean.metagen.system.project.domain.entity.Template;
 import com.koboolean.metagen.utils.AuthUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -37,9 +35,7 @@ public class ProjectDto {
 
     private Boolean isDicAbbrUsed;
 
-    private Boolean isUseSwagger;
-
-    private List<TemplateType> templateType;
+    private List<TemplateDto> templates;
 
     public static ProjectDto fromEntity(Project project) {
 
@@ -55,8 +51,7 @@ public class ProjectDto {
                 projectMembers,
                 false,
                 project.getIsDicAbbrUsed(),
-                project.getIsUseSwagger(),
-                project.getTemplateType()
+                project.getTemplateType().stream().map(TemplateDto::fromEntity).toList()
         );
     }
 
@@ -76,8 +71,7 @@ public class ProjectDto {
                 projectMembers,
                 isModified,
                 project.getIsDicAbbrUsed(),
-                project.getIsUseSwagger(),
-                project.getTemplateType()
+                project.getTemplateType().stream().map(TemplateDto::fromEntity).toList()
         );
     }
 }

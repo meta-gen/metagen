@@ -37,7 +37,7 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (5, '*', 0, '/api/updateName','url', '사용자명수정', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (6, '*', 0, '/codeRule','url', '코드규칙화면', 'SYSTEM', 'SYSTEM')
+VALUES (6, '*', 0, '/codeRuleManage','url', '코드규칙관리 화면', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (7, '*', 0, '/designManage','url', '설계서화면', 'SYSTEM', 'SYSTEM')
@@ -136,7 +136,7 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (38, '*', 0, '/api/selectTable/**','url', '테이블 조회', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (39, '*', 0, '/api/updateTable/**','url', '테이블 수정', 'SYSTEM', 'SYSTEM')
+VALUES (39, '*', 0, '/api/saveTable/**','url', '테이블 저장', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (40, '*', 0, '/api/deleteTable/**','url', '테이블 삭제', 'SYSTEM', 'SYSTEM')
@@ -145,16 +145,61 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (41, '*', 0, '/api/selectColumn/**','url', '테이블컬럼 조회', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (42, '*', 0, '/api/updateColumn/**','url', '테이블컬럼 수정', 'SYSTEM', 'SYSTEM')
+VALUES (42, '*', 0, '/api/saveColumn/**','url', '테이블컬럼 저장', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (43, '*', 0, '/api/deleteColumn/**','url', '테이블컬럼 삭제', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (44, '*', 0, '/api/uploadMetadata/**','url', '메타데이터 업로드', 'SYSTEM', 'SYSTEM')
+VALUES (44, '*', 0, '/api/uploadColumnExcelFile/**','url', '컬럼 업로드', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (45, '*', 0, '/tableManage','url', '테이블관리화면', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (46, '*', 0, '/api/uploadTableExcelFile/**','url', '테이블 업로드', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (47, '*', 0, '/api/saveNotice/**','url', '공지사항 등록/수정', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (48, '*', 0, '/api/selectNotice/**','url', '공지사항 조회', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (49, '*', 0, '/api/deleteNotice/**','url', '공지사항 삭제', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (50, '*', 0, '/popup/columTableSearch/**','url', '테이블조회 팝업화면', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (51, '*', 0, '/codeRule','url', '코드규칙 화면', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (52, '*', 0, '/api/selectCodeRuleManage/**','url', '코드규칙관리 조회', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (53, '*', 0, '/api/saveCodeRuleManage/**','url', '코드규칙관리 저장', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (54, '*', 0, '/api/deleteCodeRuleManage/**','url', '코드규칙관리 삭제', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (55, '*', 0, '/popup/codeRulePopup','url', '코드규칙관리 등록/수정 팝업', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (56, '*', 0, '/api/selectCodeRule/**','url', '코드규칙 조회', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (57, '*', 0, '/api/saveCodeRule/**','url', '코드규칙 저장', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (58, '*', 0, '/api/deleteCodeRule/**','url', '코드규칙 삭제', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (59, '*', 0, '/popup/codeRuleDetailPopup/**','url', '코드규칙 팝업', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (60, '*', 0, '/api/activeUsers','url', '사용자 로그인여부', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 
 -- ROLE_NOT_APPROVE
@@ -163,10 +208,12 @@ insert into role_resources(resource_id, role_id) values (2,5) on CONFLICT DO NOT
 insert into role_resources(resource_id, role_id) values (3,5) on CONFLICT DO NOTHING; -- 패스워드수정
 insert into role_resources(resource_id, role_id) values (5,5) on CONFLICT DO NOTHING; -- 사용자명수정
 insert into role_resources(resource_id, role_id) values (13,5) on CONFLICT DO NOTHING; -- 공지사항화면
+insert into role_resources(resource_id, role_id) values (48,5) on CONFLICT DO NOTHING; -- 공지사항조회
+insert into role_resources(resource_id, role_id) values (60,5) on CONFLICT DO NOTHING; -- 사용자 로그인여부
 
 -- ROLE_VIEWER
 insert into role_resources(resource_id, role_id) values (4,4) on CONFLICT DO NOTHING; -- 컬럼관리화면
-insert into role_resources(resource_id, role_id) values (6,4) on CONFLICT DO NOTHING; -- 코드규칙화면
+insert into role_resources(resource_id, role_id) values (6,4) on CONFLICT DO NOTHING; -- 코드규칙관리 화면
 insert into role_resources(resource_id, role_id) values (7,4) on CONFLICT DO NOTHING; -- 설계서화면
 insert into role_resources(resource_id, role_id) values (8,4) on CONFLICT DO NOTHING; -- 사용자관리화면
 insert into role_resources(resource_id, role_id) values (10,4) on CONFLICT DO NOTHING; -- 데이터사전화면
@@ -182,6 +229,9 @@ insert into role_resources(resource_id, role_id) values (36,4) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (30,4) on CONFLICT DO NOTHING; -- 프로젝트조회
 insert into role_resources(resource_id, role_id) values (38,4) on CONFLICT DO NOTHING; -- 테이블설계 조회
 insert into role_resources(resource_id, role_id) values (45,4) on CONFLICT DO NOTHING; -- 테이블관리화면
+insert into role_resources(resource_id, role_id) values (50,4) on CONFLICT DO NOTHING; -- 테이블조회 팝업화면
+insert into role_resources(resource_id, role_id) values (51,4) on CONFLICT DO NOTHING; -- 코드규칙 화면
+insert into role_resources(resource_id, role_id) values (52,4) on CONFLICT DO NOTHING; -- 코드규칙관리 조회
 
 -- ROLE_USER
 insert into role_resources(resource_id, role_id) values (15,3) on CONFLICT DO NOTHING; -- 템플릿다운로드
@@ -194,6 +244,12 @@ insert into role_resources(resource_id, role_id) values (40,3) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (41,3) on CONFLICT DO NOTHING; -- 테이블컬럼 조회
 insert into role_resources(resource_id, role_id) values (42,3) on CONFLICT DO NOTHING; -- 테이블컬럼 수정
 insert into role_resources(resource_id, role_id) values (43,3) on CONFLICT DO NOTHING; -- 테이블컬럼 삭제
+insert into role_resources(resource_id, role_id) values (44,3) on CONFLICT DO NOTHING; -- 컬럼 업로드
+insert into role_resources(resource_id, role_id) values (46,3) on CONFLICT DO NOTHING; -- 테이블 업로드
+insert into role_resources(resource_id, role_id) values (56,3) on CONFLICT DO NOTHING; -- 코드규칙 조회
+insert into role_resources(resource_id, role_id) values (57,3) on CONFLICT DO NOTHING; -- 코드규칙 저장
+insert into role_resources(resource_id, role_id) values (58,3) on CONFLICT DO NOTHING; -- 코드규칙 삭제
+insert into role_resources(resource_id, role_id) values (59,3) on CONFLICT DO NOTHING; -- 코드규칙 팝업
 
 -- ROLE_DBA
 insert into role_resources(resource_id, role_id) values (31,2) on CONFLICT DO NOTHING; -- 프로젝트저장
@@ -209,7 +265,14 @@ insert into role_resources(resource_id, role_id) values (14,0) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (34,0) on CONFLICT DO NOTHING; -- 사용자저장
 insert into role_resources(resource_id, role_id) values (35,0) on CONFLICT DO NOTHING; -- 사용자삭제
 insert into role_resources(resource_id, role_id) values (37,0) on CONFLICT DO NOTHING; -- 인가수정
-insert into role_resources(resource_id, role_id) values (44,0) on CONFLICT DO NOTHING; -- 메타데이터 업로드
+
+-- ROLE_MANAGER
+insert into role_resources(resource_id, role_id) values (47,1) on CONFLICT DO NOTHING; -- 공지사항 등록/수정
+insert into role_resources(resource_id, role_id) values (49,1) on CONFLICT DO NOTHING; -- 공지사항 삭제
+insert into role_resources(resource_id, role_id) values (53,1) on CONFLICT DO NOTHING; -- 코드규칙관리 저장
+insert into role_resources(resource_id, role_id) values (54,1) on CONFLICT DO NOTHING; -- 코드규칙관리 삭제
+insert into role_resources(resource_id, role_id) values (55,1) on CONFLICT DO NOTHING; -- 코드규칙관리 등록/수정 팝업
+
 
 -- ROLE_ANONYMOUS
 insert into role_resources(resource_id, role_id) values (17,6) on CONFLICT DO NOTHING; -- 접근가능프로젝트 조회
@@ -221,3 +284,6 @@ insert into account_roles(account_id, role_id) values(0,0) on CONFLICT (account_
 insert into project(is_active, project_id, created_by, project_name, updated_by, is_auto_active, account_id) values(true, 0, 'SYSTEM', 'MAIN', 'SYSTEM', true, 0) ON CONFLICT (project_id) DO NOTHING;
 
 insert into project_member(account_id, id, project_id, created_by, updated_by, is_active) values (0, 0, 0, 'SYSTEM', 'SYSTEM', true) on CONFLICT (ID) do nothing;
+
+/* 게시판 카테고리 */
+INSERT INTO board_category(category_id, category_name, order_number, use_yn) VALUES ('NOTICE', '공지사항', 0, 'Y') ON CONFLICT (category_id) do nothing;

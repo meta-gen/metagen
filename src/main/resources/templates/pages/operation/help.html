@@ -5,22 +5,29 @@
 <head>
 	<script type="module" th:src="@{/js/operation/help.js}"></script>
 	<link rel="stylesheet" th:href="@{/css/operation/help.css}">
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
 
 <body>
 	<section layout:fragment="content">
 		<h2>자주 묻는 질문 (FAQ)</h2>
-		<div class="search-container">
-			<form id="faq-form" style="margin-bottom: 20px;">
+		<!-- 검색 영역 -->
+		<form id="faq-form" style="margin-bottom: 20px;">
+			<div class="search-container mb-3">
 				<input id="faq-search" type="text" placeholder="검색어를 입력하세요." class="search-input-text search-input" />
-				<button type="submit" class="btn btn-primary" id="faq-search-btn"
-						style="margin-left: 10px; padding: 8px 12px;">검색</button>
-			</form>
-		</div>
+				<button type="submit" class="grd-select" id="faq-search-btn">검색</button>
+			</div>
+		</form>
 
-		<div id="faq-list">
-			<!-- FAQ 목록이 여기에 렌더링됨 -->
-		</div>
+
+
+		<ul class="nav nav-tabs mt-3" id="faqTabMenu"></ul>
+
+		<div class="tab-content mt-3 accordion" id="faqTabContent"></div>
+
+
 	</section>
 </body>
 

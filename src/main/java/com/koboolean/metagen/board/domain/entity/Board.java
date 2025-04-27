@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.koboolean.metagen.home.jpa.BaseEntity;
 
-import groovy.transform.builder.Builder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Entity
@@ -28,7 +28,7 @@ public class Board extends BaseEntity implements Serializable {
     @Id
     @GeneratedValue
     @Column(nullable = false)
-    private long id;
+    private Long id;
 
     /* 프로젝트 아이디 */
     @Column(name = "project_id")
@@ -48,7 +48,7 @@ public class Board extends BaseEntity implements Serializable {
 
     /* 조회수 */
     @Column(name = "hit_count", nullable = false)
-    private int hitCount;
+    private Integer hitCount;
 
     /* 삭제 여부 */
     @Column(name = "delete_yn", length = 1, nullable = false)

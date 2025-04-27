@@ -40,7 +40,13 @@ header {
 
 /* 오른쪽 정렬 */
 .navbar-nav {
-    margin-left: auto; /* 네비게이션 메뉴를 오른쪽으로 정렬 */
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px; /* 메뉴 사이 간격 */
+    margin: 0;
+    padding: 0;
+    margin-right: 5px;
 }
 
 /* 네비게이션 링크 스타일 */
@@ -69,12 +75,13 @@ header {
 }
 
 .sidebar {
-    flex: 0 0 200px;
+    flex: 0 0 220px;
     background-color: #f8f9fa;
     height: calc(100vh - 56px); /* 화면 전체 높이에서 헤더 높이 제외 */
     position: sticky;
     top: 56px; /* 헤더 높이만큼 아래로 배치 */
     border-right: 1px solid #dee2e6; /* 사이드바 분리선 */
+    overflow-y: auto;
 }
 
 .content {
@@ -368,6 +375,10 @@ dialog .btn-primary {
     border-radius: 6px;
 }
 
+.grid-header .button-container .btn {
+    max-width: 77px;
+}
+
 /* 조회 버튼 */
 .grd-select {
     padding: 10px 16px;
@@ -377,6 +388,7 @@ dialog .btn-primary {
     border: none;
     color: white;
     background-color: #007bff;
+    max-width: 70px;
 }
 
 /* 버튼 컨테이너 (승인, 추가, 저장, 삭제 버튼) */
@@ -385,10 +397,31 @@ dialog .btn-primary {
     align-items: center;
     gap: 8px;
     margin-left: auto; /* 오른쪽 정렬 */
+    margin-top:3px;
+    margin-bottom:3px;
 }
 
 /* 버튼 공통 */
 .button-container button {
+    padding: 10px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    min-width: 70px;
+    text-align: center;
+    margin-left: 3px;
+}
+
+.popup-button-container{
+    display: table;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto; /* 오른쪽 정렬 */
+}
+
+.popup-button-container button {
     padding: 10px 14px;
     font-size: 14px;
     font-weight: bold;
@@ -500,4 +533,167 @@ section h2 {
     margin-bottom: 16px;            /* 아래 요소와의 간격 */
     font-size: 1.5em;               /* 제목 크기 조정 */
     font-weight: bold;             /* 굵게 */
+}
+
+/* 모바일용 사이드바 스타일 */
+.sidebar.mobile-sidebar {
+    position: fixed;
+    top: 70px; /* header 아래 */
+    left: 0;
+    width: 220px;
+    background-color: #f8f9fa; /* 회색 */
+    padding: 15px;
+    border-radius: 0 8px 8px 0;
+    z-index: 1050;
+    box-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+    height: auto;
+}
+
+.sidebar-toggle-btn {
+    display: none;
+}
+
+/* 모바일 화면일 때만 보이도록 설정 */
+@media (max-width: 767.98px) {
+    .sidebar.mobile-sidebar.d-md-block {
+        display: none !important; /* PC 전용 숨기기 */
+    }
+
+    .sidebar-toggle-btn {
+        position: fixed;
+        top: 65px;
+        left: 5px;
+        width: 36px;
+        height: 36px;
+        z-index: 1060;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        background-color: #f8f9fa;
+        font-size: 20px;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        line-height: 1;
+        border-radius: 10%;
+        border: 0;
+    }
+
+    .sidebar-toggle-btn::before {
+        content: '☰';
+        font-size: 18px;
+        line-height: 1;
+        display: block;
+        text-align: center;
+    }
+}
+
+.user-list {
+ list-style: none;
+ padding-left: 0;
+ margin: 0;
+}
+
+.user-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+
+    border-bottom: 1px solid #eee; /* 구분선 추가 */
+}
+
+.user-item:last-child {
+    border-bottom: none;
+}
+
+.user-my-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.user-item:hover {
+background-color: #f0f2f5;
+}
+
+.user-name {
+font-weight: 600;
+}
+
+.user-project {
+font-size: 0.8rem;
+color: #666;
+}
+
+.user-role {
+font-size: 0.75rem;
+color: #999;
+}
+
+.active-user-list {
+    background-color: white;
+    border-radius: 3px;
+    margin: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.chat-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    max-height: 400px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+
+.chat-header {
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    font-size: 0.9rem;
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+    flex: 1;
+    margin-right: 6px;
+    padding: 5px;
+}
+
+.chat-message.me {
+    text-align: right;
+    color: blue;
+}
+.chat-message.you {
+    text-align: left;
+    color: black;
 }

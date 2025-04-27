@@ -36,7 +36,6 @@ body, html {
     padding: 10px;
     border-radius: 6px;
     border: 1px solid #ccc;
-    margin-bottom: 16px;
     font-size: 14px;
 }
 
@@ -48,7 +47,6 @@ body, html {
 .popup-form .form-row {
     display: flex;
     flex-direction: column;
-    margin-bottom: 16px;
 }
 
 .input-button-group {
@@ -74,7 +72,6 @@ body, html {
     background-color: #007bff;
     color: white;
     cursor: pointer;
-    margin-bottom: 16px;
 }
 
 .input-button-group button:hover {

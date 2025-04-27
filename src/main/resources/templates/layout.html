@@ -10,7 +10,7 @@
     <!-- Open Graph 메타태그 (카카오톡, 페북 등 미리보기용) -->
     <meta property="og:title" content="MetaGen - 메타데이터 표준관리 플랫폼" />
     <meta property="og:description" content="데이터 표준화를 위한 설계부터 관리까지, MetaGen에서 한 번에 해결하세요!" />
-    <!--<meta property="og:image" content="https://your-domain.com/images/og-image.png" />-->
+    <meta property="og:image" content="https://raw.githubusercontent.com/meta-gen/metagen/main/src/main/resources/static/images/metagen.png" />
     <!--<meta property="og:url" content="https://github.com/meta-gen/metagen" />-->
     <meta property="og:type" content="website" />
 
@@ -25,11 +25,15 @@
     <script th:src="@{/js/dataTables.dataTables.min.js}"></script>
     <script th:src="@{/js/dataTables.min.js}"></script>
     <script th:src="@{/js/jquery-ui-1.14.1.custom/jquery-ui.js}"></script>
+    <script th:src="@{/js/sockjs.min.js}"></script>
+    <script th:src="@{/js/stomp.min.js}"></script>
 
     <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
     <link th:href="@{/css/bootstrap-grid.css}" rel="stylesheet">
 
+    <script type="module" th:src="@{/js/sidebar.js}"></script>
     <script th:src="@{/js/layout.js}"></script>
+
 </head>
 <body>
 <div class="page-container">
@@ -38,13 +42,17 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <!-- Sidebar -->
-        <aside class="sidebar" th:replace="~{fragments/sidebar::sidebar}"></aside>
+        <input type="hidden" id="hidden-user-id">
+        <!-- 모바일 사이드바 (처음엔 숨김 상태) -->
+        <aside class="sidebar mobile-sidebar d-none d-md-block" th:replace="~{fragments/sidebar::sidebar}"></aside>
+
+        <!-- 모바일용 토글 버튼 -->
+        <button id="sidebarToggleBtn" class="sidebar-toggle-btn" onclick="toggleSidebar()"></button>
 
         <dialog id="myAlert">
             <h3>알림</h3>
             <p id="alertContent" style="white-space: pre-line">여기에 내용이 표시됩니다.</p>
-            <div class="button-container">
+            <div class="popup-button-container">
                 <button onclick="closeDialog('alert', true)" class="close">닫기</button>
             </div>
         </dialog>
@@ -52,7 +60,7 @@
         <dialog id="myConfirm">
             <h3>알림</h3>
             <p id="confirmContent" style="white-space: pre-line">여기에 내용이 표시됩니다.</p>
-            <div class="button-container">
+            <div class="popup-button-container">
                 <button onclick="closeDialog('confirm', true)" class="confirm">확인</button>
                 <button onclick="closeDialog('confirm', false)" class="close">닫기</button>
             </div>
@@ -70,6 +78,18 @@
         <div class="content">
             <section layout:fragment="content"></section>
         </div>
+    </div>
+
+    <div id="chat-box" class="chat-box" style="display: none;">
+        <div class="chat-header">
+            <span id="chat-target">채팅</span>
+            <button onclick="closeChat()" class="close-btn">×</button>
+        </div>
+        <div class="chat-messages" id="chat-messages"></div>
+        <form class="chat-input" id="chat-form">
+            <input type="text" id="chat-input" placeholder="메시지를 입력하세요" autocomplete=off/>
+            <button type="submit" class="btn btn-primary" id="submit-btn">전송</button>
+        </form>
     </div>
 
     <!-- Footer -->

@@ -3,6 +3,7 @@ package com.koboolean.metagen.system.user.controller;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.logs.domain.dto.LogsDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
 import com.koboolean.metagen.user.service.UserService;
 import com.koboolean.metagen.utils.PageableUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -11,12 +12,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Tag(name = "User Manage API", description = "사용자 관련 API")
 @RestController
@@ -76,5 +78,16 @@ public class UserRestController {
         userService.saveUserPassword(accountDto);
 
         return ResponseEntity.ok(Map.of("result", true));
+    }
+
+    @GetMapping("/activeUsers")
+    public ResponseEntity<Map<String,Object>> getActiveUsers(@AuthenticationPrincipal AccountDto accountDto) {
+        Map<String, Object> result = userService.getActiveUser(accountDto);
+
+        return ResponseEntity.ok(Map.of(
+                "result", true,
+                "activeUsers", result.get("loggedIn"),
+                "inactiveUsers", result.get("loggedOut")
+        ));
     }
 }

@@ -11,9 +11,6 @@
     gap: 10px;
 }
 
-.right-group button {
-    margin-left: 8px;
-}
 
 label[for="projectSelector"] {
     font-weight: bold;
@@ -45,4 +42,24 @@ label[for="projectSelector"] {
 
 .edit-form {
     padding-bottom: 10px;
+}
+
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+    .button-project-container {
+        flex-direction: column;
+        align-items: flex-start; /* 왼쪽 정렬 */
+        gap: 12px;
+    }
+
+    .right-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .right-group button {
+        margin-left: 0; /* 좌측 마진 제거 */
+    }
 }

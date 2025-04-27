@@ -12,12 +12,14 @@
 
     <div class="button-container">
         <button class="btn btn-primary" id="download-template">템플릿 다운로드</button>
-        <button id="excel-upload" class="btn btn-primary">메타데이터 업로드</button>
+        <button id="excel-upload" class="btn btn-primary">컬럼 업로드</button>
     </div>
+
+    <input type="file" id="upload-file" style="display: none" accept=".xlsx, .xls"/>
 
     <!-- 그리드 영역 -->
     <div id="gridContainer">
-        <div th:replace="~{fragments/grid :: grid('tableDesignGrid', '/api/selectColumn', 'anCD', null)}"></div>
+        <div th:replace="~{fragments/grid :: grid('columnManageGrid', '/api/selectColumn', 'anCD', 'columnManageGrid_selectRow')}"></div>
     </div>
 
 </section>

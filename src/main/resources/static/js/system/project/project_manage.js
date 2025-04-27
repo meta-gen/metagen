@@ -136,7 +136,6 @@ $(document).ready(function () {
             isActive: $form.find('[name="isActive"]').is(':checked'),
             isAutoActive: $form.find('[name="isAutoActive"]').is(':checked'),
             isDicAbbrUsed : $form.find('[name="isDicAbbrUsed"]').is(':checked'),
-            isUseSwagger: $form.find('[name="isUseSwagger"]').is(':checked'),
             templateType: $('#templateTypes').val()
         };
 
@@ -215,7 +214,7 @@ $(document).ready(function () {
      * @param projectData
      * @param saveProject
      */
-    function openDialog(type, projectData, saveProject, templateTypes) {
+    function openDialog(type, projectData, saveProject) {
         let managerSelectHtml = '';
         let templateTypeHtml = '';
 
@@ -232,21 +231,6 @@ $(document).ready(function () {
                                         ${options}
                                     </select>
                                  </div>`;
-            }
-            if(Array.isArray(templateTypes)){
-                const options = templateTypes.map(template => {
-                    const isSelected = projectData.templateType !== null && projectData.templateType.indexOf(template) !== -1 ? 'selected' : '';
-                    return `<option value="${template}" ${isSelected}>${template}</option>`;
-                }).join('');
-
-                templateTypeHtml = `<div style="margin-top: 10px; margin-bottom: 10px;"><label for="templateTypes">템플릿 타입 선택</label>
-                                        <select id="templateTypes"
-                                                name="templateType"
-                                                multiple
-                                                class="form-select">
-                                            ${options}
-                                        </select>
-                                    </div>`
             }
         }
 
@@ -275,11 +259,6 @@ $(document).ready(function () {
             <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
                 <input type="checkbox" id="project-dicAbbrUsed" name="isDicAbbrUsed" class="form-check-input" ${projectData.isDicAbbrUsed ? 'checked' : ''} />
                 <label class="form-check-label" for="project-dicAbbrUsed">데이터 사전 약어 사용 여부</label>
-            </div>
-            
-            <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
-                <input type="checkbox" id="project-swagger" name="isUseSwagger" class="form-check-input" ${projectData.isUseSwagger ? 'checked' : ''} />
-                <label class="form-check-label" for="project-swagger">Swagger 사용 여부</label>
             </div>
 
             ${templateTypeHtml}
@@ -352,18 +331,17 @@ $(document).ready(function () {
             success : (response) => {
                 if(response.result){
                     const projectData = response.project;
-                    const templateTypes = response.templateTypes;
 
                     const type = "U"
 
-                    openDialog(type, projectData, saveProject, templateTypes);
+                    openDialog(type, projectData, saveProject);
                 }
             }
         })
     });
 
     $("#btn-project-delete").on("click", function(){
-       window.openConfirm("해당 프로젝트를 삭제하시겠습니까?", function(){
+       window.openConfirm("프로젝트 삭제 시 복구가 불가합니다.\n해당 프로젝트를 삭제하시겠습니까?", function(){
            const selectedId = $("#projectSelector").val();
 
            if(selectedId === 0){

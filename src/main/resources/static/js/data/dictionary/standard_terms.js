@@ -273,6 +273,8 @@ function addStandardTerms(){
  */
 export function selectRow(rowData, columnList, isManager, tableId) {
 
+    if(rowData.isApprovalYn === 'Y') return;
+
     const dialogContent = $("<div></div>");
     const form = $("<form></form>").attr("id", `edit-${tableId}`);
 
@@ -427,7 +429,7 @@ function openDomainSearchPopup(){
     const popup = window.open(
         "/popup/standardTermSearch",  // 팝업으로 띄울 URL
         "약어 명 검색",     // 팝업 이름 (중복 방지용)
-        "width=600,height=800,resizable=yes,scrollbars=yes"
+        "width=700,height=800,resizable=yes,scrollbars=yes"
     );
 
     popup.name = JSON.stringify({ "standardTermName" : value });
@@ -461,7 +463,6 @@ function approvalSubmitClick(e){
         "allowedValues",
         "storageFormat",
         "displayFormat",
-        "synonyms",
         "commonStandardTermName",
         "commonStandardTermDescription"
     ];

@@ -18,6 +18,6 @@ public class LogsConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LogsInterceptor(logsService))
                 .addPathPatterns("/api/**")
-                .excludePathPatterns("/api/updatePwd", "/api/**/data", "/api/**/column");
+                .excludePathPatterns("/api/updatePwd", "/api/**/data", "/api/**/column", "/api/selectCodeRule/detail");
     }
 }

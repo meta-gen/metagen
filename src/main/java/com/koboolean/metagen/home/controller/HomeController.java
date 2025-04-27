@@ -22,7 +22,7 @@ public class HomeController {
 
     @GetMapping(value="/notice")
     public String notice() {
-        return "pages/notice";
+        return "pages/operation/notice/noticeList";
     }
 
     @GetMapping("/tableManage")
@@ -37,7 +37,17 @@ public class HomeController {
 
     @GetMapping("/codeRule")
     public String codeRule() {
-        return "pages/code_rule";
+        return "pages/data/code_rule";
+    }
+
+    @GetMapping("/codeRuleManage")
+    public String codeRuleManage(Model model) {
+
+        List<ProjectDto> projectDtos = userService.selectAllProjects();
+
+        model.addAttribute("projects", projectDtos);
+
+        return "pages/system/code_rule_manage";
     }
 
     @GetMapping("/designManage")

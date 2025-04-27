@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Repository
 public interface StandardWordRepository extends JpaRepository<StandardWord, Long> {
     Page<StandardWord> findAllByProjectId(Long projectId, Pageable pageable);
@@ -31,4 +33,8 @@ public interface StandardWordRepository extends JpaRepository<StandardWord, Long
     StandardWord findBycommonStandardWordName(String commonStandardWordName);
 
     StandardWord findByCommonStandardWordNameAndProjectId(String s, Long projectId);
+
+    List<StandardWord> findAllByProjectIdAndCommonStandardWordName(Long projectId, String commonStandardWordName);
+
+    List<StandardWord> findAllByCommonStandardWordAbbreviationAndProjectId(String s, Long projectId);
 }

@@ -1,0 +1,73 @@
+spring:
+  application:
+    name: meta-gen
+  datasource:
+    url: jdbc:h2:file:./data/meta-gen;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: meta-gen
+    password: meta-gen
+  data:
+    redis:
+      host: redis
+      port: 16379
+  jpa:
+    hibernate:
+      ddl-auto: update
+    generate-ddl: true
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    mapping-resources: META-INF/orm.xml
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:data-h2.sql
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+logging:
+  level:
+    root: INFO
+    org.springframework: DEBUG
+    com.koboolean.metagen: TRACE
+    org.hibernate.SQL: DEBUG
+    org.springframework.jdbc: DEBUG
+    org.springframework.security: DEBUG
+
+server:
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        secure: true
+        same-site: Strict
+      #        max-age: 1800
+      timeout: 30m
+
+  port: 9940
+
+secret:
+  key: wHlFMltmbMCxR63/G1xueQl5DwtYwUBXXcmeYcSE8ril2FpMqT2VTVPzCJiK7zXY24MlWwWpVfgspISEQdKpnw==
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui
+    url: /v3/api-docs
+  info:
+    title: "MetaGen API 문서"
+    description: "MetaGen 프로젝트의 API 문서"
+    version: "1.0.0"
