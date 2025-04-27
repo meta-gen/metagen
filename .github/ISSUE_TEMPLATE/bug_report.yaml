@@ -2,7 +2,6 @@ name: 버그 리포트
 description: MetaGen 사용 중 발견한 버그를 신고합니다.
 title: "[Bug] "
 labels: [bug]
-assignees: ''
 
 body:
   - type: input
