@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
             type: "GET",
             dataType: "json",
             error: function (xhr, status, error) {
-                console.error("프로젝트 리스트를 가져오는 데 실패했습니다.", error);
+                console.error("프로젝트 리스트를 가져오는 데 실패했습니다.", error);  
             }
         });
     }
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         fetchProjects(username).then(projects => {
             if (projects.length === 0) {
-                openAlert("해당 아이디로 접근 가능한 프로젝트가 없습니다.");
+                openAlert("해당 아이디로 접근 가능한 프로젝트가 없습니다.");  
                 return;
             }
 
