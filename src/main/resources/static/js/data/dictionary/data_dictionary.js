@@ -57,7 +57,7 @@ $(document).ready(function () {
      * 엑셀 파일이 업로드 된 이후 서버에 전송 및 파싱처리
      */
     $("#upload-file").on("change", () => {
-        window.openConfirm("업로드 하시겠습니까?", () => {
+        window.openConfirm("이 프로젝트에서 데이터 사전 약어 사용 여부가 ‘사용 안 함’으로 설정되지 않은 경우, 해당 표준단어 영문명이 여러 단어로 구성되어 있어 약어가 자동 적용됩니다. 계속 진행하시겠습니까?", () => {
             const file = $("#upload-file")[0].files[0]; // 선택한 파일 가져오기
             if (!file) {
                 alert("업로드할 파일을 선택해주세요.");

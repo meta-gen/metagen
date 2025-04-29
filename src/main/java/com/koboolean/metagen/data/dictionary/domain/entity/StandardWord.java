@@ -46,6 +46,8 @@ public class StandardWord {
     @ElementCollection
     private List<String> restrictedWords; // 금칙어 목록
 
+    private Boolean useAbbreviation;
+
     private Boolean isApproval;
 
     @OneToMany(mappedBy = "standardWord", cascade = CascadeType.ALL)
@@ -77,6 +79,7 @@ public class StandardWord {
                 .synonymList(synonyms)
                 .restrictedWords(restrictedWords)
                 .isApproval(standardWordDto.getIsApprovalYn().equals("Y"))
+                .useAbbreviation(standardWordDto.getUseAbbreviation().equals("Y"))
                 .build();
     }
 }
