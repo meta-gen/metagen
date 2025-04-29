@@ -213,11 +213,20 @@ public class CodeRuleServiceImpl implements CodeRuleService {
         for (String s : methodKeyword) {
             List<StandardWord> standardWord = standardWordRepository.findAllByProjectIdAndCommonStandardWordName(projectId, s);
 
+            // 명칭 키워드를 이용하여 메소드 명을 가져온다.
             if (!standardWord.isEmpty()) {
                 if (project.getIsDicAbbrUsed() != null && project.getIsDicAbbrUsed()) {
+                    // 약어 사용여부가 ture일 경우 약어 형식으로 사용한다.
                     data.append(standardWord.get(0).getCommonStandardWordAbbreviation().toLowerCase()).append("_");
                 } else {
-                    data.append(standardWord.get(0).getCommonStandardWordEnglishName().replace(" ", "_").toLowerCase()).append("_");
+                    // 약어사용여부가 false이거나 null일 경우, 단어를 가져와 메소드명에 사용한다.
+                    if(standardWord.get(0).getUseAbbreviation()){
+                        // 약어 사용여부는 false이지만, 문장 내부에 약어사용여부가 true일 경우, 약어 형식을 사용토록 한다.
+                        // 만약 IP일 경우 Internet Protocol 이므로 문장형식에 의해 너무 긴 메소드명이 만들어지므로 이를 방지하기 위해 사용한다.
+                        data.append(standardWord.get(0).getCommonStandardWordAbbreviation().toLowerCase()).append("_");
+                    }else{
+                        data.append(standardWord.get(0).getCommonStandardWordEnglishName().replace(" ", "_").toLowerCase()).append("_");
+                    }
                 }
             }
         }

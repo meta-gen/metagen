@@ -90,10 +90,11 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                 new ColumnDto("표준단어 영문명", "commonStandardWordEnglishName", ColumnType.STRING, true),
                 new ColumnDto("표준단어 설명", "commonStandardWordDescription", ColumnType.STRING, true),
                 new ColumnDto("표준도메인분류명", "commonStandardDomainCategory", ColumnType.STRING, true),
-                new ColumnDto("형식단어 여부", "isFormatWord", ColumnType.STRING),
-                new ColumnDto("이음동의어 목록", "synonyms", ColumnType.STRING),
-                new ColumnDto("금칙어 목록", "restrictedWords", ColumnType.STRING),
-                new ColumnDto("승인여부", "isApprovalYn", ColumnType.STRING)
+                new ColumnDto("약어사용여부", "useAbbreviation", ColumnType.STRING, RowType.TEXT, false, false),
+                new ColumnDto("형식단어 여부", "isFormatWord", ColumnType.STRING, RowType.TEXT, false, false),
+                new ColumnDto("이음동의어 목록", "synonyms", ColumnType.STRING, RowType.TEXT, false, false),
+                new ColumnDto("금칙어 목록", "restrictedWords", ColumnType.STRING, RowType.TEXT, false, false),
+                new ColumnDto("승인여부", "isApprovalYn", ColumnType.STRING, RowType.TEXT, false, true)
         );
     }
 
@@ -246,6 +247,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
         // 관리자의 경우 승인으로 저장, 아닐경우 관리자가 승인할 수 있도록 저장
         boolean isApprovalAvailable = AuthUtil.isApprovalAvailable();
 
+        standardWordDto.setUseAbbreviation(isApprovalAvailable ? "Y" : "N");
         standardWordDto.setProjectId(accountDto.getProjectId());
         standardWordDto.setIsApprovalYn(isApprovalAvailable ? "Y" : "N");
         StandardWord standardWord = StandardWord.fromEntity(standardWordDto);

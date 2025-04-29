@@ -127,6 +127,7 @@ public class StandardWordService {
                     .restrictedWords(List.of(standardWordEntry.get("prohibitedWords").split(",")))
                     .projectId(projectId)
                     .isApproval(isApprovalAvailable)
+                    .useAbbreviation(standardWordEntry.get("standardWordEnglishName").split(" ").length > 1)
                     .build();
 
             List<StandardWord> nameIsDupl = standardWordRepository.findAllByProjectIdAndCommonStandardWordName(standardWord.getProjectId(), standardWord.getCommonStandardWordName());
@@ -191,6 +192,7 @@ public class StandardWordService {
 
         StandardWord standardWord = standardWordRepository.findByIdAndProjectId(standardWordDto.getId(), standardWordDto.getProjectId());
 
+        standardWord.setUseAbbreviation(standardWordDto.getUseAbbreviation().equals("Y"));
         standardWord.setRevisionNumber(standardWordDto.getRevisionNumber());
         standardWord.setCommonStandardWordDescription(standardWordDto.getCommonStandardWordDescription());
         standardWord.setIsFormatWord(standardWordDto.getIsFormatWord().equals("Y"));

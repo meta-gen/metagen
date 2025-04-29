@@ -168,7 +168,7 @@ function addStandardWords(){
                 .attr("name", key)
                 .css("width", "100%")
                 .css("height", "60px");
-        } else if (key === "isFormatWord") {
+        } else if (key === "useAbbreviation" || key === "isFormatWord") {
             input = $("<select></select>")
                 .attr("id", key)
                 .attr("name", key)
@@ -267,7 +267,7 @@ export function selectRow(rowData, columnList, isManager, tableId) {
 
         if(key === "isApprovalYn"){
             continue;
-        }else if ( key === "isFormatWord") {
+        }else if (key === "useAbbreviation" || key === "isFormatWord") {
             input = $("<select></select>")
                 .attr("id", key)
                 .attr("name", key)

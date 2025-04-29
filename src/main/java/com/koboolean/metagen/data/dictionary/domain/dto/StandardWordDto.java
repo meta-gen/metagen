@@ -19,6 +19,7 @@ public class StandardWordDto {
     private String commonStandardWordAbbreviation; // 표준단어영문약어명
     private String commonStandardWordEnglishName; // 표준단어 영문명
     private String commonStandardWordDescription; // 표준단어 설명
+    private String useAbbreviation;
     private String isFormatWord; // 형식단어 여부
     private String commonStandardDomainCategory; // 표준도메인분류명
     private String synonyms;
@@ -34,6 +35,7 @@ public class StandardWordDto {
                 .commonStandardWordAbbreviation(entity.getCommonStandardWordAbbreviation())
                 .commonStandardWordEnglishName(entity.getCommonStandardWordEnglishName())
                 .commonStandardWordDescription(entity.getCommonStandardWordDescription())
+                .useAbbreviation(entity.getUseAbbreviation() ? "Y" : "N")
                 .isFormatWord(entity.getIsFormatWord() ? "Y" : "N")
                 .commonStandardDomainCategory(entity.getCommonStandardDomainCategory())
                 .synonyms(convertListToString(entity.getSynonymList()))
