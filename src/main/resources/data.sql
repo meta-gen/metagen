@@ -201,6 +201,12 @@ ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (60, '*', 0, '/api/activeUsers','url', '사용자 로그인여부', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (61, '*', 0, '/popup/noticePopupDetail','url', '공지사항 상세보기 팝업', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (62, '*', 0, '/popup/noticePopupSave','url', '공지사항 등록 팝업', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
 
 -- ROLE_NOT_APPROVE
 insert into role_resources(resource_id, role_id) values (1,5) on CONFLICT DO NOTHING; -- 로그아웃
@@ -210,6 +216,7 @@ insert into role_resources(resource_id, role_id) values (5,5) on CONFLICT DO NOT
 insert into role_resources(resource_id, role_id) values (13,5) on CONFLICT DO NOTHING; -- 공지사항화면
 insert into role_resources(resource_id, role_id) values (48,5) on CONFLICT DO NOTHING; -- 공지사항조회
 insert into role_resources(resource_id, role_id) values (60,5) on CONFLICT DO NOTHING; -- 사용자 로그인여부
+insert into role_resources(resource_id, role_id) values (61,5) on CONFLICT DO NOTHING; -- 공지사항 상세보기 팝업
 
 -- ROLE_VIEWER
 insert into role_resources(resource_id, role_id) values (4,4) on CONFLICT DO NOTHING; -- 컬럼관리화면
@@ -272,6 +279,7 @@ insert into role_resources(resource_id, role_id) values (49,1) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (53,1) on CONFLICT DO NOTHING; -- 코드규칙관리 저장
 insert into role_resources(resource_id, role_id) values (54,1) on CONFLICT DO NOTHING; -- 코드규칙관리 삭제
 insert into role_resources(resource_id, role_id) values (55,1) on CONFLICT DO NOTHING; -- 코드규칙관리 등록/수정 팝업
+insert into role_resources(resource_id, role_id) values (62,1) on CONFLICT DO NOTHING; -- 공지사항 등록 팝업
 
 
 -- ROLE_ANONYMOUS

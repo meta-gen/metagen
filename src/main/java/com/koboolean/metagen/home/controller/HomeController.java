@@ -20,9 +20,19 @@ public class HomeController {
         return "pages/dashboard";
     }
 
+    /**
+     * 공지사항 리스트
+     * @return
+     */
     @GetMapping(value="/notice")
-    public String notice() {
-        return "pages/operation/notice/noticeList";
+    public String notice(Model model) {
+    	
+    	// 사용자의 선택가능 프로젝트 목록을 조회한다.
+    	List<ProjectDto> projectDtos = userService.selectAllProjects();
+
+        model.addAttribute("projects", projectDtos);
+    	
+        return "pages/operation/notice/notice_list";
     }
 
     @GetMapping("/tableManage")

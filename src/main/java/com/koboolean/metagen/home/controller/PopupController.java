@@ -32,4 +32,24 @@ public class PopupController {
     public String codeRuleDetailPopup(){
         return "popup/code_rule_detail_popup";
     }
+    
+    /**
+     * 공지사항 상세보기 팝업
+     * @return
+     */
+    @GetMapping("/noticePopupDetail")
+    public String noticePopupDetail(){
+    	
+        return "popup/notice_popup_detail";
+    }
+    
+    /**
+     * 공지사항 등록 팝업
+     * @return
+     */
+    @GetMapping("/noticePopupSave")
+    public String noticePopupSave(){
+    	
+        return "popup/notice_popup_save";
+    }
 }
