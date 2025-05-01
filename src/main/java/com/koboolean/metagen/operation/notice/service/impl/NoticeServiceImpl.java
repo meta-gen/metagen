@@ -2,12 +2,15 @@ package com.koboolean.metagen.operation.notice.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.koboolean.metagen.batch.config.BatchConfig;
 import com.koboolean.metagen.board.domain.dto.BoardDto;
 import com.koboolean.metagen.board.domain.entity.Board;
 import com.koboolean.metagen.board.domain.entity.BoardCategory;
@@ -30,6 +33,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class NoticeServiceImpl implements NoticeService {
+	
+	Logger logger = LoggerFactory.getLogger(BatchConfig.class);
 
 	private final BoardRepository boardRepository;
 	private final BoardCategoryRepository boardCategoryRepository;
@@ -86,13 +91,13 @@ public class NoticeServiceImpl implements NoticeService {
         }
         
         Board board = Board.builder()
-        		.projectId(boardDto.getProjectId())
-        		.boardCategory(boardCategory)		// RDB에서 join의 개념으로 본다.
-        		.title(boardDto.getTitle())
-        		.content(boardDto.getContent())
-        		.username(accountDto.getUsername())
-        		.deleteYn('Y')
-        		.hitCount(0)
+        		.projectId    (boardDto.getProjectId() )
+        		.boardCategory(boardCategory           )	// RDB에서 join의 개념으로 본다.
+        		.title        (boardDto.getTitle()     )
+        		.content      (boardDto.getContent()   )
+        		.username     (accountDto.getUsername())
+        		.deleteYn     ('Y'                     )
+        		.hitCount     (0                       )
         		.build();
         
         boardRepository.save(board);

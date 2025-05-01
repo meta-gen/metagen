@@ -39,6 +39,7 @@ public class PopupController {
      */
     @GetMapping("/noticePopupDetail")
     public String noticePopupDetail(){
+    	
         return "popup/notice_popup_detail";
     }
     
@@ -48,6 +49,7 @@ public class PopupController {
      */
     @GetMapping("/noticePopupSave")
     public String noticePopupSave(){
+    	
         return "popup/notice_popup_save";
     }
 }

@@ -1,6 +1,4 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
-
+<html>
 <head>
     <title>MetaGen</title>
     <link rel="icon" type="image/x-icon" href="/images/favicon.png">
@@ -14,7 +12,7 @@
     <script th:src="@{/js/bootstrap.bundle.js}"></script>
     <script th:src="@{/js/dataTables.min.js}"></script>
     <script th:src="@{/js/jquery-ui-1.14.1.custom/jquery-ui.js}"></script>
-    <script th:src="@{/js/popup/standard_term_search.js}"></script>
+    <script type="module" th:src="@{/js/popup/notice_popup_save.js}"></script>
 
     <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
 </head>
@@ -22,41 +20,33 @@
 <body>
     <div class="popup-container">
         <div class="popup-header">
-            <h1>표준 용어 상세</h1>
+            <h1>공지사항 등록</h1>
             <p style="font-size: 0.9rem; color: #666; margin-top: 4px;">
-                입력한 용어를 <strong>띄어쓰기 기준</strong>으로 나누어 표준 단어를 검색합니다.<br>
-                예: <code>사용자 이름 나이</code><br>
-                <strong>※ 마지막 단어는 도메인에 등록된 단어여야 등록이 가능합니다.</strong>
+                공지사항을 등록합니다.
             </p>
         </div>
 
-        <form class="popup-form">
-            <div class="form-row">
-                <div class="input-button-group" style="margin-bottom: 16px">
-                    <input type="text" id="term_word_text" class="form-control" placeholder="예: 사용자 이름 나이" style="flex: 1;" />
-                    <button type="button" class="button btn btn-primary" id="search-btn">검색</button>
-                </div>
-                <input type="text" id="standard_term_result_text" class="form-control" placeholder="자동 생성된 표준 용어명" readonly />
+        <div class="button-container" style="justify-content:flex-end; display: flex;">
+            <button class="btn btn-primary" id="save-button">저장</button>
+        </div>
 
-                <input type="hidden" id="hidden-abbreviation">
-                <input type="hidden" id="hidden-domain-name">
-                <input type="hidden" id="hidden-allowed-values">
-                <input type="hidden" id="hidden-storage-format">
-                <input type="hidden" id="hidden-display-format">
-                <input type="hidden" id="hidden-synonyms">
-
-            </div>
-
-            <div class="form-group mt-3">
-                <label for="domain-select">도메인 선택</label>
-                <select id="domain-select" class="form-control">
-                </select>
-            </div>
-
-            <div class="popup-actions" style="margin-top: 20px; text-align: right;">
-                <button type="button" class="btn btn-secondary" onclick="window.close();">닫기</button>
-                <button type="button" class="btn btn-primary" id="confirm-btn" disabled style="display: none">확인</button>
-            </div>
+        <form id="editNoticeForm" class="popup-form">
+            <input type="hidden" id="type" />
+            <input type="hidden" id="projectId" />
+            <input type="hidden" id="id" />
+			
+			<div class="form-group">
+	            <label for="noticeTitle">공지사항 제목</label>
+	            <input type="text" id="noticeTitle" class="form-control" name="noticeTitle" required/>
+	        </div>
+			<div class="form-group">
+	            <label for="noticeContent">공지사항 내용</label>
+	            <textarea id="noticeContent" class="form-control" name="noticeContent" style="height: 300px;"></textarea>
+	        </div>
+			<div class="form-group">
+	            <label for="noticeFile">파일 등록</label>
+	            <input type="file" class="form-control" name="noticeFile" id="noticeFile"/>
+	        </div>
         </form>
     </div>
 </body>
