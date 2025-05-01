@@ -5,56 +5,10 @@ MetaGen은 대규모 시스템 개발에서 일관된 명명 규칙을 준수하
 
 [Docker Hub](https://hub.docker.com/repository/docker/koboolean/metagen)
 
----
-## 기술 스택
-
-### **Backend** (REST API 개발, 인증/인가, 비즈니스 로직)
-- Spring Boot 3.4.1
-- Java 17
-- Spring Security 6.2.1
-- JPA (Hibernate) 6.4.0.Final
-- QueryDSL 5.0.0
-- Lombok 1.18.30
-- Spring Web (REST API)
-- ModelMapper 3.1.0
-- Spring Batch 5.2.1
-
-### **Frontend** (UI 렌더링, 사용자 인터페이스, 동적 콘텐츠 처리)
-- Thymeleaf 3.1.2
-- Thymeleaf Layout Dialect 3.2.1
-- jQuery 3.6.0
-- Ajax (jQuery 기반)
-- Bootstrap 5.3.2
-- JavaScript ES6+
-- Thymeleaf Spring Security Extras 3.1.2
-
-### **Database**
-- PostgreSQL 16.3
-- PostgreSQL JDBC Driver 42.6.0
-
-### **DevOps / CI-CD**
-- Docker 24.0.7
-- Docker Compose 2.20.2
-- GitHub Actions, Jenkins 2.440.1
-
-### **프로젝트 관리 & 문서화**
-- Jira (Cloud)
-- GitHub (Actions 포함)
-- Springdoc OpenAPI (Swagger) 2.8.5
-
-### **유틸리티**
-- Apache POI (Excel 처리) 5.3.0
-- POI-Ooxml, XmlBeans, POI-Ooxml-Schemas 포함
-- Apache Commons Collections 4.4
-
-### **도입 검토 중**
-- **Redis Pub/Sub** → 승인관리 시스템 비동기 메시징 처리
-#### **Search & Indexing** (검색 및 인덱싱)
-- **Elasticsearch** 8.11.0 → 대량 데이터 검색 및 실시간 분석
-- **Spring Data Elasticsearch** 5.2.1 → Elasticsearch와의 연동 및 데이터 저장/검색 관리
-- **Spring Batch** 5.2.1 → 시간이 소요되는 Backend 로직 수행
+[Document Page](https://metagen-react.vercel.app/)
 
 ---
+
 ## 프로젝트 목표
 
 1. **코드 일관성 향상**
