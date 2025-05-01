@@ -160,6 +160,8 @@ merge into RESOURCES (resource_id, http_method, order_num, resource_name, resour
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (58, '*', 0, '/api/deleteCodeRule/**','url', '코드규칙 삭제', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (59, '*', 0, '/popup/codeRuleDetailPopup/**','url', '코드규칙 팝업', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (60, '*', 0, '/api/activeUsers','url', '사용자 로그인여부', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (61, '*', 0, '/popup/noticePopupDetail','url', '공지사항 상세보기 팝업', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (62, '*', 0, '/popup/noticePopupSave','url', '공지사항 등록 팝업', 'SYSTEM', 'SYSTEM');
 
 -- ROLE_NOT_APPROVE
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (1,5); -- 로그아웃
@@ -169,6 +171,7 @@ merge into role_resources(resource_id, role_id) key(resource_id, role_id) values
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (13,5); -- 공지사항화면
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (48,5); -- 공지사항 조회
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (60,5); -- 사용자 로그인여부
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (61,5); -- 공지사항 상세보기 팝업
 
 -- ROLE_VIEWER
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (4,4); -- 컬럼관리화면
@@ -225,6 +228,7 @@ merge into role_resources(resource_id, role_id) key(resource_id, role_id) values
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (53,1) ; -- 코드규칙관리 저장
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (54,1) ; -- 코드규칙관리 삭제
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (55,1) ; -- 코드규칙관리 등록/수정 팝업
+merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (62,1) ; -- 공지사항 등록 팝업
 
 -- ROLE_ADMIN
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (14,0); -- 권한수정

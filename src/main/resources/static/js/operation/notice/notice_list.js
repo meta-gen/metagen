@@ -72,21 +72,22 @@ $(document).ready(function() {
 
 		// 매니저일 경우
 		if (isManager) {
-
-			const type = "U";
-			const form = createForm({}, type);
-
-			window.openDialog('div', { title: type === 'C' ? '공지사항 등록' : '공지사항 수정', content: form });
-
-			$("#btn-save-notice").on("click", (e) => {
-
-				e.preventDefault();
-
-				saveNotice(type);
-			});
+			
+			const popup = window.open(
+				
+			        "/popup/noticePopupSave",  // 팝업으로 띄울 URL
+			        "공지사항 등록",     // 팝업 이름 (중복 방지용)
+			        "width=700,height=800,resizable=yes,scrollbars=yes"
+			    );
 		}
 		else {
 
+			const popup = window.open(
+				
+						        "/popup/noticePopupDetail",  // 팝업으로 띄울 URL
+						        "공지사항 상세보기",     // 팝업 이름 (중복 방지용)
+						        "width=700,height=800,resizable=yes,scrollbars=yes"
+						    );
 		}
 
 		debugger;
