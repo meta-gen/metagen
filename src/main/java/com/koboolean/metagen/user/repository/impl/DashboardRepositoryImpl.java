@@ -40,6 +40,8 @@ public class DashboardRepositoryImpl implements DashboardRepositoryCustom {
         QCodeRule rule = QCodeRule.codeRule;
         QCodeRuleDetail codeRuleDetail = QCodeRuleDetail.codeRuleDetail;
         QTemplate template = QTemplate.template;
+        QTableInfo tableInfo = QTableInfo.tableInfo;
+        QColumnInfo columnInfo = QColumnInfo.columnInfo;
 
         List<RecentChangeDto> wordChanges = query
                 .select(Projections.constructor(RecentChangeDto.class,
@@ -119,7 +121,33 @@ public class DashboardRepositoryImpl implements DashboardRepositoryCustom {
                 .limit(limit)
                 .fetch();
 
-        return Stream.of(wordChanges, termChanges, domainChanges, codeRuleChanges, codeRuleDetailChanges, templateChanges)
+        List<RecentChangeDto> tableChanges = query
+                .select(Projections.constructor(RecentChangeDto.class,
+                        Expressions.constant("테이블관리"),
+                        tableInfo.tableName,
+                        tableInfo.updatedBy,
+                        tableInfo.updated
+                ))
+                .from(tableInfo)
+                .where(tableInfo.projectId.eq(projectId))
+                .orderBy(tableInfo.updated.desc())
+                .limit(limit)
+                .fetch();
+
+        List<RecentChangeDto> columnChanges = query
+                .select(Projections.constructor(RecentChangeDto.class,
+                        Expressions.constant("컬럼관리"),
+                        columnInfo.columnName,
+                        columnInfo.updatedBy,
+                        columnInfo.updated
+                ))
+                .from(columnInfo)
+                .where(columnInfo.projectId.eq(projectId))
+                .orderBy(columnInfo.updated.desc())
+                .limit(limit)
+                .fetch();
+
+        return Stream.of(wordChanges, termChanges, domainChanges, codeRuleChanges, codeRuleDetailChanges, templateChanges, tableChanges, columnChanges)
                 .flatMap(Collection::stream)
                 .sorted(Comparator.comparing(RecentChangeDto::modifiedAt).reversed())
                 .limit(limit)
