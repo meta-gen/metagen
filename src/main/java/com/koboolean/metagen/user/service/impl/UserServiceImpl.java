@@ -2,6 +2,7 @@ package com.koboolean.metagen.user.service.impl;
 
 
 import com.koboolean.metagen.board.domain.dto.BoardDto;
+import com.koboolean.metagen.board.domain.dto.BoardViewDto;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.grid.enums.RowType;
@@ -338,8 +339,9 @@ public class UserServiceImpl implements UserService {
 
         Long projectId = accountDto.getProjectId();
 
-        List<RecentChangeDto> recentChanges = dashboardRepository.findRecentChanges(projectId, 5);
-        List<BoardDto> notice = dashboardRepository.findNotice(projectId, 5);
+        List<RecentChangeDto> recentChanges = dashboardRepository.findRecentChanges(projectId, 10);
+        List<BoardViewDto> notice = dashboardRepository.findNotice(projectId, 3);
+
         DashboardDto dashboardDto = dashboardRepository.findDataCount(projectId);
 
         dashboardDto.setRecentChanges(recentChanges);
