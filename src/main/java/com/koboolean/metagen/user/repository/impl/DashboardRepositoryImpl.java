@@ -82,7 +82,7 @@ public class DashboardRepositoryImpl implements DashboardRepositoryCustom {
 
         List<RecentChangeDto> codeRuleChanges = query
                 .select(Projections.constructor(RecentChangeDto.class,
-                        Expressions.constant("코드규칙"),
+                        Expressions.constant("코드규칙관리"),
                         rule.codeRuleName,
                         rule.updatedBy,
                         rule.updated
@@ -108,7 +108,7 @@ public class DashboardRepositoryImpl implements DashboardRepositoryCustom {
 
         List<RecentChangeDto> templateChanges = query
                 .select(Projections.constructor(RecentChangeDto.class,
-                        Expressions.constant("코드규칙"),
+                        Expressions.constant("템플릿"),
                         template.templateName,
                         template.updatedBy,
                         template.updated
