@@ -240,7 +240,6 @@ function saveTable(type){
 
     const tableData = {
         id: $form.find("[name='id']").val(),
-        type: $form.find("[name='type']").val(),
         tableName: $form.find("[name='tableName']").val(),
         tableDescription: $form.find("[name='tableDescription']").val(),
         isMasterTable: $form.find("[name='isMasterTable']").is(":checked") ? "Y" : "N",
