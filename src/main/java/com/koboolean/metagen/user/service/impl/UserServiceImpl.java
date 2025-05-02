@@ -1,9 +1,12 @@
 package com.koboolean.metagen.user.service.impl;
 
 
+import com.koboolean.metagen.board.domain.dto.BoardDto;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.grid.enums.RowType;
+import com.koboolean.metagen.home.domain.dto.DashboardDto;
+import com.koboolean.metagen.home.domain.dto.RecentChangeDto;
 import com.koboolean.metagen.redis.service.MessageSaveService;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.exception.CustomException;
@@ -19,6 +22,7 @@ import com.koboolean.metagen.security.repository.RoleRepository;
 import com.koboolean.metagen.security.repository.UserRepository;
 import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
 import com.koboolean.metagen.system.project.repository.ProjectRepository;
+import com.koboolean.metagen.user.repository.DashboardRepository;
 import com.koboolean.metagen.user.service.UserService;
 import com.koboolean.metagen.utils.AuthUtil;
 import lombok.RequiredArgsConstructor;
@@ -50,6 +54,8 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     private final RedisTemplate<String, Object> redisTemplate;
+
+    private final DashboardRepository dashboardRepository;
 
     @Transactional
     public void createUser(AccountDto accountDto) {
@@ -325,6 +331,21 @@ public class UserServiceImpl implements UserService {
         result.put("loggedOut", loggedOut);
 
         return result;
+    }
+
+    @Override
+    public DashboardDto selectDashboardData(AccountDto accountDto) {
+
+        Long projectId = accountDto.getProjectId();
+
+        List<RecentChangeDto> recentChanges = dashboardRepository.findRecentChanges(projectId, 5);
+        List<BoardDto> notice = dashboardRepository.findNotice(projectId, 5);
+        DashboardDto dashboardDto = dashboardRepository.findDataCount(projectId);
+
+        dashboardDto.setRecentChanges(recentChanges);
+        dashboardDto.setNotices(notice);
+
+        return dashboardDto;
     }
 
 

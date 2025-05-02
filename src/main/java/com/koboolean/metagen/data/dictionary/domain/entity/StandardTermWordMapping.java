@@ -1,5 +1,6 @@
 package com.koboolean.metagen.data.dictionary.domain.entity;
 
+import com.koboolean.metagen.home.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "standard_term_word_mappings")
-public class StandardTermWordMapping {
+public class StandardTermWordMapping extends BaseEntity {
 
     @Id @GeneratedValue
     private Long id;

@@ -1,6 +1,7 @@
 package com.koboolean.metagen.user.service;
 
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
+import com.koboolean.metagen.home.domain.dto.DashboardDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.system.project.domain.dto.ProjectMemberDto;
@@ -40,4 +41,6 @@ public interface UserService {
     ProjectMemberDto getProjectRoleName(Long projectId, String username);
 
     Map<String, Object> getActiveUser(AccountDto accountDto);
+
+    DashboardDto selectDashboardData(AccountDto accountDto);
 }
