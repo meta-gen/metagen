@@ -1,6 +1,7 @@
 package com.koboolean.metagen.user.repository.impl;
 
 import com.koboolean.metagen.board.domain.dto.BoardDto;
+import com.koboolean.metagen.board.domain.dto.BoardViewDto;
 import com.koboolean.metagen.board.domain.entity.Board;
 import com.koboolean.metagen.board.domain.entity.QBoard;
 import com.koboolean.metagen.data.code.domain.entity.QCodeRuleDetail;
@@ -12,6 +13,7 @@ import com.koboolean.metagen.data.table.domain.entity.QTableInfo;
 import com.koboolean.metagen.home.domain.dto.DashboardDto;
 import com.koboolean.metagen.home.domain.dto.RecentChangeDto;
 import com.koboolean.metagen.system.code.domain.entity.QCodeRule;
+import com.koboolean.metagen.system.project.domain.entity.QTemplate;
 import com.koboolean.metagen.user.repository.DashboardRepositoryCustom;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
@@ -35,7 +37,9 @@ public class DashboardRepositoryImpl implements DashboardRepositoryCustom {
         QStandardWord word = QStandardWord.standardWord;
         QStandardTerm term = QStandardTerm.standardTerm;
         QStandardDomain domain = QStandardDomain.standardDomain;
-        QCodeRuleDetail rule = QCodeRuleDetail.codeRuleDetail;
+        QCodeRule rule = QCodeRule.codeRule;
+        QCodeRuleDetail codeRuleDetail = QCodeRuleDetail.codeRuleDetail;
+        QTemplate template = QTemplate.template;
 
         List<RecentChangeDto> wordChanges = query
                 .select(Projections.constructor(RecentChangeDto.class,
@@ -79,7 +83,7 @@ public class DashboardRepositoryImpl implements DashboardRepositoryCustom {
         List<RecentChangeDto> codeRuleChanges = query
                 .select(Projections.constructor(RecentChangeDto.class,
                         Expressions.constant("코드규칙"),
-                        rule.methodName,
+                        rule.codeRuleName,
                         rule.updatedBy,
                         rule.updated
                 ))
@@ -89,7 +93,33 @@ public class DashboardRepositoryImpl implements DashboardRepositoryCustom {
                 .limit(limit)
                 .fetch();
 
-        return Stream.of(wordChanges, termChanges, domainChanges, codeRuleChanges)
+        List<RecentChangeDto> codeRuleDetailChanges = query
+                .select(Projections.constructor(RecentChangeDto.class,
+                        Expressions.constant("코드규칙"),
+                        codeRuleDetail.methodName,
+                        codeRuleDetail.updatedBy,
+                        codeRuleDetail.updated
+                ))
+                .from(codeRuleDetail)
+                .where(codeRuleDetail.projectId.eq(projectId))
+                .orderBy(codeRuleDetail.updated.desc())
+                .limit(limit)
+                .fetch();
+
+        List<RecentChangeDto> templateChanges = query
+                .select(Projections.constructor(RecentChangeDto.class,
+                        Expressions.constant("코드규칙"),
+                        template.templateName,
+                        template.updatedBy,
+                        template.updated
+                ))
+                .from(template)
+                .where(template.projectId.eq(projectId))
+                .orderBy(template.updated.desc())
+                .limit(limit)
+                .fetch();
+
+        return Stream.of(wordChanges, termChanges, domainChanges, codeRuleChanges, codeRuleDetailChanges, templateChanges)
                 .flatMap(Collection::stream)
                 .sorted(Comparator.comparing(RecentChangeDto::modifiedAt).reversed())
                 .limit(limit)
@@ -97,18 +127,24 @@ public class DashboardRepositoryImpl implements DashboardRepositoryCustom {
     }
 
     @Override
-    public List<BoardDto> findNotice(Long projectId, int limit) {
+    public List<BoardViewDto> findNotice(Long projectId, int limit) {
         QBoard board = QBoard.board;
 
-        List<Board> dtos = query
-                .selectFrom(board)
+        return query
+                .select(Projections.constructor(BoardViewDto.class,
+                        board.id,
+                        board.projectId,
+                        board.createdBy.as("createdBy"),
+                        board.created.as("created"),
+                        board.title,
+                        board.hitCount
+                ))
+                .from(board)
                 .where(board.projectId.eq(projectId))
-                .orderBy(board.updated.desc())
+                .where(board.deleteYn.eq('N'))
+                .orderBy(board.created.desc())
                 .limit(limit)
                 .fetch();
-
-
-        return dtos.stream().map(BoardDto::fromEntity).collect(Collectors.toList());
     }
 
     @Override
