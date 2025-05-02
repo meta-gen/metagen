@@ -1,5 +1,6 @@
 package com.koboolean.metagen.home.conf;
 
+import com.koboolean.metagen.security.domain.dto.AccountDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class JpaConfig {
             }
 
             // 세션 정보에서 ID를 가져온 후 userId를 Set
-            return Optional.ofNullable(null);
+            return Optional.ofNullable(((AccountDto) authentication.getPrincipal()).getName());
         };
     }
 }

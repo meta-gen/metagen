@@ -56,7 +56,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                 new ColumnDto("행정표준코드명", "administrativeStandardCodeName", ColumnType.STRING),
                 new ColumnDto("소관기관명", "responsibleOrganization", ColumnType.STRING),
                 new ColumnDto("용어 이음동의어 목록", "synonyms", ColumnType.STRING, RowType.TEXT, false, false),
-                new ColumnDto("승인여부", "isApprovalYn", ColumnType.STRING)
+                new ColumnDto("승인여부", "isApprovalYn", ColumnType.STRING, RowType.TEXT,false, false)
         );
     }
 
@@ -76,7 +76,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                 new ColumnDto("표현 형식", "displayFormat", ColumnType.STRING),
                 new ColumnDto("단위", "unit", ColumnType.STRING),
                 new ColumnDto("허용값", "allowedValues", ColumnType.STRING),
-                new ColumnDto("승인여부", "isApprovalYn", ColumnType.STRING)
+                new ColumnDto("승인여부", "isApprovalYn", ColumnType.STRING, RowType.TEXT,false, false)
         );
     }
 
@@ -94,7 +94,7 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
                 new ColumnDto("형식단어 여부", "isFormatWord", ColumnType.STRING, RowType.TEXT, false, false),
                 new ColumnDto("이음동의어 목록", "synonyms", ColumnType.STRING, RowType.TEXT, false, false),
                 new ColumnDto("금칙어 목록", "restrictedWords", ColumnType.STRING, RowType.TEXT, false, false),
-                new ColumnDto("승인여부", "isApprovalYn", ColumnType.STRING, RowType.TEXT, false, true)
+                new ColumnDto("승인여부", "isApprovalYn", ColumnType.STRING, RowType.TEXT, false, false)
         );
     }
 

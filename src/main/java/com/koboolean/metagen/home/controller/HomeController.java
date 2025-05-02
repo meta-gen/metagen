@@ -1,8 +1,11 @@
 package com.koboolean.metagen.home.controller;
 
+import com.koboolean.metagen.home.domain.dto.DashboardDto;
+import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,7 +19,16 @@ public class HomeController {
     private final UserService userService;
 
     @GetMapping(value="/")
-    public String dashboard() {
+    public String dashboard(Model model, @AuthenticationPrincipal AccountDto accountDto) {
+
+        DashboardDto dashboard = userService.selectDashboardData(accountDto);
+
+        model.addAttribute("pendingStandardCount", dashboard.getPendingStandardCount());
+        model.addAttribute("pendingTableCount", dashboard.getPendingTableCount());
+        model.addAttribute("pendingColumnCount", dashboard.getPendingColumnCount());
+        model.addAttribute("notices", dashboard.getNotices());
+        model.addAttribute("recentChanges", dashboard.getRecentChanges());
+
         return "pages/dashboard";
     }
 

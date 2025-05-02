@@ -52,7 +52,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/css/**", "/js/**", "/images/**", "/h2-console/**"
-                                        , "/favicon.*", "/*/icon-*", "/fonts/**", "/", "/error", "/denied", "/help"
+                                        , "/favicon.*", "/*/icon-*", "/fonts/**", "/error", "/denied", "/help"
                                         , "/signup", "/login", "/fragments/grid", "/isApprovalAvailable","/jsons/**", "/ws-chat/**", "/api/chat/history/**").permitAll()
                         .anyRequest().access(authorizationManager))
                 .formLogin(form -> form

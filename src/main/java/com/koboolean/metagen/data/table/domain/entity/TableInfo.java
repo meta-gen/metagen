@@ -1,6 +1,7 @@
 package com.koboolean.metagen.data.table.domain.entity;
 
 import com.koboolean.metagen.data.column.domain.entity.ColumnInfo;
+import com.koboolean.metagen.home.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TableInfo {
+public class TableInfo extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

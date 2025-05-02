@@ -5,14 +5,99 @@
 >
 <body>
 <section layout:fragment="content">
-    <h2>대시보드</h2>
-    <p>• 설명: 서비스의 주요 정보를 시각화하여 보여주는 메인 화면.</p>
-    <p>• 기능:</p>
-    <ul>
-        <li>최근 생성된 설계서 및 테스트 시나리오 목록</li>
-        <li>최근 생성된 메타데이터 정보 (승인 대기 상태 표시, 관리자 승인 가능 - 관리자는 설정을 통해 승인여부를 선택할 수 있다.)</li>
-        <li>공지사항 및 업데이트 정보</li>
-    </ul>
+    <h2 class="mb-4">대시보드</h2>
+
+    <div class="row">
+
+        <!-- 승인 대기 목록 -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>승인 대기 목록</strong>
+                </div>
+                <div class="card-body p-2">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            표준 도메인/단어/용어
+                            <div>
+                                <span class="badge bg-danger rounded-pill" th:text="${pendingStandardCount}">0</span>
+                                <a href="/dataDictionary" class="btn btn-sm btn-link p-0 ps-2">More</a>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            테이블 관리
+                            <div>
+                                <span class="badge bg-danger rounded-pill" th:text="${pendingTableCount}">0</span>
+                                <a href="/tableManage" class="btn btn-sm btn-link p-0 ps-2">More</a>
+                            </div>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            컬럼 관리
+                            <div>
+                                <span class="badge bg-danger rounded-pill" th:text="${pendingColumnCount}">0</span>
+                                <a href="/columnManage" class="btn btn-sm btn-link p-0 ps-2">More</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 공지사항 -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>프로젝트 공지사항</strong>
+                    <a href="/notice" class="btn btn-sm btn-outline-primary">More</a>
+                </div>
+                <div class="card-body p-2">
+                    <table class="table table-sm">
+                        <thead>
+                        <tr><th>제목</th><th>작성일</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="notice : ${notices}">
+                            <td th:text="${notice.title}">공지 제목</td>
+                            <td th:text="${#dates.format(notice.createdAt, 'yyyy-MM-dd')}">2025-04-29</td>
+                        </tr>
+                        <tr th:if="${notices.size() == 0}">
+                            <td colspan="2" class="text-center text-muted">공지사항이 없습니다.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 최근 변경된 항목 -->
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <strong>최근 변경된 항목</strong>
+                    <a href="/tableManage" class="btn btn-sm btn-outline-primary">More</a>
+                </div>
+                <div class="card-body p-2">
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
+                        <tr><th>구분</th><th>이름</th><th>수정자</th><th>수정일</th></tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="item : ${recentChanges}">
+                            <td th:text="${item.type}">테이블</td>
+                            <td th:text="${item.name}">회원정보</td>
+                            <td th:text="${item.modifiedBy}">admin</td>
+                            <td th:text="${#temporals.format(item.modifiedAt, 'yyyy-MM-dd HH:mm')}">2025-04-29 15:30</td>
+                        </tr>
+                        <tr th:if="${recentChanges.size() == 0}">
+                            <td colspan="4" class="text-center text-muted">최근 변경된 항목이 없습니다.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </section>
 </body>
 </html>

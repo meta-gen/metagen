@@ -1,6 +1,7 @@
 package com.koboolean.metagen.data.dictionary.domain.entity;
 
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardDomainDto;
+import com.koboolean.metagen.home.jpa.BaseEntity;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -14,7 +15,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "standard_domains")
-public class StandardDomain {
+public class StandardDomain extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

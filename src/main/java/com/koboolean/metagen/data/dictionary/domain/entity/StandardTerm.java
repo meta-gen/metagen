@@ -1,5 +1,6 @@
 package com.koboolean.metagen.data.dictionary.domain.entity;
 import com.koboolean.metagen.data.column.domain.entity.ColumnInfo;
+import com.koboolean.metagen.home.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "standard_terms")
-public class StandardTerm {
+public class StandardTerm extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

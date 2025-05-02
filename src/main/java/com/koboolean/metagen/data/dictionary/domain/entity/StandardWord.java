@@ -2,6 +2,7 @@ package com.koboolean.metagen.data.dictionary.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardWordDto;
+import com.koboolean.metagen.home.jpa.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "standard_words")
-public class StandardWord {
+public class StandardWord extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
