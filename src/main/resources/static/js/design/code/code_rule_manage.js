@@ -5,44 +5,6 @@ const tableId = 'codeRuleManageGrid';
 $(document).ready(function () {
     setupAjaxCsrf();
 
-    const $selector = $("#projectSelector");
-
-    // 초기 표시
-    const selectedOption = $selector.find("option:selected");
-    const isDicAbbrUsed = selectedOption.data("isdicabbrused");
-    setSwaggerText(isDicAbbrUsed);
-
-    // 선택 변경 시
-    $selector.on("change", function () {
-        const selectedOption = $(this).find("option:selected");
-        const isDicAbbrUsed = selectedOption.data("isdicabbrused");
-
-        setSwaggerText(isDicAbbrUsed);
-
-        if (window.tableInstances[tableId]) {
-            window.tableInstances[tableId].destroy();
-            delete window.tableInstances[tableId];
-        }
-
-        const dataUrl = '/api/selectCodeRuleManage/' + $(this).val();
-
-        $('#' + tableId + ' thead tr').empty();
-        window.grid(tableId, dataUrl, 'cd', 'codeRuleManageGrid_selectRow');
-    });
-
-    function setSwaggerText(isDicAbbrUsed) {
-        let text = "";
-
-        if (isDicAbbrUsed === true || isDicAbbrUsed === "true") {
-            text = "등록된 표준용어 약어를 기준으로 메소드 이름이 생성됩니다.";
-        } else {
-            text = "데이터 이름의 띄어쓰기를 기준으로 표준단어의 영문명을 조합해 메소드 이름이 생성됩니다.";
-        }
-
-        $("#projectSelectorSwaggerText").text(text);
-        $("#mProjectSelectorSwaggerText").text(text);
-    }
-
     /**
      * 템플릿 등록
      */
@@ -90,11 +52,8 @@ $(document).ready(function () {
      * 템플릿 제거
      */
     $("#btn-project-delete").on("click", () => {
-
-        const projectId = $('#projectSelector').val();
-
         $.ajax({
-            url: `/api/selectCodeRuleManage/template/${projectId}`,
+            url: `/api/selectCodeRuleManage/template`,
             type: "GET",
             success: (response) => {
                 if(response.result){
@@ -105,19 +64,15 @@ $(document).ready(function () {
     });
 
     $("#grd-add-codeRuleManageGrid").on("click", () => {
-        const projectId = $('#projectSelector').val();
-
         // 팝업 열기
         const popup = window.open(
-            `/popup/codeRulePopup?projectId=${projectId}&type=add`,  // 전달 파라미터
+            `/popup/codeRulePopup?type=add`,  // 전달 파라미터
             "코드규칙관리 등록/수정",
             "width=800,height=900,resizable=yes,scrollbars=yes"
         );
     });
 
     $("#grd-delete-codeRuleManageGrid").on("click", () => {
-       const projectId = $('#projectSelector').val();
-
         const checkedData = getCheckedDataIsNonNull(tableId);
 
         if(checkedData.length === 0){
@@ -126,7 +81,7 @@ $(document).ready(function () {
 
        openConfirm("선택한 코드규칙을 삭제하시겠습니까?", () => {
            $.ajax({
-               url: `/api/deleteCodeRuleManage/${projectId}`,
+               url: `/api/deleteCodeRuleManage`,
                type: "DELETE",
                data: JSON.stringify(checkedData),
                success: (response) => {
@@ -165,10 +120,9 @@ function codeRuleSubmitClick(e){
         templateDescription
     };
 
-    const projectId = $('#projectSelector').val();
 
     $.ajax({
-        url: `/api/saveCodeRuleManage/template/${projectId}`,
+        url: `/api/saveCodeRuleManage/template`,
         type: "POST",
         data: JSON.stringify(payload),
         success: (response) => {
@@ -273,13 +227,11 @@ window.popupFunction['codeRuleManageSuccess'] = codeRuleManageSuccess;
  * @param tableId
  */
 export function codeRuleManageDetail(rowData, columnList, isManager, tableId){
-
-    const projectId = $('#projectSelector').val();
     const codeRuleId = rowData.id;
 
     // 팝업 열기
     const popup = window.open(
-        `/popup/codeRulePopup?projectId=${projectId}&type=modified&id=${codeRuleId}`,  // 전달 파라미터
+        `/popup/codeRulePopup?type=modified&id=${codeRuleId}`,  // 전달 파라미터
         "코드규칙관리 등록/수정",
         "width=800,height=900,resizable=yes,scrollbars=yes"
     );

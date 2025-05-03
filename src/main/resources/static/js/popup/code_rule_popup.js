@@ -11,23 +11,21 @@ $(document).ready(function () {
 
     // 페이지 로드 시 파라미터로 데이터 조회
     const params = new URLSearchParams(window.location.search);
-    const projectId = params.get("projectId");
     const type = params.get("type");
 
     $.ajax({
-        url: `/api/selectCodeRuleManage/template/${projectId}`,
+        url: `/api/selectCodeRuleManage/template`,
         type: "GET",
         success: function (response) {
             if (response.result) {
                 setCodeRuleTemplates(response.templates || [], type);
-                $("#projectId").val(projectId);
 
-                if (type === "modified" && projectId) {
+                if (type === "modified") {
                     const id = params.get("id");
 
                     $.ajax({
 
-                        url: `/api/selectCodeRuleManage/detail/${projectId}/${id}`,
+                        url: `/api/selectCodeRuleManage/detail/${id}`,
                         type: "GET",
                         success: (response) => {
                             if(response.result){
@@ -80,7 +78,6 @@ function setCodeRuleTemplates(templateList, type) {
 
 function submitForm() {
     const data = {
-        projectId: $("#projectId").val(),
         templateId: $("#templateSelect").val(),
         codeRuleName: $("#codeRuleName").val(),
         codeRuleDescription: $("#codeRuleDescription").val(),
