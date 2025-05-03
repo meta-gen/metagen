@@ -63,11 +63,11 @@ public class HomeController {
     }
 
     @GetMapping("/codeRuleManage")
-    public String codeRuleManage(Model model) {
+    public String codeRuleManage(Model model, @AuthenticationPrincipal AccountDto accountDto) {
 
-        List<ProjectDto> projectDtos = userService.selectAllProjects();
+        ProjectDto projectDto = userService.selectProjects(accountDto);
 
-        model.addAttribute("projects", projectDtos);
+        model.addAttribute("project", projectDto);
 
         return "pages/design/code_rule_manage";
     }

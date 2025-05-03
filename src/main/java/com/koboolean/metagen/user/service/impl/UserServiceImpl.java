@@ -149,6 +149,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ProjectDto selectProjects(AccountDto accountDto) {
+        return ProjectDto.fromEntity(Objects.requireNonNull(projectRepository.findById(accountDto.getProjectId()).orElse(null)));
+    }
+
+    @Override
     public List<ProjectDto> selectAllProjectsIsActive() {
         return projectRepository.findByIsActive(true).stream().map(ProjectDto::fromEntity).collect(Collectors.toList());
     }

@@ -22,6 +22,8 @@ public interface UserService {
 
     List<ProjectDto> selectAllProjects();
 
+    ProjectDto selectProjects(AccountDto accountDto);
+
     List<ProjectDto> selectAllProjectsIsActive();
 
     List<ColumnDto> selectUserColumn();

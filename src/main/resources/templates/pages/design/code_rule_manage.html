@@ -12,7 +12,11 @@
     <h2>코드규칙 관리</h2>
     <div class="button-rule-container">
         <div class="left-group">
-            <p id="projectSelectorSwaggerText" class="is-swagger"></p>
+            <p id="projectSelectorSwaggerText" class="is-swagger"
+               th:text="${project.isDicAbbrUsed} == true ?
+                '📘 등록된 표준용어 약어를 기준으로 메소드 이름이 생성됩니다.' :
+                '📕 데이터 이름의 띄어쓰기를 기준으로 표준단어의 영문명을 조합해 메소드 이름이 생성됩니다.'">
+            </p>
         </div>
 
         <p id="mProjectSelectorSwaggerText" class="is-swagger-m"></p>
