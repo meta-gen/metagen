@@ -3,6 +3,7 @@ package com.koboolean.metagen.system.code.service.impl;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.grid.enums.RowType;
+import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.exception.CustomException;
 import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.system.code.repository.CodeRuleRepository;
@@ -120,13 +121,13 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
 
     @Override
     @Transactional
-    public void saveCodeRuleManage(CodeRuleDto codeRuleDto) {
+    public void saveCodeRuleManage(CodeRuleDto codeRuleDto, AccountDto accountDto) {
         if(!AuthUtil.isApprovalAdmin()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
 
         CodeRule codeRule = CodeRule.builder()
-                .projectId(codeRuleDto.getProjectId())
+                .projectId(accountDto.getProjectId())
                 .codeRuleName(codeRuleDto.getCodeRuleName())
                 .codeRuleDescription(codeRuleDto.getCodeRuleDescription())
                 .prefix(codeRuleDto.getPrefix())
@@ -135,7 +136,7 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
                 .build();
 
         Template template = templateRepository.findById(codeRuleDto.getTemplateId()).orElse(null);
-        Project project = projectRepository.findById(codeRuleDto.getProjectId()).orElse(null);
+        Project project = projectRepository.findById(accountDto.getProjectId()).orElse(null);
 
         if(template == null || project == null){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
@@ -144,7 +145,7 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
         codeRule.setTemplate(template);
         codeRule.setTemplateName(template.getTemplateName());
 
-        List<CodeRule> isCodeDupl = codeRuleRepository.findAllByProjectIdAndCodeRuleNameAndTemplate_Id(codeRuleDto.getProjectId(), codeRuleDto.getCodeRuleName(), template.getId());
+        List<CodeRule> isCodeDupl = codeRuleRepository.findAllByProjectIdAndCodeRuleNameAndTemplate_Id(accountDto.getProjectId(), codeRuleDto.getCodeRuleName(), template.getId());
 
         if(!isCodeDupl.isEmpty()){
             throw new CustomException(ErrorCode.TEMPLATE_CODE_RULE_NAME_IN_PROJECT_DUPLICATE);
@@ -190,7 +191,7 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
 
     @Override
     @Transactional
-    public void updateCodeRuleManage(CodeRuleDto codeRuleDto) {
+    public void updateCodeRuleManage(CodeRuleDto codeRuleDto, AccountDto accountDto) {
         if(!AuthUtil.isApprovalAdmin()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }

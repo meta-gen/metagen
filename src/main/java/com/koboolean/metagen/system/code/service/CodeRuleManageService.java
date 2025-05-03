@@ -1,6 +1,7 @@
 package com.koboolean.metagen.system.code.service;
 
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
+import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.system.code.domain.dto.CodeRuleDto;
 import com.koboolean.metagen.system.project.domain.dto.TemplateDto;
 import org.springframework.data.domain.Page;
@@ -19,11 +20,11 @@ public interface CodeRuleManageService {
 
     Page<CodeRuleDto> getCodeRuleManageData(Pageable pageable, String searchColumn, String searchQuery, Long projectId);
 
-    void saveCodeRuleManage(CodeRuleDto codeRuleDto);
+    void saveCodeRuleManage(CodeRuleDto codeRuleDto, AccountDto accountDto);
 
     void deleteCodeRuleManage(Long projectId, List<CodeRuleDto> codeRuleDtos);
 
     CodeRuleDto selectCodeRuleManageDetail(Long projectId, Long id);
 
-    void updateCodeRuleManage(CodeRuleDto codeRuleDto);
+    void updateCodeRuleManage(CodeRuleDto codeRuleDto, AccountDto accountDto);
 }
