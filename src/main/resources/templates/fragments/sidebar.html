@@ -32,11 +32,6 @@
                    data-submenu-id="project-manage">
                     프로젝트 관리
                 </a>
-                <a href="/codeRuleManage" class="list-group-item list-group-item-action ps-4"
-                   onclick="setActiveSubmenu(event, 'code-rule-manage')"
-                   data-submenu-id="code-rule-manage">
-                    코드규칙 관리
-                </a>
                 <a href="/systemLog" class="list-group-item list-group-item-action ps-4"
                    onclick="setActiveSubmenu(event, 'system-log')"
                    data-submenu-id="system-log">
@@ -89,20 +84,26 @@
                    data-submenu-id="column-manage">
                     컬럼 관리
                 </a>
+
+            </div>
+
+            <!-- 1뎁스: 설계 및 테스트 -->
+            <a href="#design-test" class="list-group-item list-group-item-action"
+               onclick="toggleMenu(event, 'design-test', this)"
+               data-menu-id="design-test">
+                설계기반 관리
+            </a>
+            <div id="design-test" class="collapse">
+                <a href="/codeRuleManage" class="list-group-item list-group-item-action ps-4"
+                   onclick="setActiveSubmenu(event, 'code-rule-manage')"
+                   data-submenu-id="code-rule-manage">
+                    코드규칙 관리
+                </a>
                 <a href="/codeRule" class="list-group-item list-group-item-action ps-4"
                    onclick="setActiveSubmenu(event, 'code-rule')"
                    data-submenu-id="code-rule">
                     코드 규칙
                 </a>
-            </div>
-
-            <!-- 1뎁스: 설계 및 테스트 -->
-            <!--<a href="#design-test" class="list-group-item list-group-item-action"
-               onclick="toggleMenu(event, 'design-test', this)"
-               data-menu-id="design-test">
-                설계 및 테스트
-            </a>
-            <div id="design-test" class="collapse">
                 <a href="/designManage" class="list-group-item list-group-item-action ps-4"
                    onclick="setActiveSubmenu(event, 'design-manage')"
                    data-submenu-id="design-manage">
@@ -113,7 +114,7 @@
                    data-submenu-id="test-manage">
                     시나리오
                 </a>
-            </div>-->
+            </div>
 
             <div id="active-user-list" class="p-3 border-top active-user-list" style="font-size: 0.9rem;" sec:authorize="isAuthenticated()">
                 <div style="font-weight: 600; margin-bottom: 6px;">🟢 현재 로그인 사용자</div>

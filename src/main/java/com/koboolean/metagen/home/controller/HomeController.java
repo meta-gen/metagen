@@ -59,7 +59,7 @@ public class HomeController {
 
     @GetMapping("/codeRule")
     public String codeRule() {
-        return "pages/data/code_rule";
+        return "pages/design/code_rule";
     }
 
     @GetMapping("/codeRuleManage")
@@ -69,17 +69,17 @@ public class HomeController {
 
         model.addAttribute("projects", projectDtos);
 
-        return "pages/system/code_rule_manage";
+        return "pages/design/code_rule_manage";
     }
 
     @GetMapping("/designManage")
     public String designTestManage() {
-        return "pages/design_manage";
+        return "pages/design/design_manage";
     }
 
     @GetMapping("/testManage")
     public String testManage() {
-        return "pages/test_manage";
+        return "pages/design/test_manage";
     }
 
     @GetMapping("/userManage")
