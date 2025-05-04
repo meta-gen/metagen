@@ -35,6 +35,10 @@ public class CodeRuleDetail extends BaseEntity {
 
     private Boolean useSwagger;
 
+    private String input;
+
+    private String output;
+
     @ManyToOne
     @JoinColumn(name = "code_rule_id")
     private CodeRule codeRule; // 코드규칙

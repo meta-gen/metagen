@@ -40,6 +40,10 @@ public class CodeRule extends BaseEntity {
     @JoinColumn(name = "template_id")
     private Template template;
 
+    private String input;
+
+    private String output;
+
     @OneToMany(mappedBy = "codeRule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CodeRuleDetail> codeRuleDetails;
 }
