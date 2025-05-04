@@ -93,7 +93,10 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
                 , new ColumnDto("코드규칙 명", "codeRuleName", ColumnType.STRING, RowType.TEXT, true, true)
                 , new ColumnDto("코드규칙 내용", "codeRuleDescription", ColumnType.STRING, RowType.TEXT, false)
                 , new ColumnDto("접두사", "prefix", ColumnType.STRING, RowType.TEXT, false)
-                , new ColumnDto("접미사", "suffix", ColumnType.STRING, RowType.TEXT, false));
+                , new ColumnDto("접미사", "suffix", ColumnType.STRING, RowType.TEXT, false)
+                , new ColumnDto("입력값", "input", ColumnType.STRING, RowType.TEXT, false,false)
+                , new ColumnDto("출력값", "output", ColumnType.STRING, RowType.TEXT, false,false)
+        );
     }
 
     @Override
@@ -133,6 +136,8 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
                 .prefix(codeRuleDto.getPrefix())
                 .suffix(codeRuleDto.getSuffix())
                 .methodForm(codeRuleDto.getMethodForm())
+                .input(codeRuleDto.getInput())
+                .output(codeRuleDto.getOutput())
                 .build();
 
         Template template = templateRepository.findById(codeRuleDto.getTemplateId()).orElse(null);
@@ -206,6 +211,8 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
         codeRule.setCodeRuleDescription(codeRuleDto.getCodeRuleDescription());
         codeRule.setPrefix(codeRuleDto.getPrefix());
         codeRule.setSuffix(codeRuleDto.getSuffix());
+        codeRule.setInput(codeRuleDto.getInput());
+        codeRule.setOutput(codeRuleDto.getOutput());
         codeRule.setMethodForm(codeRuleDto.getMethodForm());
 
         Template template = templateRepository.findById(codeRuleDto.getTemplateId()).orElse(null);

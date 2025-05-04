@@ -43,6 +43,10 @@ public class CodeRuleDetailDto {
 
     private Boolean useSwagger;
 
+    private String input;
+
+    private String output;
+
     public static CodeRuleDetailDto fromEntity(CodeRuleDetail entity) {
         return builder()
                 .id(entity.getId())
@@ -60,6 +64,8 @@ public class CodeRuleDetailDto {
                 .isDicAbbrUsed(entity.getIsDicAbbrUsed())
                 .codeRuleDto(CodeRuleDto.fromEntity(entity.getCodeRule()))
                 .useSwagger(entity.getUseSwagger())
+                .input(entity.getInput())
+                .output(entity.getOutput())
                 .build();
     }
 

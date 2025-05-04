@@ -51,6 +51,8 @@ public class CodeRuleServiceImpl implements CodeRuleService {
                 new ColumnDto("코드규칙 명", "codeRuleName", ColumnType.STRING, RowType.TEXT, false,false),
                 new ColumnDto("기능/목적 설명", "methodPurpose", ColumnType.STRING, RowType.TEXT, false,false),
                 new ColumnDto("변환된 메소드 명", "methodName", ColumnType.STRING, RowType.TEXT, false,false),
+                new ColumnDto("입력값", "input", ColumnType.STRING, RowType.TEXT, false,false),
+                new ColumnDto("출력값", "output", ColumnType.STRING, RowType.TEXT, false,false),
                 new ColumnDto("기타 설명", "description", ColumnType.STRING, RowType.TEXT, false,false)
         );
     }
@@ -131,6 +133,8 @@ public class CodeRuleServiceImpl implements CodeRuleService {
                 .swaggerData(codeRuleDetailDto.getSwaggerData())
                 .isDicAbbrUsed(codeRuleDetailDto.getIsDicAbbrUsed())
                 .useSwagger(codeRuleDetailDto.getUseSwagger())
+                .input(codeRuleDetailDto.getInput())
+                .output(codeRuleDetailDto.getOutput())
                 .build();
 
         codeRuleDetail.setCodeRule(codeRule);
@@ -165,6 +169,8 @@ public class CodeRuleServiceImpl implements CodeRuleService {
         codeRuleDetail.setSwaggerData(codeRuleDetailDto.getSwaggerData());
         codeRuleDetail.setIsDicAbbrUsed(codeRuleDetailDto.getIsDicAbbrUsed());
         codeRuleDetail.setUseSwagger(codeRuleDetailDto.getUseSwagger());
+        codeRuleDetail.setInput(codeRuleDetailDto.getInput());
+        codeRuleDetail.setOutput(codeRuleDetailDto.getOutput());
         codeRuleDetail.setCodeRule(codeRule);
 
         if(codeRule != null){
@@ -261,7 +267,9 @@ public class CodeRuleServiceImpl implements CodeRuleService {
         methodForm = methodForm.replace("${0}", codeRuleDetailDto.getMethodName());
         methodForm = methodForm.replace("${1}", codeRuleDetailDto.getMethodKeyword());
         methodForm = methodForm.replace("${2}", codeRuleDetailDto.getMethodPurpose());
-        methodForm = methodForm.replace("${USER_NAME}", accountDto.getName());
+        methodForm = methodForm.replaceAll("(?i)\\$\\{USER_NAME}", accountDto.getName());
+        methodForm = methodForm.replaceAll("(?i)\\$\\{INPUT}", codeRuleDetailDto.getInput() == null ? "" : codeRuleDetailDto.getInput());
+        methodForm = methodForm.replaceAll("(?i)\\$\\{OUTPUT}", codeRuleDetailDto.getOutput() == null ? "" : codeRuleDetailDto.getOutput());
 
         String description = codeRuleDetailDto.getDescription();
         if(description != null){

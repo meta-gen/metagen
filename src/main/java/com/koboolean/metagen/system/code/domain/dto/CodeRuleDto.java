@@ -35,6 +35,10 @@ public class CodeRuleDto {
 
     private String isApproval;
 
+    private String input;
+
+    private String output;
+
     public static CodeRuleDto fromEntity(CodeRule codeRule) {
 
         TemplateDto templateDto = TemplateDto.fromEntity(codeRule.getTemplate());
@@ -51,6 +55,8 @@ public class CodeRuleDto {
                 .prefix(codeRule.getPrefix())
                 .suffix(codeRule.getSuffix())
                 .methodForm(codeRule.getMethodForm())
+                .input(codeRule.getInput())
+                .output(codeRule.getOutput())
                 .build();
     }
 }

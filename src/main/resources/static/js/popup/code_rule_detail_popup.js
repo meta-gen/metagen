@@ -31,6 +31,8 @@ $(document).ready(function () {
                                 $("#description").val(data.description);
                                 $("#methodName").val(data.methodName);
                                 $("#isDicAbbrUsed").val(data.isDicAbbrUsed);
+                                $("#input").val(data.input);
+                                $("#output").val(data.output);
                                 $("#useSwagger").prop("checked", data.useSwagger);
                                 $("#methodForm").val(data.methodForm);
 
@@ -51,6 +53,8 @@ $(document).ready(function () {
         $codeRuleSelect.empty(); // 기존 옵션 초기화
         $codeRuleSelect.append(`<option value="">코드규칙을 선택하세요</option>`);
 
+        if(type === "add") $codeRuleSelect.trigger("change");
+
         if(select === ""){
             return;
         }
@@ -60,6 +64,9 @@ $(document).ready(function () {
             type: "GET",
             success: (response) => {
                 if(response.result){
+                    // codeRules 전역 저장 (또는 클로저로 유지)
+                    window._codeRuleCache = response.codeRules;
+
                     response.codeRules.forEach(rule => {
                         $codeRuleSelect.append(
                             `<option value="${rule.id}" data-method-form="${encodeURIComponent(rule.methodForm)}">${rule.codeRuleName}</option>`
@@ -87,6 +94,22 @@ $(document).ready(function () {
 
     $("#save-button").on("click", function(){
         saveData();
+    });
+
+    // 코드 규칙 선택 시 input/output 값 반영
+    $("#codeRule").on("change", function() {
+        if(type === "add"){
+            const selectedId = $(this).val();
+            const selectedRule = (window._codeRuleCache || []).find(rule => rule.id == selectedId);
+
+            if (selectedRule) {
+                $("#input").val(selectedRule.input || "");
+                $("#output").val(selectedRule.output || "");
+            } else {
+                $("#input").val("");
+                $("#output").val("");
+            }
+        }
     });
 });
 
@@ -117,6 +140,8 @@ function setData(){
         methodKeyword: $("#methodKeyword").val().trim(),
         methodPurpose: $("#methodPurpose").val().trim(),
         description: $("#description").val().trim(),
+        input: $("#input").val().trim(),
+        output: $("#output").val().trim(),
         useSwagger: $("#useSwagger").is(":checked")
     };
 
@@ -169,6 +194,8 @@ function saveData(){
         methodPurpose: $("#methodPurpose").val().trim(),
         description: $("#description").val().trim(),
         methodName: $("#methodName").val(),
+        input: $("#input").val().trim(),
+        output: $("#output").val().trim(),
         useSwagger: $("#useSwagger").is(":checked")
     }
 
@@ -211,6 +238,5 @@ function saveData(){
                 window.close();
             }
         }
-    })
-
+    });
 }

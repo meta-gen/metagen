@@ -37,6 +37,8 @@ $(document).ready(function () {
                                 $("#prefix").val(codeRule.prefix);
                                 $("#suffix").val(codeRule.suffix);
                                 $("#methodForm").val(codeRule.methodForm);
+                                $("#input").val(codeRule.input);
+                                $("#output").val(codeRule.output);
                                 $("#templateSelect").val(String(codeRule.templateId)).prop("disabled", true);
                             }
                         }
@@ -83,13 +85,15 @@ function submitForm() {
         codeRuleDescription: $("#codeRuleDescription").val(),
         prefix: $("#prefix").val(),
         suffix: $("#suffix").val(),
+        input: $("#input").val(),
+        output: $("#output").val(),
         methodForm: $("#methodForm").val()
     };
 
     // 필수 항목 유효성 검사
     for (const [key, value] of Object.entries(data)) {
 
-        if(key === "prefix" || key === "suffix"){
+        if(key === "prefix" || key === "suffix" || key === "input" || key === "output"){
             continue;
         }
 
