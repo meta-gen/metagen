@@ -267,9 +267,9 @@ public class CodeRuleServiceImpl implements CodeRuleService {
         methodForm = methodForm.replace("${0}", codeRuleDetailDto.getMethodName());
         methodForm = methodForm.replace("${1}", codeRuleDetailDto.getMethodKeyword());
         methodForm = methodForm.replace("${2}", codeRuleDetailDto.getMethodPurpose());
-        methodForm = methodForm.replace("${USER_NAME}", accountDto.getName());
-        methodForm = methodForm.replace("${INPUT}", codeRuleDetailDto.getInput() == null ? "" : codeRuleDetailDto.getInput());
-        methodForm = methodForm.replace("${OUTPUT}", codeRuleDetailDto.getOutput() == null ? "" : codeRuleDetailDto.getOutput());
+        methodForm = methodForm.replaceAll("(?i)\\$\\{USER_NAME}", accountDto.getName());
+        methodForm = methodForm.replaceAll("(?i)\\$\\{INPUT}", codeRuleDetailDto.getInput() == null ? "" : codeRuleDetailDto.getInput());
+        methodForm = methodForm.replaceAll("(?i)\\$\\{OUTPUT}", codeRuleDetailDto.getOutput() == null ? "" : codeRuleDetailDto.getOutput());
 
         String description = codeRuleDetailDto.getDescription();
         if(description != null){
