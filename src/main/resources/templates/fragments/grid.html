@@ -21,6 +21,7 @@
             <button class="grd-modified btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-modified-' + ${tableId}" style="display: none;">수정</button>
             <button class="grd-save btn btn-primary" th:data-table-id="${tableId}" th:id="'grd-save-' + ${tableId}" style="display: none;">저장</button>
             <button class="grd-delete btn btn-secondary" th:data-table-id="${tableId}" th:id="'grd-delete-' + ${tableId}" style="display: none;">삭제</button>
+            <button class="grd-print btn btn-secondary" th:data-table-id="${tableId}" th:id="'grd-print-' + ${tableId}" style="display: none;">출력</button>
         </div>
     </div>
 
@@ -49,7 +50,8 @@
                 "M": "modified",
                 "D": "delete",
                 "A": "active",
-                "N": "unactive"
+                "N": "unactive",
+                "P": "print",
             };
         }
 

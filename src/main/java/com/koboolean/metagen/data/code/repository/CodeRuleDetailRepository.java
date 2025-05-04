@@ -19,4 +19,8 @@ public interface CodeRuleDetailRepository extends JpaRepository<CodeRuleDetail, 
     CodeRuleDetail findByProjectIdAndFunctionGroupAndMethodKeywordAndCodeRule_Id(Long projectId, String functionGroup, String methodKeyword, Long codeRuleId);
 
     CodeRuleDetail findByIdAndProjectId(Long id, Long projectId);
+
+    Page<CodeRuleDetail> findAllByProjectIdAndCodeRule_CodeRuleNameLike(Long projectId, String codeRuleCodeRuleName, Pageable pageable);
+
+    Page<CodeRuleDetail> findAllByProjectIdAndCodeRule_Template_TemplateNameLike(Long projectId, String codeRuleTemplateTemplateName, Pageable pageable);
 }
