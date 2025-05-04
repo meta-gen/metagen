@@ -47,8 +47,8 @@ public class CodeRuleServiceImpl implements CodeRuleService {
                 new ColumnDto("", "id", ColumnType.NUMBER, RowType.CHECKBOX),
                 new ColumnDto("그룹명", "functionGroup", ColumnType.STRING, RowType.TEXT, true, true),
                 new ColumnDto("키워드", "methodKeyword", ColumnType.STRING, RowType.TEXT, true, true),
-                new ColumnDto("템플릿 명", "templateName", ColumnType.STRING, RowType.TEXT, false,false),
-                new ColumnDto("코드규칙 명", "codeRuleName", ColumnType.STRING, RowType.TEXT, false,false),
+                new ColumnDto("템플릿 명", "templateName", ColumnType.STRING, RowType.TEXT, true,false),
+                new ColumnDto("코드규칙 명", "codeRuleName", ColumnType.STRING, RowType.TEXT, true,false),
                 new ColumnDto("기능/목적 설명", "methodPurpose", ColumnType.STRING, RowType.TEXT, false,false),
                 new ColumnDto("변환된 메소드 명", "methodName", ColumnType.STRING, RowType.TEXT, false,false),
                 new ColumnDto("입력값", "input", ColumnType.STRING, RowType.TEXT, false,false),
@@ -75,6 +75,10 @@ public class CodeRuleServiceImpl implements CodeRuleService {
                     codeRuleDetailRepository.findAllByProjectIdAndFunctionGroupLike(projectId, searchQuery, pageable);
             case "methodKeyword" ->
                     codeRuleDetailRepository.findAllByProjectIdAndMethodKeywordLike(projectId, searchQuery, pageable);
+            case "templateName" ->
+                    codeRuleDetailRepository.findAllByProjectIdAndCodeRule_Template_TemplateNameLike(projectId, searchQuery, pageable);
+            case "codeRuleName" ->
+                    codeRuleDetailRepository.findAllByProjectIdAndCodeRule_CodeRuleNameLike(projectId, searchQuery, pageable);
             default -> null;
         };
 
