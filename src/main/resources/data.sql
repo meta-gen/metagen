@@ -210,6 +210,12 @@ ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (63, '*', 0, '/','url', '대시보드', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (64, '*', 0, '/api/printDesign/**','url', '설계서 출력', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
+INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+VALUES (65, '*', 0, '/api/printTest/**','url', '시나리오 출력', 'SYSTEM', 'SYSTEM')
+ON CONFLICT (resource_id) DO NOTHING;
 
 -- ROLE_NOT_APPROVE
 insert into role_resources(resource_id, role_id) values (1,5) on CONFLICT DO NOTHING; -- 로그아웃
@@ -261,6 +267,8 @@ insert into role_resources(resource_id, role_id) values (56,3) on CONFLICT DO NO
 insert into role_resources(resource_id, role_id) values (57,3) on CONFLICT DO NOTHING; -- 코드규칙 저장
 insert into role_resources(resource_id, role_id) values (58,3) on CONFLICT DO NOTHING; -- 코드규칙 삭제
 insert into role_resources(resource_id, role_id) values (59,3) on CONFLICT DO NOTHING; -- 코드규칙 팝업
+insert into role_resources(resource_id, role_id) values (64,3) on CONFLICT DO NOTHING; -- 설계서 출력
+insert into role_resources(resource_id, role_id) values (65,3) on CONFLICT DO NOTHING; -- 시나리오 출력
 
 -- ROLE_DBA
 insert into role_resources(resource_id, role_id) values (31,2) on CONFLICT DO NOTHING; -- 프로젝트저장
