@@ -1,5 +1,6 @@
 package com.koboolean.metagen.operation.notice.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class NoticeServiceImpl implements NoticeService {
 		return List.of(new ColumnDto("", "id", ColumnType.NUMBER, RowType.CHECKBOX)
 				     , new ColumnDto("게시글 제목", "categoryName", ColumnType.STRING, true)
 				     , new ColumnDto("작성자", "username", ColumnType.STRING, true)
-				     , new ColumnDto("작성일", "created", ColumnType.STRING)
+				     , new ColumnDto("작성일", "updatedTime", ColumnType.STRING)
 				     , new ColumnDto("조회수", "hitCount", ColumnType.NUMBER));
 	}
 
@@ -83,6 +84,7 @@ public class NoticeServiceImpl implements NoticeService {
         
         BoardCategory boardCategory = boardCategoryRepository.findById("NOTICE").orElse(null);
         
+        
         /* DB 데이터가 없는 경우 객체가 비어서 Error 발생하기 때문에 */
         if(boardCategory == null) {
 
@@ -98,8 +100,40 @@ public class NoticeServiceImpl implements NoticeService {
         		.username     (accountDto.getUsername())
         		.deleteYn     ('Y'                     )
         		.hitCount     (0                       )
+        		.updatedTime  (LocalDateTime.now()     )
         		.build();
         
         boardRepository.save(board);
+    }
+    
+	/**
+	 * [공지사항 수정] 공지사항을 수정한다.
+	 * 
+	 * @param accountDto
+	 * @param boardDto
+	 */
+    @Override
+    @Transactional
+    public void updateNotice(AccountDto accountDto, BoardDto boardDto) {
+
+        boardDto.setProjectId(accountDto.getProjectId());
+        
+        BoardCategory boardCategory = boardCategoryRepository.findById("NOTICE").orElse(null);
+        
+        /* DB 데이터가 없는 경우 객체가 비어서 Error 발생하기 때문에 */
+        if(boardCategory == null) {
+
+        	// 예외 처리
+        	throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+        }
+        
+        /* update의 경우 save로 저장하지 않고 객체에 값을 바꾼다.
+         * 객체에 값을 바꾸면 JPA 정책 상 데이터를 덮어써서 트랜잭션이 마무리되는 시점에 flush 한다.
+         */
+        Board board = boardRepository.findById(boardDto.getId()).orElse(null);
+        
+        board.setTitle      (boardDto.getTitle()      );
+        board.setContent    (boardDto.getContent()    );
+        board.setUpdatedTime(boardDto.getUpdatedTime());
     }
 }

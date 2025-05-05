@@ -2,6 +2,8 @@ package com.koboolean.metagen.board.domain.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 import com.koboolean.metagen.board.domain.entity.Board;
 
 import lombok.experimental.Accessors;
@@ -9,7 +11,6 @@ import lombok.experimental.Accessors;
 @Data
 @Builder
 @Getter
-@Accessors(chain = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardDto {
@@ -41,7 +42,8 @@ public class BoardDto {
     /* 삭제 여부 */
     private char deleteYn;
     
-    /*  */
+    private LocalDateTime updatedTime;
+    
     private BoardCategoryDto boardCategoryDto;
     
     /* 빌더 호출 */
@@ -57,6 +59,7 @@ public class BoardDto {
                        .content     (entity.getContent()  )
                        .hitCount    (entity.getHitCount() )
                        .deleteYn    (entity.getDeleteYn() )
+                       .updatedTime (entity.getUpdatedTime())
                        .categoryName(boardCategoryDto.getCategoryName())
                        .categoryId  (boardCategoryDto.getCategoryId())
                        .build()

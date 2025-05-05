@@ -13,11 +13,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Builder
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class BoardCategory extends BaseEntity implements Serializable {
 
     /* 게시판 카테고리 아이디 */

@@ -1,12 +1,20 @@
 package com.koboolean.metagen.home.controller;
 
+import com.koboolean.metagen.system.access.controller.AccessRestController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/popup")
 public class PopupController {
+
+    private final AccessRestController accessRestController;
+
+    PopupController(AccessRestController accessRestController) {
+        this.accessRestController = accessRestController;
+    }
 
     @GetMapping("/standardTermSearch")
     public String standardTermSearch(){
@@ -37,8 +45,8 @@ public class PopupController {
      * 공지사항 상세보기 팝업
      * @return
      */
-    @GetMapping("/noticePopupDetail")
-    public String noticePopupDetail(){
+    @GetMapping("/noticePopupDetail/{projectId}/{id}")
+    public String noticePopupDetail(@PathVariable(name="projectId") String projectId, @PathVariable(name="id") String id){
     	
         return "popup/notice_popup_detail";
     }
