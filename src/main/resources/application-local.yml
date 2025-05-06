@@ -11,7 +11,7 @@ spring:
       port: 16379
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     generate-ddl: true
     defer-datasource-initialization: true
     properties:
