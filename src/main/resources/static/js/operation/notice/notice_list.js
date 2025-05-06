@@ -6,25 +6,21 @@ $(document).ready(function() {
 
 	const $addBtn = $('#btn-notice-add');
 	const tableId = "noticeList";
+	
+	/**
+	 * 팝업 닫은 후 완료 메세지 출력.
+	 */
+	function noticeSaveSuccess() {
+		
+	    openAlert("정상적으로 공지사항이 저장되었습니다.", () => {
+			
+	        window.searchGrid(tableId);
+	    });
+	}
+	
+	window.popupFunction = window.popupFunction || {}; // 혹시 없을 경우 방지
+	window.popupFunction['noticeSaveSuccess'] = noticeSaveSuccess;
 
-	/** 공지사항 저장버튼 클릭 이벤트
-	 *   - 공지사항 저장버튼 클릭 시 수행되는 동작 정의
-	 
-	$("#grd-add-noticeList").on("click", function(e) {
-
-		const type = "C";
-		const form = createForm({}, type);
-
-		window.openDialog('div', { title: type === 'C' ? '공지사항 등록' : '공지사항 수정', content: form });
-
-		$("#btn-save-table").on("click", (e) => {
-
-			e.preventDefault();
-
-			debugger;
-		});
-	});
-	*/
 	
 	/** 추가 버튼 이벤트
 	 *  공지사항 등록 팝업을 띄운다.
@@ -46,13 +42,15 @@ $(document).ready(function() {
 	// 데이터 상세 내용 확인
 	function selectRow(rowData, columnList, isManager, tableId) {
 
+		const projectId = $('#projectSelector').val();
+
 		// 매니저일 경우
 		if (isManager) {
 			
 			const popup = window.open(
 				
-			        "/popup/noticePopupSave",  // 팝업으로 띄울 URL
-			        "공지사항 등록",     // 팝업 이름 (중복 방지용)
+			        `/popup/noticePopupSave?projectId=${projectId}&id=${rowData.id}&type=modify`,  // 팝업으로 띄울 URL
+			        "공지사항 수정",     // 팝업 이름 (중복 방지용)
 			        "width=700,height=800,resizable=yes,scrollbars=yes"
 			    );
 		}
@@ -60,13 +58,11 @@ $(document).ready(function() {
 
 			const popup = window.open(
 				
-			        "/popup/noticePopupDetail",  // 팝업으로 띄울 URL
+			        `/popup/noticePopupDetail/${rowData.id}`,  // 팝업으로 띄울 URL
 			        "공지사항 상세보기",     // 팝업 이름 (중복 방지용)
 			        "width=700,height=800,resizable=yes,scrollbars=yes"
 			    );
 		}
-
-		debugger;
 	}
 
 	window.gridCallbacks["noticeList_selectRow"] = selectRow;

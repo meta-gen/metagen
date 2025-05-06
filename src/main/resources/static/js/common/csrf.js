@@ -57,7 +57,7 @@ export function setupAjaxCsrf(type) {
                         message = xhr.responseJSON.message;
                     }
 
-                    openAlert(message);
+                    showAlert(message);
                 }
 
             }

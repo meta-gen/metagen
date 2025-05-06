@@ -9,68 +9,47 @@ $(document).ready(function () {
 		
         e.preventDefault(); // 폼 기본 제출 막기
 		
-        saveNotice();
+        saveNotice(type);
     });
 
     // 페이지 로드 시 파라미터로 데이터 조회
     const params    = new URLSearchParams(window.location.search);
     const projectId = params.get("projectId");
     const type      = params.get("type");
+	
+	$('#projectId').val(projectId);
+	$('#type').val(type);
+	
+	if(type === "modify"){
+        const id      = params.get("id");
+        $("#id").val(id);
 
-    $.ajax({
-        url: `/api/selectCodeRuleManage/template/${projectId}`
-      , type: "GET"
-      , success: function (response) {
-		
-            if (response.result) {
-				
-                setCodeRuleTemplates(response.templates || [], type);
-				
-                $("#projectId").val(projectId);
+        $("#edit-button").removeAttr("hidden");
+        $("#save-button").attr("hidden", true);
 
-                if (type === "modified" && projectId) {
-					
-                    const id = params.get("id");
+		// 상세조회
+		$.ajax({
+			url : ""
+		});
+	}else{
+		// 등록
+        $("#save-button").removeAttr("hidden");
+        $("#edit-button").attr("hidden", true);
 
-                    $.ajax({
+        $("#title").prop("readonly", false);
+        $("#content").prop("readonly", false);
+        $("#noticeFile").prop("disabled", false);
+	}
 
-                        url: `/api/selectCodeRuleManage/detail/${projectId}/${id}`
-                      , type: "GET"
-                      , success: (response) => {
-						
-                            if(response.result) {
-								
-                                const codeRule = response.codeRuleDto;
+    $("#edit-button").on("click", function () {
+        $("#title").prop("readonly", false);
+        $("#content").prop("readonly", false);
+        $("#noticeFile").prop("disabled", false);
 
-                                $("#id").val(codeRule.id);
-                                $("#codeRuleName").val(codeRule.codeRuleName);
-                                $("#codeRuleDescription").val(codeRule.codeRuleDescription);
-                                $("#prefix").val(codeRule.prefix);
-                                $("#suffix").val(codeRule.suffix);
-                                $("#methodForm").val(codeRule.methodForm);
-                                $("#templateSelect").val(String(codeRule.templateId)).prop("disabled", true);
-                            }
-                        }
-                    });
-                }
-            }
-        }
+        $("#save-button").removeAttr("hidden");
+        $("#edit-button").attr("hidden", true);
     });
-
-    $("#methodForm").on("keydown", function(e) {
-        if (e.key === "Tab") {
-            e.preventDefault();
-
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-
-            $(this).val(function(i, val) {
-                return val.substring(0, start) + "\t" + val.substring(end);
-            });
-
-            this.selectionStart = this.selectionEnd = start + 1;
-        }
-    });
+	
 });
 
 
@@ -81,13 +60,13 @@ function saveNotice(type) {
 	
     const $form = $("#editNoticeForm");
 
-    const msg = type === "C" ? "저장" : "수정";
+    const msg = type === "add" ? "저장" : "수정";
 
 	// 필수값 설정
     const requiredFields = [
 		
-        { name: "noticeTitle"  , label: "공지사항 제목" }
-      , { name: "noticeContent", label: "공지사항 내용" }
+        { name: "title"  , label: "공지사항 제목" }
+      , { name: "content", label: "공지사항 내용" }
     ];
 
     // 필수값 검증
@@ -97,7 +76,7 @@ function saveNotice(type) {
 		
         if (!value || value.trim() === "") {
 			
-            openAlert(`${field.label}은(는) 필수 입력 항목입니다.`);
+            alert(`${field.label}은(는) 필수 입력 항목입니다.`);
 			
             return;
         }
@@ -105,32 +84,34 @@ function saveNotice(type) {
 
     const noticeData = {
 		
-        id            : $form.find("[name='id']").val()
-      , type          : $form.find("[name='type']").val()
-      , noticeTitle   : $form.find("[name='noticeTitle']").val()
-      , noticeContent : $form.find("[name='noticeContent']").val()
+        id      : $form.find("[name='id']").val()
+      , title   : $form.find("[name='title']").val()
+      , content : $form.find("[name='content']").val()
     };
 
-    const method = type === "C" ? "POST" : "PUT";
+    const method = type === "add" ? "POST" : "PUT";
 
-    openConfirm(`${msg}하시겠습니까?`, () => {
+    $.ajax({
+        url     : "/api/saveNotice" // 필요 시 type에 따라 URL 분기 가능
+      , type    : method
+      , data    : JSON.stringify(noticeData)
+      , success : (response) => {
 		
-        $.ajax({
-            url     : "/api/insertNotice" // 필요 시 type에 따라 URL 분기 가능
-          , type    : method
-          , data    : JSON.stringify(noticeData)
-          , success : (response) => {
-			
-                if (response.result) {
+            if (response.result) {
+				
+				// 부모로 데이터 전달
+                if (window.opener && typeof window.opener.popupFunction?.noticeSaveSuccess === 'function') {
 					
-                    openAlert(`정상적으로 ${msg}되었습니다.`, () => {
-						
-                        window.closeDialog("div");
-						
-                        window.searchGrid(tableId);
-                    });
+					
+                    window.opener.popupFunction.noticeSaveSuccess();
+                } 
+				else {
+					
+                    alert("부모 창과의 통신이 불가능합니다.");
                 }
+
+                window.close();
             }
-        });
+        }
     });
 }

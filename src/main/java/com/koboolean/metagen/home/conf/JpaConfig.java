@@ -28,6 +28,10 @@ public class JpaConfig {
                 return Optional.empty();
             }
 
+            if(authentication.getPrincipal().equals("anonymousUser")) {
+                return Optional.empty();
+            }
+
             // 세션 정보에서 ID를 가져온 후 userId를 Set
             return Optional.ofNullable(((AccountDto) authentication.getPrincipal()).getName());
         };

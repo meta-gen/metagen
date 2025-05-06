@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -77,6 +78,9 @@ public class NoticeRestController {
      * @param accountDto
      * @param boardDto
      * @return
+     * 
+     * Restful API
+     * 	url명칭은 동일하나, save의 경우 PostMapping으로 설정.
      */
     @Operation(summary = "공지사항 게시글 등록", description = "공지사항을 등록한다.")
     @PostMapping(value = "/saveNotice")
@@ -84,6 +88,25 @@ public class NoticeRestController {
     		                                               , @RequestBody BoardDto boardDto) {
 
     	noticeService.insertNotice(accountDto, boardDto);
+
+        return ResponseEntity.ok(Map.of("result", true));
+    }
+    
+    /**
+     * 공지사항 게시글 수정
+     * @param accountDto
+     * @param boardDto
+     * @return
+     * 
+     * Restful API
+     * 	url명칭은 동일하나, update의 경우 PutMapping으로 설정.
+     */
+    @Operation(summary = "공지사항 게시글 수정", description = "공지사항을 등록한다.")
+    @PutMapping(value = "/saveNotice")
+    public ResponseEntity<Map<String, Boolean>> updateNotice(@AuthenticationPrincipal AccountDto accountDto
+    		                                               , @RequestBody BoardDto boardDto) {
+
+    	noticeService.updateNotice(accountDto, boardDto);
 
         return ResponseEntity.ok(Map.of("result", true));
     }
