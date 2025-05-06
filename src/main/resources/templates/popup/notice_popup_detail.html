@@ -12,17 +12,29 @@
     <script th:src="@{/js/bootstrap.bundle.js}"></script>
     <script th:src="@{/js/dataTables.min.js}"></script>
     <script th:src="@{/js/jquery-ui-1.14.1.custom/jquery-ui.js}"></script>
-    <script type="module" th:src="@{/js/popup/notice_popup_detail.js}"></script>
 
     <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
 </head>
 
 <body>
-    <div class="popup-container">
-        <div class="popup-header">
-            <h1>공지사항</h1>
+<div class="popup-container">
+    <div class="popup-header">
+        <h1>공지사항</h1>
+    </div>
+
+    <form class="popup-form">
+        <div class="form-group">
+            <label for="title">공지사항 제목</label>
+            <input type="text" id="title" class="form-control" name="title" th:value="${notice.title}" readonly />
         </div>
 
-    </div>
+        <div class="form-group">
+            <label for="content">공지사항 내용</label>
+            <textarea id="content" class="form-control" name="content" style="height: 300px;" readonly
+                      th:text="${notice.content}"></textarea>
+        </div>
+
+    </form>
+</div>
 </body>
 </html>

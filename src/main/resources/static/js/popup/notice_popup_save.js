@@ -21,14 +21,34 @@ $(document).ready(function () {
 	$('#type').val(type);
 	
 	if(type === "modify"){
+        const id      = params.get("id");
+        $("#id").val(id);
+
+        $("#edit-button").removeAttr("hidden");
+        $("#save-button").attr("hidden", true);
+
 		// 상세조회
 		$.ajax({
 			url : ""
 		});
 	}else{
 		// 등록
-		
+        $("#save-button").removeAttr("hidden");
+        $("#edit-button").attr("hidden", true);
+
+        $("#title").prop("readonly", false);
+        $("#content").prop("readonly", false);
+        $("#noticeFile").prop("disabled", false);
 	}
+
+    $("#edit-button").on("click", function () {
+        $("#title").prop("readonly", false);
+        $("#content").prop("readonly", false);
+        $("#noticeFile").prop("disabled", false);
+
+        $("#save-button").removeAttr("hidden");
+        $("#edit-button").attr("hidden", true);
+    });
 	
 });
 

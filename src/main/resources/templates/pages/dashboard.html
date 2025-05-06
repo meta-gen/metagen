@@ -4,6 +4,10 @@
       layout:decorate="~{layout}"
 >
 
+<head>
+    <script type="module" th:src="@{/js/dashboard.js}"></script>
+</head>
+
 <body>
 <section layout:fragment="content">
     <h2 class="mb-4">대시보드</h2>
@@ -52,12 +56,12 @@
                     <a href="/notice" class="btn btn-sm btn-outline-primary">More</a>
                 </div>
                 <div class="card-body p-2">
-                    <table class="table table-sm table-hover">
+                    <table class="table table-sm table-hover"  id="noticeTable">
                         <thead>
                         <tr><th>제목</th><th>작성자</th><th>작성일</th><th>조회수</th></tr>
                         </thead>
                         <tbody>
-                        <tr th:each="notice : ${notices}" ><!--th:onclick="'showNoticeModal(' + ${notice.id} + ')'"-->
+                        <tr th:each="notice : ${notices}" th:data-id="${notice.id}" style="cursor: pointer;">
                             <td th:text="${notice.title}">공지 제목</td>
                             <td th:text="${notice.createdBy}">ADMIN</td>
                             <td th:text="${#temporals.format(notice.created, 'yyyy-MM-dd HH:mm')}">2025-04-29</td>

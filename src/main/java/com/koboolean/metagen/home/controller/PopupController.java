@@ -1,20 +1,24 @@
 package com.koboolean.metagen.home.controller;
 
+import com.koboolean.metagen.board.domain.dto.BoardDto;
+import com.koboolean.metagen.operation.notice.service.NoticeService;
+import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.system.access.controller.AccessRestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/popup")
+@RequiredArgsConstructor
 public class PopupController {
 
     private final AccessRestController accessRestController;
-
-    PopupController(AccessRestController accessRestController) {
-        this.accessRestController = accessRestController;
-    }
+    private final NoticeService noticeService;
 
     @GetMapping("/standardTermSearch")
     public String standardTermSearch(){
@@ -45,11 +49,12 @@ public class PopupController {
      * 공지사항 상세보기 팝업
      * @return
      */
-    @GetMapping("/noticePopupDetail/{projectId}/{id}")
-    public String noticePopupDetail(@PathVariable(name="projectId") String projectId, @PathVariable(name="id") String id){
-    	
+    @GetMapping("/noticePopupDetail/{id}")
+    public String noticePopupDetail(@PathVariable(name="id") Long id, Model model){
+        model.addAttribute("notice", noticeService.noticePopupMain(id));
         return "popup/notice_popup_detail";
     }
+
     
     /**
      * 공지사항 등록 팝업

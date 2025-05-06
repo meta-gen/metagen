@@ -42,12 +42,14 @@ $(document).ready(function() {
 	// 데이터 상세 내용 확인
 	function selectRow(rowData, columnList, isManager, tableId) {
 
+		const projectId = $('#projectSelector').val();
+
 		// 매니저일 경우
 		if (isManager) {
 			
 			const popup = window.open(
 				
-			        "/popup/noticePopupSave?projectId=${projectId}&type=modify",  // 팝업으로 띄울 URL
+			        `/popup/noticePopupSave?projectId=${projectId}&id=${rowData.id}&type=modify`,  // 팝업으로 띄울 URL
 			        "공지사항 수정",     // 팝업 이름 (중복 방지용)
 			        "width=700,height=800,resizable=yes,scrollbars=yes"
 			    );
@@ -56,13 +58,11 @@ $(document).ready(function() {
 
 			const popup = window.open(
 				
-			        `/popup/noticePopupDetail/${projectId}/${rowData.id}`,  // 팝업으로 띄울 URL
+			        `/popup/noticePopupDetail/${rowData.id}`,  // 팝업으로 띄울 URL
 			        "공지사항 상세보기",     // 팝업 이름 (중복 방지용)
 			        "width=700,height=800,resizable=yes,scrollbars=yes"
 			    );
 		}
-
-		debugger;
 	}
 
 	window.gridCallbacks["noticeList_selectRow"] = selectRow;

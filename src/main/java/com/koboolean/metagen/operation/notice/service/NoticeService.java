@@ -37,4 +37,11 @@ public interface NoticeService {
      * @param boardDto
      */
     void updateNotice(AccountDto accountDto, BoardDto boardDto);
+
+    /**
+     * 공지사항 상세조회
+     * @param id
+     * @return
+     */
+    BoardDto noticePopupMain(Long id);
 }

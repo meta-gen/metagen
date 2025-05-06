@@ -51,8 +51,8 @@ public class NoticeServiceImpl implements NoticeService {
 		return List.of(new ColumnDto("", "id", ColumnType.NUMBER, RowType.CHECKBOX)
 				     , new ColumnDto("게시글 제목", "categoryName", ColumnType.STRING, true)
 				     , new ColumnDto("작성자", "username", ColumnType.STRING, true)
-				     , new ColumnDto("작성일", "updatedTime", ColumnType.STRING)
-				     , new ColumnDto("조회수", "hitCount", ColumnType.NUMBER));
+				     , new ColumnDto("작성일", "updatedTime", ColumnType.DATE, RowType.TEXT)
+				     , new ColumnDto("조회수", "hitCount", ColumnType.STRING));
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class NoticeServiceImpl implements NoticeService {
         		.title        (boardDto.getTitle()     )
         		.content      (boardDto.getContent()   )
         		.username     (accountDto.getUsername())
-        		.deleteYn     ('Y'                     )
+        		.deleteYn     ('N'                     )
         		.hitCount     (0                       )
         		.updatedTime  (LocalDateTime.now()     )
         		.build();
@@ -136,4 +136,17 @@ public class NoticeServiceImpl implements NoticeService {
         board.setContent    (boardDto.getContent()    );
         board.setUpdatedTime(boardDto.getUpdatedTime());
     }
+
+	@Override
+	@Transactional
+	public BoardDto noticePopupMain(Long id) {
+		Board board = boardRepository.findById(id).orElse(null);
+
+		if(board == null) {
+			board = new Board();
+		}
+		board.setHitCount(board.getHitCount() + 1);
+
+		return BoardDto.fromEntity(board);
+	}
 }

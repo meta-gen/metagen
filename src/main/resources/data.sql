@@ -202,10 +202,10 @@ INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resour
 VALUES (60, '*', 0, '/api/activeUsers','url', '사용자 로그인여부', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (61, '*', 0, '/popup/noticePopupDetail','url', '공지사항 상세보기 팝업', 'SYSTEM', 'SYSTEM')
+VALUES (61, '*', 0, '/popup/noticePopupDetail/**','url', '공지사항 상세보기 팝업', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
-VALUES (62, '*', 0, '/popup/noticePopupSave','url', '공지사항 등록 팝업', 'SYSTEM', 'SYSTEM')
+VALUES (62, '*', 0, '/popup/noticePopupSave/**','url', '공지사항 등록 팝업', 'SYSTEM', 'SYSTEM')
 ON CONFLICT (resource_id) DO NOTHING;
 INSERT INTO RESOURCES(resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
 VALUES (63, '*', 0, '/','url', '대시보드', 'SYSTEM', 'SYSTEM')
