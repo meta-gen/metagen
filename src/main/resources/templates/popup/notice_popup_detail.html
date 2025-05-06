@@ -19,18 +19,20 @@
 <body>
 <div class="popup-container">
     <div class="popup-header">
-        <h1>공지사항</h1>
+        <h1 th:text="${notice.title}"></h1>
     </div>
 
     <form class="popup-form">
         <div class="form-group">
-            <label for="title">공지사항 제목</label>
-            <input type="text" id="title" class="form-control" name="title" th:value="${notice.title}" readonly />
+            <div style="display: flex; align-items: center; white-space: nowrap; gap: 6px;">
+                <span style="font-weight: bold;">조회수</span>
+                <span th:text="${notice.hitCount}" style="min-width: 30px; text-align: right;"></span>
+            </div>
         </div>
 
         <div class="form-group">
             <label for="content">공지사항 내용</label>
-            <textarea id="content" class="form-control" name="content" style="height: 300px;" readonly
+            <textarea id="content" class="form-control" name="content" style="height: 500px;" readonly
                       th:text="${notice.content}"></textarea>
         </div>
 
