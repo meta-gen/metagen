@@ -4,7 +4,7 @@
       layout:decorate="~{layout}"
 >
 	<head>
-	    <script type="module" th:src="@{/js/operation/notice/notice_list.js}"></script>
+	    <script type="module" th:src="@{/js/operation/notice_list.js}"></script>
 	</head>
 	
 	<body>
@@ -23,7 +23,7 @@
 	            </select>
 			</div>
 			
-		    <div th:replace="~{fragments/grid :: grid('noticeList', '/api/selectNotice', 'cd', 'noticeList_selectRow')}"></div>
+		    <div th:replace="~{fragments/grid :: grid('noticeList', '/api/selectNotice/' + ${projects[0].id}, 'cd', 'noticeList_selectRow')}"></div>
 		</section>
 	</body>
 </html>

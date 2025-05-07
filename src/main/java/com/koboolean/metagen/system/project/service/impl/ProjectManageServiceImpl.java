@@ -90,7 +90,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
 
         projectMemberRepository.save(projectMember);
 
-        project.setProjectMembers(List.of(projectMember));
+        project.setProjectMember(List.of(projectMember));
 
         projectRepository.save(project);
     }
@@ -119,7 +119,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED, "삭제를 할 수 없습니다.");
         }
 
-        if(project.getProjectMembers().size() > 1){
+        if(project.getProjectMember().size() > 1){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED, "프로젝트 관리자 외의 멤버가 존재하여 삭제가 불가능합니다.");
         }
 
@@ -132,7 +132,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
         }
 
         templateRepository.deleteByProjectId(project.getId());
-        projectMemberRepository.deleteAll(project.getProjectMembers());
+        projectMemberRepository.deleteAll(project.getProjectMember());
 
         projectRepository.delete(project);
     }
@@ -175,7 +175,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
 
             if(projectMember != null){
                 // 프로젝트의 관리자의 경우에는 삭제가 불가능하다.
-                if(projectMember.getAccount().getId().equals(Long.parseLong(accountDto.getId()))){
+                if(projectMember.getProject().getAccount().getId().equals(projectMemberDto.getAccountId())){
                     throw new CustomException(ErrorCode.MANAGER_NON_DELETED);
                 }
 
@@ -217,7 +217,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
                 .isActive(true)
                 .build();
 
-        if(project != null) project.getProjectMembers().add(projectMember);
+        if(project != null) project.getProjectMember().add(projectMember);
 
         projectMemberRepository.save(projectMember);
     }

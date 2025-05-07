@@ -39,7 +39,7 @@ public class ProjectDto {
 
     public static ProjectDto fromEntity(Project project) {
 
-        List<ProjectMemberDto> projectMembers = project.getProjectMembers().stream().map(ProjectMemberDto::fromEntity).toList();
+        List<ProjectMemberDto> projectMembers = project.getProjectMember().stream().map(ProjectMemberDto::fromEntity).toList();
 
         return new ProjectDto(
                 project.getId(),
@@ -57,7 +57,7 @@ public class ProjectDto {
 
     public static ProjectDto fromEntity(Project project, AccountDto accountDto) {
 
-        List<ProjectMemberDto> projectMembers = project.getProjectMembers().stream().map(ProjectMemberDto::fromEntity).toList();
+        List<ProjectMemberDto> projectMembers = project.getProjectMember().stream().map(ProjectMemberDto::fromEntity).toList();
         Boolean isModified = project.getAccount() != null && (project.getAccount().getId() == Long.parseLong(accountDto.getId())
                 || AuthUtil.isApprovalAvailable());
 

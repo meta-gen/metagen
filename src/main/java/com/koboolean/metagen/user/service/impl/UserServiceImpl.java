@@ -355,5 +355,19 @@ public class UserServiceImpl implements UserService {
         return dashboardDto;
     }
 
+    @Override
+    public List<ProjectDto> selectAllProjectsByUsername(AccountDto accountDto) {
+        Long accountId = Long.parseLong(accountDto.getId());
+
+        return projectRepository.findAllByProjectMember_Account_Id(accountId).stream().map(ProjectDto::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProjectDto> selectAllProjectsByUsernameProjectManager(AccountDto accountDto) {
+        Long accountId = Long.parseLong(accountDto.getId());
+
+        return projectRepository.findAllByAccount_IdAndProjectMember_Account_Id(accountId, accountId).stream().map(ProjectDto::fromEntity).collect(Collectors.toList());
+    }
+
 
 }

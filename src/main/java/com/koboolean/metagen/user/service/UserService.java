@@ -45,4 +45,8 @@ public interface UserService {
     Map<String, Object> getActiveUser(AccountDto accountDto);
 
     DashboardDto selectDashboardData(AccountDto accountDto);
+
+    List<ProjectDto> selectAllProjectsByUsername(AccountDto accountDto);
+
+    List<ProjectDto> selectAllProjectsByUsernameProjectManager(AccountDto accountDto);
 }

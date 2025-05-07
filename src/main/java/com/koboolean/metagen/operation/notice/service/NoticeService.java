@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.koboolean.metagen.board.domain.dto.BoardDto;
-import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 
@@ -16,13 +15,13 @@ public interface NoticeService {
      * 공지사항 리스트 조회
      * @return
      */
-    Page<BoardDto> getNoticeList(Pageable pageable, AccountDto accountDto);
+    Page<BoardDto> getNoticeList(Pageable pageable, Long selectedId);
 
     /**
      * 공지사항 컬럼 조회
      * @return
      */
-    List<ColumnDto> getNoticeListColumn();
+    List<ColumnDto> getNoticeListColumn(Long selectedId);
     
     /**
      * 공지사항 등록
@@ -44,4 +43,11 @@ public interface NoticeService {
      * @return
      */
     BoardDto noticePopupMain(Long id);
+
+    /**
+     * 공지사항 수정 상세조회
+     * @param id
+     * @return
+     */
+    BoardDto noticeSavePopup(Long id);
 }

@@ -1,16 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layout}"
->
+      layout:decorate="~{layout}">
 <body>
 <section layout:fragment="content">
-    <div class="col-md-10 content">
-        <div>
-            <h3 th:text="${exception}"></h3>
-            <br/>
-            <span th:text="${name} != null ? ${name} + ' 님은 접근 권한이 없습니다. 관리자에게 접근권한을 신청하시기 바랍니다.' : '비 정상적인 접근입니다'"></span>
-        </div>
+    <div class="col-md-10 content d-flex flex-column align-items-center justify-content-center"
+         style="min-height: 60vh; text-align: center; padding-top: 40px;">
+
+        <div style="font-size: 3rem; color: #5c6bc0;">🚫</div>
+
+        <h2 class="mt-3" style="color: #333;" th:text="${exception} ?: '접근이 거부되었습니다.'"></h2>
+
+        <p class="mt-3 text-secondary" th:if="${msg}" th:text="${name} + ' 님은 ' + ${msg}"></p>
+        <p class="mt-3 text-secondary" th:if="${name != null and msg == null}"
+           th:text="${name} + ' 님은 해당 페이지에 접근 권한이 없습니다. 관리자에게 접근권한을 신청하시기 바랍니다.'"></p>
+        <p class="mt-3 text-secondary" th:if="${name == null}" th:text="'비정상적인 접근입니다.'"></p>
+
+        <a href="/" class="btn btn-outline-primary mt-4">홈으로 돌아가기</a>
     </div>
 </section>
 </body>
