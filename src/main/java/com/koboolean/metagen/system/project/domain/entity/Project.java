@@ -31,7 +31,7 @@ public class Project extends BaseEntity implements Serializable {
     private Boolean isActive;
 
     @OneToMany(mappedBy = "project")
-    private List<ProjectMember> projectMembers = new ArrayList<>();
+    private List<ProjectMember> projectMember = new ArrayList<>();
 
     @Column(name = "is_auto_active")
     private Boolean isAutoActive; // 자동 승인여부

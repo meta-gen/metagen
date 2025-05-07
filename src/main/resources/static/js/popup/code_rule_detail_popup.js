@@ -33,6 +33,7 @@ $(document).ready(function () {
                                 $("#isDicAbbrUsed").val(data.isDicAbbrUsed);
                                 $("#input").val(data.input);
                                 $("#output").val(data.output);
+                                $("#exception").val(data.exception);
                                 $("#useSwagger").prop("checked", data.useSwagger);
                                 $("#methodForm").val(data.methodForm);
 
@@ -105,9 +106,11 @@ $(document).ready(function () {
             if (selectedRule) {
                 $("#input").val(selectedRule.input || "");
                 $("#output").val(selectedRule.output || "");
+                $("#exception").val(selectedRule.exception || "");
             } else {
                 $("#input").val("");
                 $("#output").val("");
+                $("#exception").val("");
             }
         }
     });
@@ -142,6 +145,7 @@ function setData(){
         description: $("#description").val().trim(),
         input: $("#input").val().trim(),
         output: $("#output").val().trim(),
+        exception: $("#exception").val().trim(),
         useSwagger: $("#useSwagger").is(":checked")
     };
 
@@ -196,6 +200,7 @@ function saveData(){
         methodName: $("#methodName").val(),
         input: $("#input").val().trim(),
         output: $("#output").val().trim(),
+        exception: $("#exception").val().trim(),
         useSwagger: $("#useSwagger").is(":checked")
     }
 

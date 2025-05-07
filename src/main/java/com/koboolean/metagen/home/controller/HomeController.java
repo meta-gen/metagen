@@ -10,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Controller
@@ -37,14 +39,14 @@ public class HomeController {
      * @return
      */
     @GetMapping(value="/notice")
-    public String notice(Model model) {
+    public String notice(Model model, @AuthenticationPrincipal AccountDto accountDto) {
     	
     	// 사용자의 선택가능 프로젝트 목록을 조회한다.
-    	List<ProjectDto> projectDtos = userService.selectAllProjects();
+    	List<ProjectDto> projectDtos = userService.selectAllProjectsByUsername(accountDto);
 
         model.addAttribute("projects", projectDtos);
     	
-        return "pages/operation/notice/notice_list";
+        return "pages/operation/notice_list";
     }
 
     @GetMapping("/tableManage")
@@ -108,12 +110,22 @@ public class HomeController {
     }
 
     @GetMapping("/projectManage")
-    public String projectManage(Model model) {
+    public String projectManage(Model model, @AuthenticationPrincipal AccountDto accountDto) {
 
-        List<ProjectDto> projectDtos = userService.selectAllProjects();
+        List<ProjectDto> projectDtos = userService.selectAllProjectsByUsernameProjectManager(accountDto);
 
         model.addAttribute("projects", projectDtos);
-        model.addAttribute("crudActions", projectDtos.get(0).getIsAutoActive()? "cd" : "ancd");
+
+        if(!projectDtos.isEmpty()) {
+            model.addAttribute("crudActions", projectDtos.get(0).getIsAutoActive()? "cd" : "ancd");
+        }else{
+            // 프로젝트 관리자가 아닌경우 권한 없음 페이지로 이동
+            String errorMsg = URLEncoder.encode("프로젝트 관리자만 접근 가능합니다", StandardCharsets.UTF_8);
+            String exception = URLEncoder.encode("접근 불가 페이지", StandardCharsets.UTF_8);
+            return "redirect:/denied?msg=" + errorMsg + "&exception=" + exception;
+        }
+
+
 
         return "pages/system/project_manage";
     }

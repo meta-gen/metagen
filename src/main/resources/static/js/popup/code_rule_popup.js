@@ -39,6 +39,7 @@ $(document).ready(function () {
                                 $("#methodForm").val(codeRule.methodForm);
                                 $("#input").val(codeRule.input);
                                 $("#output").val(codeRule.output);
+                                $("#exception").val(codeRule.exception);
                                 $("#templateSelect").val(String(codeRule.templateId)).prop("disabled", true);
                             }
                         }
@@ -87,6 +88,7 @@ function submitForm() {
         suffix: $("#suffix").val(),
         input: $("#input").val(),
         output: $("#output").val(),
+        exception: $("#exception").val(),
         methodForm: $("#methodForm").val()
     };
 

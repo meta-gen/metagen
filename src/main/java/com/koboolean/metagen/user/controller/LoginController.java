@@ -86,10 +86,14 @@ public class LoginController {
      * @return
      */
     @GetMapping(value="/denied")
-    public String accessDenied(@RequestParam(value = "exception", required = false) String exception, @AuthenticationPrincipal AccountDto accountDto, Model model) {
+    public String accessDenied(@RequestParam(value = "exception", required = false) String exception,
+                               @RequestParam(value = "msg", required = false) String msg,
+                               @AuthenticationPrincipal AccountDto accountDto,
+                               Model model) {
 
         model.addAttribute("name", accountDto.getName());
         model.addAttribute("exception", exception);
+        model.addAttribute("msg", msg);
 
         return "pages/login/denied";
     }

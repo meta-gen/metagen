@@ -1,4 +1,5 @@
 import {setupAjaxCsrf} from "../../common/csrf.js";
+import {downloadFile} from "../../common/common.js";
 
 setupAjaxCsrf();
 
@@ -18,8 +19,8 @@ $(document).ready(() => {
         form.append(p);
 
         [
-            { id: "unitTest", text: "단위테스트 시나리오" },
-            { id: "integrationTest", text: "통합테스트 시나리오" }
+            { id: "unitTest", text: "단위테스트 시나리오" }
+            /*, { id: "integrationTest", text: "통합테스트 시나리오" }*/
         ].forEach(option => {
             const btn = $("<button></button>")
                 .attr({
@@ -69,12 +70,27 @@ function handlePrintFormat(formatType, formatText, checkedData) {
         message = `체크된 ${formatText}을 출력하시겠습니까?`;
         type = "unit";
 
-        data.checkedData = checkedData;
+        data.rules = checkedData;
     }
 
-    openConfirm(message, () => {
-        // 실제 출력 로직 호출
+    data.type = type;
 
-        console.log(data);
+    openConfirm(message, () => {
+        $.ajax({
+            url : "/api/printTest",
+            type : "POST",
+            data : JSON.stringify(data),
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (blob, status, xhr) {
+                downloadFile(blob, status, xhr, `${formatText}.xlsx`);
+                closeDialog("div");
+            },
+            error: function (xhr) {
+                const errorMessage = xhr.responseJSON?.message || '파일 다운로드 중 문제가 발생했습니다.';
+                openAlert(errorMessage);
+            }
+        })
     });
 }

@@ -27,9 +27,20 @@ $(document).ready(function () {
         $("#edit-button").removeAttr("hidden");
         $("#save-button").attr("hidden", true);
 
+        $("#notice_title").html("공지사항 수정");
+
 		// 상세조회
 		$.ajax({
-			url : ""
+			url : `/api/selectNotice/detail/${id}`,
+            type: "GET",
+            success : (response) => {
+                if(response.result){
+                    const board = response.board;
+
+                    $("#title").val(board.title);
+                    $("#content").val(board.content);
+                }
+            }
 		});
 	}else{
 		// 등록

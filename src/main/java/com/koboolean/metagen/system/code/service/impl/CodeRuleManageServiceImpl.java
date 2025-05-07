@@ -96,6 +96,7 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
                 , new ColumnDto("접미사", "suffix", ColumnType.STRING, RowType.TEXT, false)
                 , new ColumnDto("입력값", "input", ColumnType.STRING, RowType.TEXT, false,false)
                 , new ColumnDto("출력값", "output", ColumnType.STRING, RowType.TEXT, false,false)
+                , new ColumnDto("예외처리", "exception", ColumnType.STRING, RowType.TEXT, false,false)
         );
     }
 
@@ -138,6 +139,7 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
                 .methodForm(codeRuleDto.getMethodForm())
                 .input(codeRuleDto.getInput())
                 .output(codeRuleDto.getOutput())
+                .exception(codeRuleDto.getException())
                 .build();
 
         Template template = templateRepository.findById(codeRuleDto.getTemplateId()).orElse(null);
@@ -214,6 +216,7 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
         codeRule.setInput(codeRuleDto.getInput());
         codeRule.setOutput(codeRuleDto.getOutput());
         codeRule.setMethodForm(codeRuleDto.getMethodForm());
+        codeRule.setException(codeRuleDto.getException());
 
         Template template = templateRepository.findById(codeRuleDto.getTemplateId()).orElse(null);
 

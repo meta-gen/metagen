@@ -1,5 +1,6 @@
 package com.koboolean.metagen.utils;
 
+import com.koboolean.metagen.data.code.domain.dto.CodeRuleDetailDto;
 import com.koboolean.metagen.security.exception.CustomException;
 import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import org.apache.poi.ss.usermodel.Cell;
@@ -17,10 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -68,6 +66,64 @@ public class ExcelUtils {
         }
 
         return new InputStreamResource(inputStream);
+    }
+
+    public static File loadAndCopyExcelFile(String fileName, List<CodeRuleDetailDto> dataList, List<String> data) throws IOException {
+        InputStream inputStream = ExcelUtils.class.getClassLoader().getResourceAsStream("static/excel/" + fileName + ".xlsx");
+
+        if (inputStream == null) {
+            throw new FileNotFoundException("파일을 찾을 수 없습니다: " + fileName);
+        }
+
+        // 임시파일로 복사 (수정 가능)
+        File tempFile = File.createTempFile("temp-", ".xlsx");
+        try (FileOutputStream out = new FileOutputStream(tempFile)) {
+            inputStream.transferTo(out);
+        }
+
+        FileInputStream fileInputStream = new FileInputStream(tempFile);
+        Workbook workbook = new XSSFWorkbook(fileInputStream);
+        Sheet sheet = workbook.getSheetAt(0); // 첫 시트 사용
+
+        // 4. 데이터 입력 (헤더 다음 줄부터)
+        int rowNum = 1;
+        for (CodeRuleDetailDto dto : dataList) {
+            Row row = sheet.createRow(rowNum++);
+            for (int i = 0; i < data.size(); i++) {
+                String fieldName = data.get(i);
+                String value = "";
+
+                if (fieldName == null || fieldName.isEmpty()) {
+                    value = "";
+                } else {
+                    switch (fieldName) {
+                        case "functionGroup": value = dto.getFunctionGroup(); break;
+                        case "methodKeyword": value = dto.getMethodKeyword(); break;
+                        case "templateName": value = dto.getTemplateName(); break;
+                        case "codeRuleName": value = dto.getCodeRuleName(); break;
+                        case "methodPurpose": value = dto.getMethodPurpose(); break;
+                        case "methodName": value = dto.getMethodName(); break;
+                        case "input": value = dto.getInput(); break;
+                        case "output": value = dto.getOutput(); break;
+                        case "exception": value = dto.getException(); break;
+                        case "methodKeyword|codeRuleName": value = dto.getMethodKeyword() + dto.getCodeRuleName(); break;
+                        default: value = "";
+                    }
+                }
+
+                row.createCell(i).setCellValue(value != null ? value : "");
+            }
+        }
+
+        // 5. 덮어쓰기 저장
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            workbook.write(fos);
+        }
+
+        workbook.close();
+        fileInputStream.close();
+
+        return tempFile;
     }
 
     public static List<Map<String, String>> parseExcelFile(MultipartFile file, int sheetNum, List<String> predefinedHeaders, boolean useFirstRowAsHeader, int startRow) throws IOException {

@@ -1,4 +1,4 @@
-import { getCsrfToken, setupAjaxCsrf } from "../../common/csrf.js";
+import { getCsrfToken, setupAjaxCsrf } from "../common/csrf.js";
 
 $(document).ready(function() {
 
@@ -6,7 +6,22 @@ $(document).ready(function() {
 
 	const $addBtn = $('#btn-notice-add');
 	const tableId = "noticeList";
-	
+
+	$('#projectSelector').on('change', function () {
+		const selectedId = $(this).val();
+		if (!selectedId) return;
+
+		const dataUrl = '/api/selectNotice/' + selectedId;
+
+		if (window.tableInstances[tableId]) {
+			window.tableInstances[tableId].destroy();
+			delete window.tableInstances[tableId];
+		}
+
+		$('#' + tableId + ' thead tr').empty();
+		window.grid(tableId, dataUrl, 'cd', 'noticeList_selectRow');
+	});
+
 	/**
 	 * 팝업 닫은 후 완료 메세지 출력.
 	 */
