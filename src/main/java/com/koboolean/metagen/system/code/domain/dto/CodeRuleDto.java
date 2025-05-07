@@ -39,6 +39,8 @@ public class CodeRuleDto {
 
     private String output;
 
+    private String exception;
+
     public static CodeRuleDto fromEntity(CodeRule codeRule) {
 
         TemplateDto templateDto = TemplateDto.fromEntity(codeRule.getTemplate());
@@ -57,6 +59,7 @@ public class CodeRuleDto {
                 .methodForm(codeRule.getMethodForm())
                 .input(codeRule.getInput())
                 .output(codeRule.getOutput())
+                .exception(codeRule.getException())
                 .build();
     }
 }

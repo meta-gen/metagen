@@ -44,6 +44,8 @@ public class CodeRule extends BaseEntity {
 
     private String output;
 
+    private String exception;
+
     @OneToMany(mappedBy = "codeRule", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CodeRuleDetail> codeRuleDetails;
 }

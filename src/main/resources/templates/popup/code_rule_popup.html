@@ -74,6 +74,11 @@
             </div>
 
             <div class="form-group">
+                <label for="exception">기본 예외처리값</label>
+                <input type="text" id="exception" class="form-control" placeholder="선택 사항: 함수/메소드의 예외처리를 입력하세요."/>
+            </div>
+
+            <div class="form-group">
                 <label for="methodForm">메소드 형식 예시</label>
                 <textarea id="methodForm" class="form-control" style="height: 400px"
                           placeholder='▶ **\${0}** : 메소드 또는 함수 이름이 들어가는 부분입니다.
@@ -82,6 +87,7 @@
 ▶ **\${3}** : 코드규칙에 등록한 기타 설명이 들어갑니다.
 ▶ **\${INPUT}** : 코드규칙에 등록한 입력값이 들어갑니다.
 ▶ **\${OUTPUT}** : 코드규칙에 등록한 출력값이 들어갑니다.
+▶ **\${EXCEPTION}** : 코드규칙에 등록한 예외처리값이 들어갑니다.
 ▶ **\${USER_NAME}** : 사용자 명이 입력됩니다.
 ▶ Operation 어노테이션을 통한 Swagger 설명은 메소드 형식에 직접 입력하지 않아도, 프로젝트 관리 내 Swagger 사용 설정 시 자동으로 적용됩니다.
 /**

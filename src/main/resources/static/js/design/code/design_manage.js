@@ -1,4 +1,5 @@
 import {setupAjaxCsrf} from "../../common/csrf.js";
+import {downloadFile} from "../../common/common.js";
 
 setupAjaxCsrf();
 
@@ -53,6 +54,9 @@ function handlePrintFormat(formatType, formatText, checkedData) {
 
     let data = {};
 
+    data.formatType = formatType;
+    data.formatText = formatText;
+
     // null일 경우 조회조건에 따른 출력
     if(checkedData.length === 0){
         const searchColumn = $("#search-column-codeRuleGrid").val();
@@ -70,12 +74,27 @@ function handlePrintFormat(formatType, formatText, checkedData) {
         message = `체크된 ${formatText}을 출력하시겠습니까?`;
         type = "unit";
 
-        data.checkedData = checkedData;
+        data.rules = checkedData;
     }
 
-    openConfirm(message, () => {
-        // 실제 출력 로직 호출
+    data.type = type;
 
-        console.log(data);
+    openConfirm(message, () => {
+        $.ajax({
+            url : "/api/printDesign",
+            type : "POST",
+            data : JSON.stringify(data),
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (blob, status, xhr) {
+                downloadFile(blob, status, xhr, `${formatText}.xlsx`);
+                closeDialog("div");
+            },
+            error: function (xhr) {
+                const errorMessage = xhr.responseJSON?.message || '파일 다운로드 중 문제가 발생했습니다.';
+                openAlert(errorMessage);
+            }
+        })
     });
 }

@@ -53,6 +53,7 @@ public class CodeRuleServiceImpl implements CodeRuleService {
                 new ColumnDto("변환된 메소드 명", "methodName", ColumnType.STRING, RowType.TEXT, false,false),
                 new ColumnDto("입력값", "input", ColumnType.STRING, RowType.TEXT, false,false),
                 new ColumnDto("출력값", "output", ColumnType.STRING, RowType.TEXT, false,false),
+                new ColumnDto("예외처리", "exception", ColumnType.STRING, RowType.TEXT, false,false),
                 new ColumnDto("기타 설명", "description", ColumnType.STRING, RowType.TEXT, false,false)
         );
     }
@@ -139,6 +140,7 @@ public class CodeRuleServiceImpl implements CodeRuleService {
                 .useSwagger(codeRuleDetailDto.getUseSwagger())
                 .input(codeRuleDetailDto.getInput())
                 .output(codeRuleDetailDto.getOutput())
+                .exception(codeRuleDetailDto.getException())
                 .build();
 
         codeRuleDetail.setCodeRule(codeRule);
@@ -176,6 +178,7 @@ public class CodeRuleServiceImpl implements CodeRuleService {
         codeRuleDetail.setInput(codeRuleDetailDto.getInput());
         codeRuleDetail.setOutput(codeRuleDetailDto.getOutput());
         codeRuleDetail.setCodeRule(codeRule);
+        codeRuleDetail.setException(codeRuleDetailDto.getException());
 
         if(codeRule != null){
             codeRule.getCodeRuleDetails().add(codeRuleDetail);
@@ -274,6 +277,7 @@ public class CodeRuleServiceImpl implements CodeRuleService {
         methodForm = methodForm.replaceAll("(?i)\\$\\{USER_NAME}", accountDto.getName());
         methodForm = methodForm.replaceAll("(?i)\\$\\{INPUT}", codeRuleDetailDto.getInput() == null ? "" : codeRuleDetailDto.getInput());
         methodForm = methodForm.replaceAll("(?i)\\$\\{OUTPUT}", codeRuleDetailDto.getOutput() == null ? "" : codeRuleDetailDto.getOutput());
+        methodForm = methodForm.replaceAll("(?i)\\$\\{EXCEPTION}", codeRuleDetailDto.getException() == null ? "" : codeRuleDetailDto.getException());
 
         String description = codeRuleDetailDto.getDescription();
         if(description != null){

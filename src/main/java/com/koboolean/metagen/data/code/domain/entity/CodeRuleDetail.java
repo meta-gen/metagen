@@ -39,6 +39,8 @@ public class CodeRuleDetail extends BaseEntity {
 
     private String output;
 
+    private String exception;
+
     @ManyToOne
     @JoinColumn(name = "code_rule_id")
     private CodeRule codeRule; // 코드규칙

@@ -47,6 +47,8 @@ public class CodeRuleDetailDto {
 
     private String output;
 
+    private String exception;
+
     public static CodeRuleDetailDto fromEntity(CodeRuleDetail entity) {
         return builder()
                 .id(entity.getId())
@@ -66,6 +68,7 @@ public class CodeRuleDetailDto {
                 .useSwagger(entity.getUseSwagger())
                 .input(entity.getInput())
                 .output(entity.getOutput())
+                .exception(entity.getException())
                 .build();
     }
 
