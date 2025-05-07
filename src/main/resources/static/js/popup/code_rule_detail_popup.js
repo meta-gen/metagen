@@ -175,7 +175,7 @@ function setData(){
         data: JSON.stringify(data),
         success: (response) => {
             if(response.result){
-
+                $("#methodPurpose").val(response.codeRule.methodPurpose);
                 $("#methodName").val(response.codeRule.methodName);
                 $("#methodForm").val(response.codeRule.methodForm);
                 $("#isDicAbbrUsed").val(response.codeRule.isDicAbbrUsed);
