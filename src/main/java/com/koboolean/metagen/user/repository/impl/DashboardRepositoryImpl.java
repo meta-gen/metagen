@@ -12,10 +12,12 @@ import com.koboolean.metagen.data.dictionary.domain.entity.QStandardWord;
 import com.koboolean.metagen.data.table.domain.entity.QTableInfo;
 import com.koboolean.metagen.home.domain.dto.DashboardDto;
 import com.koboolean.metagen.home.domain.dto.RecentChangeDto;
+import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.system.code.domain.entity.QCodeRule;
 import com.koboolean.metagen.system.project.domain.entity.QTemplate;
 import com.koboolean.metagen.user.repository.DashboardRepositoryCustom;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -155,7 +157,7 @@ public class DashboardRepositoryImpl implements DashboardRepositoryCustom {
     }
 
     @Override
-    public List<BoardViewDto> findNotice(Long projectId, int limit) {
+    public List<BoardViewDto> findNotice(Long projectId, int limit, Account account) {
         QBoard board = QBoard.board;
 
         return query
@@ -165,7 +167,9 @@ public class DashboardRepositoryImpl implements DashboardRepositoryCustom {
                         board.createdBy.as("createdBy"),
                         board.created.as("created"),
                         board.title,
-                        board.hitCount
+                                new CaseBuilder()
+                                        .when(board.accounts.contains(account)).then("확인")
+                                        .otherwise("미확인").as("isHit")
                 ))
                 .from(board)
                 .where(board.projectId.eq(projectId))

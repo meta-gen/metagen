@@ -1,5 +1,6 @@
 package com.koboolean.metagen.security.domain.entity;
 
+import com.koboolean.metagen.board.domain.entity.Board;
 import com.koboolean.metagen.home.jpa.BaseEntity;
 import com.koboolean.metagen.system.project.domain.entity.ProjectMember;
 import jakarta.persistence.*;
@@ -51,5 +52,10 @@ public class Account extends BaseEntity implements Serializable {
 
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private List<ProjectMember> projectMember =  new ArrayList<>();
+
+
+    @ManyToMany(mappedBy = "accounts")
+    @ToString.Exclude
+    private Set<Board> boards = new HashSet<>();
 }
 

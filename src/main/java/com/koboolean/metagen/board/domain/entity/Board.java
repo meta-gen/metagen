@@ -3,18 +3,14 @@ package com.koboolean.metagen.board.domain.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.koboolean.metagen.home.jpa.BaseEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import com.koboolean.metagen.security.domain.entity.Account;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -50,10 +46,6 @@ public class Board extends BaseEntity implements Serializable {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    /* 조회수 */
-    @Column(name = "hit_count", nullable = false)
-    private Integer hitCount;
-
     /* 삭제 여부 */
     @Column(name = "delete_yn", length = 1, nullable = false)
     private char deleteYn;
@@ -81,4 +73,15 @@ public class Board extends BaseEntity implements Serializable {
      */
     @OneToMany(mappedBy = "board")
     private List<File> file = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "board_accounts",
+            joinColumns = @JoinColumn(name = "board_id"),
+            inverseJoinColumns = @JoinColumn(name = "accounts_id"),
+            uniqueConstraints = {
+                    @UniqueConstraint(columnNames = {"board_id", "accounts_id"})
+            }
+    )
+    private Set<Account> accounts = new HashSet<>();
 }

@@ -11,4 +11,6 @@ import com.koboolean.metagen.board.domain.entity.Board;
 public interface BoardRepository extends JpaRepository<Board, Long> {
 
     Page<Board> findAllByProjectId(Long projectId, Pageable pageable);
+
+    Page<Board> findAllByProjectIdAndTitleLike(Long projectId, String searchQuery, Pageable pageable);
 }

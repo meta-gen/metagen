@@ -62,10 +62,10 @@
                         </thead>
                         <tbody>
                         <tr th:each="notice : ${notices}" th:data-id="${notice.id}" style="cursor: pointer;">
-                            <td th:text="${notice.title}">공지 제목</td>
+                            <td th:text="${notice.title}">확인여부</td>
                             <td th:text="${notice.createdBy}">ADMIN</td>
                             <td th:text="${#temporals.format(notice.created, 'yyyy-MM-dd HH:mm')}">2025-04-29</td>
-                            <td th:text="${notice.hitCount}">0</td>
+                            <td th:text="${notice.isHit}">미확인</td>
                         </tr>
                         <tr th:if="${notices.size() == 0}">
                             <td colspan="4" class="text-center text-muted">공지사항이 없습니다.</td>

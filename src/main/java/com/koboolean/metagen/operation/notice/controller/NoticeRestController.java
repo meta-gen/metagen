@@ -45,11 +45,14 @@ public class NoticeRestController {
                                                           , @RequestParam(value="sort", required = false) String sort
                                                           , @RequestParam(required = false, value = "searchQuery") String searchQuery
                                                           , @RequestParam(required = false, value = "searchColumn") String searchColumn
-                                                          , @PathVariable(value = "selectedId") Long selectedId) {
+                                                          , @PathVariable(value = "selectedId") Long selectedId
+                                                          , @AuthenticationPrincipal AccountDto accountDto) {
 
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
 
-        Page<BoardDto> selectnoticeListPage = noticeService.getNoticeList(pageable, selectedId);
+        String accountId = accountDto.getId();
+
+        Page<BoardDto> selectnoticeListPage = noticeService.getNoticeList(pageable, selectedId, accountId, searchQuery, searchColumn);
 
         return PageableUtil.getGridPageableMap(selectnoticeListPage);
     }
@@ -109,9 +112,9 @@ public class NoticeRestController {
      */
     @Operation(summary = "공지사항 상세 조회", description = "선택된 공지사항의 상세정보를 조회한다.")
     @GetMapping("/selectNotice/detail/{id}")
-    public ResponseEntity<Map<String, Object>> getNoticeDetail(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> getNoticeDetail(@PathVariable Long id, @AuthenticationPrincipal AccountDto accountDto) {
 
-        BoardDto boardDto = noticeService.noticeSavePopup(id);
+        BoardDto boardDto = noticeService.noticePopupMain(id, accountDto);
 
         return ResponseEntity.ok(Map.of("board", boardDto, "result", true));
     }

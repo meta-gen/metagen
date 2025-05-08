@@ -1,8 +1,15 @@
 package com.koboolean.metagen.operation.notice.service.impl;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
+import com.koboolean.metagen.data.code.domain.dto.CodeRuleDetailDto;
+import com.koboolean.metagen.security.domain.entity.Account;
+import com.koboolean.metagen.security.repository.AccountRepository;
+import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -34,6 +41,8 @@ public class NoticeServiceImpl implements NoticeService {
 
 	private final BoardRepository boardRepository;
 	private final BoardCategoryRepository boardCategoryRepository;
+	private final AccountRepository accountRepository;
+	private final ProjectMemberRepository projectMemberRepository;
 
 	/**
 	 * [공지사항 컬럼 조회] 공지사항 그리드에 표시할 컬럼을 조회한다.
@@ -44,10 +53,10 @@ public class NoticeServiceImpl implements NoticeService {
 	public List<ColumnDto> getNoticeListColumn(Long selectedId) {
 
 		return List.of(new ColumnDto("", "id", ColumnType.NUMBER, RowType.CHECKBOX)
-				     , new ColumnDto("게시글 제목", "categoryName", ColumnType.STRING, true)
-				     , new ColumnDto("작성자", "username", ColumnType.STRING, true)
-				     , new ColumnDto("작성일", "updatedTime", ColumnType.DATE, RowType.TEXT)
-				     , new ColumnDto("조회수", "hitCount", ColumnType.STRING));
+				     , new ColumnDto("게시글 제목", "title", ColumnType.STRING, RowType.TEXT, true, true)
+				     , new ColumnDto("작성자", "username", ColumnType.STRING, RowType.TEXT, false, false)
+				     , new ColumnDto("작성일", "updatedTime", ColumnType.DATE, RowType.TEXT, false, false)
+				     , new ColumnDto("확인여부", "isHit", ColumnType.STRING, RowType.TEXT, false, false));
 	}
 
 	/**
@@ -55,14 +64,25 @@ public class NoticeServiceImpl implements NoticeService {
 	 *
 	 * @param pageable
 	 * @param selectedId
+	 * @param accountId
+	 * @param searchQuery
+	 * @param searchColumn
 	 */
 	@Override
-	public Page<BoardDto> getNoticeList(Pageable pageable, Long selectedId) {
+	public Page<BoardDto> getNoticeList(Pageable pageable, Long selectedId, String accountId, String searchQuery, String searchColumn) {
 
-		Page<Board> allByProjectId = boardRepository.findAllByProjectId(selectedId, pageable);
+		if (searchQuery == null || searchQuery.trim().isEmpty()) {
+			// 검색어가 없을 경우 전체 조회
+			return boardRepository.findAllByProjectId(selectedId, pageable).map(board -> BoardDto.fromEntity(board, accountId));
+		}
 
+		if(!searchQuery.isEmpty()) {
+			searchQuery = "%" + searchQuery + "%";
+		}
 
-		return allByProjectId.map(BoardDto::fromEntity);
+		Page<Board> allByProjectId = boardRepository.findAllByProjectIdAndTitleLike(selectedId, searchQuery, pageable);
+
+		return allByProjectId.map(board -> BoardDto.fromEntity(board, accountId));
 	}
 	
 	/**
@@ -86,7 +106,9 @@ public class NoticeServiceImpl implements NoticeService {
         	// 예외 처리
         	throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
         }
-        
+
+		Account account = accountRepository.findById(Long.valueOf(accountDto.getId())).orElse(null);
+
         Board board = Board.builder()
         		.projectId    (boardDto.getProjectId() )
         		.boardCategory(boardCategory           )	// RDB에서 join의 개념으로 본다.
@@ -94,8 +116,8 @@ public class NoticeServiceImpl implements NoticeService {
         		.content      (boardDto.getContent()   )
         		.username     (accountDto.getUsername())
         		.deleteYn     ('N'                     )
-        		.hitCount     (0                       )
         		.updatedTime  (LocalDateTime.now()     )
+				.accounts(new HashSet<>(List.of(account)))
         		.build();
         
         boardRepository.save(board);
@@ -134,25 +156,18 @@ public class NoticeServiceImpl implements NoticeService {
 
 	@Override
 	@Transactional
-	public BoardDto noticePopupMain(Long id) {
+	public BoardDto noticePopupMain(Long id, AccountDto accountDto) {
+
 		Board board = boardRepository.findById(id).orElse(null);
 
 		if(board == null) {
 			board = new Board();
 		}
 
-		board.setHitCount(board.getHitCount() + 1);
+		Account account = accountRepository.findById(Long.valueOf(accountDto.getId())).orElse(null);
 
-		return BoardDto.fromEntity(board);
-	}
-
-	@Override
-	@Transactional
-	public BoardDto noticeSavePopup(Long id) {
-		Board board = boardRepository.findById(id).orElse(null);
-
-		if(board == null) {
-			board = new Board();
+		if(account != null && !board.getAccounts().contains(account)){
+			board.getAccounts().add(account);
 		}
 
 		return BoardDto.fromEntity(board);

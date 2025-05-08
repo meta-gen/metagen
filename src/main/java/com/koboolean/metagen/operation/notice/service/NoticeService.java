@@ -15,7 +15,7 @@ public interface NoticeService {
      * 공지사항 리스트 조회
      * @return
      */
-    Page<BoardDto> getNoticeList(Pageable pageable, Long selectedId);
+    Page<BoardDto> getNoticeList(Pageable pageable, Long selectedId, String accountId, String searchQuery, String searchColumn);
 
     /**
      * 공지사항 컬럼 조회
@@ -42,12 +42,5 @@ public interface NoticeService {
      * @param id
      * @return
      */
-    BoardDto noticePopupMain(Long id);
-
-    /**
-     * 공지사항 수정 상세조회
-     * @param id
-     * @return
-     */
-    BoardDto noticeSavePopup(Long id);
+    BoardDto noticePopupMain(Long id, AccountDto accountDto);
 }

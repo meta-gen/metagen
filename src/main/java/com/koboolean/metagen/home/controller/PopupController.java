@@ -50,8 +50,8 @@ public class PopupController {
      * @return
      */
     @GetMapping("/noticePopupDetail/{id}")
-    public String noticePopupDetail(@PathVariable(name="id") Long id, Model model){
-        model.addAttribute("notice", noticeService.noticePopupMain(id));
+    public String noticePopupDetail(@PathVariable(name="id") Long id, Model model, @AuthenticationPrincipal AccountDto accountDto){
+        model.addAttribute("notice", noticeService.noticePopupMain(id, accountDto));
         return "popup/notice_popup_detail";
     }
 

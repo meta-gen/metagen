@@ -16,5 +16,5 @@ public class BoardViewDto {
     private String createdBy;
     private LocalDateTime created;
     private String title;
-    private Integer hitCount;
+    private String isHit;
 }
