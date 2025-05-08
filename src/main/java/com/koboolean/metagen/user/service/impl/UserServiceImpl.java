@@ -344,8 +344,11 @@ public class UserServiceImpl implements UserService {
 
         Long projectId = accountDto.getProjectId();
 
+        Account account = userRepository.findById(Long.parseLong(accountDto.getId())).orElse(null);
+
+
         List<RecentChangeDto> recentChanges = dashboardRepository.findRecentChanges(projectId, 5);
-        List<BoardViewDto> notice = dashboardRepository.findNotice(projectId, 3);
+        List<BoardViewDto> notice = dashboardRepository.findNotice(projectId, 3, account);
 
         DashboardDto dashboardDto = dashboardRepository.findDataCount(projectId);
 
