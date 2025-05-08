@@ -53,6 +53,9 @@ function handlePrintFormat(formatType, formatText, checkedData) {
 
     let data = {};
 
+    data.formatType = formatType;
+    data.formatText = formatText;
+
     // null일 경우 조회조건에 따른 출력
     if(checkedData.length === 0){
         const searchColumn = $("#search-column-codeRuleGrid").val();

@@ -92,15 +92,7 @@ public class ExcelServiceImpl implements ExcelService {
             excelData = excelDto.getRules();
         }
 
-        List<String> data = null;
-
-        switch(excelDto.getFormatType()){
-            case "unitTest":
-                data = List.of("", "codeRuleName", "methodName", "input", "methodPurpose", "");
-                break;
-            default:
-                break;
-        }
+        List<String> data = List.of("", "codeRuleName", "methodName", "input", "methodPurpose", "");
 
         File file = ExcelUtils.loadAndCopyExcelFile(excelDto.getFormatType(), excelData, data);
         String encodedFileName = java.net.URLEncoder.encode(excelDto.getFormatText(), "UTF-8").replaceAll("\\+", "%20");
