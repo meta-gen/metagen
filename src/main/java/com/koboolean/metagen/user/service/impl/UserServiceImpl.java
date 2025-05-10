@@ -163,7 +163,7 @@ public class UserServiceImpl implements UserService {
 
         ColumnDto columnDto = new ColumnDto("권한", "role", ColumnType.STRING, RowType.SELECT, false);
 
-        columnDto.setOptions(roleRepository.findAll().stream().map(Role::getRoleName).collect(Collectors.toList()));
+        columnDto.setOptions(roleRepository.findAll().stream().filter(role -> !role.getRoleName().equals("ROLE_ANONYMOUS")).map(Role::getRoleName).collect(Collectors.toList()));
 
         return List.of(
                 new ColumnDto("","id", ColumnType.NUMBER, RowType.CHECKBOX),
