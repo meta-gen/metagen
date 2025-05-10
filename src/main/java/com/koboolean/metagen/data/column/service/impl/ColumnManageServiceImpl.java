@@ -164,9 +164,9 @@ public class ColumnManageServiceImpl implements ColumnManageService {
     @Override
     @Transactional
     public void updateColumnApproval(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos, String type) {
-        if(!AuthUtil.isApprovalAvailable()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAvailable()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         Long projectId = accountDto.getProjectId();
 
@@ -181,9 +181,9 @@ public class ColumnManageServiceImpl implements ColumnManageService {
     @Override
     @Transactional
     public void deleteColumn(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos) {
-        if(!AuthUtil.isApprovalAvailable()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAvailable()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         Long projectId = accountDto.getProjectId();
 
