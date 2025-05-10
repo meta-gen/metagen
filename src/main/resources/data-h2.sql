@@ -164,7 +164,7 @@ merge into RESOURCES (resource_id, http_method, order_num, resource_name, resour
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (62, '*', 0, '/popup/noticePopupSave/**','url', '공지사항 등록 팝업', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (63, '*', 0, '/','url', '대시보드', 'SYSTEM', 'SYSTEM');
 merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (64, '*', 0, '/api/printDesign/**','url', '설계서 출력', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (64, '*', 0, '/api/printTest/**','url', '시나리오 출력', 'SYSTEM', 'SYSTEM');
+merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (65, '*', 0, '/api/printTest/**','url', '시나리오 출력', 'SYSTEM', 'SYSTEM');
 
 -- ROLE_NOT_APPROVE
 merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (1,5); -- 로그아웃
