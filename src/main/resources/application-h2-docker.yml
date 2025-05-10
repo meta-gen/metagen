@@ -9,7 +9,7 @@ spring:
   data:
     redis:
       host: redis
-      port: 16379
+      port: 6379
   jpa:
     hibernate:
       ddl-auto: update
