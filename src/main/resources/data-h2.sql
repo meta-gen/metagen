@@ -78,177 +78,481 @@ CREATE SEQUENCE IF NOT EXISTS BATCH_JOB_EXECUTION_SEQ;
 CREATE SEQUENCE IF NOT EXISTS BATCH_JOB_SEQ;
 
 /* 권한 계층 적용 */
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (1,'ROLE_ADMIN',null, 'SYSTEM', 'SYSTEM');
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (2,'ROLE_MANAGER','1', 'SYSTEM', 'SYSTEM');
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (3,'ROLE_DBA','2', 'SYSTEM', 'SYSTEM');
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (4,'ROLE_USER','2', 'SYSTEM', 'SYSTEM');
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (5,'ROLE_USER','3', 'SYSTEM', 'SYSTEM');
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (6,'ROLE_VIEWER','4', 'SYSTEM', 'SYSTEM');
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (7,'ROLE_VIEWER','5', 'SYSTEM', 'SYSTEM');
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (8,'ROLE_NOT_APPROVE','6', 'SYSTEM', 'SYSTEM');
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (9,'ROLE_NOT_APPROVE','7', 'SYSTEM', 'SYSTEM');
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (10,'ROLE_ANONYMOUS','8', 'SYSTEM', 'SYSTEM');
-merge into role_hierarchy (id, role_name, parent_id, created_by, updated_by) key(id) values (11,'ROLE_ANONYMOUS','9', 'SYSTEM', 'SYSTEM');
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 1,'ROLE_ADMIN',null, 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 1);
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 2,'ROLE_MANAGER','1', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 2);
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 3,'ROLE_DBA','2', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 3);
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 4,'ROLE_USER','2', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 4);
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 5,'ROLE_USER','3', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 5);
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 6,'ROLE_VIEWER','4', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 6);
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 7,'ROLE_VIEWER','5', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 7);
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 8,'ROLE_NOT_APPROVE','6', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 8);
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 9,'ROLE_NOT_APPROVE','7', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 9);
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 10,'ROLE_ANONYMOUS','8', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 10);
+INSERT INTO role_hierarchy (id, role_name, parent_id, created_by, updated_by)
+SELECT 11,'ROLE_ANONYMOUS','9', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role_hierarchy WHERE id = 11);
 
 /* ROLE 생성 */
-merge into role (role_id, is_expression, role_desc, role_name, created_by, updated_by) key(ROLE_ID) values (0, null, '관리자', 'ROLE_ADMIN', 'SYSTEM', 'SYSTEM');
-merge into role (role_id, is_expression, role_desc, role_name, created_by, updated_by) key(ROLE_ID) values (1, null, '매니저', 'ROLE_MANAGER', 'SYSTEM', 'SYSTEM');
-merge into role (role_id, is_expression, role_desc, role_name, created_by, updated_by) key(ROLE_ID) values (2, null, 'DBA', 'ROLE_DBA', 'SYSTEM', 'SYSTEM');
-merge into role (role_id, is_expression, role_desc, role_name, created_by, updated_by) key(ROLE_ID) values (3, null, '사용자', 'ROLE_USER', 'SYSTEM', 'SYSTEM');
-merge into role (role_id, is_expression, role_desc, role_name, created_by, updated_by) key(ROLE_ID) values (4, null, '뷰어 사용자', 'ROLE_VIEWER', 'SYSTEM', 'SYSTEM');
-merge into role (role_id, is_expression, role_desc, role_name, created_by, updated_by) key(ROLE_ID) values (5, null, '권한 미승인 사용자', 'ROLE_NOT_APPROVE', 'SYSTEM', 'SYSTEM');
-merge into role (role_id, is_expression, role_desc, role_name, created_by, updated_by) key(ROLE_ID) values (6, null, '익명 사용자', 'ROLE_ANONYMOUS', 'SYSTEM', 'SYSTEM');
+INSERT INTO role (role_id, is_expression, role_desc, role_name, created_by, updated_by)
+SELECT 0, null, '관리자', 'ROLE_ADMIN', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role WHERE ROLE_ID = 0);
+INSERT INTO role (role_id, is_expression, role_desc, role_name, created_by, updated_by)
+SELECT 1, null, '매니저', 'ROLE_MANAGER', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role WHERE ROLE_ID = 1);
+INSERT INTO role (role_id, is_expression, role_desc, role_name, created_by, updated_by)
+SELECT 2, null, 'DBA', 'ROLE_DBA', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role WHERE ROLE_ID = 2);
+INSERT INTO role (role_id, is_expression, role_desc, role_name, created_by, updated_by)
+SELECT 3, null, '사용자', 'ROLE_USER', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role WHERE ROLE_ID = 3);
+INSERT INTO role (role_id, is_expression, role_desc, role_name, created_by, updated_by)
+SELECT 4, null, '뷰어 사용자', 'ROLE_VIEWER', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role WHERE ROLE_ID = 4);
+INSERT INTO role (role_id, is_expression, role_desc, role_name, created_by, updated_by)
+SELECT 5, null, '권한 미승인 사용자', 'ROLE_NOT_APPROVE', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role WHERE ROLE_ID = 5);
+INSERT INTO role (role_id, is_expression, role_desc, role_name, created_by, updated_by)
+SELECT 6, null, '익명 사용자', 'ROLE_ANONYMOUS', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM role WHERE ROLE_ID = 6);
 
 /* 인가 */
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (1, '*', 0, '/logout','url', '로그아웃', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (2, '*', 0, '/account','url', '내정보화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (3, '*', 0, '/api/updatePwd','url', '패스워드수정', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (4, '*', 0, '/columnManage','url', '컬럼관리화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (5, '*', 0, '/api/updateName','url', '사용자명수정', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (6, '*', 0, '/codeRuleManage','url', '코드규칙관리 화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (7, '*', 0, '/designManage','url', '설계서화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (8, '*', 0, '/userManage','url', '사용자관리화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (9, '*', 0, '/systemLog','url', '시스템로그화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (10, '*', 0, '/dataDictionary','url', '데이터사전화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (11, '*', 0, '/accessManage','url', '인가관리화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (12, '*', 0, '/testManage','url', '테스트시나리오화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (13, '*', 0, '/notice','url', '공지사항화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (14, '*', 0, '/api/updateRole','url', '권한수정', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (15, '*', 0, '/api/downloadTemplate/**','url', '템플릿다운로드', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (16, '*', 0, '/projectManage','url', '프로젝트관리화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (17, '*', 0, '/api/checkProjectList/**','url', '접근가능프로젝트 조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (18, '*', 0, '/api/getSystemLog/**','url', '시스템로그조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (19, '*', 0, '/api/getStandardTerms/**','url', '표준용어조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (20, '*', 0, '/api/getStandardWords/**','url', '표준단어조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (21, '*', 0, '/api/getStandardDomains/**','url', '표준도메인조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (22, '*', 0, '/api/uploadDataDictionaryExcelFile/**','url', '데이터사전 엑셀파일업로드', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (23, '*', 0, '/popup/standardTermSearch','url', '표준용어세부조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (24, '*', 0, '/api/approvalStandardDomains/**','url', '표준도메인승인/승인취소', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (25, '*', 0, '/api/approvalStandardWords/**','url', '표준단어승인/승인취소', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (26, '*', 0, '/api/approvalStandardTerms/**','url', '표준용어승인/승인취소', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (27, '*', 0, '/api/insertDataDictionary/**','url', '데이터사전등록', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (28, '*', 0, '/api/deleteDataDictionary/**','url', '데이터사전삭제', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (29, '*', 0, '/api/updateDataDictionary/**','url', '데이터사전수정', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (30, '*', 0, '/api/getProject/**','url', '프로젝트조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (31, '*', 0, '/api/saveProject/**','url', '프로젝트저장', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (32, '*', 0, '/api/deleteProject/**','url', '프로젝트삭제', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (33, '*', 0, '/api/selectUser/**','url', '사용자조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (34, '*', 0, '/api/saveUser/**','url', '사용자저장', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (35, '*', 0, '/api/deleteUser/**','url', '사용자삭제', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (36, '*', 0, '/api/selectAccess/**','url', '인가조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (37, '*', 0, '/api/updateAccess/**','url', '인가수정', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (38, '*', 0, '/api/selectTable/**','url', '테이블 조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (39, '*', 0, '/api/saveTable/**','url', '테이블 수정', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (40, '*', 0, '/api/deleteTable/**','url', '테이블 삭제', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (41, '*', 0, '/api/selectColumn/**','url', '테이블컬럼 조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (42, '*', 0, '/api/saveColumn/**','url', '테이블컬럼 수정', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (43, '*', 0, '/api/deleteColumn/**','url', '테이블컬럼 삭제', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (44, '*', 0, '/api/uploadColumnExcelFile/**','url', '컬럼 업로드', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (45, '*', 0, '/tableManage','url', '테이블관리화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (46, '*', 0, '/api/uploadTableExcelFile','url', '테이블 업로드', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (47, '*', 0, '/api/saveNotice/**','url', '공지사항 등록/수정', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (48, '*', 0, '/api/selectNotice/**','url', '공지사항 조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (49, '*', 0, '/api/deleteNotice/**','url', '공지사항 삭제', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (50, '*', 0, '/popup/columTableSearch/**','url', '테이블조회 팝업화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (51, '*', 0, '/popup/codeRule/**','url', '코드규칙 화면', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (52, '*', 0, '/api/selectCodeRuleManage/**','url', '코드규칙관리 조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (53, '*', 0, '/api/saveCodeRuleManage/**','url', '코드규칙관리 저장', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (54, '*', 0, '/api/deleteCodeRuleManage/**','url', '코드규칙관리 삭제', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (55, '*', 0, '/popup/codeRulePopup','url', '코드규칙관리 등록/수정 팝업', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (56, '*', 0, '/api/selectCodeRule/**','url', '코드규칙 조회', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (57, '*', 0, '/api/saveCodeRule/**','url', '코드규칙 저장', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (58, '*', 0, '/api/deleteCodeRule/**','url', '코드규칙 삭제', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (59, '*', 0, '/popup/codeRuleDetailPopup/**','url', '코드규칙 팝업', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (60, '*', 0, '/api/activeUsers','url', '사용자 로그인여부', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (61, '*', 0, '/popup/noticePopupDetail/**','url', '공지사항 상세보기 팝업', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (62, '*', 0, '/popup/noticePopupSave/**','url', '공지사항 등록 팝업', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (63, '*', 0, '/','url', '대시보드', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (64, '*', 0, '/api/printDesign/**','url', '설계서 출력', 'SYSTEM', 'SYSTEM');
-merge into RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by) key(resource_id) values (65, '*', 0, '/api/printTest/**','url', '시나리오 출력', 'SYSTEM', 'SYSTEM');
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 1, '*', 0, '/logout','url', '로그아웃', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 1);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 2, '*', 0, '/account','url', '내정보화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 2);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 3, '*', 0, '/api/updatePwd','url', '패스워드수정', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 3);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 4, '*', 0, '/columnManage','url', '컬럼관리화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 4);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 5, '*', 0, '/api/updateName','url', '사용자명수정', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 5);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 6, '*', 0, '/codeRuleManage','url', '코드규칙관리 화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 6);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 7, '*', 0, '/designManage','url', '설계서화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 7);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 8, '*', 0, '/userManage','url', '사용자관리화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 8);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 9, '*', 0, '/systemLog','url', '시스템로그화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 9);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 10, '*', 0, '/dataDictionary','url', '데이터사전화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 10);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 11, '*', 0, '/accessManage','url', '인가관리화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 11);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 12, '*', 0, '/testManage','url', '테스트시나리오화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 12);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 13, '*', 0, '/notice','url', '공지사항화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 13);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 14, '*', 0, '/api/updateRole','url', '권한수정', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 14);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 15, '*', 0, '/api/downloadTemplate/**','url', '템플릿다운로드', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 15);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 16, '*', 0, '/projectManage','url', '프로젝트관리화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 16);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 17, '*', 0, '/api/checkProjectList/**','url', '접근가능프로젝트 조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 17);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 18, '*', 0, '/api/getSystemLog/**','url', '시스템로그조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 18);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 19, '*', 0, '/api/getStandardTerms/**','url', '표준용어조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 19);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 20, '*', 0, '/api/getStandardWords/**','url', '표준단어조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 20);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 21, '*', 0, '/api/getStandardDomains/**','url', '표준도메인조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 21);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 22, '*', 0, '/api/uploadDataDictionaryExcelFile/**','url', '데이터사전 엑셀파일업로드', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 22);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 23, '*', 0, '/popup/standardTermSearch','url', '표준용어세부조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 23);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 24, '*', 0, '/api/approvalStandardDomains/**','url', '표준도메인승인/승인취소', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 24);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 25, '*', 0, '/api/approvalStandardWords/**','url', '표준단어승인/승인취소', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 25);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 26, '*', 0, '/api/approvalStandardTerms/**','url', '표준용어승인/승인취소', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 26);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 27, '*', 0, '/api/insertDataDictionary/**','url', '데이터사전등록', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 27);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 28, '*', 0, '/api/deleteDataDictionary/**','url', '데이터사전삭제', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 28);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 29, '*', 0, '/api/updateDataDictionary/**','url', '데이터사전수정', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 29);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 30, '*', 0, '/api/getProject/**','url', '프로젝트조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 30);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 31, '*', 0, '/api/saveProject/**','url', '프로젝트저장', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 31);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 32, '*', 0, '/api/deleteProject/**','url', '프로젝트삭제', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 32);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 33, '*', 0, '/api/selectUser/**','url', '사용자조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 33);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 34, '*', 0, '/api/saveUser/**','url', '사용자저장', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 34);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 35, '*', 0, '/api/deleteUser/**','url', '사용자삭제', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 35);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 36, '*', 0, '/api/selectAccess/**','url', '인가조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 36);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 37, '*', 0, '/api/updateAccess/**','url', '인가수정', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 37);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 38, '*', 0, '/api/selectTable/**','url', '테이블 조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 38);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 39, '*', 0, '/api/saveTable/**','url', '테이블 수정', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 39);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 40, '*', 0, '/api/deleteTable/**','url', '테이블 삭제', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 40);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 41, '*', 0, '/api/selectColumn/**','url', '테이블컬럼 조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 41);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 42, '*', 0, '/api/saveColumn/**','url', '테이블컬럼 수정', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 42);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 43, '*', 0, '/api/deleteColumn/**','url', '테이블컬럼 삭제', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 43);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 44, '*', 0, '/api/uploadColumnExcelFile/**','url', '컬럼 업로드', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 44);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 45, '*', 0, '/tableManage','url', '테이블관리화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 45);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 46, '*', 0, '/api/uploadTableExcelFile','url', '테이블 업로드', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 46);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 47, '*', 0, '/api/saveNotice/**','url', '공지사항 등록/수정', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 47);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 48, '*', 0, '/api/selectNotice/**','url', '공지사항 조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 48);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 49, '*', 0, '/api/deleteNotice/**','url', '공지사항 삭제', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 49);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 50, '*', 0, '/popup/columTableSearch/**','url', '테이블조회 팝업화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 50);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 51, '*', 0, '/codeRule','url', '코드규칙 화면', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 51);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 52, '*', 0, '/api/selectCodeRuleManage/**','url', '코드규칙관리 조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 52);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 53, '*', 0, '/api/saveCodeRuleManage/**','url', '코드규칙관리 저장', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 53);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 54, '*', 0, '/api/deleteCodeRuleManage/**','url', '코드규칙관리 삭제', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 54);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 55, '*', 0, '/popup/codeRulePopup','url', '코드규칙관리 등록/수정 팝업', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 55);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 56, '*', 0, '/api/selectCodeRule/**','url', '코드규칙 조회', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 56);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 57, '*', 0, '/api/saveCodeRule/**','url', '코드규칙 저장', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 57);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 58, '*', 0, '/api/deleteCodeRule/**','url', '코드규칙 삭제', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 58);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 59, '*', 0, '/popup/codeRuleDetailPopup/**','url', '코드규칙 팝업', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 59);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 60, '*', 0, '/api/activeUsers','url', '사용자 로그인여부', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 60);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 61, '*', 0, '/popup/noticePopupDetail/**','url', '공지사항 상세보기 팝업', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 61);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 62, '*', 0, '/popup/noticePopupSave/**','url', '공지사항 등록 팝업', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 62);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 63, '*', 0, '/','url', '대시보드', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 63);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 64, '*', 0, '/api/printDesign/**','url', '설계서 출력', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 64);
+INSERT INTO RESOURCES (resource_id, http_method, order_num, resource_name, resource_type, resource_desc, created_by, updated_by)
+SELECT 65, '*', 0, '/api/printTest/**','url', '시나리오 출력', 'SYSTEM', 'SYSTEM'
+WHERE NOT EXISTS (SELECT 1 FROM RESOURCES WHERE resource_id = 65);
 
 -- ROLE_NOT_APPROVE
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (1,5); -- 로그아웃
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (2,5); -- 내정보화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (3,5); -- 패스워드수정
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (5,5); -- 사용자명수정
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (13,5); -- 공지사항화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (48,5); -- 공지사항 조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (60,5); -- 사용자 로그인여부
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (61,5); -- 공지사항 상세보기 팝업
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (63,5); -- 대시보드
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 1,5
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 1 AND role_id = 5); -- 로그아웃
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 2,5
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 2 AND role_id = 5); -- 내정보화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 3,5
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 3 AND role_id = 5); -- 패스워드수정
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 5,5
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 5 AND role_id = 5); -- 사용자명수정
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 13,5
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 13 AND role_id = 5); -- 공지사항화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 48,5
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 48 AND role_id = 5); -- 공지사항 조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 60,5
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 60 AND role_id = 5); -- 사용자 로그인여부
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 61,5
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 61 AND role_id = 5); -- 공지사항 상세보기 팝업
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 63,5
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 63 AND role_id = 5); -- 대시보드
 
 -- ROLE_VIEWER
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (4,4); -- 컬럼관리화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (6,4); -- 코드규칙관리 화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (7,4); -- 설계서화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (8,4); -- 사용자관리화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (10,4); -- 데이터사전화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (11,4); -- 인가관리화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (12,4); -- 테스트시나리오화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (16,4); -- 프로젝트관리화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (19,4); -- 표준용어조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (20,4); -- 표준단어조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (21,4); -- 표준도메인조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (23,4); -- 표준용어세부조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (33,4); -- 사용자조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (36,4); -- 인가조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (30,4); -- 프로젝트조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (38,4); -- 테이블설계 조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (45,4); -- 테이블관리화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (50,4); -- 테이블조회 팝업화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (51,4); -- 코드규칙 화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (52,4); -- 코드규칙관리 조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 4,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 4 AND role_id = 4); -- 컬럼관리화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 6,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 6 AND role_id = 4); -- 코드규칙관리 화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 7,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 7 AND role_id = 4); -- 설계서화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 8,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 8 AND role_id = 4); -- 사용자관리화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 10,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 10 AND role_id = 4); -- 데이터사전화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 11,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 11 AND role_id = 4); -- 인가관리화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 12,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 12 AND role_id = 4); -- 테스트시나리오화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 16,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 16 AND role_id = 4); -- 프로젝트관리화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 19,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 19 AND role_id = 4); -- 표준용어조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 20,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 20 AND role_id = 4); -- 표준단어조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 21,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 21 AND role_id = 4); -- 표준도메인조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 23,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 23 AND role_id = 4); -- 표준용어세부조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 33,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 33 AND role_id = 4); -- 사용자조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 36,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 36 AND role_id = 4); -- 인가조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 30,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 30 AND role_id = 4); -- 프로젝트조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 38,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 38 AND role_id = 4); -- 테이블설계 조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 45,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 45 AND role_id = 4); -- 테이블관리화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 50,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 50 AND role_id = 4); -- 테이블조회 팝업화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 51,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 51 AND role_id = 4); -- 코드규칙 화면
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 52,4
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 52 AND role_id = 4); -- 코드규칙관리 조회
 
 -- ROLE_USER
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (15,3); -- 템플릿다운로드
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (22,3); -- 데이터사전 엑셀파일업로드
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (27,3); -- 데이터사전등록
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (28,3); -- 데이터사전삭제
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (29,3); -- 데이터사전수정
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (39,3); -- 테이블설계 수정
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (40,3); -- 테이블설계 삭제
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (41,3); -- 테이블컬럼 조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (42,3); -- 테이블컬럼 수정
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (43,3); -- 테이블컬럼 삭제
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (44,3); -- 컬럼 업로드
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (46,3); -- 테이블 업로드
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (56,3); -- 코드규칙 조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (57,3); -- 코드규칙 저장
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (58,3); -- 코드규칙 삭제
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (59,3); -- 코드규칙 팝업
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (64,3); -- 설계서 출력
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (65,3); -- 시나리오 출력
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 15,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 15 AND role_id = 3); -- 템플릿다운로드
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 22,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 22 AND role_id = 3); -- 데이터사전 엑셀파일업로드
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 27,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 27 AND role_id = 3); -- 데이터사전등록
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 28,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 28 AND role_id = 3); -- 데이터사전삭제
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 29,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 29 AND role_id = 3); -- 데이터사전수정
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 39,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 39 AND role_id = 3); -- 테이블설계 수정
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 40,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 40 AND role_id = 3); -- 테이블설계 삭제
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 41,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 41 AND role_id = 3); -- 테이블컬럼 조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 42,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 42 AND role_id = 3); -- 테이블컬럼 수정
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 43,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 43 AND role_id = 3); -- 테이블컬럼 삭제
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 44,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 44 AND role_id = 3); -- 컬럼 업로드
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 46,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 46 AND role_id = 3); -- 테이블 업로드
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 56,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 56 AND role_id = 3); -- 코드규칙 조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 57,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 57 AND role_id = 3); -- 코드규칙 저장
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 58,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 58 AND role_id = 3); -- 코드규칙 삭제
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 59,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 59 AND role_id = 3); -- 코드규칙 팝업
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 64,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 64 AND role_id = 3); -- 설계서 출력
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 65,3
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 65 AND role_id = 3); -- 시나리오 출력
 
 -- ROLE_DBA
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (31,2) ; -- 프로젝트저장
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (32,2) ; -- 프로젝트삭제
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (9,2); -- 시스템로그화면
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (18,2) ; -- 시스템로그조회
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (24,2) ; -- 표준도메인승인/승인취소
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (25,2) ; -- 표준단어승인/승인취소
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (26,2) ; -- 표준용어승인/승인취소
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 31,2
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 31 AND role_id = 2);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 32,2
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 32 AND role_id = 2);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 9,2
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 9 AND role_id = 2);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 18,2
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 18 AND role_id = 2);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 24,2
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 24 AND role_id = 2);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 25,2
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 25 AND role_id = 2);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 26,2
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 26 AND role_id = 2);
 
 -- ROLE_MANAGER
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (47,1) ; -- 공지사항 등록/수정
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (49,1) ; -- 공지사항 삭제
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (53,1) ; -- 코드규칙관리 저장
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (54,1) ; -- 코드규칙관리 삭제
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (55,1) ; -- 코드규칙관리 등록/수정 팝업
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (62,1) ; -- 공지사항 등록 팝업
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 47,1
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 47 AND role_id = 1);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 49,1
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 49 AND role_id = 1);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 53,1
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 53 AND role_id = 1);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 54,1
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 54 AND role_id = 1);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 55,1
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 55 AND role_id = 1);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 62,1
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 62 AND role_id = 1);
 
 -- ROLE_ADMIN
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (14,0); -- 권한수정
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (34,0); -- 사용자저장
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (35,0); -- 사용자삭제
-merge into role_resources(resource_id, role_id) key(resource_id, role_id) values (37,0); -- 인가수정
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 14,0
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 14 AND role_id = 0);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 34,0
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 34 AND role_id = 0);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 35,0
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 35 AND role_id = 0);
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 37,0
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 37 AND role_id = 0);
 
 -- ROLE_ANONYMOUS
-merge into role_resources(resource_id, role_id) values (17,6); -- 접근가능프로젝트 조회
+INSERT INTO role_resources (resource_id, role_id)
+SELECT 17,6
+WHERE NOT EXISTS (SELECT 1 FROM role_resources WHERE resource_id = 17 AND role_id = 6);
 
 /* 유저 정보 생성 */
-merge into account (id, password, username, name, is_password_check,created_by, updated_by, is_active) key(id) values (0, '{bcrypt}$2a$10$GN1YfMyJLcWhDuslP6P/UuqRwIfJk2VF5tl9mXsRjLJ18ivQfIAoW', 'admin', '관리자', false, 'SYSTEM', 'SYSTEM', true);
-merge into account_roles (account_id, role_id) key(account_id, role_id) values (0,0);
+INSERT into account (id, password, username, name, is_password_check,created_by, updated_by, is_active)
+SELECT 0, '{bcrypt}$2a$10$GN1YfMyJLcWhDuslP6P/UuqRwIfJk2VF5tl9mXsRjLJ18ivQfIAoW', 'admin', '관리자', false, 'SYSTEM', 'SYSTEM', true
+WHERE NOT EXISTS (SELECT 1 FROM account WHERE id = 0);
+INSERT INTO account_roles (account_id, role_id)
+SELECT 0,0
+WHERE NOT EXISTS (SELECT 1 FROM account_roles WHERE account_id = 0 AND role_id = 0);
 
-merge into project (is_active, project_id, created_by, project_name, updated_by, is_auto_active, account_id) key(project_id) values (true, 0, 'SYSTEM', 'MAIN', 'SYSTEM', true, 0);
+INSERT INTO project (is_active, project_id, created_by, project_name, updated_by, is_auto_active, account_id)
+SELECT true, 0, 'SYSTEM', 'MAIN', 'SYSTEM', true, 0
+WHERE NOT EXISTS (SELECT 1 FROM project WHERE project_id = 0);
 
-merge into project_member (account_id, id, project_id, created_by, updated_by, is_active) key(ID) values (0, 0, 0, 'SYSTEM', 'SYSTEM', true);
+INSERT INTO project_member (account_id, id, project_id, created_by, updated_by, is_active)
+SELECT 0, 0, 0, 'SYSTEM', 'SYSTEM', true
+WHERE NOT EXISTS (SELECT 1 FROM project_member WHERE ID = 0);
