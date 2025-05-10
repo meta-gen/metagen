@@ -10,6 +10,6 @@ spring:
 
 spring:
   profiles:
-    active: local
+    active: h2-local
 
 
