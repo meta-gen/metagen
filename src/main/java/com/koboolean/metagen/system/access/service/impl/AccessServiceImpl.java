@@ -70,9 +70,9 @@ public class AccessServiceImpl implements AccessService {
     @Override
     @Transactional
     public void updateAccessRole(List<ResourcesDto> resourcesDtos) {
-        if(!AuthUtil.isApprovalAdmin()){
+        /*if(!AuthUtil.isApprovalAdmin()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+        }*/
 
         resourcesDtos.forEach(resourcesDto -> {
             Resources resource = resourcesRepository.findById(Long.valueOf(resourcesDto.getId())).orElse(null);

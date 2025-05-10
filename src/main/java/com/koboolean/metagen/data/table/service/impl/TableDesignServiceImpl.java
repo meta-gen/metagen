@@ -116,9 +116,9 @@ public class TableDesignServiceImpl implements TableDesignService {
     @Override
     @Transactional
     public void updateTableIsApproval(boolean isApproval, AccountDto accountDto, List<TableInfoDto> tableInfoDtos) {
-        if(!AuthUtil.isApprovalAvailable()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAvailable()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         tableInfoDtos.forEach(tableInfoDto -> {
             TableInfo tableInfo = tableInfoRepository.findByIdAndProjectId(tableInfoDto.getId(), accountDto.getProjectId());

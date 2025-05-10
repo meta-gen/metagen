@@ -150,9 +150,9 @@ public class ProjectManageServiceImpl implements ProjectManageService {
     @Override
     @Transactional
     public void saveActiveProject(List<ProjectMemberDto> projectMemberDtos, Boolean isActive) {
-        if(!AuthUtil.isApprovalAvailable()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAvailable()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         for(ProjectMemberDto projectMemberDto : projectMemberDtos){
             ProjectMember projectMember = projectMemberRepository.findById(projectMemberDto.getId()).orElse(null);
@@ -166,9 +166,9 @@ public class ProjectManageServiceImpl implements ProjectManageService {
     @Override
     @Transactional
     public void deleteProjectMember(List<ProjectMemberDto> projectMemberDtos, AccountDto accountDto) {
-        if(!AuthUtil.isApprovalAvailable()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAvailable()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         for(ProjectMemberDto projectMemberDto : projectMemberDtos){
             ProjectMember projectMember = projectMemberRepository.findById(projectMemberDto.getId()).orElse(null);
@@ -203,9 +203,9 @@ public class ProjectManageServiceImpl implements ProjectManageService {
     @Override
     @Transactional
     public void saveProjectMember(Map<String, String> accountIds, Long projectId) {
-        if(!AuthUtil.isApprovalAvailable()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAvailable()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         Project project = projectRepository.findById(projectId).orElse(null);
 

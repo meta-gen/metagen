@@ -36,9 +36,9 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
     @Override
     @Transactional
     public void saveCodeRuleManageTemplate(Long projectId, TemplateDto template) {
-        if(!AuthUtil.isApprovalAdmin()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAdmin()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         Project project = projectRepository.findById(projectId).orElse(null);
 
@@ -63,9 +63,9 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
 
     @Override
     public List<TemplateDto> selectCodeRuleManageTemplate(Long projectId) {
-        if(!AuthUtil.isApprovalAdmin()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAdmin()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         return templateRepository.findAllByProjectId(projectId).stream().map(TemplateDto::fromEntity).toList();
     }
@@ -73,9 +73,9 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
     @Override
     @Transactional
     public void deleteCodeRuleManageTemplate(Long selectedId) {
-        if(!AuthUtil.isApprovalAdmin()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAdmin()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         Template template = templateRepository.findById(selectedId).orElse(null);
         if(template == null){
@@ -126,9 +126,9 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
     @Override
     @Transactional
     public void saveCodeRuleManage(CodeRuleDto codeRuleDto, AccountDto accountDto) {
-        if(!AuthUtil.isApprovalAdmin()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAdmin()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         CodeRule codeRule = CodeRule.builder()
                 .projectId(accountDto.getProjectId())
@@ -166,9 +166,9 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
     @Override
     @Transactional
     public void deleteCodeRuleManage(Long projectId, List<CodeRuleDto> codeRuleDtos) {
-        if(!AuthUtil.isApprovalAdmin()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAdmin()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         codeRuleDtos.forEach(codeRuleDto -> {
 
@@ -199,9 +199,9 @@ public class CodeRuleManageServiceImpl implements CodeRuleManageService {
     @Override
     @Transactional
     public void updateCodeRuleManage(CodeRuleDto codeRuleDto, AccountDto accountDto) {
-        if(!AuthUtil.isApprovalAdmin()){
+        /*if(!AuthUtil.isApprovalAdmin()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+        }*/
 
         CodeRule codeRule = codeRuleRepository.findById(codeRuleDto.getId()).orElse(null);
 
