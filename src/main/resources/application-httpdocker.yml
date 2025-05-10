@@ -32,6 +32,11 @@ spring:
     init:
       mode: always
       data-locations: classpath:data.sql
+  batch:
+    jdbc:
+      initialize-schema: always
+    job:
+      enabled: false
 logging:
   level:
     root: INFO
