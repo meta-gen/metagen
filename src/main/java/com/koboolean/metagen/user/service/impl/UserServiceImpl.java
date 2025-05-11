@@ -183,9 +183,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void saveUser(List<AccountDto> accountDtos) {
-        if(!AuthUtil.isApprovalAvailable()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAvailable()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         accountDtos.forEach(accountDto -> {
 
@@ -212,9 +212,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUser(List<AccountDto> accountDtos) {
-        if(!AuthUtil.isApprovalAvailable()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAvailable()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         Role adminRole = roleRepository.findByRoleName("ROLE_ADMIN");
 
@@ -244,9 +244,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void saveUserPassword(AccountDto accountDto) {
-        if(!AuthUtil.isApprovalAvailable()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAvailable()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         Account account = userRepository.findById(Long.parseLong(accountDto.getId())).orElse(null);
 

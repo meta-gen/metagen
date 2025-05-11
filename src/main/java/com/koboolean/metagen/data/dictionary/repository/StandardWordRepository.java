@@ -9,11 +9,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
 public interface StandardWordRepository extends JpaRepository<StandardWord, Long> {
     Page<StandardWord> findAllByProjectId(Long projectId, Pageable pageable);
+    List<StandardWord> findAllByProjectId(Long projectId);
+    
     Page<StandardWord> findByRevisionNumberContainingAndProjectId(int revisionNumber, Long projectId, Pageable pageable);
     Page<StandardWord> findByCommonStandardWordNameContainingAndProjectId(String commonStandardWordName, Long projectId, Pageable pageable);
     Page<StandardWord> findByCommonStandardWordAbbreviationContainingAndProjectId(String commonStandardWordAbbreviation, Long projectId, Pageable pageable);
@@ -37,4 +40,6 @@ public interface StandardWordRepository extends JpaRepository<StandardWord, Long
     List<StandardWord> findAllByProjectIdAndCommonStandardWordName(Long projectId, String commonStandardWordName);
 
     List<StandardWord> findAllByCommonStandardWordAbbreviationAndProjectId(String s, Long projectId);
+
+    List<StandardWord> findAllByProjectIdAndIsApproval(Long projectId, boolean b);
 }

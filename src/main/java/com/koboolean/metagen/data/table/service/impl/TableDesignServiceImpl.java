@@ -76,7 +76,7 @@ public class TableDesignServiceImpl implements TableDesignService {
         List<TableInfo> allByTableNameAndProjectId = tableInfoRepository.findAllByTableNameAndProjectId(tableInfoDto.getTableName(), projectId);
 
         if(!allByTableNameAndProjectId.isEmpty() && allByTableNameAndProjectId.get(0).getTableName().equals(tableInfoDto.getTableName())){
-            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, tableInfoDto.getTableName());
         }
 
         TableInfo tableInfo = tableInfoDto.toEntity();
@@ -104,7 +104,7 @@ public class TableDesignServiceImpl implements TableDesignService {
         List<TableInfo> allByTableNameAndProjectId = tableInfoRepository.findAllByTableNameAndProjectId(tableName, projectId);
 
         if(!allByTableNameAndProjectId.isEmpty() && allByTableNameAndProjectId.get(0).getTableName().equals(tableName)){
-            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, tableInfoDto.getTableName());
         }
 
         tableInfo.setTableName(tableName);
@@ -116,9 +116,9 @@ public class TableDesignServiceImpl implements TableDesignService {
     @Override
     @Transactional
     public void updateTableIsApproval(boolean isApproval, AccountDto accountDto, List<TableInfoDto> tableInfoDtos) {
-        if(!AuthUtil.isApprovalAvailable()){
-            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+//        if(!AuthUtil.isApprovalAvailable()){
+//            throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
+//        }
 
         tableInfoDtos.forEach(tableInfoDto -> {
             TableInfo tableInfo = tableInfoRepository.findByIdAndProjectId(tableInfoDto.getId(), accountDto.getProjectId());

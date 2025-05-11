@@ -23,9 +23,9 @@ public class SecurityRestController {
 
     @GetMapping(value = "/api/updateRole")
     public ResponseEntity<Map<String, Boolean>> updateRole() {
-        if(!AuthUtil.isApprovalAdmin()){
+        /*if(!AuthUtil.isApprovalAdmin()){
             throw new CustomException(ErrorCode.DATA_CANNOT_BE_DELETED);
-        }
+        }*/
         
         // 권한 Reload
         authorizationManager.reload();
