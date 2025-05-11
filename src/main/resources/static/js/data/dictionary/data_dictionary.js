@@ -47,6 +47,27 @@ $(document).ready(function () {
     });
 
     /**
+     * 데이터사전 다운로드 버튼 클릭 이벤트
+     */
+    $(document).on("click", "#download-dictionary", function () {
+        $.ajax({
+            url: '/api/downloadTemplate/dictionary',
+            type: 'GET',
+            xhrFields: {
+                responseType: 'blob'
+            },
+            success: function (blob, status, xhr) {
+                downloadFile(blob, status, xhr, "데이터 사전.xlsx");
+                closeDialog("div");
+            },
+            error: function (xhr) {
+                const errorMessage = xhr.responseJSON?.message || '파일 다운로드 중 문제가 발생했습니다.';
+                openAlert(errorMessage);
+            }
+        });
+    });
+
+    /**
      * 엑셀업로드 버튼 클릭 이벤트
      */
     $("#excel-upload").on("click", function () {
@@ -94,8 +115,8 @@ $(document).ready(function () {
                     }
                 },
                 error: function (xhr, status, error) {
-                    alert("파일 업로드 중 오류가 발생했습니다.");
-                    console.error("업로드 실패:", status, error);
+                    const errorMessage = xhr.responseJSON?.message || '파일 다운로드 중 문제가 발생했습니다.';
+                    openAlert(errorMessage);
                 }
             });
         });
@@ -118,7 +139,7 @@ $(document).ready(function () {
             id: "download-template",
             class: "btn btn-primary",
             text: "템플릿 다운로드"
-        });
+        }).css("margin-top", "5px");
 
         dialogContent.append(btn1, btn2);
         openDialog("div", {title: "템플릿 다운로드", content: dialogContent});

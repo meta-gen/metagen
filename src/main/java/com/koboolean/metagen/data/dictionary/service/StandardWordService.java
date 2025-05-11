@@ -116,7 +116,7 @@ public class StandardWordService {
 
         standardWordData.forEach(standardWordEntry -> {
             StandardWord standardWord = StandardWord.builder()
-                    .revisionNumber(standardWordEntry.get("revisionNumber") == null ? 0 : Integer.parseInt(standardWordEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
+                    .revisionNumber(standardWordEntry.get("revisionNumber") == null || standardWordEntry.get("revisionNumber").isEmpty() ? 0 : Integer.parseInt(standardWordEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
                     .commonStandardWordName(standardWordEntry.get("standardWordName"))
                     .commonStandardWordAbbreviation(standardWordEntry.get("standardWordAbbreviation"))
                     .commonStandardWordEnglishName(standardWordEntry.get("standardWordEnglishName"))
@@ -133,12 +133,13 @@ public class StandardWordService {
             List<StandardWord> nameIsDupl = standardWordRepository.findAllByProjectIdAndCommonStandardWordName(standardWord.getProjectId(), standardWord.getCommonStandardWordName());
 
             if(!nameIsDupl.isEmpty()){
-                throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+                throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, standardWord.getCommonStandardWordName());
             }
 
-            domainIsNotDefinedCheck(standardWord);
-
-            standardWordRepository.save(standardWord);
+            if(standardWord.getCommonStandardWordName() != null && !standardWord.getCommonStandardWordName().isEmpty()){
+                domainIsNotDefinedCheck(standardWord);
+                standardWordRepository.save(standardWord);
+            }
         });
     }
 
@@ -159,7 +160,7 @@ public class StandardWordService {
 
             standardWordRepository.save(standardWord);
         }else{
-            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, standardWord.getCommonStandardWordName());
         }
 
     }

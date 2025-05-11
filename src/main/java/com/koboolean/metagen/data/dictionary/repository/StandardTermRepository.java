@@ -9,12 +9,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
 public interface StandardTermRepository extends JpaRepository<StandardTerm, Long> {
 
     Page<StandardTerm> findAllByProjectId(Long projectId, Pageable pageable);
+    List<StandardTerm> findAllByProjectId(Long projectId);
+    
     Page<StandardTerm> findAllByIdAndProjectId(Long searchQuery, Long projectId, Pageable pageable);
 
     Page<StandardTerm> findByRevisionNumberAndProjectId(int revisionNumber, Long projectId, Pageable pageable);
@@ -44,4 +47,6 @@ public interface StandardTermRepository extends JpaRepository<StandardTerm, Long
     List<StandardTerm> findALlByProjectIdAndCommonStandardTermName(Long projectId, String commonStandardTermName);
 
     List<StandardTerm> findALlByProjectIdAndCommonStandardTermAbbreviation(Long projectId, String commonStandardTermAbbreviation);
+
+    List<StandardTerm> findAllByProjectIdAndIsApproval(Long projectId, boolean b);
 }

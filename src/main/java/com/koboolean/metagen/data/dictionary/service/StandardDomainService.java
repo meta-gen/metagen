@@ -125,14 +125,14 @@ public class StandardDomainService {
 
         standardDomainData.forEach(standardDomainEntry -> {
             StandardDomain standardDomain = StandardDomain.builder()
-                    .revisionNumber(standardDomainEntry.get("revisionNumber") == null ? 0 : Integer.parseInt(standardDomainEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
+                    .revisionNumber(standardDomainEntry.get("revisionNumber") == null || standardDomainEntry.get("revisionNumber").isEmpty() ? 0 : Integer.parseInt(standardDomainEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
                     .commonStandardDomainGroupName(standardDomainEntry.get("standardDomainGroupName"))
                     .commonStandardDomainCategory(standardDomainEntry.get("standardDomainCategoryName"))
                     .commonStandardDomainName(standardDomainEntry.get("standardDomainName"))
                     .commonStandardDomainDescription(standardDomainEntry.get("standardDomainDescription"))
                     .dataType(standardDomainEntry.get("dataType"))
-                    .dataLength(standardDomainEntry.get("dataLength").equals("-") ? 0 : Integer.parseInt(standardDomainEntry.get("dataLength")))
-                    .dataDecimalLength(standardDomainEntry.get("dataDecimalLength").equals("-") ? 0 : Integer.parseInt(standardDomainEntry.get("dataDecimalLength")))
+                    .dataLength(standardDomainEntry.get("dataLength").equals("-") || standardDomainEntry.get("dataLength").isEmpty()  ? 0 : Integer.parseInt(standardDomainEntry.get("dataLength")))
+                    .dataDecimalLength(standardDomainEntry.get("dataDecimalLength").equals("-")  || standardDomainEntry.get("dataDecimalLength").isEmpty() ? 0 : Integer.parseInt(standardDomainEntry.get("dataDecimalLength")))
                     .storageFormat(standardDomainEntry.get("storageFormat"))
                     .displayFormat(standardDomainEntry.get("displayFormat"))
                     .unit(standardDomainEntry.get("unit"))
@@ -141,7 +141,9 @@ public class StandardDomainService {
                     .isApproval(isApprovalAvailable)
                     .build();
 
-            standardDomainRepository.save(standardDomain);
+            if(standardDomain.getCommonStandardDomainName() != null && !standardDomain.getCommonStandardDomainName().isEmpty()){
+                standardDomainRepository.save(standardDomain);
+            }
         });
     }
 

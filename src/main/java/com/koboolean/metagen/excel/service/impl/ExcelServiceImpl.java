@@ -3,26 +3,28 @@ package com.koboolean.metagen.excel.service.impl;
 import com.koboolean.metagen.data.code.domain.dto.CodeRuleDetailDto;
 import com.koboolean.metagen.data.code.domain.entity.CodeRuleDetail;
 import com.koboolean.metagen.data.code.repository.CodeRuleDetailRepository;
+import com.koboolean.metagen.data.dictionary.domain.dto.StandardDomainDto;
+import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
+import com.koboolean.metagen.data.dictionary.domain.dto.StandardWordDto;
+import com.koboolean.metagen.data.dictionary.repository.StandardDomainRepository;
+import com.koboolean.metagen.data.dictionary.repository.StandardTermRepository;
+import com.koboolean.metagen.data.dictionary.repository.StandardWordRepository;
 import com.koboolean.metagen.excel.domain.dto.ExcelDto;
 import com.koboolean.metagen.excel.service.ExcelService;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.utils.ExcelUtils;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,9 +35,29 @@ public class ExcelServiceImpl implements ExcelService {
 
     private final CodeRuleDetailRepository codeRuleDetailRepository;
 
+    private final StandardWordRepository standardWordRepository;
+    private final StandardTermRepository standardTermRepository;
+    private final StandardDomainRepository standardDomainRepository;
+
     @Override
-    public ResponseEntity<Resource> getExcelFile(String templateName) throws IOException {
-        Resource resource = ExcelUtils.downloadExcelFile(templateName);
+    public ResponseEntity<Resource> getExcelFile(String templateName, AccountDto accountDto) throws IOException {
+
+        Resource resource = null;
+
+        if(templateName.equals("dictionary")){
+            Long projectId = accountDto.getProjectId();
+
+            List<StandardWordDto> wordDtos = standardWordRepository.findAllByProjectIdAndIsApproval(projectId, true).stream().map(StandardWordDto::fromEntity).toList();
+            List<StandardTermDto> termDtos = standardTermRepository.findAllByProjectIdAndIsApproval(projectId, true).stream().map(StandardTermDto::fromEntity).toList();
+            List<StandardDomainDto> domainDtos = standardDomainRepository.findAllByProjectIdAndIsApproval(projectId, true).stream().map(StandardDomainDto::fromEntity).toList();
+
+            Map dtos = Map.of("wordDtos", wordDtos, "termDtos", termDtos, "domainDtos", domainDtos);
+
+            File file = ExcelUtils.loadAndCopyDictionaryExcelFile(templateName, dtos);
+            resource = new InputStreamResource(new FileInputStream(file));
+        }else{
+            resource = ExcelUtils.downloadExcelFile(templateName);
+        }
         String encodedFileName = java.net.URLEncoder.encode(templateName, "UTF-8").replaceAll("\\+", "%20");
 
         return ResponseEntity.ok()

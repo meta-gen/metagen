@@ -114,11 +114,12 @@ public class StandardTermService {
 
 
         standardTermData.forEach(standardTermEntry -> {
-
             String[] split = standardTermEntry.get("standardTermAbbreviation").split("_");
             String standardTermName = standardTermEntry.get("standardTermName");
 
-            saveTermWordMappings(projectId, isApprovalAvailable, standardTermEntry, split, standardTermName);
+            if(standardTermEntry.get("standardTermName") != null && !standardTermEntry.get("standardTermName").isEmpty()){
+                saveTermWordMappings(projectId, isApprovalAvailable, standardTermEntry, split, standardTermName);
+            }
         });
     }
 
@@ -153,7 +154,7 @@ public class StandardTermService {
         }
 
         return StandardTerm.builder()
-                .revisionNumber(standardTermEntry.get("revisionNumber") == null ? 0 : Integer.parseInt(standardTermEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
+                .revisionNumber(standardTermEntry.get("revisionNumber") == null || standardTermEntry.get("revisionNumber").isEmpty() ? 0 : Integer.parseInt(standardTermEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
                 .commonStandardTermName(standardTermEntry.get("standardTermName"))
                 .commonStandardTermDescription(standardTermEntry.get("standardTermDescription"))
                 .termWordMappings(mappings)

@@ -42,9 +42,9 @@ public class ExcelRestController {
             @ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
     @GetMapping("/downloadTemplate/{templateName}")
-    public ResponseEntity<Resource> downloadTemplate(@PathVariable(value = "templateName") String templateName) {
+    public ResponseEntity<Resource> downloadTemplate(@PathVariable(value = "templateName") String templateName, @AuthenticationPrincipal AccountDto accountDto){
         try {
-            return excelService.getExcelFile(templateName);
+            return excelService.getExcelFile(templateName, accountDto);
         } catch (MalformedURLException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 경로가 잘못되었습니다.", e);
         } catch (IOException e) {

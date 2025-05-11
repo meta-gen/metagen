@@ -76,7 +76,7 @@ public class TableDesignServiceImpl implements TableDesignService {
         List<TableInfo> allByTableNameAndProjectId = tableInfoRepository.findAllByTableNameAndProjectId(tableInfoDto.getTableName(), projectId);
 
         if(!allByTableNameAndProjectId.isEmpty() && allByTableNameAndProjectId.get(0).getTableName().equals(tableInfoDto.getTableName())){
-            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, tableInfoDto.getTableName());
         }
 
         TableInfo tableInfo = tableInfoDto.toEntity();
@@ -104,7 +104,7 @@ public class TableDesignServiceImpl implements TableDesignService {
         List<TableInfo> allByTableNameAndProjectId = tableInfoRepository.findAllByTableNameAndProjectId(tableName, projectId);
 
         if(!allByTableNameAndProjectId.isEmpty() && allByTableNameAndProjectId.get(0).getTableName().equals(tableName)){
-            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, tableInfoDto.getTableName());
         }
 
         tableInfo.setTableName(tableName);

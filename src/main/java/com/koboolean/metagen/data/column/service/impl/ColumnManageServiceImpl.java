@@ -126,7 +126,7 @@ public class ColumnManageServiceImpl implements ColumnManageService {
         List<ColumnInfo> allByProjectIdAndColumnName = columnInfoRepository.findAllByProjectIdAndColumnName(projectId, columnInfoDto.getColumnName());
 
         if(!allByProjectIdAndColumnName.isEmpty()){
-            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS);
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, allByProjectIdAndColumnName.get(0).getColumnName());
         }
 
         TableInfo tableInfo = tableInfoRepository.findByIdAndProjectId(columnInfoDto.getTableInfoId(), projectId);

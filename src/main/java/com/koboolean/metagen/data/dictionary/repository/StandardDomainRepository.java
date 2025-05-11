@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -39,4 +40,8 @@ public interface StandardDomainRepository extends JpaRepository<StandardDomain, 
     List<StandardDomain> findAllByCommonStandardDomainCategoryAndCommonStandardDomainCategoryAndProjectId(String commonStandardDomainCategory, String commonStandardDomainCategory1, Long projectId);
 
     List<StandardDomain> findAllByProjectIdAndCommonStandardDomainCategory(Long projectId, String commonStandardDomainCategory);
+
+    List<StandardDomain> findAllByProjectId(Long projectId);
+
+    List<StandardDomain> findAllByProjectIdAndIsApproval(Long projectId, boolean b);
 }
