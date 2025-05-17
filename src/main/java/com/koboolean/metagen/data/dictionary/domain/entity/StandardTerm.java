@@ -44,7 +44,7 @@ public class StandardTerm extends BaseEntity {
 
     private Boolean isApproval;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "standard_domain_id")
     private StandardDomain standardDomain;
 

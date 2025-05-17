@@ -67,7 +67,7 @@ $(document).ready(() => {
                     termDtos.forEach(term => {
                         const $option = $("<option>")
                             .val(term.id)
-                            .text(`${term.commonStandardTermAbbreviation} (${term.commonStandardTermName} ${term.commonStandardDomainName})`);
+                            .text(`${term.commonStandardTermAbbreviation}/${term.commonStandardTermName}/${term.dataType}`);
                         $select.append($option);
                     });
                 }

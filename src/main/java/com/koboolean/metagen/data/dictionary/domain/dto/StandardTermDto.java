@@ -31,6 +31,8 @@ public class StandardTermDto {
     private String synonyms;
     private String isApprovalYn;
 
+    private String dataType;
+
     public static StandardTermDto fromEntity(StandardTerm entity) {
 
         String abbreviation = entity.getTermWordMappings().stream()
@@ -39,6 +41,13 @@ public class StandardTermDto {
                 .collect(Collectors.joining("_"));
 
         StandardDomain domain = entity.getStandardDomain();
+
+        String data = domain != null ? domain.getDataType() : null;
+
+        // 데이터 타입 입력
+        if(data != null && domain.getDataLength() != null && domain.getDataLength() != 0) {
+            data += "(" + domain.getDataLength() + ")";
+        }
 
         return StandardTermDto.builder()
                 .id(entity.getId())
@@ -55,6 +64,7 @@ public class StandardTermDto {
                 .responsibleOrganization(entity.getResponsibleOrganization())
                 .synonyms(convertListToString(entity.getSynonymList()))
                 .isApprovalYn(entity.getIsApproval() ? "Y" : "N")
+                .dataType(data)
                 .build();
     }
 
