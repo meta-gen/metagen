@@ -350,15 +350,13 @@ window.toggleExtraInfo = function () {
 
 function receiveTableInfo(data){
 
-    const term = data.termValue.split("(");
-
-    const replaceData = term[1].replace(")","").split(" ");
+    const term = data.termValue.split("/");
 
     $("#tableName").val(data.value);
     $("#tableInfoId").val(data.key);
     $("#columnName").val(term[0].trim());
-    $("#dataType").val(replaceData[1]);
-    $("#columnDesc").val(replaceData[0]);
+    $("#dataType").val(term[2]);
+    $("#columnDesc").val(term[1]);
     $("#termId").val(data.term);
 }
 
