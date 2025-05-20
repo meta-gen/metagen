@@ -43,4 +43,12 @@ public interface NoticeService {
      * @return
      */
     BoardDto noticePopupMain(Long id, AccountDto accountDto);
+
+    /**
+     * 공지사항 삭제
+     * @param accountDto
+     * @param boardDtos
+     * @return
+     */
+    void deleteNotice(AccountDto accountDto, List<BoardDto> boardDtos);
 }
