@@ -40,12 +40,17 @@ public class HomeController {
      */
     @GetMapping(value="/notice")
     public String notice(Model model, @AuthenticationPrincipal AccountDto accountDto) {
-    	
-    	// 사용자의 선택가능 프로젝트 목록을 조회한다.
-    	List<ProjectDto> projectDtos = userService.selectAllProjectsByUsername(accountDto);
 
-        model.addAttribute("projects", projectDtos);
-    	
+        List<ProjectDto> projectDtos = userService.selectAllProjectsByUsernameProjectManager(accountDto);
+
+        for(ProjectDto projectDto : projectDtos){
+            if(projectDto.getId().equals(accountDto.getProjectId())){
+                // 프로젝트 ID가 포함되어있을 경우에만 공지사항 추가, 삭제가 가능하다.
+                model.addAttribute("isProjectManager", true);
+            }
+        }
+
+
         return "pages/operation/notice_list";
     }
 

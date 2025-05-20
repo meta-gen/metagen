@@ -9,6 +9,7 @@ import java.util.Set;
 import com.koboolean.metagen.data.code.domain.dto.CodeRuleDetailDto;
 import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.security.repository.AccountRepository;
+import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,7 +43,6 @@ public class NoticeServiceImpl implements NoticeService {
 	private final BoardRepository boardRepository;
 	private final BoardCategoryRepository boardCategoryRepository;
 	private final AccountRepository accountRepository;
-	private final ProjectMemberRepository projectMemberRepository;
 
 	/**
 	 * [공지사항 컬럼 조회] 공지사항 그리드에 표시할 컬럼을 조회한다.
@@ -73,7 +73,7 @@ public class NoticeServiceImpl implements NoticeService {
 
 		if (searchQuery == null || searchQuery.trim().isEmpty()) {
 			// 검색어가 없을 경우 전체 조회
-			return boardRepository.findAllByProjectId(selectedId, pageable).map(board -> BoardDto.fromEntity(board, accountId));
+			return boardRepository.findAllByProjectIdAndDeleteYn(selectedId, 'N', pageable).map(board -> BoardDto.fromEntity(board, accountId));
 		}
 
 		if(!searchQuery.isEmpty()) {
@@ -109,18 +109,23 @@ public class NoticeServiceImpl implements NoticeService {
 
 		Account account = accountRepository.findById(Long.valueOf(accountDto.getId())).orElse(null);
 
-        Board board = Board.builder()
-        		.projectId    (boardDto.getProjectId() )
-        		.boardCategory(boardCategory           )	// RDB에서 join의 개념으로 본다.
-        		.title        (boardDto.getTitle()     )
-        		.content      (boardDto.getContent()   )
-        		.username     (accountDto.getUsername())
-        		.deleteYn     ('N'                     )
-        		.updatedTime  (LocalDateTime.now()     )
-				.accounts(new HashSet<>(List.of(account)))
-        		.build();
-        
-        boardRepository.save(board);
+		boardDto.getProjectIds().forEach(projectId -> {
+			// for문을 돌며 체크박스에 체크된 프로젝트 전부 공지사항을 등록한다.
+			Board board = Board.builder()
+					.projectId    (projectId)
+					.boardCategory(boardCategory           )	// RDB에서 join의 개념으로 본다.
+					.title        (boardDto.getTitle()     )
+					.content      (boardDto.getContent()   )
+					.username     (accountDto.getUsername())
+					.deleteYn     ('N'                     )
+					.updatedTime  (LocalDateTime.now()     )
+					.accounts(new HashSet<>(List.of(account)))
+					.projectIds(boardDto.getProjectIds())
+					.build();
+
+			boardRepository.save(board);
+		});
+
     }
     
 	/**
@@ -152,6 +157,8 @@ public class NoticeServiceImpl implements NoticeService {
         board.setTitle      (boardDto.getTitle()      );
         board.setContent    (boardDto.getContent()    );
         board.setUpdatedTime(LocalDateTime.now()	  );
+		board.setProjectIds (boardDto.getProjectIds());
+
     }
 
 	@Override
@@ -171,5 +178,42 @@ public class NoticeServiceImpl implements NoticeService {
 		}
 
 		return BoardDto.fromEntity(board);
+	}
+
+	@Override
+	@Transactional
+	public void deleteNotice(AccountDto accountDto, List<BoardDto> boardDtos) {
+		boardDtos.forEach(boardDto -> {
+			// 연결되어있던 모든 공지사항이 함께 삭제된다.
+			boardDto.getProjectIds().forEach(projectId -> {
+				Board board = boardRepository.findByIdAndProjectId(boardDto.getId(), projectId).orElse(null);
+
+				if(board != null){
+					board.setDeleteYn('Y');
+					board.setUpdatedTime(LocalDateTime.now());
+				}
+			});
+		});
+	}
+
+	@Override
+	public List<ProjectDto> selectAllProjectsByUsernameProjectManagerChecked(Long boardId, Long accountId, List<ProjectDto> collect) {
+
+		Board board = boardRepository.findById(boardId).orElse(null);
+
+		if(board != null) {
+			BoardDto boardDto = BoardDto.fromEntity(board);
+
+			collect.forEach(projectDto -> {
+				boardDto.getProjectIds().forEach(projectId -> {
+					Boolean isSelected = projectDto.getIsSelected();
+					if(!isSelected){
+						projectDto.setIsSelected(projectDto.getId().equals(projectId));
+					}
+				});
+			});
+		}
+
+		return collect;
 	}
 }

@@ -39,20 +39,19 @@ public class NoticeRestController {
      * @return String
      */
     @Operation(summary = "공지사항 리스트 조회", description = "공지사항 리스트를 조회한다.")
-    @GetMapping("/selectNotice/{selectedId}/data")
+    @GetMapping("/selectNotice/data")
     public ResponseEntity<Map<String,Object>> getNoticeList(@RequestParam(value="page") int page
                                                           , @RequestParam(value="size") int size
                                                           , @RequestParam(value="sort", required = false) String sort
                                                           , @RequestParam(required = false, value = "searchQuery") String searchQuery
                                                           , @RequestParam(required = false, value = "searchColumn") String searchColumn
-                                                          , @PathVariable(value = "selectedId") Long selectedId
                                                           , @AuthenticationPrincipal AccountDto accountDto) {
 
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
 
         String accountId = accountDto.getId();
 
-        Page<BoardDto> selectnoticeListPage = noticeService.getNoticeList(pageable, selectedId, accountId, searchQuery, searchColumn);
+        Page<BoardDto> selectnoticeListPage = noticeService.getNoticeList(pageable, accountDto.getProjectId(), accountId, searchQuery, searchColumn);
 
         return PageableUtil.getGridPageableMap(selectnoticeListPage);
     }
@@ -62,10 +61,12 @@ public class NoticeRestController {
      * @return
      */
     @Operation(summary = "공지사항 컬럼 조회", description = "공지사항 리스트의 컬럼을 조회한다.")
-    @GetMapping("/selectNotice/{selectedId}/column")
-    public ResponseEntity<List<ColumnDto>> getNoticeListColumn(@PathVariable(value = "selectedId") Long selectedId ) {
+    @GetMapping("/selectNotice/column")
+    public ResponseEntity<List<ColumnDto>> getNoticeListColumn(@AuthenticationPrincipal AccountDto accountDto ) {
 
-        return ResponseEntity.ok(noticeService.getNoticeListColumn(selectedId));
+        Long projectId = accountDto.getProjectId();
+
+        return ResponseEntity.ok(noticeService.getNoticeListColumn(projectId));
     }
     
     /**
@@ -117,5 +118,18 @@ public class NoticeRestController {
         BoardDto boardDto = noticeService.noticePopupMain(id, accountDto);
 
         return ResponseEntity.ok(Map.of("board", boardDto, "result", true));
+    }
+
+    /**
+     * 공지사항 삭제
+     * @return
+     */
+    @Operation(summary = "공지사항 삭제", description = "선택된 공지사항의 정보를 삭제한다.")
+    @DeleteMapping("/deleteNotice")
+    public ResponseEntity<Map<String, Object>> deleteNotice(@RequestBody List<BoardDto> boardDtos, @AuthenticationPrincipal AccountDto accountDto) {
+
+        noticeService.deleteNotice(accountDto, boardDtos);
+
+        return ResponseEntity.ok(Map.of("result", true));
     }
 }

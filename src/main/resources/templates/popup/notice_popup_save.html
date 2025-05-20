@@ -33,9 +33,26 @@
 
         <form id="editNoticeForm" class="popup-form">
             <input type="hidden" id="type" name="type"/>
-            <input type="hidden" id="projectId" name="projectId" />
             <input type="hidden" id="id" name="id"/>
-			
+
+            <div class="form-group" th:if="${projects != null}">
+                <label>공지 등록 대상 프로젝트</label>
+                <div id="notice-project" class="form-check-group" style="display: flex; flex-wrap: wrap; gap: 16px;">
+                    <div th:each="project : ${projects}" class="form-check" style="display: flex; align-items: center; gap: 6px;">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               th:id="'project_' + ${project.id}"
+                               th:name="projectIds"
+                               th:value="${project.id}"
+                               th:checked="${project.isSelected} ? 'checked' : null"/>
+                        <label class="form-check-label"
+                               th:for="'project_' + ${project.id}"
+                               th:text="${project.projectName}"
+                               style="margin-bottom: 0; font-weight: 500;"></label>
+                    </div>
+                </div>
+            </div>
+
 			<div class="form-group">
 	            <label for="title">공지사항 제목</label>
 	            <input type="text" id="title" class="form-control" name="title" required readonly/>

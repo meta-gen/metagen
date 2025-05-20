@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,8 @@ public class BoardDto {
     private Set<AccountDto> accounts = new HashSet<>();
 
     private String isHit;
+
+    private List<Long> projectIds;
     
     /* 빌더 호출 */
     public static BoardDto fromEntity(Board entity) {
@@ -69,6 +72,7 @@ public class BoardDto {
                        .categoryName(boardCategoryDto.getCategoryName())
                        .categoryId  (boardCategoryDto.getCategoryId())
                        .accounts    (collect)
+                       .projectIds  (entity.getProjectIds())
                        .isHit("")
                        .build()
         ;
@@ -100,6 +104,7 @@ public class BoardDto {
                 .categoryName(boardCategoryDto.getCategoryName())
                 .categoryId  (boardCategoryDto.getCategoryId())
                 .accounts    (collect)
+                .projectIds  (entity.getProjectIds())
                 .isHit(isHits ? "확인" : "미확인")
                 .build()
                 ;

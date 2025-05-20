@@ -1,13 +1,13 @@
 package com.koboolean.metagen.user.service.impl;
 
 
-import com.koboolean.metagen.board.domain.dto.BoardDto;
 import com.koboolean.metagen.board.domain.dto.BoardViewDto;
 import com.koboolean.metagen.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.grid.enums.ColumnType;
 import com.koboolean.metagen.grid.enums.RowType;
 import com.koboolean.metagen.home.domain.dto.DashboardDto;
 import com.koboolean.metagen.home.domain.dto.RecentChangeDto;
+import com.koboolean.metagen.operation.notice.service.NoticeService;
 import com.koboolean.metagen.redis.service.MessageSaveService;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.exception.CustomException;
@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
     private final ProjectRepository projectRepository;
     private final MessageSaveService messageSaveService;
+    private final NoticeService noticeService;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -369,7 +370,22 @@ public class UserServiceImpl implements UserService {
     public List<ProjectDto> selectAllProjectsByUsernameProjectManager(AccountDto accountDto) {
         Long accountId = Long.parseLong(accountDto.getId());
 
-        return projectRepository.findAllByAccount_IdAndProjectMember_Account_Id(accountId, accountId).stream().map(ProjectDto::fromEntity).collect(Collectors.toList());
+        return projectRepository.findAllByAccount_IdAndProjectMember_Account_Id(accountId, accountId).stream().map(ProjectDto::fromEntity).toList();
+    }
+
+    @Override
+    public List<ProjectDto> selectAllProjectsByUsernameProjectManagerChecked(Long boardId, AccountDto accountDto) {
+        Long accountId = Long.parseLong(accountDto.getId());
+
+        List<ProjectDto> collect = projectRepository.findAllByAccount_IdAndProjectMember_Account_Id(accountId, accountId).stream().map(ProjectDto::fromEntity).toList();
+
+        List<ProjectDto> projects = new ArrayList<>();
+
+        if(!collect.isEmpty()){
+            projects = noticeService.selectAllProjectsByUsernameProjectManagerChecked(boardId, accountId, collect);
+        }
+
+        return projects;
     }
 
 

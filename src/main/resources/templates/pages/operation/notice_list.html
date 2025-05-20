@@ -10,20 +10,8 @@
 	<body>
 		<section layout:fragment="content">
 			<h2>공지사항</h2>
-			<div>
-				<label for="projectSelector">프로젝트 선택</label>
-	            <select id="projectSelector" class="search-column-select">
-	                <option th:each="project : ${projects}"
-	                        th:value="${project.id}"
-	                        th:data-active="${project.isActive}"
-	                        th:text="${project.projectName}"
-	                        th:data-autoactive="${project.isAutoActive}"
-	                        th:data-isdicabbrused="${project.isDicAbbrUsed}">
-	                </option>
-	            </select>
-			</div>
-			
-		    <div th:replace="~{fragments/grid :: grid('noticeList', '/api/selectNotice/' + ${projects[0].id}, 'cd', 'noticeList_selectRow')}"></div>
+
+		    <div th:replace="~{fragments/grid :: grid('noticeList', '/api/selectNotice', ${isProjectManager} ? 'cd' : '', 'noticeList_selectRow')}"></div>
 		</section>
 	</body>
 </html>

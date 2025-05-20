@@ -1,26 +1,10 @@
-import { getCsrfToken, setupAjaxCsrf } from "../common/csrf.js";
+import { setupAjaxCsrf } from "../common/csrf.js";
 
 $(document).ready(function() {
 
 	setupAjaxCsrf();
 
-	const $addBtn = $('#btn-notice-add');
 	const tableId = "noticeList";
-
-	$('#projectSelector').on('change', function () {
-		const selectedId = $(this).val();
-		if (!selectedId) return;
-
-		const dataUrl = '/api/selectNotice/' + selectedId;
-
-		if (window.tableInstances[tableId]) {
-			window.tableInstances[tableId].destroy();
-			delete window.tableInstances[tableId];
-		}
-
-		$('#' + tableId + ' thead tr').empty();
-		window.grid(tableId, dataUrl, 'cd', 'noticeList_selectRow');
-	});
 
 	/**
 	 * 팝업 닫은 후 완료 메세지 출력.
@@ -41,30 +25,45 @@ $(document).ready(function() {
 	 *  공지사항 등록 팝업을 띄운다.
 	 */
 	$("#grd-add-noticeList").on("click", () => {
-		
-	    const projectId = $('#projectSelector').val();
-
 	    // 팝업 열기
 	    const popup = window.open(
 			
-	        `/popup/noticePopupSave?projectId=${projectId}&type=add`  // 전달 파라미터
+	        `/popup/noticePopupSave?type=add`  // 전달 파라미터
 	      , "공지사항 등록/수정"
 	      , "width=800,height=900,resizable=yes,scrollbars=yes"
 	    );
 	});
 
+	$("#grd-delete-noticeList").on("click", function() {
+		const checkedData = getCheckedDataIsNonNull(tableId);
+
+		if(!checkedData) return;
+
+		window.openConfirm("선택한 공지사항을 삭제하시겠습니까?", () => {
+			$.ajax({
+				url: "/api/deleteNotice",
+				type : "DELETE",
+				data: JSON.stringify(checkedData),
+				success: (response) => {
+					if(response.result){
+						openAlert("선택한 공지사항이 삭제되었습니다.", () => {
+							window.searchGrid(tableId);
+						});
+					}
+				}
+			})
+		})
+	});
+
 
 	// 데이터 상세 내용 확인
 	function selectRow(rowData, columnList, isManager, tableId) {
-
-		const projectId = $('#projectSelector').val();
-
 		// 매니저일 경우
 		if (isManager) {
 			
 			const popup = window.open(
 				
-			        `/popup/noticePopupSave?projectId=${projectId}&id=${rowData.id}&type=modify`,  // 팝업으로 띄울 URL
+			        `/popup/noticePopupSave?id=${rowData.id}&type=modify`,  // 팝업으로 띄울 URL
 			        "공지사항 수정",     // 팝업 이름 (중복 방지용)
 			        "width=700,height=800,resizable=yes,scrollbars=yes"
 			    );
