@@ -84,4 +84,6 @@ public class Board extends BaseEntity implements Serializable {
             }
     )
     private Set<Account> accounts = new HashSet<>();
+
+    private List<Long> projectIds;
 }

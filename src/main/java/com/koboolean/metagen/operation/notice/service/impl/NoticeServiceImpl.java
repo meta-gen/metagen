@@ -9,6 +9,7 @@ import java.util.Set;
 import com.koboolean.metagen.data.code.domain.dto.CodeRuleDetailDto;
 import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.security.repository.AccountRepository;
+import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -119,6 +120,7 @@ public class NoticeServiceImpl implements NoticeService {
 					.deleteYn     ('N'                     )
 					.updatedTime  (LocalDateTime.now()     )
 					.accounts(new HashSet<>(List.of(account)))
+					.projectIds(boardDto.getProjectIds())
 					.build();
 
 			boardRepository.save(board);
@@ -155,6 +157,8 @@ public class NoticeServiceImpl implements NoticeService {
         board.setTitle      (boardDto.getTitle()      );
         board.setContent    (boardDto.getContent()    );
         board.setUpdatedTime(LocalDateTime.now()	  );
+		board.setProjectIds (boardDto.getProjectIds());
+
     }
 
 	@Override
@@ -180,12 +184,35 @@ public class NoticeServiceImpl implements NoticeService {
 	@Transactional
 	public void deleteNotice(AccountDto accountDto, List<BoardDto> boardDtos) {
 		boardDtos.forEach(boardDto -> {
+			// 연결되어있던 모든 공지사항이 함께 삭제된다.
 			Board board = boardRepository.findByIdAndProjectId(boardDto.getId(), accountDto.getProjectId()).orElse(null);
 
 			if(board != null){
 				board.setDeleteYn('Y');
 				board.setUpdatedTime(LocalDateTime.now());
+				board.getProjectIds().remove(accountDto.getProjectId());
 			}
 		});
+	}
+
+	@Override
+	public List<ProjectDto> selectAllProjectsByUsernameProjectManagerChecked(Long boardId, Long accountId, List<ProjectDto> collect) {
+
+		Board board = boardRepository.findById(boardId).orElse(null);
+
+		if(board != null) {
+			BoardDto boardDto = BoardDto.fromEntity(board);
+
+			collect.forEach(projectDto -> {
+				boardDto.getProjectIds().forEach(projectId -> {
+					Boolean isSelected = projectDto.getIsSelected();
+					if(!isSelected){
+						projectDto.setIsSelected(projectDto.getId().equals(projectId));
+					}
+				});
+			});
+		}
+
+		return collect;
 	}
 }

@@ -2,6 +2,7 @@ package com.koboolean.metagen.operation.notice.service;
 
 import java.util.List;
 
+import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -51,4 +52,13 @@ public interface NoticeService {
      * @return
      */
     void deleteNotice(AccountDto accountDto, List<BoardDto> boardDtos);
+
+    /**
+     * 공지사항 프로젝트별 정보를 수정하기위한 프로젝트를 조회한다.
+     * @param boardId
+     * @param accountId
+     * @param collect
+     * @return
+     */
+    List<ProjectDto> selectAllProjectsByUsernameProjectManagerChecked(Long boardId, Long accountId, List<ProjectDto> collect);
 }

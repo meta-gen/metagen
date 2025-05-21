@@ -27,6 +27,8 @@ $(document).ready(function () {
 
         $("#notice_title").html("공지사항 수정");
 
+        $("#notice-project input").prop("disabled", true);
+
         // 상세조회
         $.ajax({
             url: `/api/selectNotice/detail/${id}`,

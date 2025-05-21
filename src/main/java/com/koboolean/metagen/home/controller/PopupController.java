@@ -63,10 +63,12 @@ public class PopupController {
      * @return
      */
     @GetMapping("/noticePopupSave")
-    public String noticePopupSave(@AuthenticationPrincipal AccountDto accountDto, Model model, @RequestParam(value = "type") String type){
+    public String noticePopupSave(@AuthenticationPrincipal AccountDto accountDto, Model model, @RequestParam(value = "type") String type, @RequestParam(value = "id", required = false) Long id){
 
         if(type.equals("add")){
             model.addAttribute("projects", userService.selectAllProjectsByUsernameProjectManager(accountDto));
+        }else{
+            model.addAttribute("projects", userService.selectAllProjectsByUsernameProjectManagerChecked(id, accountDto));
         }
 
         return "popup/notice_popup_save";

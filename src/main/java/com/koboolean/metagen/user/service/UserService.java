@@ -49,4 +49,6 @@ public interface UserService {
     List<ProjectDto> selectAllProjectsByUsername(AccountDto accountDto);
 
     List<ProjectDto> selectAllProjectsByUsernameProjectManager(AccountDto accountDto);
+
+    List<ProjectDto> selectAllProjectsByUsernameProjectManagerChecked(Long boardId, AccountDto accountDto);
 }

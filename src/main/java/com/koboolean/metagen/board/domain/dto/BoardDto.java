@@ -72,6 +72,7 @@ public class BoardDto {
                        .categoryName(boardCategoryDto.getCategoryName())
                        .categoryId  (boardCategoryDto.getCategoryId())
                        .accounts    (collect)
+                       .projectIds  (entity.getProjectIds())
                        .isHit("")
                        .build()
         ;
@@ -103,6 +104,7 @@ public class BoardDto {
                 .categoryName(boardCategoryDto.getCategoryName())
                 .categoryId  (boardCategoryDto.getCategoryId())
                 .accounts    (collect)
+                .projectIds  (entity.getProjectIds())
                 .isHit(isHits ? "확인" : "미확인")
                 .build()
                 ;
