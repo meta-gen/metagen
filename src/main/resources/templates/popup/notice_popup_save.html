@@ -37,14 +37,13 @@
 
             <div class="form-group" th:if="${projects != null}">
                 <label>공지 등록 대상 프로젝트</label>
-                <div id="notice-project" class="form-check-group" style="display: flex; flex-wrap: wrap; gap: 16px;">
+                <div class="form-check-group" style="display: flex; flex-wrap: wrap; gap: 16px;">
                     <div th:each="project : ${projects}" class="form-check" style="display: flex; align-items: center; gap: 6px;">
                         <input class="form-check-input"
                                type="checkbox"
                                th:id="'project_' + ${project.id}"
                                th:name="projectIds"
-                               th:value="${project.id}"
-                               th:checked="${project.isSelected} ? 'checked' : null"/>
+                               th:value="${project.id}" />
                         <label class="form-check-label"
                                th:for="'project_' + ${project.id}"
                                th:text="${project.projectName}"
