@@ -185,14 +185,13 @@ public class NoticeServiceImpl implements NoticeService {
 	public void deleteNotice(AccountDto accountDto, List<BoardDto> boardDtos) {
 		boardDtos.forEach(boardDto -> {
 			// 연결되어있던 모든 공지사항이 함께 삭제된다.
-			boardDto.getProjectIds().forEach(projectId -> {
-				Board board = boardRepository.findByIdAndProjectId(boardDto.getId(), projectId).orElse(null);
+			Board board = boardRepository.findByIdAndProjectId(boardDto.getId(), accountDto.getProjectId()).orElse(null);
 
-				if(board != null){
-					board.setDeleteYn('Y');
-					board.setUpdatedTime(LocalDateTime.now());
-				}
-			});
+			if(board != null){
+				board.setDeleteYn('Y');
+				board.setUpdatedTime(LocalDateTime.now());
+				board.getProjectIds().remove(accountDto.getProjectId());
+			}
 		});
 	}
 
