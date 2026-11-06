@@ -3,29 +3,28 @@
       layout:decorate="~{layout}">
 
 <head>
-    <link rel="stylesheet" th:href="@{/css/design/code_rule_manage.css}">
     <script type="module" th:src="@{/js/design/code/code_rule_manage.js}"></script>
 </head>
 
 <body>
 <section layout:fragment="content">
     <div th:replace="~{fragments/page_header :: pageHeader('설계기반 관리', '코드규칙 관리')}"></div>
-    <div class="button-rule-container">
-        <div class="left-group">
-            <p id="projectSelectorSwaggerText" class="is-swagger"
-               th:text="${project.isDicAbbrUsed} == true ?
+    <p class="page-desc">템플릿별로 메소드 이름을 만드는 코드규칙(접두사·접미사·메소드 형식)을 관리합니다.</p>
+
+    <!-- 메소드 이름 생성 기준 안내 (GitHub Flash) -->
+    <div class="gh-flash">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"/></svg>
+        <span id="projectSelectorSwaggerText"
+              th:text="${project.isDicAbbrUsed} == true ?
                 '등록된 표준용어 약어를 기준으로 메소드 이름이 생성됩니다.' :
                 '데이터 이름의 띄어쓰기를 기준으로 표준단어의 영문명을 조합해 메소드 이름이 생성됩니다.'">
-            </p>
-        </div>
+        </span>
+    </div>
 
-        <p id="mProjectSelectorSwaggerText" class="is-swagger-m"></p>
-
-        <!-- 상단 버튼 : 그리드 버튼 그룹으로 이동 -->
-        <div class="grid-extra-actions" data-grid-actions="codeRuleManageGrid">
-            <button id="btn-project-add" class="btn btn-primary">템플릿 등록</button>
-            <button id="btn-project-delete" class="btn btn-primary">템플릿 삭제</button>
-        </div>
+    <!-- 상단 버튼 : 그리드 버튼 그룹으로 이동 -->
+    <div class="grid-extra-actions" data-grid-actions="codeRuleManageGrid">
+        <button id="btn-project-add" class="btn"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M7.75 2a.75.75 0 0 1 .75.75V7h4.25a.75.75 0 0 1 0 1.5H8.5v4.25a.75.75 0 0 1-1.5 0V8.5H2.75a.75.75 0 0 1 0-1.5H7V2.75A.75.75 0 0 1 7.75 2Z"/></svg>템플릿 등록</button>
+        <button id="btn-project-delete" class="btn btn-danger"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M11 1.75V3h2.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H5V1.75C5 .784 5.784 0 6.75 0h2.5C10.216 0 11 .784 11 1.75ZM4.496 6.675l.66 6.6a.25.25 0 0 0 .249.225h5.19a.25.25 0 0 0 .249-.225l.66-6.6a.75.75 0 0 1 1.492.149l-.66 6.6A1.748 1.748 0 0 1 10.595 15h-5.19a1.75 1.75 0 0 1-1.741-1.575l-.66-6.6a.75.75 0 1 1 1.492-.15ZM6.5 1.75V3h3V1.75a.25.25 0 0 0-.25-.25h-2.5a.25.25 0 0 0-.25.25Z"/></svg>템플릿 삭제</button>
     </div>
 
     <!-- 그리드 영역 -->

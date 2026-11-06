@@ -1,4 +1,11 @@
 import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
+import {registerRowDecorator, setLabel, setMono, setUser} from "../../common/grid_cells.js";
+
+registerRowDecorator("userTable", (row, data, cellOf) => {
+    setMono(cellOf("username"), data.username);
+    setUser(cellOf("name"), data.name);
+    if (data.roleName) setLabel(cellOf("roleName"), data.roleName, "done");
+});
 
 $(document).ready(() => {
     setupAjaxCsrf();

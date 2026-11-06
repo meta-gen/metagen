@@ -23,7 +23,7 @@ public class FormAuthenticationFailureHandler extends SimpleUrlAuthenticationFai
         String errorMessage = "아이디 또는 비밀번호가 잘못되었습니다.";
 
         if (exception instanceof CredentialsExpiredException) {
-            errorMessage = "비밀번호가 만료되었습니다.";
+            errorMessage = exception.getMessage();
         } else if (exception instanceof ProjectAccessException) {
             errorMessage = exception.getMessage();
         }

@@ -1,0 +1,145 @@
+/* =========================================================
+   로그인 / 회원가입 : GitHub 로그인 화면 형태
+   ========================================================= */
+.auth {
+    width: 100%;
+    max-width: 340px;
+    margin: 40px auto 0;
+    padding: 0 16px;
+}
+
+.auth-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.auth-logo img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.auth-title {
+    margin: 0 0 16px;
+    color: var(--gh-fg);
+    font-family: var(--app-font);
+    font-size: 24px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    text-align: center;
+}
+
+/* 폼 박스 */
+.auth-box {
+    padding: 16px;
+    border: 1px solid var(--gh-border-muted);
+    border-radius: 6px;
+    background-color: var(--gh-canvas-subtle);
+}
+
+.auth-field {
+    margin-bottom: 16px;
+}
+
+.auth-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--gh-fg);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.auth-field .form-control {
+    width: 100%;
+    background-color: var(--gh-canvas);
+}
+
+.auth-field-note {
+    margin: 6px 0 0;
+    color: var(--gh-fg-muted);
+    font-size: 12px;
+}
+
+.content .btn.auth-submit {
+    display: flex;
+    width: 100%;
+    margin-top: 20px;
+}
+
+.auth-hint {
+    margin: 12px 0 0;
+    color: var(--gh-fg-muted);
+    font-size: 12px;
+    text-align: center;
+}
+
+/* 하단 안내 박스 */
+.auth-callout {
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    color: var(--gh-fg);
+    font-size: 14px;
+    text-align: center;
+}
+
+.auth-callout a {
+    color: var(--gh-accent);
+    text-decoration: none;
+}
+
+.auth-callout a:hover {
+    text-decoration: underline;
+}
+
+/* 프로젝트 선택 다이얼로그 : 프로젝트 목록 */
+.auth-project-list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    list-style: none;
+    overflow: hidden;
+}
+
+.auth-project-list button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 16px;
+    border: 0;
+    background: transparent;
+    color: var(--gh-fg);
+    font-size: 14px;
+    text-align: left;
+}
+
+.auth-project-list li + li button {
+    border-top: 1px solid var(--gh-border-muted);
+}
+
+.auth-project-list button:hover,
+.auth-project-list button:focus-visible {
+    background-color: var(--gh-canvas-subtle);
+    outline: none;
+}
+
+.auth-project-list button svg {
+    flex: none;
+    color: var(--gh-fg-muted);
+}
+
+.auth-project-list button .auth-project-go {
+    margin-left: auto;
+    opacity: 0;
+}
+
+.auth-project-list button:hover .auth-project-go,
+.auth-project-list button:focus-visible .auth-project-go {
+    opacity: 1;
+}

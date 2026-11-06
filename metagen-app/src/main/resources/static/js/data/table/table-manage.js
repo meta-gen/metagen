@@ -1,5 +1,15 @@
 import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
 import {downloadFile} from "../../common/common.js";
+import {registerRowDecorator, setApproval, setMono, setYN} from "../../common/grid_cells.js";
+
+/**
+ * 테이블 행 꾸미기 : 테이블명은 코드 글꼴, 마스터 여부/승인 여부는 라벨
+ */
+registerRowDecorator("tableManageGrid", (row, data, cellOf) => {
+    setMono(cellOf("tableName"), data.tableName);
+    setYN(cellOf("isMasterTable"), data.isMasterTable, "마스터");
+    setApproval(cellOf("isApproval"), data.isApproval);
+});
 
 setupAjaxCsrf();
 const tableId = "tableManageGrid";

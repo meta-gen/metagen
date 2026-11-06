@@ -9,6 +9,7 @@
 
 <section layout:fragment="content">
     <div th:replace="~{fragments/page_header :: pageHeader('설계기반 관리', '코드 규칙')}"></div>
+    <p class="page-desc">코드규칙과 명칭 키워드로 메소드 이름을 만들어 관리합니다. 행을 누르면 수정할 수 있습니다.</p>
     
     <div id="gridContainer">
         <div th:replace="~{fragments/grid :: grid('codeRuleGrid', '/api/selectCodeRule', 'CD', 'codeRuleTable_selectRow')}"></div>

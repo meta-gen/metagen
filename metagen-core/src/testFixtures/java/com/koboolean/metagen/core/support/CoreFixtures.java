@@ -34,6 +34,7 @@ public final class CoreFixtures {
                 .name(username + "_name")
                 .password("encoded")
                 .isActive(true)
+                .isPasswdCheck(true) // 일반 계정 (초기 비밀번호 변경 완료)
                 .userRoles(new HashSet<>(Set.of(roles)))
                 .projectMember(new ArrayList<>())
                 .build();

@@ -1,0 +1,1192 @@
+/* =========================================================
+   GitHub Primer 스타일 공통 컴포넌트
+   - bootstrap.css / dataTables.css 이후에 로드되어 기본 스타일을 덮어쓴다.
+   - 그리드(fragments/grid.html), 버튼, 폼, 다이얼로그, 라벨
+   ========================================================= */
+:root {
+    --gh-fg: #1f2328;
+    --gh-fg-muted: #59636e;
+    --gh-border: #d1d9e0;
+    --gh-border-muted: #d1d9e0b3;
+    --gh-canvas: #ffffff;
+    --gh-canvas-subtle: #f6f8fa;
+    --gh-neutral-muted: #818b981f;
+    --gh-hover: #818b981a;
+    --gh-accent: #0969da;
+    --gh-accent-subtle: #ddf4ff;
+    --gh-success: #1a7f37;
+    --gh-success-subtle: #dafbe1;
+    --gh-attention: #9a6700;
+    --gh-attention-subtle: #fff8c5;
+    --gh-danger: #d1242f;
+    --gh-danger-subtle: #ffebe9;
+    --gh-done: #8250df;
+    --gh-done-subtle: #fbefff;
+    --gh-btn-primary: #0969da;
+    --gh-btn-primary-hover: #0860ca;
+    --gh-font: var(--app-font);
+    --gh-mono: var(--app-font);
+}
+
+.content {
+    color: var(--gh-fg);
+    font-family: var(--gh-font);
+    font-size: 14px;
+}
+
+/* ---------- 화면 타이틀 ---------- */
+.page-breadcrumb {
+    font-size: 14px;
+    color: var(--gh-fg-muted);
+}
+
+.page-desc {
+    margin: -8px 0 16px;
+    color: var(--gh-fg-muted);
+    font-family: var(--gh-font);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* =========================================================
+   버튼 (Primer Button)
+   ========================================================= */
+.content .btn,
+.popup-container .btn,
+dialog .btn,
+.gh-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas-subtle);
+    color: var(--gh-fg);
+    font-family: var(--gh-font);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    white-space: nowrap;
+    box-shadow: 0 1px 0 #1f23280a;
+    transition: background-color .1s ease, border-color .1s ease;
+}
+
+.content .btn:hover,
+.popup-container .btn:hover,
+dialog .btn:hover,
+.gh-btn:hover {
+    background-color: #eff2f5;
+    border-color: var(--gh-border);
+    color: var(--gh-fg);
+}
+
+.content .btn:focus-visible,
+.popup-container .btn:focus-visible,
+dialog .btn:focus-visible,
+.gh-btn:focus-visible {
+    outline: 2px solid var(--gh-accent);
+    outline-offset: -2px;
+    box-shadow: none;
+}
+
+.content .btn:disabled,
+.popup-container .btn:disabled,
+dialog .btn:disabled {
+    background-color: #eff2f5;
+    border-color: var(--gh-border-muted);
+    color: #818b98;
+    opacity: 1;
+}
+
+/* Primary (파랑) */
+.content .btn.btn-primary,
+.popup-container .btn.btn-primary,
+dialog .btn.btn-primary,
+.gh-btn-primary {
+    background-color: var(--gh-btn-primary);
+    border-color: #1f232826;
+    color: #ffffff;
+    box-shadow: 0 1px 0 #1f23281a;
+}
+
+.content .btn.btn-primary:hover,
+.popup-container .btn.btn-primary:hover,
+dialog .btn.btn-primary:hover,
+.gh-btn-primary:hover {
+    background-color: var(--gh-btn-primary-hover);
+    border-color: #1f232826;
+    color: #ffffff;
+}
+
+.content .btn.btn-primary:disabled,
+.popup-container .btn.btn-primary:disabled,
+dialog .btn.btn-primary:disabled {
+    background-color: #9ecbff;
+    border-color: #9ecbff;
+    color: #ffffffcc;
+}
+
+/* Danger (빨간 글자 → hover 시 빨간 배경) */
+.content .btn.btn-danger,
+.popup-container .btn.btn-danger,
+.gh-btn-danger {
+    background-color: var(--gh-canvas-subtle);
+    border-color: var(--gh-border);
+    color: var(--gh-danger);
+}
+
+.content .btn.btn-danger:hover,
+.popup-container .btn.btn-danger:hover,
+.gh-btn-danger:hover {
+    background-color: #a40e26;
+    border-color: #a40e26;
+    color: #ffffff;
+}
+
+.content .btn.btn-danger:disabled,
+.popup-container .btn.btn-danger:disabled {
+    background-color: #eff2f5;
+    color: #d1242f80;
+}
+
+/* Small */
+.content .btn.btn-sm,
+.popup-container .btn.btn-sm,
+table.dataTable .btn {
+    height: 28px;
+    padding: 0 8px;
+    font-size: 12px;
+}
+
+/* =========================================================
+   폼 컨트롤 (Primer FormControl)
+   ========================================================= */
+.content .form-control,
+.popup-container .form-control,
+.content .form-select,
+.popup-container .form-select,
+dialog .form-control,
+dialog .form-select {
+    height: 32px;
+    padding: 5px 12px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas);
+    color: var(--gh-fg);
+    font-family: var(--gh-font);
+    font-size: 14px;
+    line-height: 20px;
+    box-shadow: inset 0 1px 0 #d1d9e033;
+    transition: border-color .1s ease, box-shadow .1s ease;
+}
+
+.content textarea.form-control,
+.popup-container textarea.form-control,
+dialog textarea.form-control {
+    height: auto;
+}
+
+.content select.form-control,
+.popup-container select.form-control,
+dialog select.form-control {
+    padding-right: 32px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2359636e'%3E%3Cpath d='m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    cursor: pointer;
+}
+
+.content .form-control:focus,
+.popup-container .form-control:focus,
+.content .form-select:focus,
+.popup-container .form-select:focus,
+dialog .form-control:focus,
+dialog .form-select:focus {
+    border-color: var(--gh-accent);
+    outline: none;
+    box-shadow: inset 0 0 0 1px var(--gh-accent);
+}
+
+.content .form-check-input,
+.popup-container .form-check-input,
+dialog .form-check-input {
+    border-color: #818b98;
+}
+
+.content .form-check-input:checked,
+.popup-container .form-check-input:checked,
+dialog .form-check-input:checked {
+    background-color: var(--gh-accent);
+    border-color: var(--gh-accent);
+}
+
+.content .form-check-input:focus,
+.popup-container .form-check-input:focus,
+dialog .form-check-input:focus {
+    box-shadow: 0 0 0 3px #0969da4d;
+}
+
+dialog .form-group {
+    margin-bottom: 16px;
+}
+
+dialog .form-group > label,
+dialog .gh-form-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--gh-fg);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+dialog .form-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 24px;
+    margin: 0 0 8px !important;
+    padding-left: 0;
+}
+
+dialog .form-check .form-check-input {
+    float: none;
+    margin: 0;
+}
+
+dialog .form-check-label {
+    color: var(--gh-fg);
+    font-size: 14px;
+}
+
+/* =========================================================
+   라벨 (Primer Label / StateLabel)
+   ========================================================= */
+.gh-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 7px;
+    border: 1px solid var(--gh-border);
+    border-radius: 2em;
+    background-color: transparent;
+    color: var(--gh-fg-muted);
+    font-family: var(--gh-font);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    white-space: nowrap;
+}
+
+.gh-label-accent    { border-color: #54aeff66; background-color: var(--gh-accent-subtle);    color: var(--gh-accent); }
+.gh-label-success   { border-color: #4ac26b66; background-color: var(--gh-success-subtle);   color: var(--gh-success); }
+.gh-label-attention { border-color: #d4a72c66; background-color: var(--gh-attention-subtle); color: var(--gh-attention); }
+.gh-label-danger    { border-color: #ff818266; background-color: var(--gh-danger-subtle);    color: var(--gh-danger); }
+.gh-label-done      { border-color: #c297ff66; background-color: var(--gh-done-subtle);      color: var(--gh-done); }
+
+.gh-label-dot::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+/* 코드성 값(테이블명, 약어 등) : 글꼴·크기는 주변과 동일하게 유지 */
+.gh-mono {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.gh-muted {
+    color: var(--gh-fg-muted);
+}
+
+/* 이니셜 아바타 + 이름 */
+.gh-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.gh-avatar {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: var(--gh-accent-subtle);
+    color: var(--gh-accent);
+    box-shadow: 0 0 0 1px var(--gh-border-muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* =========================================================
+   그리드 툴바 (검색 + 버튼) : GitHub 이슈 목록 상단 형태
+   ========================================================= */
+.grid-header {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.grid-divider {
+    display: none;
+}
+
+.search-container {
+    flex: 1 1 480px;
+    justify-content: flex-start;
+    gap: 0;
+    width: auto;
+    max-width: 720px;
+    padding: 0;
+    background: none;
+    border: 0;
+    border-radius: 0;
+}
+
+/* select + input + 버튼을 하나의 입력 그룹으로 묶음 */
+.search-container .search-column-select {
+    flex: none;
+    height: 32px;
+    min-width: 120px;
+    max-width: 180px;
+    padding: 0 30px 0 12px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px 0 0 6px;
+    background-color: var(--gh-canvas-subtle);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2359636e'%3E%3Cpath d='m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z'/%3E%3C/svg%3E");
+    background-position: right 8px center;
+    background-size: 16px;
+    color: var(--gh-fg);
+    font-weight: 500;
+}
+
+.search-container .search-column-select:focus,
+.search-container .search-input:focus {
+    position: relative;
+    z-index: 1;
+    border-color: var(--gh-accent);
+    box-shadow: inset 0 0 0 1px var(--gh-accent);
+}
+
+.search-container .search-input {
+    flex: 1 1 auto;
+    height: 32px;
+    margin-left: -1px;
+    padding: 0 12px 0 32px;
+    border: 1px solid var(--gh-border);
+    border-radius: 0;
+    background-color: var(--gh-canvas);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2359636e'%3E%3Cpath d='M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    background-size: 14px;
+    font-size: 14px;
+    box-shadow: inset 0 1px 0 #d1d9e033;
+}
+
+.search-container .search-input::placeholder {
+    color: #818b98;
+}
+
+.search-container .grd-select {
+    flex: none;
+    height: 32px;
+    margin-left: -1px;
+    padding: 0 16px;
+    border: 1px solid var(--gh-border);
+    border-radius: 0 6px 6px 0;
+    background-color: var(--gh-canvas-subtle);
+    color: var(--gh-fg);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.search-container .grd-select:hover {
+    background-color: #eff2f5;
+}
+
+/* 검색 컬럼이 없어 select 가 숨겨진 경우 입력창 왼쪽 모서리 복원 */
+.search-container .search-column-select[style*="display: none"] + .search-input {
+    margin-left: 0;
+    border-radius: 6px 0 0 6px;
+}
+
+/* 버튼 그룹 */
+.grid-header .button-container {
+    flex: none;
+    align-self: center;
+    gap: 8px;
+    margin: 0 0 0 auto;
+}
+
+.grid-header .button-container:not(:has(> :not([style*="display: none"]))) {
+    display: none;
+}
+
+.grid-header .button-container > .btn,
+.grid-header .grid-extra-actions > .btn {
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* display:inline-block 으로 노출되는 그리드 버튼도 flex 정렬 유지 */
+.grid-header .button-container > .btn[style*="inline-block"] {
+    display: inline-flex !important;
+}
+
+.grid-header .grid-extra-actions {
+    gap: 8px;
+    margin-right: 0;
+    padding-right: 8px;
+    border-right: 1px solid var(--gh-border-muted);
+}
+
+.grid-header .grid-extra-actions:last-child {
+    padding-right: 0;
+    border-right: 0;
+}
+
+/* 그리드 기본 버튼 : 승인/저장 = Primary, 삭제/승인취소 = Danger, 나머지 = 기본 */
+.grid-header .button-container .btn {
+    background-color: var(--gh-canvas-subtle);
+    border-color: var(--gh-border);
+    color: var(--gh-fg);
+}
+
+.grid-header .button-container .btn:hover {
+    background-color: #eff2f5;
+    color: var(--gh-fg);
+}
+
+.grid-header .button-container .grd-save,
+.grid-header .button-container .grd-active {
+    background-color: var(--gh-btn-primary);
+    border-color: #1f232826;
+    color: #ffffff;
+}
+
+.grid-header .button-container .grd-save:hover,
+.grid-header .button-container .grd-active:hover {
+    background-color: var(--gh-btn-primary-hover);
+    color: #ffffff;
+}
+
+.grid-header .button-container .grd-delete,
+.grid-header .button-container .grd-unactive,
+.grid-header .button-container .btn.btn-danger {
+    color: var(--gh-danger);
+}
+
+.grid-header .button-container .grd-delete:hover,
+.grid-header .button-container .grd-unactive:hover,
+.grid-header .button-container .btn.btn-danger:hover {
+    background-color: #a40e26;
+    border-color: #a40e26;
+    color: #ffffff;
+}
+
+.grid-header .button-container .btn:disabled {
+    background-color: #eff2f5;
+    border-color: var(--gh-border-muted);
+    color: #818b98;
+}
+
+/* =========================================================
+   DataTables (Primer Box 형태의 테이블)
+   ========================================================= */
+div.dt-container {
+    font-family: var(--gh-font);
+    font-size: 14px;
+    color: var(--gh-fg);
+}
+
+div.dt-container .dt-layout-row {
+    margin: 0;
+}
+
+div.dt-container .dt-layout-row:first-child {
+    margin-bottom: 8px;
+}
+
+div.dt-container .dt-layout-row:last-child {
+    margin-top: 16px;
+}
+
+div.dt-container .dt-length {
+    color: var(--gh-fg-muted);
+    font-size: 12px;
+}
+
+div.dt-container .dt-length label {
+    margin-left: 6px;
+}
+
+div.dt-container select.dt-input,
+div.dt-container .dt-input {
+    height: 28px;
+    padding: 0 26px 0 8px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas-subtle);
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2359636e'%3E%3Cpath d='m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    background-size: 14px;
+    color: var(--gh-fg);
+    font-size: 12px;
+    appearance: none;
+    cursor: pointer;
+}
+
+/* 테이블 박스 */
+table.dataTable.table {
+    --bs-table-bg: transparent;
+    --bs-table-striped-bg: transparent;
+    --bs-table-hover-bg: transparent;
+    --bs-table-border-color: var(--gh-border-muted);
+
+    width: 100% !important;
+    margin: 0 !important;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    border-collapse: separate !important;
+    border-spacing: 0;
+    background-color: var(--gh-canvas);
+    color: var(--gh-fg);
+    overflow: hidden;
+}
+
+/* Bootstrap bordered / striped 효과 제거 */
+table.dataTable.table-bordered > :not(caption) > * > * {
+    border-width: 0;
+}
+
+table.dataTable.table-striped > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-bg-type: transparent;
+}
+
+table.dataTable.table > :not(caption) > * > * {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+/* 헤더 */
+table.dataTable > thead > tr > th,
+table.dataTable > thead > tr > td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--gh-border) !important;
+    background-color: var(--gh-canvas-subtle) !important;
+    color: var(--gh-fg-muted);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+table.dataTable thead > tr > th.dt-orderable-asc:hover,
+table.dataTable thead > tr > th.dt-orderable-desc:hover {
+    outline: none;
+    color: var(--gh-fg);
+}
+
+table.dataTable thead > tr > th.dt-ordering-asc,
+table.dataTable thead > tr > th.dt-ordering-desc {
+    color: var(--gh-fg);
+}
+
+table.dataTable thead > tr > th span.dt-column-order:before,
+table.dataTable thead > tr > th span.dt-column-order:after {
+    opacity: .3;
+}
+
+/* 본문 */
+table.dataTable > tbody > tr > th,
+table.dataTable > tbody > tr > td {
+    padding: 8px 16px;
+    border-top: 1px solid var(--gh-border-muted);
+    vertical-align: middle;
+    color: var(--gh-fg);
+}
+
+table.dataTable > tbody > tr:first-child > td {
+    border-top: 0;
+}
+
+table.dataTable > tbody > tr:hover > * {
+    background-color: var(--gh-canvas-subtle) !important;
+}
+
+/* 선택된 행 : 연한 파란 배경 + 왼쪽 파란 선 */
+table.dataTable > tbody > tr.selected > *,
+table.dataTable > tbody > tr.selected:hover > * {
+    background-color: var(--gh-accent-subtle) !important;
+    box-shadow: none !important;
+    color: var(--gh-fg) !important;
+}
+
+table.dataTable > tbody > tr.selected > *:first-child {
+    box-shadow: inset 2px 0 0 var(--gh-accent) !important;
+}
+
+/* render 함수가 감싸는 <p> 여백/폰트 제거 */
+table.dataTable td p {
+    margin: 0;
+    font-family: inherit;
+    font-weight: inherit;
+}
+
+table.dataTable td.dt-empty {
+    padding: 40px 16px;
+    color: var(--gh-fg-muted);
+    text-align: center;
+}
+
+/* 셀 안의 입력 컨트롤 (INPUT / SELECT / DATE) */
+table.dataTable td .form-control {
+    height: 28px;
+    min-width: 120px;
+    padding: 0 8px;
+    font-size: 13px;
+}
+
+table.dataTable td select.form-control {
+    padding-right: 28px;
+}
+
+table.dataTable input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+    accent-color: var(--gh-accent);
+    cursor: pointer;
+}
+
+/* 페이징 (Primer Pagination) */
+div.dt-container .dt-paging {
+    display: flex;
+    justify-content: center;
+}
+
+div.dt-container .dt-paging nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+}
+
+div.dt-container .dt-paging .dt-paging-button {
+    min-width: 32px;
+    height: 32px;
+    margin: 0;
+    padding: 0 10px;
+    border: 1px solid transparent !important;
+    border-radius: 6px;
+    background: transparent !important;
+    color: var(--gh-fg) !important;
+    font-size: 14px;
+    line-height: 30px;
+    box-shadow: none !important;
+}
+
+div.dt-container .dt-paging .dt-paging-button:hover {
+    border-color: var(--gh-border) !important;
+    background: transparent !important;
+    color: var(--gh-fg) !important;
+}
+
+div.dt-container .dt-paging .dt-paging-button.current,
+div.dt-container .dt-paging .dt-paging-button.current:hover {
+    border-color: transparent !important;
+    background: var(--gh-accent) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+div.dt-container .dt-paging .dt-paging-button.disabled,
+div.dt-container .dt-paging .dt-paging-button.disabled:hover {
+    border-color: transparent !important;
+    background: transparent !important;
+    color: #818b98 !important;
+    cursor: default;
+}
+
+div.dt-container .dt-paging .ellipsis {
+    padding: 0 6px;
+    color: var(--gh-fg-muted);
+}
+
+/* =========================================================
+   다이얼로그 (Primer Dialog)
+   ========================================================= */
+dialog {
+    width: 440px;
+    padding: 0;
+    border: 0;
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px var(--gh-border), 0 24px 48px #25292e3d;
+    color: var(--gh-fg);
+    font-family: var(--gh-font);
+    font-size: 14px;
+    overflow: hidden;
+}
+
+dialog.dialog-wide {
+    width: 800px;
+}
+
+dialog::backdrop {
+    background-color: #1f232866;
+}
+
+dialog > h3,
+dialog .dialog-header {
+    margin: 0;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--gh-border-muted);
+}
+
+dialog h3 {
+    color: var(--gh-fg);
+    font-family: var(--gh-font);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+dialog .dialog-header {
+    gap: 8px;
+}
+
+dialog .dialog-header h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+dialog > p {
+    margin: 0;
+    padding: 16px;
+    color: var(--gh-fg);
+    font-family: var(--gh-font);
+    font-size: 14px;
+    font-weight: 400;
+}
+
+#mainDialogContent {
+    max-height: calc(100vh - 160px);
+    padding: 16px;
+    overflow-y: auto;
+}
+
+/* 닫기(X) 버튼 */
+dialog .close-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 6px;
+    color: var(--gh-fg-muted);
+    font-size: 20px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+dialog .close-btn:hover {
+    background-color: var(--gh-hover);
+    color: var(--gh-fg);
+}
+
+/* 알림/확인 버튼 영역 (Dialog Footer) */
+dialog .popup-button-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin: 0;
+    padding: 12px 16px;
+    border-top: 1px solid var(--gh-border-muted);
+}
+
+dialog .popup-button-container button,
+dialog button.confirm,
+dialog button.close {
+    min-width: 0;
+    height: 32px;
+    margin: 0;
+    padding: 0 16px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas-subtle);
+    color: var(--gh-fg);
+    font-family: var(--gh-font);
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 1px 0 #1f23280a;
+}
+
+dialog button.close:hover {
+    background-color: #eff2f5;
+    border-color: var(--gh-border);
+}
+
+dialog button.confirm {
+    order: 2; /* Primary 버튼은 오른쪽 끝 */
+    background-color: var(--gh-btn-primary);
+    border-color: #1f232826;
+    color: #ffffff;
+}
+
+dialog button.confirm:hover {
+    background-color: var(--gh-btn-primary-hover);
+}
+
+/* 다이얼로그 안 폼 저장 버튼 : 전체 폭 세로 정렬(기존) 대신 오른쪽 정렬 */
+dialog .btn-primary {
+    display: inline-flex;
+    flex-direction: row;
+    width: auto;
+    margin: 0;
+}
+
+dialog .gh-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin: 16px -16px -16px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--gh-border-muted);
+}
+
+/* 상세 항목 */
+dialog .dialog-detail-label {
+    margin: 16px 0 6px;
+    color: var(--gh-fg);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+dialog .dialog-detail-label:first-child {
+    margin-top: 0;
+}
+
+dialog .dialog-detail-value {
+    max-height: 240px;
+    padding: 12px 16px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas-subtle);
+    font-family: var(--app-font);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* =========================================================
+   반응형
+   ========================================================= */
+@media (max-width: 768px) {
+    .search-container {
+        flex-direction: row;
+        flex-basis: 100%;
+        max-width: none;
+    }
+
+    .search-container .search-column-select {
+        width: auto;
+        min-width: 96px;
+    }
+
+    .search-container .search-input,
+    .search-container .grd-select {
+        width: auto;
+    }
+
+    .grid-header .button-container {
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        margin-left: 0;
+    }
+
+    div.dt-container .dt-layout-table {
+        overflow-x: auto;
+    }
+}
+
+/* =========================================================
+   탭 (Primer UnderlineNav) : Bootstrap nav-tabs 대체
+   ========================================================= */
+.content .nav-tabs {
+    gap: 8px;
+    margin-top: 0 !important;
+    border-bottom: 1px solid var(--gh-border);
+}
+
+.content .nav-tabs .nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    padding: 8px 8px 10px;
+    border: 0;
+    border-radius: 6px 6px 0 0;
+    background: transparent;
+    color: var(--gh-fg-muted);
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+.content .nav-tabs .nav-link:hover {
+    color: var(--gh-fg);
+}
+
+.content .nav-tabs .nav-link:hover::after {
+    content: "";
+    position: absolute;
+    right: 8px;
+    bottom: -1px;
+    left: 8px;
+    height: 2px;
+    border-radius: 6px;
+    background-color: var(--gh-border);
+}
+
+.content .nav-tabs .nav-link.active {
+    background: transparent;
+    color: var(--gh-fg);
+    font-weight: 600;
+}
+
+.content .nav-tabs .nav-link.active::after {
+    content: "";
+    position: absolute;
+    right: 8px;
+    bottom: -1px;
+    left: 8px;
+    height: 2px;
+    border-radius: 6px;
+    background-color: #fd8c73; /* GitHub 선택 탭 밑줄 */
+}
+
+.content .nav-tabs .nav-link svg {
+    color: var(--gh-fg-muted);
+}
+
+.content .tab-content {
+    margin-top: 16px !important;
+}
+
+/* =========================================================
+   다이얼로그 안의 동적 폼 (클래스 없이 생성되는 input/select/textarea)
+   ========================================================= */
+#mainDialogContent form > label {
+    display: block;
+    margin: 12px 0 6px !important;
+    color: var(--gh-fg);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#mainDialogContent form > label:first-of-type {
+    margin-top: 0 !important;
+}
+
+#mainDialogContent input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="file"]):not([type="submit"]):not([type="button"]),
+#mainDialogContent select,
+#mainDialogContent textarea {
+    width: 100%;
+    min-height: 32px;
+    padding: 5px 12px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas);
+    color: var(--gh-fg);
+    font-family: var(--gh-font);
+    font-size: 14px;
+    line-height: 20px;
+    box-shadow: inset 0 1px 0 #d1d9e033;
+}
+
+#mainDialogContent select {
+    height: 32px !important;
+    padding-right: 32px;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%2359636e'%3E%3Cpath d='m4.427 7.427 3.396 3.396a.25.25 0 0 0 .354 0l3.396-3.396A.25.25 0 0 0 11.396 7H4.604a.25.25 0 0 0-.177.427Z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+}
+
+#mainDialogContent textarea {
+    min-height: 72px;
+    resize: vertical;
+}
+
+#mainDialogContent input:focus,
+#mainDialogContent select:focus,
+#mainDialogContent textarea:focus {
+    border-color: var(--gh-accent);
+    outline: none;
+    box-shadow: inset 0 0 0 1px var(--gh-accent);
+}
+
+#mainDialogContent input[readonly],
+#mainDialogContent textarea[readonly],
+#mainDialogContent input:disabled,
+#mainDialogContent select:disabled {
+    background-color: var(--gh-canvas-subtle) !important;
+    color: var(--gh-fg-muted);
+}
+
+/* 폼 마지막 저장/추가 버튼 : 오른쪽 정렬 */
+#mainDialogContent form > .btn:last-child,
+#mainDialogContent form > button[type="submit"] {
+    display: flex;
+    width: fit-content;
+    margin: 20px 0 0 auto !important;
+}
+
+/* 다이얼로그 선택지 목록 (예: 템플릿 다운로드 종류) */
+.gh-action-list {
+    display: flex;
+    flex-direction: column;
+    margin: -8px;
+}
+
+.gh-action-list > button {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    padding: 10px 8px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--gh-fg);
+    font-size: 14px;
+    text-align: left;
+}
+
+.gh-action-list > button:hover {
+    background-color: var(--gh-hover);
+}
+
+.gh-action-list > button svg {
+    flex: none;
+    margin-top: 2px;
+    color: var(--gh-fg-muted);
+}
+
+.gh-action-list strong {
+    display: block;
+    font-weight: 600;
+}
+
+.gh-action-list span {
+    color: var(--gh-fg-muted);
+    font-size: 12px;
+}
+
+/* =========================================================
+   안내 배너 (Primer Flash)
+   ========================================================= */
+.gh-flash {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    border: 1px solid #54aeff66;
+    border-radius: 6px;
+    background-color: var(--gh-accent-subtle);
+    color: var(--gh-fg);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.gh-flash > svg {
+    flex: none;
+    margin-top: 2px;
+    color: var(--gh-accent);
+}
+
+.gh-flash-attention {
+    border-color: #d4a72c66;
+    background-color: var(--gh-attention-subtle);
+}
+
+.gh-flash-attention > svg {
+    color: var(--gh-attention);
+}
+
+/* 다이얼로그 안내 문구 */
+.gh-dialog-text {
+    margin: 0 0 12px !important;
+    color: var(--gh-fg);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+}
+
+/* 테두리 있는 선택지 목록 */
+.gh-action-list.gh-action-list-boxed {
+    gap: 0;
+    margin: 0;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.gh-action-list.gh-action-list-boxed > button {
+    border-radius: 0;
+    padding: 12px 16px;
+}
+
+.gh-action-list.gh-action-list-boxed > button + button {
+    border-top: 1px solid var(--gh-border-muted);
+}
+
+/* JS 가 display: inline-block 으로 노출하는 버튼도 아이콘 정렬 유지 */
+.content .btn[style*="inline-block"],
+.popup-container .btn[style*="inline-block"],
+dialog .btn[style*="inline-block"] {
+    display: inline-flex !important;
+}
+
+/* 코드 입력/표시용 textarea (메소드 형식 등) */
+.gh-code-area {
+    min-height: 240px;
+    padding: 12px 16px !important;
+    background-color: var(--gh-canvas-subtle) !important;
+    font-family: var(--app-font) !important;
+    font-size: 12px !important;
+    line-height: 1.6 !important;
+    white-space: pre;
+    tab-size: 4;
+    resize: vertical;
+}
+
+.gh-code-area:not([readonly]):not(:disabled):focus {
+    background-color: var(--gh-canvas) !important;
+}

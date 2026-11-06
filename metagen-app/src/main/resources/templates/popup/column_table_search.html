@@ -3,6 +3,8 @@
 
 <head>
     <title>MetaGen</title>
+    <!-- 폰트 미리 받기 : 첫 렌더링 전에 Pretendard 를 준비해 폰트 교체로 인한 화면 흔들림 방지 -->
+    <link rel="preload" th:href="@{/fonts/pretendard/PretendardVariable.woff2}" href="/fonts/pretendard/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="icon" type="image/x-icon" href="/images/favicon.png">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
@@ -16,7 +18,8 @@
     <script th:src="@{/js/jquery-ui-1.14.1.custom/jquery-ui.js}"></script>
     <script th:src="@{/js/popup/column_table_search.js}"></script>
 
-    <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
+    <link th:href="@{/fonts/pretendard.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/primer.css}">
 </head>
 
 <body>
@@ -33,7 +36,7 @@
             <label for="table_name_text" style="margin-bottom: 6px;">테이블 선택</label>
             <div class="input-button-group">
                 <input type="text" id="table_name_text" class="form-control" placeholder="예: TEST_TABLE" style="flex: 1;" />
-                <button type="submit" class="button btn btn-primary" id="search-btn">검색</button>
+                <button type="submit" class="btn" id="search-btn">검색</button>
             </div>
         </div>
 
@@ -48,7 +51,7 @@
             <div style="display: flex; gap: 8px; align-items: center; flex-wrap: nowrap;">
                 <select id="term-search-type"
                         class="form-control"
-                        style="width: 140px; height: 38px; margin-bottom: 0;">
+                        style="flex: none; width: 140px; margin-bottom: 0;">
                     <option value="termName">표준용어명</option>
                     <option value="termAbbreviation">영문약어명</option>
                 </select>
@@ -57,12 +60,12 @@
                        id="term-search-text"
                        class="form-control"
                        placeholder="검색어 입력"
-                       style="flex: 1; height: 38px; margin-bottom: 0;" />
+                       style="flex: 1; margin-bottom: 0;" />
 
                 <button type="button"
-                        class="btn btn-primary"
+                        class="btn"
                         id="search-term-btn"
-                        style="white-space: nowrap; height: 38px; margin-bottom: 0;">
+                        style="flex: none;">
                     검색
                 </button>
             </div>
@@ -76,7 +79,7 @@
 
 
         <div class="popup-actions" style="margin-top: 20px; text-align: right;">
-            <button type="button" class="btn btn-secondary" onclick="window.close();">닫기</button>
+            <button type="button" class="btn" onclick="window.close();">닫기</button>
             <button type="button" class="btn btn-primary" id="confirm-btn" disabled style="display: none">확인</button>
         </div>
     </form>

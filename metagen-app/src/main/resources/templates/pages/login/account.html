@@ -4,12 +4,12 @@
       layout:decorate="~{layout}"
 >
 <head>
+    <link rel="stylesheet" th:href="@{/css/login/account.css}">
     <script type="module" th:src="@{/js/login/account.js}"></script>
 </head>
 <body>
 <section layout:fragment="content">
-
-    <h2>내정보</h2>
+    <div th:replace="~{fragments/page_header :: pageHeader('사용자', '내 정보')}"></div>
 
     <div th:if="${!account.isPasswdCheck()}">
         <script>
@@ -19,39 +19,77 @@
         </script>
     </div>
 
-    <div>
-        ID : <span th:text="${account.username}"></span>
+    <!-- GitHub 설정 화면 형태 : 왼쪽 프로필 / 오른쪽 설정 항목 -->
+    <div class="account-layout"
+         th:with="displayName=${#strings.isEmpty(account.name) ? account.username : account.name}">
+
+        <aside class="account-profile">
+            <div class="account-avatar"
+                 th:text="${#strings.isEmpty(displayName) ? '?' : #strings.substring(displayName, 0, 1)}">A</div>
+            <div class="account-names">
+                <strong th:text="${displayName}">관리자</strong>
+                <span th:text="${account.username}">admin</span>
+            </div>
+            <span class="gh-label gh-label-done" th:text="${account.roleName}">관리자</span>
+        </aside>
+
+        <div class="account-main">
+            <!-- 비밀번호 변경 필요 안내 -->
+            <div class="gh-flash gh-flash-attention" th:if="${!account.isPasswdCheck()}">
+                <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M6.457 1.047c.659-1.234 2.427-1.234 3.086 0l6.082 11.378A1.75 1.75 0 0 1 14.082 15H1.918a1.75 1.75 0 0 1-1.543-2.575Zm1.763.707a.25.25 0 0 0-.44 0L1.698 13.132a.25.25 0 0 0 .22.368h12.164a.25.25 0 0 0 .22-.368Zm.53 3.996v2.5a.75.75 0 0 1-1.5 0v-2.5a.75.75 0 0 1 1.5 0ZM9 11a1 1 0 1 1-2 0 1 1 0 0 1 2 0Z"/></svg>
+                <span>이 계정은 비밀번호 변경이 필요합니다. 아래에서 비밀번호를 변경해주세요.</span>
+            </div>
+
+            <!-- 계정 정보 -->
+            <section class="account-section">
+                <h2 class="account-subhead">계정 정보</h2>
+                <dl class="account-info">
+                    <div>
+                        <dt>아이디</dt>
+                        <dd th:text="${account.username}">admin</dd>
+                    </div>
+                    <div>
+                        <dt>권한</dt>
+                        <dd th:text="${account.roleName}">관리자</dd>
+                    </div>
+                </dl>
+            </section>
+
+            <!-- 사용자명 -->
+            <section class="account-section">
+                <h2 class="account-subhead">사용자명</h2>
+                <form id="chnageNameForm" th:action="@{/api/updateName}" method="post">
+                    <div class="account-field">
+                        <label for="name">사용자명</label>
+                        <input type="text" class="form-control" id="name" name="name" th:value="${account.name}" autocomplete="name">
+                        <p class="account-note">메신저와 공지사항 등 화면에 표시되는 이름입니다.</p>
+                    </div>
+                    <button id="changeNameBtn" type="submit" class="btn">사용자명 변경</button>
+                </form>
+            </section>
+
+            <!-- 비밀번호 -->
+            <section class="account-section">
+                <h2 class="account-subhead">비밀번호 변경</h2>
+                <form id="changedPasswdForm" th:action="@{/api/updatePwd}" method="post">
+                    <div class="account-field">
+                        <label for="password">현재 비밀번호</label>
+                        <input type="password" class="form-control" id="password" name="password" autocomplete="current-password">
+                    </div>
+                    <div class="account-field">
+                        <label for="changedPasswd">새 비밀번호</label>
+                        <input type="password" class="form-control" id="changedPasswd" name="changedPasswd" autocomplete="new-password">
+                    </div>
+                    <div class="account-field">
+                        <label for="changedPasswd2">새 비밀번호 확인</label>
+                        <input type="password" class="form-control" id="changedPasswd2" name="changedPasswd2" autocomplete="new-password">
+                        <p class="account-note">비밀번호를 변경하면 로그아웃되며, 새 비밀번호로 다시 로그인해야 합니다.</p>
+                    </div>
+                    <button id="changePasswdBtn" type="button" class="btn btn-primary">비밀번호 변경</button>
+                </form>
+            </section>
+        </div>
     </div>
-    <hr/>
-    <div>
-        권한 : <span th:text="${account.roleName}"></span>
-    </div>
-    <hr/>
-    <form id="chnageNameForm" th:action="@{/api/updateName}" method="post">
-        <div class="form-group">
-            <label for="name">사용자명</label>
-            <input type="text" class="form-control" id="name" name="name" th:value="${account.name}">
-        </div>
-        <br/>
-        <button id="changeNameBtn" type="submit" class="btn btn-primary">사용자명 변경</button>
-    </form>
-    <hr/>
-    <form id="changedPasswdForm" th:action="@{/api/updatePwd}" method="post">
-        <div class="form-group">
-            <label for="password">현재 비밀번호</label>
-            <input type="password" class="form-control" id="password" name="password">
-        </div>
-        <div class="form-group">
-            <label for="changedPasswd">변경 비밀번호</label>
-            <input type="password" class="form-control" id="changedPasswd" name="changedPasswd">
-        </div>
-        <div class="form-group">
-            <label for="changedPasswd2">변경 비밀번호 확인</label>
-            <input type="password" class="form-control" id="changedPasswd2" name="changedPasswd2">
-        </div>
-        <br/>
-        <button id="changePasswdBtn" type="button" class="btn btn-primary">비밀번호 변경</button>
-    </form>
 </section>
 </body>
 </html>

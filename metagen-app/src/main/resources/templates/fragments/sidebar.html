@@ -15,7 +15,7 @@
 
         <nav class="sidebar-nav">
             <!-- 1뎁스: 대시보드 -->
-            <a href="/" class="sidebar-link" title="대시보드"
+            <a th:if="${@menuAuth.canView('dashboard')}" href="/" class="sidebar-link" title="대시보드"
                onclick="setActiveMenu(event, 'dashboard')"
                data-menu-id="dashboard">
                 <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -26,121 +26,129 @@
             </a>
 
             <!-- 1뎁스: 시스템 관리 -->
-            <a href="#system-management" class="sidebar-link has-children" title="시스템 관리"
-               onclick="toggleMenu(event, 'system-management', this)"
-               data-menu-id="system-management">
-                <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/>
-                    <circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>
-                </svg>
-                <span class="sidebar-label">시스템 관리</span>
-                <svg class="sidebar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-            </a>
-            <div id="system-management" class="collapse sidebar-submenu">
-                <a href="/userManage" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'user-manage')"
-                   data-submenu-id="user-manage">
-                    사용자 관리
+            <th:block th:if="${@menuAuth.canView('system-management')}">
+                <a href="#system-management" class="sidebar-link has-children" title="시스템 관리"
+                   onclick="toggleMenu(event, 'system-management', this)"
+                   data-menu-id="system-management">
+                    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/>
+                        <circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>
+                    </svg>
+                    <span class="sidebar-label">시스템 관리</span>
+                    <svg class="sidebar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </a>
-                <a href="/projectManage" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'project-manage')"
-                   data-submenu-id="project-manage">
-                    프로젝트 관리
-                </a>
-                <a href="/systemLog" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'system-log')"
-                   data-submenu-id="system-log">
-                    시스템 로그
-                </a>
-            </div>
+                <div id="system-management" class="collapse sidebar-submenu">
+                    <a th:if="${@menuAuth.canView('user-manage')}" href="/userManage" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'user-manage')"
+                       data-submenu-id="user-manage">
+                        사용자 관리
+                    </a>
+                    <a th:if="${@menuAuth.canView('project-manage')}" href="/projectManage" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'project-manage')"
+                       data-submenu-id="project-manage">
+                        프로젝트 관리
+                    </a>
+                    <a th:if="${@menuAuth.canView('system-log')}" href="/systemLog" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'system-log')"
+                       data-submenu-id="system-log">
+                        시스템 로그
+                    </a>
+                </div>
+            </th:block>
 
             <!-- 1뎁스: 운영 관리 -->
-            <a href="#operation-management" class="sidebar-link has-children" title="운영 관리"
-               onclick="toggleMenu(event, 'operation-management', this)"
-               data-menu-id="operation-management">
-                <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-                </svg>
-                <span class="sidebar-label">운영 관리</span>
-                <svg class="sidebar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-            </a>
-            <div id="operation-management" class="collapse sidebar-submenu">
-
-                <!-- 2뎁스: 공지사항 -->
-                <a href="/notice" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'notice')"
-                   data-submenu-id="notice">
-                    공지사항
+            <th:block th:if="${@menuAuth.canView('operation-management')}">
+                <a href="#operation-management" class="sidebar-link has-children" title="운영 관리"
+                   onclick="toggleMenu(event, 'operation-management', this)"
+                   data-menu-id="operation-management">
+                    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                    </svg>
+                    <span class="sidebar-label">운영 관리</span>
+                    <svg class="sidebar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </a>
+                <div id="operation-management" class="collapse sidebar-submenu">
 
-                <!-- 2뎁스: 도움말 - 작업 안함 -->
-<!--                <a href="/help" class="sidebar-sublink"-->
-<!--                    onclick="setActiveSubmenu(event, 'help')"-->
-<!--                    data-submenu-id="help">-->
-<!--                    도움말-->
-<!--                </a>-->
-            </div>
+                    <!-- 2뎁스: 공지사항 -->
+                    <a th:if="${@menuAuth.canView('notice')}" href="/notice" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'notice')"
+                       data-submenu-id="notice">
+                        공지사항
+                    </a>
+
+                    <!-- 2뎁스: 도움말 - 작업 안함 -->
+    <!--                <a href="/help" class="sidebar-sublink"-->
+    <!--                    onclick="setActiveSubmenu(event, 'help')"-->
+    <!--                    data-submenu-id="help">-->
+    <!--                    도움말-->
+    <!--                </a>-->
+                </div>
+            </th:block>
 
             <!-- 1뎁스: 데이터 관리 -->
-            <a href="#data-management" class="sidebar-link has-children" title="데이터 관리"
-               onclick="toggleMenu(event, 'data-management', this)"
-               data-menu-id="data-management">
-                <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/>
-                </svg>
-                <span class="sidebar-label">데이터 관리</span>
-                <svg class="sidebar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-            </a>
-            <div id="data-management" class="collapse sidebar-submenu">
-                <a href="/dataDictionary" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'data-dictionary')"
-                   data-submenu-id="data-dictionary">
-                    데이터 사전
+            <th:block th:if="${@menuAuth.canView('data-management')}">
+                <a href="#data-management" class="sidebar-link has-children" title="데이터 관리"
+                   onclick="toggleMenu(event, 'data-management', this)"
+                   data-menu-id="data-management">
+                    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.66 3.58 3 8 3s8-1.34 8-3V5"/><path d="M4 12c0 1.66 3.58 3 8 3s8-1.34 8-3"/>
+                    </svg>
+                    <span class="sidebar-label">데이터 관리</span>
+                    <svg class="sidebar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </a>
-                <a href="/tableManage" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'table-manage')"
-                   data-submenu-id="table-manage">
-                    테이블 관리
-                </a>
-                <a href="/columnManage" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'column-manage')"
-                   data-submenu-id="column-manage">
-                    컬럼 관리
-                </a>
-            </div>
+                <div id="data-management" class="collapse sidebar-submenu">
+                    <a th:if="${@menuAuth.canView('data-dictionary')}" href="/dataDictionary" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'data-dictionary')"
+                       data-submenu-id="data-dictionary">
+                        데이터 사전
+                    </a>
+                    <a th:if="${@menuAuth.canView('table-manage')}" href="/tableManage" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'table-manage')"
+                       data-submenu-id="table-manage">
+                        테이블 관리
+                    </a>
+                    <a th:if="${@menuAuth.canView('column-manage')}" href="/columnManage" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'column-manage')"
+                       data-submenu-id="column-manage">
+                        컬럼 관리
+                    </a>
+                </div>
+            </th:block>
 
             <!-- 1뎁스: 설계기반 관리 -->
-            <a href="#design-test" class="sidebar-link has-children" title="설계기반 관리"
-               onclick="toggleMenu(event, 'design-test', this)"
-               data-menu-id="design-test">
-                <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>
-                </svg>
-                <span class="sidebar-label">설계기반 관리</span>
-                <svg class="sidebar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-            </a>
-            <div id="design-test" class="collapse sidebar-submenu">
-                <a href="/codeRuleManage" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'code-rule-manage')"
-                   data-submenu-id="code-rule-manage">
-                    코드규칙 관리
+            <th:block th:if="${@menuAuth.canView('design-test')}">
+                <a href="#design-test" class="sidebar-link has-children" title="설계기반 관리"
+                   onclick="toggleMenu(event, 'design-test', this)"
+                   data-menu-id="design-test">
+                    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>
+                    </svg>
+                    <span class="sidebar-label">설계기반 관리</span>
+                    <svg class="sidebar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
                 </a>
-                <a href="/codeRule" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'code-rule')"
-                   data-submenu-id="code-rule">
-                    코드 규칙
-                </a>
-                <a href="/designManage" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'design-manage')"
-                   data-submenu-id="design-manage">
-                    설계서
-                </a>
-                <a href="/testManage" class="sidebar-sublink"
-                   onclick="setActiveSubmenu(event, 'test-manage')"
-                   data-submenu-id="test-manage">
-                    시나리오
-                </a>
-            </div>
+                <div id="design-test" class="collapse sidebar-submenu">
+                    <a th:if="${@menuAuth.canView('code-rule-manage')}" href="/codeRuleManage" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'code-rule-manage')"
+                       data-submenu-id="code-rule-manage">
+                        코드규칙 관리
+                    </a>
+                    <a th:if="${@menuAuth.canView('code-rule')}" href="/codeRule" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'code-rule')"
+                       data-submenu-id="code-rule">
+                        코드 규칙
+                    </a>
+                    <a th:if="${@menuAuth.canView('design-manage')}" href="/designManage" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'design-manage')"
+                       data-submenu-id="design-manage">
+                        설계서
+                    </a>
+                    <a th:if="${@menuAuth.canView('test-manage')}" href="/testManage" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'test-manage')"
+                       data-submenu-id="test-manage">
+                        시나리오
+                    </a>
+                </div>
+            </th:block>
         </nav>
     </aside>
 </html>

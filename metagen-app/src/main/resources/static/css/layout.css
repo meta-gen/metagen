@@ -11,60 +11,192 @@ body, html {
     min-height: 100vh;
 }
 
-.containers {
-    width: 100%; /* 전체 너비 사용 */
-    max-width: 100vw; /* 뷰포트 너비만큼 설정 */
+/* =========================================================
+   상단 헤더 (GitHub 스타일)
+   ========================================================= */
+.app-header {
+    --hd-fg: #1f2328;
+    --hd-muted: #59636e;
+    --hd-border: #d1d9e0;
+    --hd-bg: #f6f8fa;
+    --hd-hover: #818b981a;
+    --hd-accent: #0969da;
+
+    position: relative;
+    z-index: 20;
     display: flex;
-    flex-wrap: inherit;
     align-items: center;
     justify-content: space-between;
-    padding-left: 2%;
-    padding-right: 2%;
-}
-
-header {
+    gap: 16px;
     width: 100%;
-    position: relative;
-    z-index: 10;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    height: 64px;
+    padding: 0 16px;
+    background-color: var(--hd-bg);
+    border-bottom: 1px solid var(--hd-border);
+    color: var(--hd-fg);
+    font-family: var(--app-font);
+    font-size: 14px;
 }
 
-.navbar-custom {
+.app-header-left,
+.app-header-right {
     display: flex;
-    justify-content: space-between; /* 좌우 정렬 */
     align-items: center;
-    background-color: #007bff;
-    padding: 10px 20px;
-    color: white;
+    gap: 8px;
+    min-width: 0;
 }
 
-/* 오른쪽 정렬 */
-.navbar-nav {
-    display: flex !important;
-    flex-direction: row !important;
+.app-header-logo {
+    flex: none;
+    display: inline-flex;
     align-items: center;
-    gap: 8px; /* 메뉴 사이 간격 */
-    margin: 0;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--hd-border);
+    border-radius: 6px;
+    background-color: #ffffff;
+}
+
+.app-header-logo img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.app-header-context {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    min-width: 0;
+}
+
+.app-header-crumb {
+    padding: 4px 6px;
+    border-radius: 6px;
+    color: var(--hd-fg);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.5;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+a.app-header-crumb:hover {
+    background-color: var(--hd-hover);
+    color: var(--hd-fg);
+}
+
+.app-header-crumb.is-project {
+    font-weight: 400;
+    color: var(--hd-fg);
+}
+
+.app-header-sep {
+    color: var(--hd-muted);
+    font-weight: 300;
+}
+
+/* 아바타 (원형 이니셜) */
+.app-header-avatar {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
     padding: 0;
-    margin-right: 5px;
+    border: 0;
+    border-radius: 50%;
+    background-color: #ddf4ff;
+    color: var(--hd-accent);
+    box-shadow: 0 0 0 1px var(--hd-border);
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
 }
 
-/* 네비게이션 링크 스타일 */
-.navbar-custom .nav-link {
-    color: #ffffff;
-    margin-left: 15px;
-    transition: color 0.3s ease;
+.app-header-avatar:hover,
+.app-header-avatar[aria-expanded="true"] {
+    box-shadow: 0 0 0 1px var(--hd-border), 0 0 0 4px var(--hd-hover);
 }
 
-.navbar-custom .nav-link:hover {
-    color: #d4d4d4;
+.app-header-avatar:focus-visible,
+.app-header-logo:focus-visible,
+.app-header-crumb:focus-visible {
+    outline: 2px solid var(--hd-accent);
+    outline-offset: 2px;
 }
 
-/* 모바일 토글 버튼 색상 */
-.navbar-toggler {
-    border: none;
-    background: transparent;
-    color: white;
+.app-header-avatar.is-static {
+    cursor: default;
+    box-shadow: 0 0 0 1px var(--hd-border);
+}
+
+/* 사용자 드롭다운 (Primer Overlay) */
+.app-header-menu {
+    min-width: 240px;
+    padding: 8px;
+    margin-top: 8px !important;
+    border: 1px solid var(--hd-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px #1f23281f, 0 8px 24px #4247501f;
+    font-size: 14px;
+}
+
+.app-header-menu-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 8px;
+}
+
+.app-header-menu-names {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    line-height: 1.3;
+}
+
+.app-header-menu-names strong {
+    color: var(--hd-fg);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.app-header-menu-names span {
+    color: var(--hd-muted);
+    font-size: 12px;
+}
+
+.app-header-menu-divider {
+    height: 1px;
+    margin: 8px -8px;
+    background-color: #d1d9e0b3;
+}
+
+.app-header-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    color: var(--hd-fg);
+    text-decoration: none;
+}
+
+.app-header-menu-item svg {
+    color: var(--hd-muted);
+}
+
+.app-header-menu-item:hover {
+    background-color: var(--hd-hover);
+    color: var(--hd-fg);
 }
 
 .main-content {
@@ -73,17 +205,17 @@ header {
 }
 
 /* =========================================================
-   사이드바
+   사이드바 (GitHub Primer ActionList 스타일)
    ========================================================= */
 .sidebar {
-    --sb-text: #374151;
-    --sb-muted: #6b7280;
-    --sb-hover: #f1f5f9;
-    --sb-accent: #0056b3;
-    --sb-accent-bg: #e8f0fb;
-    --sb-border: #e5e7eb;
+    --sb-text: #1f2328;
+    --sb-muted: #59636e;
+    --sb-hover: #818b981a;
+    --sb-active-bg: #818b9826;
+    --sb-accent: #0969da;
+    --sb-border: #d1d9e0;
 
-    flex: 0 0 232px;
+    flex: 0 0 248px;
     background-color: #ffffff;
     height: 100vh; /* 스크롤 시 화면 전체 높이를 채움 */
     position: sticky;
@@ -91,6 +223,7 @@ header {
     border-right: 1px solid var(--sb-border);
     overflow-x: hidden;
     overflow-y: auto;
+    font-family: var(--app-font);
     transition: flex-basis 0.2s ease;
 }
 
@@ -102,16 +235,15 @@ header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 52px;
-    padding: 0 10px 0 20px;
+    height: 48px;
+    padding: 0 8px 0 16px;
     background-color: #ffffff;
 }
 
 .sidebar-title {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.08em;
-    color: #9ca3af;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sb-muted);
     white-space: nowrap;
 }
 
@@ -119,15 +251,20 @@ header {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
     padding: 0;
     border: 0;
-    border-radius: 8px;
+    border-radius: 6px;
     background: transparent;
     color: var(--sb-muted);
     cursor: pointer;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition: background-color 0.1s ease, color 0.1s ease;
+}
+
+.sidebar-collapse-btn svg {
+    width: 16px;
+    height: 16px;
 }
 
 .sidebar-collapse-btn:hover {
@@ -146,23 +283,28 @@ header {
 .sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 4px 10px 12px;
+    gap: 1px;
+    padding: 0 8px 12px;
+}
+
+.sidebar-link,
+.sidebar-sublink {
+    position: relative;
 }
 
 .sidebar-link {
     display: flex;
     align-items: center;
-    gap: 12px;
-    height: 40px;
-    padding: 0 10px;
-    border-radius: 8px;
+    gap: 8px;
+    height: 32px;
+    padding: 0 8px;
+    border-radius: 6px;
     color: var(--sb-text);
     font-size: 14px;
-    font-weight: 500;
+    font-weight: 400;
     text-decoration: none;
     white-space: nowrap;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    transition: background-color 0.1s ease;
 }
 
 .sidebar-link:hover {
@@ -171,11 +313,10 @@ header {
 }
 
 .sidebar-icon {
-    flex: 0 0 18px;
-    width: 18px;
-    height: 18px;
+    flex: 0 0 16px;
+    width: 16px;
+    height: 16px;
     color: var(--sb-muted);
-    transition: color 0.15s ease;
 }
 
 .sidebar-label {
@@ -188,63 +329,67 @@ header {
     flex: 0 0 16px;
     width: 16px;
     height: 16px;
-    color: #9ca3af;
+    color: var(--sb-muted);
     transition: transform 0.2s ease;
 }
 
 /* 열린 그룹 메뉴 */
 .sidebar-link.has-children.active {
-    color: var(--sb-accent);
-}
-
-.sidebar-link.has-children.active .sidebar-icon,
-.sidebar-link.has-children.active .sidebar-chevron {
-    color: var(--sb-accent);
+    font-weight: 600;
 }
 
 .sidebar-link.has-children.active .sidebar-chevron {
     transform: rotate(180deg);
 }
 
-/* 현재 페이지 (단일 메뉴) */
-.sidebar-link:not(.has-children).active {
-    background-color: var(--sb-accent-bg);
-    color: var(--sb-accent);
+/* 현재 페이지 : 회색 배경 + 왼쪽 파란 막대 (GitHub 선택 표시) */
+.sidebar-link:not(.has-children).active,
+.sidebar-sublink.active {
+    background-color: var(--sb-active-bg);
+    color: var(--sb-text);
     font-weight: 600;
 }
 
+.sidebar-link:not(.has-children).active::after,
+.sidebar-sublink.active::after {
+    content: "";
+    position: absolute;
+    top: calc(50% - 12px);
+    left: -8px;
+    width: 4px;
+    height: 24px;
+    border-radius: 6px;
+    background-color: var(--sb-accent);
+}
+
 .sidebar-link:not(.has-children).active .sidebar-icon {
-    color: var(--sb-accent);
+    color: var(--sb-text);
 }
 
 /* 하위 메뉴 */
 .sidebar-submenu {
-    margin: 2px 0 6px 19px;
-    padding-left: 12px;
-    border-left: 1px solid var(--sb-border);
+    margin: 1px 0 4px;
 }
 
 .sidebar-sublink {
     display: block;
-    padding: 7px 12px;
+    height: 32px;
+    padding: 0 8px 0 32px; /* 아이콘(16) + 간격(8) + 여백(8) 만큼 들여쓰기 */
     margin: 1px 0;
     border-radius: 6px;
-    color: var(--sb-muted);
-    font-size: 13.5px;
+    color: var(--sb-text);
+    font-size: 14px;
+    line-height: 32px;
     text-decoration: none;
     white-space: nowrap;
-    transition: background-color 0.15s ease, color 0.15s ease;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: background-color 0.1s ease;
 }
 
 .sidebar-sublink:hover {
     background-color: var(--sb-hover);
     color: var(--sb-text);
-}
-
-.sidebar-sublink.active {
-    background-color: var(--sb-accent-bg);
-    color: var(--sb-accent);
-    font-weight: 600;
 }
 
 /* 접힌 상태 (PC 전용): 아이콘만 표시 */
@@ -259,7 +404,23 @@ header {
     }
 
     html.sidebar-collapsed .sidebar-nav {
-        padding: 4px 10px 12px;
+        padding: 0 12px 12px;
+    }
+
+    /* 접힌 상태에서는 하위 메뉴가 보이지 않으므로 상위 메뉴에 선택 표시 */
+    html.sidebar-collapsed .sidebar-link.has-children.active {
+        background-color: var(--sb-active-bg);
+    }
+
+    html.sidebar-collapsed .sidebar-link.has-children.active::after {
+        content: "";
+        position: absolute;
+        top: calc(50% - 12px);
+        left: -12px;
+        width: 4px;
+        height: 24px;
+        border-radius: 6px;
+        background-color: var(--sb-accent);
     }
 
     html.sidebar-collapsed .sidebar-link {
@@ -287,8 +448,15 @@ header {
 
 .content {
     flex: 1;
+    display: flex;
+    flex-direction: column;
     padding: 20px;
     overflow-y: auto;
+}
+
+/* 본문이 짧아도 푸터가 콘텐츠 영역 최하단에 붙도록 본문이 남은 높이를 채움 */
+.content > section {
+    flex: 1 0 auto;
 }
 
 /* 화면 타이틀 영역 (fragments/page_header) : 구분선은 타이틀(.page-title)에만 표시 */
@@ -305,40 +473,66 @@ header {
     color: #59636e;
 }
 
-/* 로그인 / 회원가입 폼 : 좁은 폭으로 화면 중앙에 배치 */
-.auth-form {
-    max-width: 420px;
-    margin: 60px auto;
-    padding: 32px;
-    background-color: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+/* =========================================================
+   푸터 (GitHub 스타일) : 콘텐츠 영역 최하단
+   ========================================================= */
+.app-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 16px;
+    margin-top: 40px;
+    padding: 24px 0 8px;
+    border-top: 1px solid #d1d9e0;
+    color: #59636e;
+    font-family: var(--app-font);
+    font-size: 12px;
+    line-height: 1.5;
 }
 
-.auth-form h2 {
-    font-size: 24px;
-    font-weight: 300;
-    color: #1f2328;
-    margin-bottom: 24px;
-    text-align: center;
+.app-footer-brand,
+.app-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
 }
 
-footer {
-    background-color: #343a40;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
+.app-footer-brand img {
+    opacity: 0.7;
+}
+
+.app-footer-sep {
+    color: #818b98;
+}
+
+.app-footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #0969da;
+    text-decoration: none;
+}
+
+.app-footer-link:hover {
+    color: #0969da;
+    text-decoration: underline;
+}
+
+.app-footer-link:focus-visible {
+    outline: 2px solid #0969da;
+    outline-offset: 2px;
+    border-radius: 3px;
 }
 
 h1 {
-    font-family: 'Roboto', sans-serif;
+    font-family: var(--app-font);
     font-weight: 500;
 }
 
 p {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 300;
+    font-family: var(--app-font);
 }
 
 /* 1-depth 활성화된 메뉴 스타일 */
@@ -401,45 +595,6 @@ p {
     transition: all 0.3s ease; /* 부드러운 전환 효과 */
 }
 
-/* Custom Navbar Styles */
-.navbar-custom {
-    background-color: #0056b3; /* 어두운 파란색 */
-    padding: 10px 15px; /* 내부 여백 */
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); /* 헤더 하단 그림자 */
-}
-
-/* Navbar 링크 스타일 */
-.navbar-custom .nav-link {
-    color: #ffffff; /* 흰색 글자 */
-    margin-left: 15px; /* 간격 추가 */
-    transition: color 0.3s ease; /* 부드러운 색상 전환 */
-}
-
-/* Navbar 링크 hover 상태 스타일 */
-.navbar-custom .nav-link:hover {
-    color: #d4d4d4 !important; /* 연한 회색 글자 */
-}
-
-/* Bootstrap 기본 링크 스타일 덮어쓰기 */
-.navbar-custom .nav-link:focus,
-.navbar-custom .nav-link:active{
-    color: #d4d4d4 !important; /* 연한 회색 글자 */
-}
-
-/* Navbar 브랜드 스타일 */
-.navbar-custom .navbar-brand {
-    color: #ffffff; /* 기본 흰색 */
-    font-weight: bold;
-    font-size: 1.5rem;
-    transition: color 0.3s ease; /* 부드러운 색상 전환 */
-}
-
-/* Navbar 브랜드 hover 상태 스타일 */
-.navbar-custom .navbar-brand:hover,
-.navbar-custom .navbar-brand:focus {
-    color: #d4d4d4; /* 연한 회색 */
-}
-
 /* 다이얼로그 공통 스타일 */
 dialog {
     border-radius: 8px;
@@ -448,7 +603,7 @@ dialog {
     width: 400px;
     max-width: 90%;
     background-color: #fff;
-    font-family: Arial, sans-serif;
+    font-family: var(--app-font);
     text-align: left; /* 기본 내용 왼쪽 정렬 */
     position: fixed;
     top: 50%;
@@ -463,7 +618,7 @@ dialog {
 /* 다이얼로그 타이틀 */
 /* 다이얼로그 타이틀 (GitHub Subhead 스타일) */
 dialog h3 {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "Apple SD Gothic Neo", "Malgun Gothic", Helvetica, Arial, sans-serif;
+    font-family: var(--app-font);
     font-size: 20px;
     font-weight: 400;
     line-height: 1.25;
@@ -769,10 +924,6 @@ dialog .btn-primary {
     border-radius: 6px;
 }
 
-.selected {
-    background-color: #d1ecf1 !important;
-}
-
 .close-btn {
     background: none;
     border: none;
@@ -788,7 +939,7 @@ dialog .btn-primary {
 /* 컨텐츠 타이틀 (GitHub Subhead 스타일) */
 .content > section > h2,
 .page-header .page-title {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "Apple SD Gothic Neo", "Malgun Gothic", Helvetica, Arial, sans-serif;
+    font-family: var(--app-font);
     font-size: 24px;
     font-weight: 400;
     line-height: 1.25;
@@ -855,8 +1006,8 @@ dialog .btn-primary {
    ========================================================= */
 .messenger {
     position: fixed;
-    right: 20px;
-    bottom: 20px;
+    right: 16px;
+    bottom: 80px; /* 콘텐츠 하단 푸터(GitHub 링크)를 가리지 않도록 위로 띄움 */
     z-index: 1000;
     font-size: 14px;
     color: #1f2328;
@@ -867,15 +1018,16 @@ dialog .btn-primary {
     position: relative;
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 10px 16px;
-    font-size: 14px;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 12px;
     font-weight: 600;
+    line-height: 20px;
     color: #fff;
     background-color: #24292f;
     border: none;
-    border-radius: 6px;
-    box-shadow: 0 8px 24px rgba(31, 35, 40, 0.2);
+    border-radius: 2em;
+    box-shadow: 0 4px 12px rgba(31, 35, 40, 0.2);
     cursor: pointer;
 }
 
@@ -884,10 +1036,10 @@ dialog .btn-primary {
 }
 
 .messenger-count {
-    min-width: 20px;
-    padding: 0 6px;
-    font-size: 12px;
-    line-height: 18px;
+    min-width: 18px;
+    padding: 0 5px;
+    font-size: 11px;
+    line-height: 16px;
     text-align: center;
     color: #24292f;
     background-color: #fff;
@@ -897,10 +1049,10 @@ dialog .btn-primary {
 /* 새 메시지 빨간 표시 */
 .messenger-unread {
     position: absolute;
-    top: -4px;
-    right: -4px;
-    width: 12px;
-    height: 12px;
+    top: -3px;
+    right: -3px;
+    width: 10px;
+    height: 10px;
     background-color: #cf222e;
     border: 2px solid #fff;
     border-radius: 50%;
@@ -921,7 +1073,7 @@ dialog .btn-primary {
     display: flex;
     flex-direction: column;
     height: 420px;
-    max-height: calc(100vh - 120px);
+    max-height: calc(100vh - 180px); /* 헤더 + 하단 여백(80px) 고려 */
 }
 
 .messenger-header {

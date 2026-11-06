@@ -1,5 +1,8 @@
 import {setupAjaxCsrf} from "../../common/csrf.js";
 import {downloadFile} from "../../common/common.js";
+import {createPrintOptions, registerCodeRuleDecorator} from "./code_rule_cells.js";
+
+registerCodeRuleDecorator();
 
 setupAjaxCsrf();
 
@@ -10,37 +13,15 @@ $(document).ready(() => {
     $("#grd-print-codeRuleGrid").on("click", () => {
         const checkedData = getCheckedData(tableId);
 
-        const dialogContent = $("<div></div>");
-        const form = $("<form></form>").attr("id", `edit-${tableId}`);
+        const message = checkedData.length === 0
+            ? "검색조건의 <b>전체 데이터</b>가 출력됩니다. 출력 형식을 선택해주세요."
+            : `<b>체크된 데이터 ${checkedData.length}건</b>이 출력됩니다. 출력 형식을 선택해주세요.`;
 
-        const message = checkedData.length === 0 ? "검색조건의 <b>전체 데이터</b>가 출력됩니다." : "<b>체크된 데이터</b>가 출력됩니다.";
-
-        const p = $("<p></p>").html(`${message}<br/>아래의 출력 형식을 선택해주세요.`);
-        form.append(p);
-
-        [
-            { id: "functionSpec", text: "기능 정의서" },
-            { id: "interfaceSpec", text: "인터페이스 설계서" },
-            { id: "technicalSpec", text: "기술 설계서" }
-        ].forEach(option => {
-            const btn = $("<button></button>")
-                .attr({
-                    type: "button",
-                    id: option.id
-                }).css("margin-top", "20px")
-                .addClass("btn btn-primary")
-                .text(option.text)
-                .on("click", () => {
-                    // 여기에 각 버튼 클릭 시 동작 처리
-                    console.log("선택된 출력 형식:", option.id);
-                    handlePrintFormat(option.id, option.text, checkedData);
-                });
-
-            form.append(btn);
-        });
-
-
-        dialogContent.append(form);
+        const dialogContent = createPrintOptions(message, [
+            { id: "functionSpec", text: "기능 정의서", desc: "기능 그룹별 메소드와 기능/목적 설명" },
+            { id: "interfaceSpec", text: "인터페이스 설계서", desc: "메소드별 입력값·출력값·예외처리" },
+            { id: "technicalSpec", text: "기술 설계서", desc: "메소드 형식을 포함한 상세 기술 정보" }
+        ], option => handlePrintFormat(option.id, option.text, checkedData));
 
 
         openDialog("div", {title: "설계서 출력", content: dialogContent});

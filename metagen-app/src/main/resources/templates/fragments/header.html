@@ -6,42 +6,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MetaGen</title>
 </head>
-<header>
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <div class="containers">
-            <a class="navbar-brand" href="/" onclick="setActiveMenu(event, 'dashboard')">MetaGen</a>
+<!-- GitHub 스타일 상단 헤더 : 로고 / 프로젝트 경로 + 사용자 메뉴 -->
+<header class="app-header">
+    <div class="app-header-left">
+        <a class="app-header-logo" href="/" onclick="setActiveMenu(event, 'dashboard')" aria-label="MetaGen 홈">
+            <img th:src="@{/images/favicon.png}" src="/images/favicon.png" alt="" width="28" height="28">
+        </a>
+        <nav class="app-header-context" aria-label="현재 위치">
+            <a class="app-header-crumb is-brand" href="/" onclick="setActiveMenu(event, 'dashboard')">MetaGen</a>
+            <th:block sec:authorize="isAuthenticated()">
+                <span class="app-header-sep" aria-hidden="true">/</span>
+                <span class="app-header-crumb is-project" id="project-info-link"></span>
+            </th:block>
+        </nav>
+    </div>
 
-            <ul class="navbar-nav ms-auto"> <!-- 오른쪽 정렬 -->
-                <!-- For anonymous users -->
-                <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a class="nav-link" href="/login">로그인</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAnonymous()">
-                    <a class="nav-link" href="/signup">회원가입</a>
-                </li>
+    <div class="app-header-right">
+        <!-- 로그인 사용자 : 아바타 드롭다운 -->
+        <div class="dropdown" sec:authorize="isAuthenticated()"
+             th:with="displayName=${#strings.isEmpty(#authentication.principal.name) ? #authentication.principal.username : #authentication.principal.name}">
+            <button type="button" class="app-header-avatar" data-bs-toggle="dropdown" aria-expanded="false"
+                    aria-label="사용자 메뉴 열기"
+                    th:text="${#strings.isEmpty(displayName) ? '?' : #strings.substring(displayName, 0, 1)}">A</button>
 
-                <!-- For authenticated users -->
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" href="#" id="project-info-link"></a>
-                </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" href="/account">내정보</a>
-                </li>
-                <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <a class="nav-link" href="/logout" onclick="localStorage.removeItem('selectedProject')">로그아웃</a>
-                </li>
-            </ul>
+            <div class="dropdown-menu dropdown-menu-end app-header-menu">
+                <div class="app-header-menu-user">
+                    <div class="app-header-avatar is-static"
+                         th:text="${#strings.isEmpty(displayName) ? '?' : #strings.substring(displayName, 0, 1)}">A</div>
+                    <div class="app-header-menu-names">
+                        <strong th:text="${displayName}">관리자</strong>
+                        <span th:text="${#authentication.principal.username}">admin</span>
+                    </div>
+                </div>
+                <div class="app-header-menu-divider"></div>
+                <a class="app-header-menu-item" href="/account">
+                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.56 8.69a5.5 5.5 0 0 1 3.41 4.62.75.75 0 0 1-1.49.17 4 4 0 0 0-7.96 0 .75.75 0 1 1-1.49-.17 5.5 5.5 0 0 1 3.41-4.62 3.5 3.5 0 1 1 4.12 0ZM8.5 3a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z"/></svg>
+                    내 정보
+                </a>
+                <div class="app-header-menu-divider"></div>
+                <a class="app-header-menu-item" href="/logout" onclick="localStorage.removeItem('selectedProject')">
+                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M2 2.75C2 1.78 2.78 1 3.75 1h2.5a.75.75 0 0 1 0 1.5h-2.5a.25.25 0 0 0-.25.25v10.5c0 .14.11.25.25.25h2.5a.75.75 0 0 1 0 1.5h-2.5A1.75 1.75 0 0 1 2 13.25Zm10.44 4.5-1.97-1.97a.75.75 0 0 1 1.06-1.06l3.25 3.25a.75.75 0 0 1 0 1.06l-3.25 3.25a.75.75 0 1 1-1.06-1.06l1.97-1.97H6.75a.75.75 0 0 1 0-1.5Z"/></svg>
+                    로그아웃
+                </a>
+            </div>
         </div>
-    </nav>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
+            const projectLink = document.getElementById("project-info-link");
+            if (!projectLink) return;
+
             const selectedProject = localStorage.getItem("selectedProject");
             if (selectedProject) {
-                const projectLink = document.getElementById("project-info-link");
-                if (projectLink) {
-                    projectLink.textContent = selectedProject;
-                }
+                projectLink.textContent = selectedProject;
+            } else {
+                // 프로젝트명이 없으면 구분자까지 숨김
+                projectLink.previousElementSibling?.remove();
+                projectLink.remove();
             }
         });
     </script>

@@ -60,7 +60,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class SmokeTest {
 
     private static final String USERNAME = "admin";
-    private static final String PASSWORD = "admin";
+    /** 초기 비밀번호 (V2 초기 데이터) : 변경 전에는 로그인할 수 없다 */
+    private static final String INITIAL_PASSWORD = "admin";
+    /** 로그인 전 비밀번호 변경 단계에서 바꾼 비밀번호 */
+    private static final String PASSWORD = "Smoke!Pass1";
     private static final long PROJECT_ID = 0L;
 
     @Value("${local.server.port}")
@@ -86,17 +89,36 @@ class SmokeTest {
         assertThat(get("/login", false).statusCode()).isEqualTo(200);
         assertThat(csrfToken()).isNotBlank();
 
-        // 2. 로그인 가능 프로젝트 조회
+        // 2. 초기 비밀번호(admin/admin)로는 프로젝트 조회 단계에서 차단 → 비밀번호 변경 요구
+        HttpResponse<String> blocked = postJson("/api/login/projects",
+                "{\"username\":\"" + USERNAME + "\",\"password\":\"" + INITIAL_PASSWORD + "\"}");
+        assertThat(blocked.statusCode()).isEqualTo(403);
+        assertThat(blocked.body()).contains("PASSWORD_CHANGE_REQUIRED");
+
+        // 화면을 거치지 않고 폼 로그인을 직접 호출해도 차단된다
+        HttpResponse<String> blockedLogin = postForm("/login",
+                "username=" + USERNAME + "&password=" + INITIAL_PASSWORD + "&project_id=" + PROJECT_ID);
+        assertThat(blockedLogin.statusCode()).isEqualTo(302);
+        assertThat(location(blockedLogin)).contains("/login?error=true");
+
+        // 3. 로그인 전 비밀번호 변경 (규칙 위반은 거부)
+        assertThat(postJson("/api/login/password", "{\"username\":\"" + USERNAME + "\",\"password\":\"" + INITIAL_PASSWORD
+                + "\",\"newPassword\":\"weak\"}").statusCode()).isEqualTo(400);
+        HttpResponse<String> changed = postJson("/api/login/password", "{\"username\":\"" + USERNAME + "\",\"password\":\"" + INITIAL_PASSWORD
+                + "\",\"newPassword\":\"" + PASSWORD + "\"}");
+        assertThat(changed.statusCode()).as(changed.body()).isEqualTo(200);
+
+        // 4. 새 비밀번호로 로그인 가능 프로젝트 조회
         HttpResponse<String> projects = postJson("/api/login/projects",
                 "{\"username\":\"" + USERNAME + "\",\"password\":\"" + PASSWORD + "\"}");
         assertThat(projects.statusCode()).isEqualTo(200);
         assertThat(projects.body()).contains("\"projectName\":\"MAIN\"");
 
-        // 3. 폼 로그인 (선택한 프로젝트 포함) : 초기 계정은 비밀번호 변경 전이므로 /account로 이동
+        // 5. 폼 로그인 (선택한 프로젝트 포함) : 비밀번호 변경을 마쳤으므로 대시보드로 이동
         HttpResponse<String> login = postForm("/login",
                 "username=" + USERNAME + "&password=" + PASSWORD + "&project_id=" + PROJECT_ID);
         assertThat(login.statusCode()).isEqualTo(302);
-        assertThat(location(login)).endsWith("/account");
+        assertThat(location(login)).endsWith("/");
 
         // 대시보드 렌더링 확인 겸 로그인 사용자 ID(#authentication.principal.id) 확보
         HttpResponse<String> dashboard = get("/", false);
@@ -137,7 +159,12 @@ class SmokeTest {
         HttpClient other = HttpClient.newBuilder().cookieHandler(otherCookies)
                 .followRedirects(HttpClient.Redirect.NEVER).build();
 
-        other.send(HttpRequest.newBuilder(uri("/login")).GET().build(), HttpResponse.BodyHandlers.discarding());
+        // 비로그인 상태의 로그인 / 회원가입 화면 렌더링
+        for (String path : new String[]{"/login", "/signup"}) {
+            HttpResponse<String> page = other.send(HttpRequest.newBuilder(uri(path)).GET().build(), HttpResponse.BodyHandlers.ofString());
+            assertThat(page.statusCode()).as(path).isEqualTo(200);
+            assertThat(page.body()).as(path).contains("class=\"auth-box\"").contains("</html>");
+        }
         String token = cookie(otherCookies, "XSRF-TOKEN");
 
         HttpResponse<String> login = other.send(HttpRequest.newBuilder(uri("/login"))
@@ -154,7 +181,9 @@ class SmokeTest {
     @ValueSource(strings = {
             "/", "/account", "/notice", "/dataDictionary", "/tableManage", "/columnManage",
             "/codeRule", "/codeRuleManage", "/designManage", "/testManage",
-            "/userManage", "/systemLog", "/projectManage", "/help"
+            "/userManage", "/systemLog", "/projectManage", "/help", "/denied",
+            "/popup/standardTermSearch", "/popup/columTableSearch", "/popup/columTableSearch/detail",
+            "/popup/codeRulePopup", "/popup/codeRuleDetailPopup"
     })
     @Order(10)
     @DisplayName("주요 화면 렌더링")
@@ -163,6 +192,70 @@ class SmokeTest {
 
         assertThat(response.statusCode()).as(path).isEqualTo(200);
         assertThat(response.body()).as(path).contains("</html>");
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("공지사항 등록 → 상세/등록/수정 팝업 렌더링")
+    void noticePopups() throws Exception {
+        String title = "smoke-notice-" + UUID.randomUUID();
+        HttpResponse<String> save = postJson("/api/saveNotice",
+                "{\"title\":\"" + title + "\",\"content\":\"공지 내용\",\"projectIds\":[" + PROJECT_ID + "]}");
+        assertThat(save.statusCode()).isEqualTo(200);
+
+        HttpResponse<String> list = get("/api/selectNotice/data?page=0&size=100", true);
+        String noticeId = null;
+        for (tools.jackson.databind.JsonNode row : tools.jackson.databind.json.JsonMapper.builder().build()
+                .readTree(list.body()).path("data")) {
+            if (title.equals(row.path("title").asString())) {
+                noticeId = row.path("id").asString();
+            }
+        }
+        assertThat(noticeId).as("등록한 공지사항이 목록에 있어야 한다").isNotBlank();
+
+        for (String path : new String[]{
+                "/popup/noticePopupDetail/" + noticeId,
+                "/popup/noticePopupSave?type=add",
+                "/popup/noticePopupSave?type=modify&id=" + noticeId}) {
+            HttpResponse<String> response = get(path, false);
+            assertThat(response.statusCode()).as(path).isEqualTo(200);
+            assertThat(response.body()).as(path).contains("</html>");
+        }
+
+        assertThat(get("/popup/noticePopupDetail/" + noticeId, false).body()).contains(title);
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("사이드바 : 권한 계층 적용으로 ADMIN 은 모든 메뉴가 보인다")
+    void sidebarMenusForAdmin() throws Exception {
+        String body = get("/", false).body();
+
+        for (String path : new String[]{"/userManage", "/projectManage", "/systemLog", "/notice",
+                "/dataDictionary", "/tableManage", "/columnManage",
+                "/codeRuleManage", "/codeRule", "/designManage", "/testManage"}) {
+            assertThat(body).as(path).contains("href=\"" + path + "\"");
+        }
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("폰트는 브라우저 캐시 허용 (페이지 이동마다 재다운로드 → 폰트 깜빡임 방지)")
+    void fontCacheable() throws Exception {
+        HttpResponse<String> font = get("/fonts/pretendard/PretendardVariable.woff2", false);
+
+        assertThat(font.statusCode()).isEqualTo(200);
+        String cacheControl = font.headers().firstValue("Cache-Control").orElse("");
+        assertThat(cacheControl).as("Cache-Control").contains("max-age=31536000").doesNotContain("no-store");
+
+        // CSS 는 캐시하되 매번 변경 여부를 확인한다 (배포 후 바로 반영)
+        HttpResponse<String> css = get("/css/primer.css", false);
+        assertThat(css.statusCode()).isEqualTo(200);
+        assertThat(css.headers().firstValue("Cache-Control").orElse("")).as("CSS Cache-Control")
+                .contains("no-cache").doesNotContain("no-store");
+
+        // 화면은 기존처럼 캐시하지 않는다 (로그인 사용자 정보 포함)
+        assertThat(get("/", false).headers().firstValue("Cache-Control").orElse("")).contains("no-store");
     }
 
     @ParameterizedTest(name = "그리드 {0}")
@@ -216,7 +309,8 @@ class SmokeTest {
         // 로그인 프로젝트 조회 요청은 비밀번호가 포함되므로 저장되더라도 원문이 남지 않아야 한다
         assertThat(logsRepository.findAll())
                 .extracting(Logs::getRequestBody)
-                .noneMatch(body -> body != null && body.contains("\"password\":\"" + PASSWORD + "\""));
+                .noneMatch(body -> body != null && (body.contains("\"password\":\"" + PASSWORD + "\"")
+                        || body.contains(PASSWORD))); // 로그인 전 비밀번호 변경의 newPassword 포함
     }
 
     @Test

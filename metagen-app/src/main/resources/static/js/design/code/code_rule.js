@@ -1,4 +1,7 @@
 import {setupAjaxCsrf} from "../../common/csrf.js";
+import {registerCodeRuleDecorator} from "./code_rule_cells.js";
+
+registerCodeRuleDecorator();
 
 const tableId = "codeRuleGrid";
 
