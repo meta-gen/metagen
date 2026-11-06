@@ -23,11 +23,13 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
 @Tag(name = "Excel API", description = "Excel 관련 API")
+@PreAuthorize("hasRole('USER')")
 public class ExcelRestController {
 
     private final ExcelService excelService;

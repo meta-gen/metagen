@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
 <head>
     <title>MetaGen</title>
@@ -31,7 +32,16 @@
     <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
     <link th:href="@{/css/bootstrap-grid.css}" rel="stylesheet">
 
-    <script type="module" th:src="@{/js/sidebar.js}"></script>
+    <!-- 사이드바 접힘 상태를 렌더링 전에 반영 (페이지 이동 시 깜빡임 방지) -->
+    <script>
+        try {
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                document.documentElement.classList.add('sidebar-collapsed');
+            }
+        } catch (e) {}
+    </script>
+
+    <script type="module" th:src="@{/js/messenger.js}"></script>
     <script th:src="@{/js/layout.js}"></script>
 
 </head>
@@ -42,12 +52,14 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <input type="hidden" id="hidden-user-id">
-        <!-- 모바일 사이드바 (처음엔 숨김 상태) -->
-        <aside class="sidebar mobile-sidebar d-none d-md-block" th:replace="~{fragments/sidebar::sidebar}"></aside>
+        <!-- 사이드바는 로그인한 사용자에게만 표시 (로그인/회원가입 화면 제외) -->
+        <th:block sec:authorize="isAuthenticated()">
+            <!-- 모바일 사이드바 (처음엔 숨김 상태) -->
+            <aside class="sidebar mobile-sidebar d-none d-md-block" th:replace="~{fragments/sidebar::sidebar}"></aside>
 
-        <!-- 모바일용 토글 버튼 -->
-        <button id="sidebarToggleBtn" class="sidebar-toggle-btn" onclick="toggleSidebar()"></button>
+            <!-- 모바일용 토글 버튼 -->
+            <button id="sidebarToggleBtn" class="sidebar-toggle-btn" onclick="toggleSidebar()"></button>
+        </th:block>
 
         <dialog id="myAlert">
             <h3>알림</h3>
@@ -67,7 +79,7 @@
         </dialog>
 
         <dialog id="mainConfirm">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="dialog-header">
                 <h3 id="mainDialogTitle">알림</h3>
                 <button onclick="closeDialog('div', true)" class="close-btn" aria-label="닫기">&times;</button>
             </div>
@@ -80,16 +92,49 @@
         </div>
     </div>
 
-    <div id="chat-box" class="chat-box" style="display: none;">
-        <div class="chat-header">
-            <span id="chat-target">채팅</span>
-            <button onclick="closeChat()" class="close-btn">×</button>
+    <!-- 메신저 (오른쪽 하단 스낵바) : 로그인 사용자 목록 ↔ 채팅 (messenger.js) -->
+    <div id="messenger" class="messenger" sec:authorize="isAuthenticated()">
+        <input type="hidden" id="hidden-user-id" th:value="${#authentication.principal.id}">
+
+        <!-- 접힌 상태 : 스낵바 (새 메시지가 있으면 빨간 표시) -->
+        <button type="button" id="messenger-snackbar" class="messenger-snackbar">
+            <span class="status-dot online"></span>
+            <span>현재 로그인 사용자</span>
+            <span id="messenger-active-count" class="messenger-count">0</span>
+            <span id="messenger-unread" class="messenger-unread" style="display: none;" aria-label="새 메시지"></span>
+        </button>
+
+        <div id="messenger-panel" class="messenger-panel" style="display: none;">
+            <!-- 로그인 사용자 목록 -->
+            <div id="messenger-users" class="messenger-view">
+                <div class="messenger-header">
+                    <span class="messenger-title">현재 로그인 사용자</span>
+                    <button type="button" class="messenger-icon-btn messenger-minimize" aria-label="접기">&minus;</button>
+                </div>
+                <div class="messenger-body">
+                    <ul id="user-list-active" class="user-list"></ul>
+
+                    <div id="inactive-toggle" class="user-section-title user-section-toggle">
+                        <span class="status-dot offline"></span>비로그인 사용자 <span id="toggle-arrow">▼</span>
+                    </div>
+                    <ul id="user-list-inactive" class="user-list user-list-inactive" style="display: none;"></ul>
+                </div>
+            </div>
+
+            <!-- 채팅 -->
+            <div id="chat-box" class="messenger-view" style="display: none;">
+                <div class="messenger-header">
+                    <button type="button" id="chat-back" class="messenger-icon-btn" aria-label="뒤로가기">&larr;</button>
+                    <span id="chat-target" class="messenger-title">채팅</span>
+                    <button type="button" class="messenger-icon-btn messenger-minimize" aria-label="접기">&minus;</button>
+                </div>
+                <div class="chat-messages" id="chat-messages"></div>
+                <form class="chat-input" id="chat-form">
+                    <input type="text" id="chat-input" placeholder="메시지를 입력하세요" autocomplete="off"/>
+                    <button type="submit" class="btn btn-primary" id="submit-btn">전송</button>
+                </form>
+            </div>
         </div>
-        <div class="chat-messages" id="chat-messages"></div>
-        <form class="chat-input" id="chat-form">
-            <input type="text" id="chat-input" placeholder="메시지를 입력하세요" autocomplete=off/>
-            <button type="submit" class="btn btn-primary" id="submit-btn">전송</button>
-        </form>
     </div>
 
     <!-- Footer -->

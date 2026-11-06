@@ -55,6 +55,20 @@
             };
         }
 
+        /* 화면 상단 버튼(.grid-extra-actions[data-grid-actions=tableId])을 해당 그리드 버튼 그룹 앞으로 이동 */
+        if (!window.moveGridExtraActions) {
+            window.moveGridExtraActions = function ($actions, tableId) {
+                const $buttonGroup = $(`#grd-add-${tableId}`).closest(".button-container");
+                if ($buttonGroup.length > 0) $buttonGroup.prepend($actions);
+            };
+
+            $(function () {
+                $(".grid-extra-actions[data-grid-actions]").each(function () {
+                    window.moveGridExtraActions($(this), $(this).data("grid-actions"));
+                });
+            });
+        }
+
         window.grid = function (tableId, dataUrl, crudActions = '', initCompleteCallback = '') {
             let isManager = false;
 
@@ -163,7 +177,9 @@
                         $(`#search-input-text-${tableId}`).hide();
                         $(`#search-input-number-${tableId}`).hide();
                         $(`#search-column-${tableId}`).hide();
+                        $select.closest(".search-container").hide(); // 빈 SearchBox 숨김
                     } else {
+                        $select.closest(".search-container").show();
                         $select.show();
                         $(`#grd-select-${tableId}`).show();
                         $select.trigger("change"); // 기본 컬럼 선택 적용
@@ -275,6 +291,7 @@
                                 data: col.column,
                                 title: isCheckbox ? "" : col.columnName,
                                 orderable: isFilter && !isCheckbox, // 정렬 비활성화
+                                visible: col.isVisible !== false, // 숨김 컬럼 (검색 조건으로만 사용)
                                 width: isCheckbox ? "40px" : undefined,
                                 className: isCheckbox ? "text-center" : "text-start",
                                 render: function (data, type, row) {
@@ -435,7 +452,7 @@
                 const id = $btn.data('id');        // ex) 해당 row의 id (선택 사항)
                 const $row = $btn.closest('tr');
 
-                const table = window.tableInstances['userTable'];
+                const table = window.tableInstances[tableId];
                 const rowData = table.row($row).data();
 
                 if (!rowData) return;

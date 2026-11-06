@@ -8,9 +8,10 @@
 
 <body>
 <section layout:fragment="content">
-    <h2>컬럼 관리</h2>
+    <div th:replace="~{fragments/page_header :: pageHeader('데이터 관리', '컬럼 관리')}"></div>
 
-    <div class="button-container">
+    <!-- 상단 버튼 : 그리드 버튼 그룹으로 이동 -->
+    <div class="grid-extra-actions" data-grid-actions="columnManageGrid">
         <button class="btn btn-primary" id="download-template">템플릿 다운로드</button>
         <button id="excel-upload" class="btn btn-primary">컬럼 업로드</button>
     </div>

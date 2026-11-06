@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Tag(name = "System Log Manage API", description = "시스템 로그 관련 API")
 @RestController
 @RequestMapping("/api")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('DBA')")
 public class SystemLogRestController {
 
     private final SystemLogService systemLogService;

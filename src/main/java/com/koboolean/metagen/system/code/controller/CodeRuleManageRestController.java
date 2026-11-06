@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +29,7 @@ public class CodeRuleManageRestController {
     private final CodeRuleManageService codeRuleManageService;
 
     @Operation(summary = "코드규칙 템플릿 등록", description = "프로젝트 내 코드규칙의 템플릿을 등록한다.")
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/saveCodeRuleManage/template")
     public ResponseEntity<Map<String, Boolean>> saveCodeRuleManageTemplate(@RequestBody TemplateDto template, @AuthenticationPrincipal AccountDto accountDto) {
         Long projectId = accountDto.getProjectId();
@@ -37,6 +39,7 @@ public class CodeRuleManageRestController {
     }
 
     @Operation(summary = "템플릿 목록 조회", description = "프로젝트에 해당하는 템플릿 목록을 조회한다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/selectCodeRuleManage/template")
     public ResponseEntity<Map<String, Object>> selectCodeRuleManageTemplate(@AuthenticationPrincipal AccountDto accountDto) {
         Long projectId = accountDto.getProjectId();
@@ -47,6 +50,7 @@ public class CodeRuleManageRestController {
     }
 
     @Operation(summary = "템플릿 삭제", description = "프로젝트에 해당하는 템플릿을 삭제한다.")
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/deleteCodeRuleManage/template/{selectedId}")
     public ResponseEntity<Map<String, Boolean>> deleteCodeRuleManageTemplate(@PathVariable(value = "selectedId") Long selectedId) {
         codeRuleManageService.deleteCodeRuleManageTemplate(selectedId);
@@ -55,12 +59,14 @@ public class CodeRuleManageRestController {
     }
 
     @Operation(summary = "코드규칙관리 컬럼조회", description = "코드규칙관리 컬럼을 조회한다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/selectCodeRuleManage/column")
     public ResponseEntity<List<ColumnDto>> getCodeRuleManageColumn() {
         return ResponseEntity.ok(codeRuleManageService.getCodeRuleManageColumn());
     }
 
     @Operation(summary = "코드규칙관리 데이터조회", description = "코드규칙관리 데이터를 조회한다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/selectCodeRuleManage/data")
     public ResponseEntity<Map<String,Object>> getCodeRuleManageData(
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
@@ -82,6 +88,7 @@ public class CodeRuleManageRestController {
     }
 
     @Operation(summary = "코드규칙관리 등록", description = "코드규칙관리 데이터를 등록한다.")
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping("/saveCodeRuleManage")
     public ResponseEntity<Map<String, Object>> saveCodeRuleManage(@RequestBody CodeRuleDto codeRuleDto, @AuthenticationPrincipal AccountDto accountDto) {
         codeRuleManageService.saveCodeRuleManage(codeRuleDto, accountDto);
@@ -90,6 +97,7 @@ public class CodeRuleManageRestController {
     }
 
     @Operation(summary = "코드규칙관리 삭제", description = "코드규칙관리 데이터를 삭제한다.")
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/deleteCodeRuleManage")
     public ResponseEntity<Map<String, Boolean>> deleteCodeRuleManage(@RequestBody List<CodeRuleDto> codeRuleDtos, @AuthenticationPrincipal AccountDto accountDto) {
         Long projectId = accountDto.getProjectId();
@@ -99,6 +107,7 @@ public class CodeRuleManageRestController {
     }
 
     @Operation(summary = "코드규칙관리 상세조회", description = "코드규칙관리 데이터를 상세 조회한다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/selectCodeRuleManage/detail/{id}")
     public ResponseEntity<Map<String, Object>> selectCodeRuleManageDetail(@AuthenticationPrincipal AccountDto accountDto, @PathVariable(value = "id") Long id) {
         Long projectId = accountDto.getProjectId();
@@ -108,6 +117,7 @@ public class CodeRuleManageRestController {
     }
 
     @Operation(summary = "코드규칙관리 수정", description = "코드규칙관리 데이터를 수정한다.")
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping("/saveCodeRuleManage")
     public ResponseEntity<Map<String, Object>> updateCodeRuleManage(@RequestBody CodeRuleDto codeRuleDto, @AuthenticationPrincipal AccountDto accountDto) {
         codeRuleManageService.updateCodeRuleManage(codeRuleDto, accountDto);

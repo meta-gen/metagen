@@ -6,12 +6,16 @@ import com.koboolean.metagen.security.exception.CustomException;
 import com.koboolean.metagen.security.exception.CustomFormException;
 import com.koboolean.metagen.security.exception.domain.ErrorCode;
 import com.koboolean.metagen.security.repository.UserRepository;
+import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
+import com.koboolean.metagen.system.project.repository.ProjectRepository;
 import com.koboolean.metagen.user.service.LoginService;
 import com.koboolean.metagen.utils.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +24,34 @@ public class LoginServiceImpl implements LoginService {
 
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
+    private final ProjectRepository projectRepository;
+
+    /**
+     * 로그인 전 단계 : 1. 로그인 정보(아이디/비밀번호)를 확인한 뒤 2. 접근 가능한 프로젝트를 조회한다.
+     *
+     * @param username
+     * @param password
+     * @return 접근 가능한 프로젝트 목록 (1건 이상)
+     */
+    @Override
+    public List<ProjectDto> selectLoginProjects(String username, String password) {
+
+        Account account = userRepository.findByUsernameAndIsActive(username, true);
+
+        if (account == null || password == null || !passwordEncoder.matches(password, account.getPassword())) {
+            throw new CustomException(ErrorCode.LOGIN_FAILED);
+        }
+
+        List<ProjectDto> projects = projectRepository.findProjectsByUsername(username).stream()
+                .map(ProjectDto::fromEntity)
+                .toList();
+
+        if (projects.isEmpty()) {
+            throw new CustomException(ErrorCode.NO_ACCESSIBLE_PROJECT);
+        }
+
+        return projects;
+    }
 
     /**
      * 패스워드 변경

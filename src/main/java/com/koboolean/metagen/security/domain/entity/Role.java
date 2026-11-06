@@ -6,7 +6,6 @@ import lombok.*;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -30,11 +29,6 @@ public class Role extends BaseEntity implements Serializable {
 
     @Column(name = "is_expression")
     private String isExpression;
-
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roleSet", cascade = CascadeType.ALL)
-    @OrderBy("orderNum desc")
-    private Set<Resources> resourcesSet = new LinkedHashSet<>();
-
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "userRoles", cascade = CascadeType.ALL)
     private Set<Account> accounts = new HashSet<>();

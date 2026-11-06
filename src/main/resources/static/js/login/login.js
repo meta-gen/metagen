@@ -1,28 +1,36 @@
+import {getCsrfToken} from "../common/csrf.js";
+
 document.addEventListener("DOMContentLoaded", function () {
 
     const loginForm = document.getElementById("loginForm");
-    const loginBtn = document.getElementById("login-btn");
 
-    // 로그인 버튼이 보일 때만 submit 허용
+    // 로그인 실패로 돌아온 경우 이전에 입력한 아이디 복원
+    if (new URLSearchParams(window.location.search).has("error")) {
+        document.getElementById("username").value = sessionStorage.getItem("loginUsername") || "";
+    }
+    sessionStorage.removeItem("loginUsername");
+
+    // 버튼 클릭 / Enter 입력 시 바로 제출하지 않고 프로젝트 선택 다이얼로그를 연다
+    // (프로젝트 선택 후 $("#loginForm").submit()으로 제출되며, 이 경우 submit 이벤트는 발생하지 않음)
     loginForm.addEventListener("submit", function (event) {
-        if (loginBtn.style.visibility === "hidden") {
-            event.preventDefault(); // 폼 제출 막기
-            openProjectDialog(); // 프로젝트 선택 다이얼로그 열기
-        }
+        event.preventDefault(); // 폼 제출 막기
+        openProjectDialog(); // 프로젝트 선택 다이얼로그 열기
     });
 
-    function fetchProjects(username) {
-        if (!username) {
-            console.warn("사용자 아이디가 입력되지 않았습니다.");
-            return $.Deferred().resolve([]); // 빈 배열 반환 (Promise와 동일한 기능)
-        }
-
+    /**
+     * 1. 로그인 정보(아이디/비밀번호) 확인 → 2. 접근 가능한 프로젝트 조회
+     * 로그인 정보가 틀리거나 접근 가능한 프로젝트가 없으면 서버가 오류 메시지를 반환한다.
+     */
+    function fetchLoginProjects(username, password) {
         return $.ajax({
-            url: `/api/checkProjectList/${username}`,
-            type: "GET",
+            url: "/api/login/projects",
+            type: "POST",
+            contentType: "application/json",
             dataType: "json",
-            error: function (xhr, status, error) {
-                console.error("프로젝트 리스트를 가져오는 데 실패했습니다.", error);  
+            data: JSON.stringify({ username, password }),
+            headers: {
+                "X-XSRF-TOKEN": getCsrfToken(),
+                "X-Requested-With": "XMLHttpRequest"
             }
         });
     }
@@ -39,12 +47,16 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        fetchProjects(username).then(projects => {
-            if (projects.length === 0) {
-                openAlert("해당 아이디로 접근 가능한 프로젝트가 없습니다.");  
-                return;
-            }
+        if (!document.getElementById("password").value) {
+            openAlert("패스워드를 입력하세요.");
+            return;
+        }
 
+        const password = document.getElementById("password").value;
+
+        fetchLoginProjects(username, password).fail(xhr => {
+            openAlert(xhr.responseJSON?.message || "로그인 정보를 확인하는 중 문제가 발생했습니다.");
+        }).done(projects => {
             if(projects.length === 1){
                 openConfirm(`${projects[0].projectName} 프로젝트로 로그인됩니다.`, () => {
                     $("#project_id").val(projects[0].id);
@@ -83,28 +95,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("project_id").value = selectedOption.value;
                 localStorage.setItem("selectedProject", selectedOption.text);
 
-                closeDialog("div", true);
+                // 선택한 프로젝트로 바로 로그인
+                closeDialog("div", false);
+                $("#loginForm").submit();
             });
 
             const dialogContent = document.createElement("div");
             dialogContent.appendChild(select);
 
-            openDialog("div", { title: "프로젝트 선택", content: dialogContent }, () => {
-
-                if($("#project_id").val() === ""){
-                    return;
-                }
-
-                $("#project-btn").hide();
-                $("#login-btn").css("visibility", "visible");
-                document.getElementById("project_id").value = document.getElementById("projectSelect").value;
-            });
+            openDialog("div", { title: "프로젝트 선택", content: dialogContent });
         });
     }
 
     window.openProjectDialog = openProjectDialog;
 
     function beforeLogin() {
+
+        // 로그인 실패 시 아이디를 복원하기 위해 저장
+        sessionStorage.setItem("loginUsername", document.getElementById("username").value.trim());
 
         if(!$("#project_id").val()) return;
 

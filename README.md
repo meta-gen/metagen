@@ -93,7 +93,9 @@ docker run -d \
   koboolean/metagen:h2-latest
 ```
 
-> 기본 이미지는 HTTPS 환경을 기준으로 배포됩니다. HTTP 환경에서 실행하려면 `http-`가 포함된 태그를 사용해 주세요.
+> HTTP / HTTPS 환경 모두 같은 이미지를 사용합니다. 요청이 HTTPS인 경우 세션 쿠키에 `Secure`가 자동으로 적용되며,
+> nginx 등 리버스 프록시에서 HTTPS를 처리하는 경우 `X-Forwarded-Proto` 헤더를 전달해 주세요.
+> (기존 `http-` 태그는 더 이상 필요하지 않습니다.)
 
 ---
 ## 계정

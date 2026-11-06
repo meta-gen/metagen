@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
       layout:decorate="~{layout}">
+<head>
+    <script type="module" th:src="@{/js/system/log/system_log.js}"></script>
+</head>
 <body>
 <section layout:fragment="content">
-    <h2>시스템 로그</h2>
+    <div th:replace="~{fragments/page_header :: pageHeader('시스템 관리', '시스템 로그')}"></div>
 
     <!-- 그리드 영역 -->
     <div id="gridContainer">

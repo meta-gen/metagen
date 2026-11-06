@@ -28,6 +28,7 @@ public class LogsDto {
     private String errorMessage; // 예외 발생 시 에러 메시지
     private String userAgent; // 브라우저, OS 정보
     private LocalDateTime timestamp; // 요청 발생 시간
+    private String detailButton; // 그리드 상세보기 버튼 명
 
     public static LogsDto fromEntity(Logs log) {
         return LogsDto.builder()
@@ -44,6 +45,7 @@ public class LogsDto {
                 .errorMessage(log.getErrorMessage())
                 .userAgent(log.getUserAgent())
                 .timestamp(log.getTimestamp())
+                .detailButton("상세보기")
                 .build();
     }
 }

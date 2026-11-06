@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,6 +21,7 @@ public class HomeController {
 
     private final UserService userService;
 
+    @PreAuthorize("hasRole('NOT_APPROVE')")
     @GetMapping(value="/")
     public String dashboard(Model model, @AuthenticationPrincipal AccountDto accountDto) {
 
@@ -38,6 +40,7 @@ public class HomeController {
      * 공지사항 리스트
      * @return
      */
+    @PreAuthorize("hasRole('NOT_APPROVE')")
     @GetMapping(value="/notice")
     public String notice(Model model, @AuthenticationPrincipal AccountDto accountDto) {
 
@@ -54,21 +57,25 @@ public class HomeController {
         return "pages/operation/notice_list";
     }
 
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/tableManage")
     public String tableManage() {
         return "pages/data/table-manage";
     }
 
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/columnManage")
     public String columnManage() {
         return "pages/data/column_manage";
     }
 
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/codeRule")
     public String codeRule() {
         return "pages/design/code_rule";
     }
 
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/codeRuleManage")
     public String codeRuleManage(Model model, @AuthenticationPrincipal AccountDto accountDto) {
 
@@ -79,34 +86,34 @@ public class HomeController {
         return "pages/design/code_rule_manage";
     }
 
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/designManage")
     public String designTestManage() {
         return "pages/design/design_manage";
     }
 
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/testManage")
     public String testManage() {
         return "pages/design/test_manage";
     }
 
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/userManage")
     public String manage() {
         return "pages/system/user_manage";
     }
 
+    @PreAuthorize("hasRole('DBA')")
     @GetMapping("/systemLog")
     public String systemLog() {
         return "pages/system/system_log";
     }
 
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/dataDictionary")
     public String dataDictionary() {
         return "pages/data/data_dictionary";
-    }
-
-    @GetMapping("/accessManage")
-    public String accessControl() {
-        return "pages/system/access_manage";
     }
 
     @GetMapping("/help")
@@ -114,6 +121,7 @@ public class HomeController {
         return "pages/operation/help";
     }
 
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/projectManage")
     public String projectManage(Model model, @AuthenticationPrincipal AccountDto accountDto) {
 

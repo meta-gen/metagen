@@ -24,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequestMapping("/api")
@@ -34,12 +35,14 @@ public class DataDictionaryRestController {
     private final DataDictionaryService dataDictionaryService;
 
     @Operation(summary = "표준 용어 컬럼 조회", description = "표준 용어 테이블의 컬럼 목록을 조회합니다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/getStandardTerms/column")
     public ResponseEntity<List<ColumnDto>> getStandardTermsColumn() {
         return ResponseEntity.ok(dataDictionaryService.getStandardTermsColumn());
     }
 
     @Operation(summary = "표준 용어 데이터 조회", description = "표준 용어 데이터를 조회합니다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/getStandardTerms/data")
     public ResponseEntity<Map<String,Object>> getStandardTermsData(
             @Parameter(description = "사용자 인증 정보", hidden = true)
@@ -61,12 +64,14 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "표준 단어 컬럼 조회", description = "표준 단어 테이블의 컬럼 목록을 조회합니다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/getStandardWords/column")
     public ResponseEntity<List<ColumnDto>> getStandardWordsColumn() {
         return ResponseEntity.ok(dataDictionaryService.getStandardWordsColumn());
     }
 
     @Operation(summary = "표준 단어 데이터 조회", description = "표준 단어 데이터를 조회합니다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/getStandardWords/data")
     public ResponseEntity<Map<String,Object>> getStandardWordsData(
             @Parameter(description = "사용자 인증 정보", hidden = true)
@@ -88,6 +93,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "표준 도메인 컬럼 조회", description = "표준 도메인 테이블의 컬럼 목록을 조회합니다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/getStandardDomains/column")
     public ResponseEntity<List<ColumnDto>> getStandardDomainsColumn() {
         return ResponseEntity.ok(dataDictionaryService.getStandardDomainsColumn());
@@ -95,6 +101,7 @@ public class DataDictionaryRestController {
 
     @Operation(summary = "표준 도메인 데이터 조회", description = "표준 도메인 데이터를 조회합니다.")
 
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/getStandardDomains/data")
 
     public ResponseEntity<Map<String,Object>> getStandardDomainsData(
@@ -117,6 +124,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "데이터사전 엑셀 업로드", description = "업로드한 엑셀 데이터를 파싱하여 데이터사전 테이블에 저장한다.")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping(value = "/uploadDataDictionaryExcelFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> uploadDataDictionaryExcelFile(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal AccountDto accountDto) throws IOException {
 
@@ -130,6 +138,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "도메인 승인여부 수정", description = "도메인 승인여부를 '승인', '미승인'으로 수정한다.")
+    @PreAuthorize("hasRole('DBA')")
     @PatchMapping(value = "/approvalStandardDomains/{isChecked}")
     public ResponseEntity<Map<String, Boolean>> approvalStandardDomains(@RequestBody List<StandardDomainDto> standardDomains
             , @AuthenticationPrincipal AccountDto accountDto
@@ -141,6 +150,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "용어 승인여부 수정", description = "용어 승인여부를 '승인', '미승인'으로 수정한다.")
+    @PreAuthorize("hasRole('DBA')")
     @PatchMapping(value = "/approvalStandardTerms/{isChecked}")
     public ResponseEntity<Map<String, Boolean>> approvalStandardTerms(@RequestBody List<StandardTermDto> standardTerms
             , @AuthenticationPrincipal AccountDto accountDto
@@ -152,6 +162,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "단어 승인여부 수정", description = "단어 승인여부를 '승인', '미승인'으로 수정한다.")
+    @PreAuthorize("hasRole('DBA')")
     @PatchMapping(value = "/approvalStandardWords/{isChecked}")
     public ResponseEntity<Map<String, Boolean>> approvalStandardWords(@RequestBody List<StandardWordDto> standardWords
             , @AuthenticationPrincipal AccountDto accountDto
@@ -163,6 +174,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "도메인 삭제", description = "도메인 데이터를 삭제처리한다.")
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping(value = "/deleteDataDictionary/standardDomains")
     public ResponseEntity<Map<String, Boolean>> deleteDataDictionaryStandardDomains(@RequestBody List<StandardDomainDto> standardDomains
             , @AuthenticationPrincipal AccountDto accountDto) {
@@ -174,6 +186,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "용어 삭제", description = "용어 데이터를 삭제처리한다.")
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping(value = "/deleteDataDictionary/standardTerms")
     public ResponseEntity<Map<String, Boolean>> deleteDataDictionaryStandardTerms(@RequestBody List<StandardTermDto> standardTerms
             , @AuthenticationPrincipal AccountDto accountDto) {
@@ -184,6 +197,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "단어 삭제", description = "단어 데이터를 삭제처리한다.")
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping(value = "/deleteDataDictionary/standardWords")
     public ResponseEntity<Map<String, Boolean>> deleteDataDictionaryStandardWords(@RequestBody List<StandardWordDto> standardWords
             , @AuthenticationPrincipal AccountDto accountDto) {
@@ -194,12 +208,14 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "단어/도메인 조회", description = "용어 등록을 위한 단어 및 도메인을 조회한다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping(value = "/getStandardTerms/popup/{termNm}")
     public ResponseEntity<Map<String, Object>> searchStandardTermList(@PathVariable(value = "termNm") String termNm, @AuthenticationPrincipal AccountDto accountDto) {
         return ResponseEntity.ok(dataDictionaryService.getStandardTermList(termNm, accountDto));
     }
 
     @Operation(summary = "용어 등록", description = "표준용어를 등록한다.")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping(value = "/insertDataDictionary/standardTerms")
     public ResponseEntity<Map<String, Boolean>> insertStandardTerms(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardTermDto standardTermDto){
 
@@ -209,6 +225,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "용어 수정", description = "표준용어를 수정한다.")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping(value = "/updateDataDictionary/standardTerms")
     public ResponseEntity<Map<String, Boolean>> updateStandardTerms(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardTermDto standardTermDto){
 
@@ -218,6 +235,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "도메인 등록", description = "표준 도메인을 등록한다.")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping(value = "/insertDataDictionary/standardDomains")
     public ResponseEntity<Map<String, Boolean>> insertStandardDomains(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardDomainDto standardDomainDto){
 
@@ -227,6 +245,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "도메인 수정", description = "표준 도메인을 수정한다.")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping(value = "/updateDataDictionary/standardDomains")
     public ResponseEntity<Map<String, Boolean>> updateStandardDomains(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardDomainDto standardDomainDto){
 
@@ -236,6 +255,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "단어 등록", description = "표준 단어를 등록한다.")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping(value = "/insertDataDictionary/standardWords")
     public ResponseEntity<Map<String, Boolean>> insertStandardWords(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardWordDto standardWordDto){
 
@@ -245,6 +265,7 @@ public class DataDictionaryRestController {
     }
 
     @Operation(summary = "단어 수정", description = "표준 단어를 수정한다.")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping(value = "/updateDataDictionary/standardWords")
     public ResponseEntity<Map<String, Boolean>> updateStandardWords(@AuthenticationPrincipal AccountDto accountDto, @RequestBody StandardWordDto standardWordDto){
 

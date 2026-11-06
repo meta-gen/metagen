@@ -13,14 +13,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationDetailsSource;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authorization.AuthorizationManager;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
@@ -35,6 +35,7 @@ import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -42,7 +43,6 @@ public class SecurityConfig {
     private final AuthenticationDetailsSource<HttpServletRequest, WebAuthenticationDetails> authenticationDetailsSource;
     private final FormAuthenticationSuccessHandler successHandler;
     private final FormAuthenticationFailureHandler failureHandler;
-    private final AuthorizationManager<RequestAuthorizationContext> authorizationManager;
     private final CustomOncePerRequestFilter customOncePerRequestFilter;
 
     @Bean
@@ -53,8 +53,13 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/css/**", "/js/**", "/images/**", "/h2-console/**"
                                         , "/favicon.*", "/*/icon-*", "/fonts/**", "/error", "/denied", "/help"
-                                        , "/signup", "/login", "/fragments/grid", "/isApprovalAvailable","/jsons/**", "/ws-chat/**", "/api/chat/history/**").permitAll()
-                        .anyRequest().access(authorizationManager))
+                                        , "/signup", "/login", "/fragments/grid", "/isApprovalAvailable","/jsons/**").permitAll()
+
+                        // 로그인 화면에서 호출 (익명 허용, 컨트롤러에서 @PreAuthorize로 제어)
+                        .requestMatchers(HttpMethod.POST, "/api/login/projects").permitAll()
+
+                        // 그 외 권한은 각 컨트롤러의 @PreAuthorize로 제어
+                        .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("/login")
                         .authenticationDetailsSource(authenticationDetailsSource)

@@ -31,11 +31,13 @@ public class SystemLogServiceImpl implements SystemLogService {
                 , new ColumnDto("사용자 ID","username", ColumnType.STRING, true)
                 , new ColumnDto("권한","roleName", ColumnType.STRING)
                 , new ColumnDto("응답 HTTP 상태코드","statusCode", ColumnType.STRING, true)
-                , new ColumnDto("요청 데이터","requestBody", ColumnType.STRING, true)
-                , new ColumnDto("응답 데이터","responseBody", ColumnType.STRING, true)
-                , new ColumnDto("에러 메시지","errorMessage", ColumnType.STRING, true)
-                , new ColumnDto("브라우저 정보","userAgent", ColumnType.STRING)
                 , new ColumnDto("요청 발생시간","timestamp", ColumnType.STRING)
+                , new ColumnDto("상세보기","detailButton", ColumnType.STRING, RowType.BUTTON, false)
+                // 요청/응답 데이터, 에러 메시지, 브라우저 정보는 상세보기 다이얼로그에서 확인 (검색 조건으로는 유지)
+                , new ColumnDto("요청 데이터","requestBody", ColumnType.STRING, true).hidden()
+                , new ColumnDto("응답 데이터","responseBody", ColumnType.STRING, true).hidden()
+                , new ColumnDto("에러 메시지","errorMessage", ColumnType.STRING, true).hidden()
+                , new ColumnDto("브라우저 정보","userAgent", ColumnType.STRING).hidden()
         );
     }
 
