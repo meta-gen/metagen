@@ -20,11 +20,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @Tag(name = "Code Rule API", description = "코드규칙 API")
+@PreAuthorize("hasRole('USER')")
 public class CodeRuleRestController {
 
     private final CodeRuleService codeRuleService;

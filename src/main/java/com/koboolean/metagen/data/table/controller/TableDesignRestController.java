@@ -22,6 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,12 +33,14 @@ public class TableDesignRestController {
     private final TableDesignService tableDesignService;
 
     @Operation(summary = "테이블 설계 컬럼 조회", description = "테이블 설계 테이블의 컬럼 목록을 조회합니다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/selectTable/column")
     public ResponseEntity<List<ColumnDto>> selectTableInfoColumn() {
         return ResponseEntity.ok(tableDesignService.selectTableInfoColumn());
     }
 
     @Operation(summary = "테이블 설계 데이터 조회", description = "테이블 설계 데이터를 조회합니다.")
+    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/selectTable/data")
     public ResponseEntity<Map<String,Object>> selectTableInfoData(
             @Parameter(description = "사용자 인증 정보", hidden = true)
@@ -59,6 +62,7 @@ public class TableDesignRestController {
     }
 
     @Operation(summary = "테이블 관리 테이블 등록", description = "테이블 관리 테이블 데이터를 등록합니다.")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping("/saveTable")
     public ResponseEntity<Map<String, Boolean>> saveTable(@RequestBody TableInfoDto tableInfoDto, @AuthenticationPrincipal AccountDto accountDto) {
         tableDesignService.saveTable(tableInfoDto, accountDto);
@@ -66,6 +70,7 @@ public class TableDesignRestController {
     }
 
     @Operation(summary = "테이블 관리 테이블 수정", description = "테이블 관리 테이블 데이터를 수정합니다.")
+    @PreAuthorize("hasRole('USER')")
     @PutMapping("/saveTable")
     public ResponseEntity<Map<String, Boolean>> updateTable(@RequestBody TableInfoDto tableInfoDto, @AuthenticationPrincipal AccountDto accountDto) {
         tableDesignService.updateTable(tableInfoDto, accountDto);
@@ -73,6 +78,7 @@ public class TableDesignRestController {
     }
 
     @Operation(summary = "테이블 관리 테이블 승인/승인취소", description = "테이블 관리 테이블 데이터를  승인/승인취소합니다.")
+    @PreAuthorize("hasRole('USER')")
     @PatchMapping("/saveTable/{isApproval}")
     public ResponseEntity<Map<String, Boolean>> updateTableIsApproval(@PathVariable(value = "isApproval") boolean isApproval, @AuthenticationPrincipal AccountDto accountDto, @RequestBody List<TableInfoDto> tableInfoDtos) {
         tableDesignService.updateTableIsApproval(isApproval, accountDto, tableInfoDtos);
@@ -81,6 +87,7 @@ public class TableDesignRestController {
     }
 
     @Operation(summary = "테이블 관리 테이블 삭제", description = "테이블 관리 테이블 데이터를  삭제합니다.")
+    @PreAuthorize("hasRole('USER')")
     @DeleteMapping("/deleteTable")
     public ResponseEntity<Map<String, Boolean>> deleteTable(@AuthenticationPrincipal AccountDto accountDto, @RequestBody List<TableInfoDto> tableInfoDtos) {
         tableDesignService.deleteTable(tableInfoDtos, accountDto);
@@ -88,6 +95,7 @@ public class TableDesignRestController {
     }
 
     @Operation(summary = "테이블 템플릿 엑셀 업로드", description = "테이블 템플릿 엑셀을 파싱하여 테이블에 저장한다.")
+    @PreAuthorize("hasRole('USER')")
     @PostMapping(value = "/uploadTableExcelFile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> uploadTableExcelFile(@RequestParam("file") MultipartFile file, @AuthenticationPrincipal AccountDto accountDto) throws IOException {
 

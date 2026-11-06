@@ -5,6 +5,14 @@ $(document).ready(function () {
     setupAjaxCsrf();
 
     /**
+     * 상단 버튼(템플릿 다운로드/업로드)을 활성 탭 그리드의 버튼 그룹으로 이동
+     */
+    $('a[data-bs-toggle="tab"]').on("shown.bs.tab", function () {
+        const tableId = $($(this).data("bs-target")).find(".grid-header [data-table-id]").first().data("table-id");
+        window.moveGridExtraActions($(".grid-extra-actions"), tableId);
+    });
+
+    /**
      * 공공데이터포털 공통표준용어 가져오기
      */
     $(document).on("click", "#download-data-portal", function () {

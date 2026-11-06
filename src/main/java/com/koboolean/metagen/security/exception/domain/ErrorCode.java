@@ -123,7 +123,17 @@ public enum ErrorCode {
     /**
      * 프로젝트 관리자는 삭제가 불가능합니다.
      */
-    MANAGER_NON_DELETED(HttpStatus.BAD_REQUEST, "MANAGER_NON_DELETED", "관리자는 변경이 불가능합니다.");
+    MANAGER_NON_DELETED(HttpStatus.BAD_REQUEST, "MANAGER_NON_DELETED", "관리자는 변경이 불가능합니다."),
+
+    /**
+     * 로그인 정보가 일치하지 않습니다. (아이디 존재 여부를 노출하지 않도록 동일 메시지 사용)
+     */
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "LOGIN_FAILED", "아이디 또는 비밀번호가 잘못되었습니다."),
+
+    /**
+     * 로그인 가능한 프로젝트가 없습니다.
+     */
+    NO_ACCESSIBLE_PROJECT(HttpStatus.FORBIDDEN, "NO_ACCESSIBLE_PROJECT", "해당 아이디로 접근 가능한 프로젝트가 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -41,3 +41,5 @@ out/
 /docker/volume/**
 /docker/volume/metagen/**
 /.metadata/
+
+CLAUDE.md

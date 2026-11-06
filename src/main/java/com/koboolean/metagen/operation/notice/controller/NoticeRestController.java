@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @Tag(name = "공지사항 API", description = "공지사항 조회 및 관리 API")
@@ -39,6 +40,7 @@ public class NoticeRestController {
      * @return String
      */
     @Operation(summary = "공지사항 리스트 조회", description = "공지사항 리스트를 조회한다.")
+    @PreAuthorize("hasRole('NOT_APPROVE')")
     @GetMapping("/selectNotice/data")
     public ResponseEntity<Map<String,Object>> getNoticeList(@RequestParam(value="page") int page
                                                           , @RequestParam(value="size") int size
@@ -61,6 +63,7 @@ public class NoticeRestController {
      * @return
      */
     @Operation(summary = "공지사항 컬럼 조회", description = "공지사항 리스트의 컬럼을 조회한다.")
+    @PreAuthorize("hasRole('NOT_APPROVE')")
     @GetMapping("/selectNotice/column")
     public ResponseEntity<List<ColumnDto>> getNoticeListColumn(@AuthenticationPrincipal AccountDto accountDto ) {
 
@@ -79,6 +82,7 @@ public class NoticeRestController {
      * 	url명칭은 동일하나, save의 경우 PostMapping으로 설정.
      */
     @Operation(summary = "공지사항 게시글 등록", description = "공지사항을 등록한다.")
+    @PreAuthorize("hasRole('MANAGER')")
     @PostMapping(value = "/saveNotice")
     public ResponseEntity<Map<String, Boolean>> insertNotice(@AuthenticationPrincipal AccountDto accountDto
     		                                               , @RequestBody BoardDto boardDto) {
@@ -98,6 +102,7 @@ public class NoticeRestController {
      * 	url명칭은 동일하나, update의 경우 PutMapping으로 설정.
      */
     @Operation(summary = "공지사항 게시글 수정", description = "공지사항을 등록한다.")
+    @PreAuthorize("hasRole('MANAGER')")
     @PutMapping(value = "/saveNotice")
     public ResponseEntity<Map<String, Boolean>> updateNotice(@AuthenticationPrincipal AccountDto accountDto
     		                                               , @RequestBody BoardDto boardDto) {
@@ -112,6 +117,7 @@ public class NoticeRestController {
      * @return
      */
     @Operation(summary = "공지사항 상세 조회", description = "선택된 공지사항의 상세정보를 조회한다.")
+    @PreAuthorize("hasRole('NOT_APPROVE')")
     @GetMapping("/selectNotice/detail/{id}")
     public ResponseEntity<Map<String, Object>> getNoticeDetail(@PathVariable Long id, @AuthenticationPrincipal AccountDto accountDto) {
 
@@ -125,6 +131,7 @@ public class NoticeRestController {
      * @return
      */
     @Operation(summary = "공지사항 삭제", description = "선택된 공지사항의 정보를 삭제한다.")
+    @PreAuthorize("hasRole('MANAGER')")
     @DeleteMapping("/deleteNotice")
     public ResponseEntity<Map<String, Object>> deleteNotice(@RequestBody List<BoardDto> boardDtos, @AuthenticationPrincipal AccountDto accountDto) {
 

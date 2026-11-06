@@ -5,13 +5,13 @@
 >
 <head>
     <script type="module" th:src="@{/js/data/dictionary/data_dictionary.js}"></script>
-    <script type="module" th:src="@{/js/system/project/project_manage.js}"></script>
 </head>
 
 <body>
 <section layout:fragment="content">
-    <h2>데이터 사전</h2>
-    <div class="button-container">
+    <div th:replace="~{fragments/page_header :: pageHeader('데이터 관리', '데이터 사전')}"></div>
+    <!-- 상단 버튼 : 활성 탭 그리드의 버튼 그룹으로 이동 (data_dictionary.js) -->
+    <div class="grid-extra-actions" data-grid-actions="standardDomains">
         <button class="btn btn-primary" onclick="openCustomDialog()">템플릿 다운로드</button>
         <button id="download-dictionary" class="btn btn-primary">등록 항목 다운로드</button>
         <button id="excel-upload" class="btn btn-primary">데이터사전 업로드</button>

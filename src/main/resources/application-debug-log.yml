@@ -1,0 +1,8 @@
+# 개발용 상세 로그 : local / h2-local / dev 프로필에 그룹으로 함께 적용된다 (application.yml spring.profiles.group)
+logging:
+  level:
+    org.springframework: DEBUG
+    com.koboolean.metagen: TRACE
+    org.hibernate.SQL: DEBUG
+    org.springframework.jdbc: DEBUG
+    org.springframework.security: DEBUG

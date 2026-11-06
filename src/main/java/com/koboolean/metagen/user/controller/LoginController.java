@@ -3,12 +3,12 @@ package com.koboolean.metagen.user.controller;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.domain.entity.Account;
 import com.koboolean.metagen.security.exception.CustomFormException;
+import com.koboolean.metagen.user.service.LoginUserCache;
 import com.koboolean.metagen.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,13 +22,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @Controller
 @RequiredArgsConstructor
 public class LoginController {
 
     private final UserService userService;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final LoginUserCache loginUserCache;
 
     /**
      * 로그인
@@ -64,12 +65,12 @@ public class LoginController {
      * @param response
      * @return
      */
+    @PreAuthorize("hasRole('NOT_APPROVE')")
     @GetMapping(value = "/logout")
     public String logout(@AuthenticationPrincipal AccountDto accountDto, HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = SecurityContextHolder.getContextHolderStrategy().getContext().getAuthentication();
 
-        String key = "login:user:" + accountDto.getId();
-        redisTemplate.delete(key);
+        loginUserCache.remove(accountDto.getId());
 
         if (authentication != null) {
             new SecurityContextLogoutHandler().logout(request, response, authentication);
@@ -98,6 +99,7 @@ public class LoginController {
         return "pages/login/denied";
     }
 
+    @PreAuthorize("hasRole('NOT_APPROVE')")
     @GetMapping(value = "/account")
     public String account(@AuthenticationPrincipal AccountDto accountDto, Authentication authentication, Model model) {
 
@@ -114,6 +116,8 @@ public class LoginController {
         }catch(CustomFormException e){
             model.addAttribute("errorMessage", e.getErrorCode().getMessage());
             model.addAttribute("projects", userService.selectAllProjectsIsActive());
+            // 오류 시 입력한 내역 유지 (패스워드 제외)
+            model.addAttribute("account", accountDto.setPassword(null));
             return "pages/login/signup";
         }
         return "redirect:/";

@@ -25,11 +25,13 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 @Tag(name = "Column Design API", description = "컬럼 설계 API")
+@PreAuthorize("hasRole('USER')")
 public class ColumnManageRestController {
 
     private final ColumnManageService columnManageService;

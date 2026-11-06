@@ -1,32 +1,28 @@
 package com.koboolean.metagen.security.conf;
 
-import com.koboolean.metagen.security.service.RoleService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 
 @Configuration
-@RequiredArgsConstructor
 public class RoleHierarchyConfig {
 
-    private final RoleService roleService;
-
+    /**
+     * 권한 계층
+     * ADMIN > MANAGER > DBA > USER > VIEWER > NOT_APPROVE > ANONYMOUS
+     *                 > USER
+     */
     @Bean
-    public RoleHierarchyImpl roleHierarchy() {
-        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy(findHierarchy());
-        return roleHierarchy;
-    }
-
-    private String findHierarchy() {
-        return roleService.findAllHierarchy();
-    }
-
-    // 동적으로 RoleHierarchy를 업데이트하는 메서드
-    public String updateHierarchy(RoleHierarchyImpl roleHierarchy) {
-        String hierarchy = findHierarchy();
-        roleHierarchy.setHierarchy(hierarchy);
-        return hierarchy;
+    public static RoleHierarchy roleHierarchy() {
+        return RoleHierarchyImpl.fromHierarchy("""
+                ROLE_ADMIN > ROLE_MANAGER
+                ROLE_MANAGER > ROLE_DBA
+                ROLE_MANAGER > ROLE_USER
+                ROLE_DBA > ROLE_USER
+                ROLE_USER > ROLE_VIEWER
+                ROLE_VIEWER > ROLE_NOT_APPROVE
+                ROLE_NOT_APPROVE > ROLE_ANONYMOUS
+                """);
     }
 }

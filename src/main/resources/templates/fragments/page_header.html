@@ -1,0 +1,11 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+    <!-- 화면 타이틀 영역 (GitHub Subhead 스타일) : 상위 메뉴 / 타이틀 -->
+    <div class="page-header" th:fragment="pageHeader(category, title)">
+        <nav class="page-breadcrumb" aria-label="메뉴 경로">
+            <span th:text="${category}"></span>
+        </nav>
+        <h2 class="page-title" th:text="${title}"></h2>
+    </div>
+
+</html>

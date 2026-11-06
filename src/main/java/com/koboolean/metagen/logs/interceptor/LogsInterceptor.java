@@ -2,6 +2,7 @@ package com.koboolean.metagen.logs.interceptor;
 
 import com.koboolean.metagen.logs.domain.entity.Logs;
 import com.koboolean.metagen.logs.service.LogsService;
+import com.koboolean.metagen.logs.util.SensitiveDataMasker;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -73,14 +75,14 @@ public class LogsInterceptor implements HandlerInterceptor {
                 return;
             }
 
-            // 요청 및 응답 본문 가져오기
-            String requestBody = getRequestBody(details.wrappedRequest);
+            // 요청 및 응답 본문 가져오기 (비밀번호 등 민감정보는 마스킹하여 저장)
+            String requestBody = SensitiveDataMasker.mask(getRequestBody(details.wrappedRequest));
             logger.debug("Captured Request Body: " + requestBody);
 
             String header = response.getHeader("Content-Disposition");
 
             // fileData 데이터 저장 시 크기 문제로 인한 File Data 출력
-            String responseBody = header != null && (header.contains("attachment") || header.contains("filename=")) ? "File Data" : getResponseBody(details.wrappedResponse);
+            String responseBody = header != null && (header.contains("attachment") || header.contains("filename=")) ? "File Data" : SensitiveDataMasker.mask(getResponseBody(details.wrappedResponse));
             logger.debug("Captured Response Body: " + responseBody);
 
             int statusCode = response.getStatus(); // 응답 상태 코드
@@ -106,6 +108,12 @@ public class LogsInterceptor implements HandlerInterceptor {
 
                 log.setTimestamp();
 
+                // 예외 메시지는 저장 전에 설정 (@RestControllerAdvice로 처리된 예외는 ex가 null이므로 요청 속성에서 가져옴)
+                Throwable error = ex != null ? ex : (Throwable) request.getAttribute(DispatcherServlet.EXCEPTION_ATTRIBUTE);
+                if (error != null) {
+                    log.setErrorMessage(error.getMessage());
+                }
+
                 logger.debug("Saved Log Data: " + log);
                 logsService.saveLogs(log);
             }
@@ -117,10 +125,6 @@ public class LogsInterceptor implements HandlerInterceptor {
 
             if (ex != null) {
                 logger.error("Exception Occurred: ", ex);
-
-                if (log != null) {
-                    log.setErrorMessage(ex.getMessage());
-                }
             }
         }
     }

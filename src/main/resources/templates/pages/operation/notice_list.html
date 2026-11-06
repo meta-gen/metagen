@@ -9,7 +9,7 @@
 	
 	<body>
 		<section layout:fragment="content">
-			<h2>공지사항</h2>
+			<div th:replace="~{fragments/page_header :: pageHeader('운영 관리', '공지사항')}"></div>
 
 		    <div th:replace="~{fragments/grid :: grid('noticeList', '/api/selectNotice', ${isProjectManager} ? 'cd' : '', 'noticeList_selectRow')}"></div>
 		</section>

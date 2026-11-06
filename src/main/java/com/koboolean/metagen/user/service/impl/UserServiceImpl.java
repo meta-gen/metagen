@@ -8,7 +8,7 @@ import com.koboolean.metagen.grid.enums.RowType;
 import com.koboolean.metagen.home.domain.dto.DashboardDto;
 import com.koboolean.metagen.home.domain.dto.RecentChangeDto;
 import com.koboolean.metagen.operation.notice.service.NoticeService;
-import com.koboolean.metagen.redis.service.MessageSaveService;
+import com.koboolean.metagen.chat.service.MessageSaveService;
 import com.koboolean.metagen.security.domain.dto.AccountDto;
 import com.koboolean.metagen.security.exception.CustomException;
 import com.koboolean.metagen.system.project.domain.dto.ProjectDto;
@@ -24,13 +24,13 @@ import com.koboolean.metagen.security.repository.UserRepository;
 import com.koboolean.metagen.system.project.repository.ProjectMemberRepository;
 import com.koboolean.metagen.system.project.repository.ProjectRepository;
 import com.koboolean.metagen.user.repository.DashboardRepository;
+import com.koboolean.metagen.user.service.LoginUserCache;
 import com.koboolean.metagen.user.service.UserService;
 import com.koboolean.metagen.utils.AuthUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final LoginUserCache loginUserCache;
 
     private final DashboardRepository dashboardRepository;
 
@@ -278,29 +278,16 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> result = new HashMap<>();
 
         List<AccountDto> accountDtos = getAccountList(); // 전체 사용자
-        Set<String> keys = redisTemplate.keys("login:user:*");
-
-        Map<String, Map<Object, Object>> redisDataMap = new HashMap<>();
-
-        if (keys != null) {
-            for (String key : keys) {
-                Map<Object, Object> data = redisTemplate.opsForHash().entries(key);
-                if (!data.isEmpty()) {
-                    redisDataMap.put(key, data);
-                }
-            }
-        }
+        Map<String, Map<String, String>> loginUserMap = loginUserCache.getAll(); // 로그인된 사용자 (key : 사용자 id)
 
         List<Map<String, String>> loggedIn = new ArrayList<>();
         List<Map<String, String>> loggedOut = new ArrayList<>();
 
         for (AccountDto dto : accountDtos) {
-            String redisKey = "login:user:" + dto.getId();
+            Map<String, String> loginUser = loginUserMap.get(dto.getId());
 
-            if (redisDataMap.containsKey(redisKey)) {
-                Map<Object, Object> redisData = redisDataMap.get(redisKey);
-
-                Long projectId = Long.parseLong(String.valueOf(redisData.get("projectId")));
+            if (loginUser != null) {
+                Long projectId = Long.parseLong(loginUser.get("projectId"));
 
                 String username = dto.getUsername();
                 String projectName = getProjectName(projectId);

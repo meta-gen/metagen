@@ -1,17 +1,21 @@
-let stompClient = null;
-
 // 메뉴 상태 저장
 window.toggleMenu = function (event, menuId, menuLink) {
     event.preventDefault(); // 기본 동작 방지
     const menu = document.getElementById(menuId);
-    const isOpen = menu.classList.contains('show');
+
+    // 사이드바가 접혀 있으면 펼치면서 해당 메뉴를 연다
+    const isCollapsed = document.documentElement.classList.contains('sidebar-collapsed');
+    if (isCollapsed) {
+        toggleSidebarCollapse();
+    }
+    const isOpen = !isCollapsed && menu.classList.contains('show');
 
     // 상태 저장
     sessionStorage.setItem('activeMenu', isOpen ? '' : menuId);
 
     // 모든 메뉴 닫기
-    document.querySelectorAll('.list-group .collapse').forEach(item => item.classList.remove('show'));
-    document.querySelectorAll('.list-group a').forEach(link => link.classList.remove('active'));
+    document.querySelectorAll('.sidebar-nav .collapse').forEach(item => item.classList.remove('show'));
+    document.querySelectorAll('.sidebar-nav a').forEach(link => link.classList.remove('active'));
 
     if (!isOpen) {
         menu.classList.add('show');
@@ -26,7 +30,7 @@ window.setActiveMenu = function (event, menuId) {
     sessionStorage.removeItem('activeSubmenu'); // 2-depth 초기화
 
     // 모든 메뉴 비활성화
-    document.querySelectorAll('.list-group a').forEach(link => link.classList.remove('active'));
+    document.querySelectorAll('.sidebar-nav a').forEach(link => link.classList.remove('active'));
 
     // 클릭한 메뉴 활성화
     const menuLink = document.querySelector(`[data-menu-id="${menuId}"]`);
@@ -35,17 +39,17 @@ window.setActiveMenu = function (event, menuId) {
     }
 
     // 페이지 이동
-    window.location.href = event.target.href;
+    window.location.href = event.currentTarget.href;
 };
 
 window.setActiveSubmenu = function (event, submenuId) {
     event.preventDefault();
-    const parentMenuId = event.target.closest('.collapse').id;
+    const parentMenuId = event.currentTarget.closest('.collapse').id;
     sessionStorage.setItem('activeMenu', parentMenuId);
     sessionStorage.setItem('activeSubmenu', submenuId);
 
     // 페이지 이동
-    window.location.href = event.target.href;
+    window.location.href = event.currentTarget.href;
 };
 
 window.restoreMenuState = function () {
@@ -86,12 +90,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // 포커스를 제거할 조건
     if (excludedPaths.includes(currentPath)) {
         // 사이드바에서 active 클래스 제거
-        document.querySelectorAll('.list-group a').forEach(item => {
+        document.querySelectorAll('.sidebar-nav a').forEach(item => {
             item.classList.remove('active');
         });
 
         // 모든 열려 있는 메뉴를 닫습니다.
-        document.querySelectorAll('.list-group .collapse').forEach(item => {
+        document.querySelectorAll('.sidebar-nav .collapse').forEach(item => {
             item.classList.remove('show');
         });
     }
@@ -101,21 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
     makeDialogDraggable("myConfirm");
     makeDialogDraggable("mainConfirm", "#mainDialogTitle");
 
-    if (typeof Stomp === 'undefined') {
-        console.error('STOMP 라이브러리가 로딩되지 않았습니다.');
-        return;
-    }
-
-    const socket = new SockJS("/ws-chat");
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
-        console.log("WebSocket 연결됨:", frame);
-    });
-
-    $("#submit-btn").on("click", function (e) {
-        e.preventDefault();
-        sendChatMessage();
-    })
 });
 
 function callableFunction() {
@@ -252,119 +241,33 @@ function toggleSidebar() {
     }
 }
 
-let currentTarget = null;
+/**
+ * PC 사이드바 접기/펼치기
+ */
+function toggleSidebarCollapse() {
+    const collapsed = document.documentElement.classList.toggle('sidebar-collapsed');
 
-function openChat(user) {
-    currentTarget = user.id;
-    $("#chat-target").text(`${user.name}님과의 채팅`);
-    $("#chat-box").show();
-    $("#chat-messages").empty();
+    try {
+        localStorage.setItem('sidebarCollapsed', String(collapsed));
+    } catch (e) {}
 
-    const loginUserId = $("#hidden-user-id").val();
+    syncSidebarCollapseBtn();
 
-    stompClient.subscribe("/sub/chat/" + loginUserId, function (messageOutput) {
-        const message = JSON.parse(messageOutput.body);
-        const isCurrentChat = message.from === currentTarget;
-
-        fetchActiveUsers();
-
-        if (isCurrentChat) {
-            appendMessage(message.from, message.content);
-        } else {
-            showPreviewOrBadge(message.from, message.content);
+    // 사이드바 너비 변경 후 그리드 컬럼 너비 재계산
+    setTimeout(function () {
+        if ($.fn.dataTable) {
+            $.fn.dataTable.tables({ visible: true, api: true }).columns.adjust();
         }
-    });
-
-    loadChatHistory(user.id);
+    }, 250);
 }
 
-function closeChat() {
-    $("#chat-box").hide();
-    currentTarget = null;
+function syncSidebarCollapseBtn() {
+    const btn = document.getElementById('sidebarCollapseBtn');
+    if (!btn) return;
+
+    const collapsed = document.documentElement.classList.contains('sidebar-collapsed');
+    btn.setAttribute('aria-expanded', String(!collapsed));
+    btn.setAttribute('aria-label', collapsed ? '사이드바 펼치기' : '사이드바 접기');
 }
 
-function sendChatMessage() {
-    const content = $("#chat-input").val();
-    if (!content.trim()) return;
-
-    const userId = $("#hidden-user-id").val();
-
-    stompClient.send("/pub/chat.send", {}, JSON.stringify({
-        from: userId,
-        to: currentTarget,
-        content: content,
-        timestamp: new Date()
-    }));
-
-    $("#chat-input").val("");
-    appendMessage(userId, content);
-}
-
-function appendMessage(sender, content) {
-    const loginUserId = $("#hidden-user-id").val();
-    const className = sender === loginUserId ? "me" : "you";
-    $("#chat-messages").append(
-        `<div class="chat-message ${className}">${content}</div>`
-    );
-
-    const chatMessages = document.getElementById("chat-messages");
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-
-    $.ajax({
-        url: `/api/chat/history/${sender}`,
-        type: "DELETE",
-        beforeSend: function(xhr, settings) {
-            xhr.setRequestHeader('X-XSRF-TOKEN', window.getCsrfTokenFromWindow());
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.setRequestHeader('Content-Type', 'application/json');
-        },
-        complete: function () {
-            // 로딩바 없이 작업수행
-        },
-        success: function (response) {
-            if(response.result){
-                const userElement = document.querySelector(`.user-item[data-id="${sender}"]`);
-
-                if (userElement) {
-                    // 간단히 뱃지 표시
-                    let badge = userElement.querySelector(".new-badge");
-                    if (badge) {
-                        badge.style.display = "none"; // 숨겨진 뱃지를 숨김
-                    }
-                }
-            }
-        }
-    })
-}
-
-function loadChatHistory(user) {
-    $.ajax({
-        url: `/api/chat/history?user=${user}`,
-        type: "GET",
-        success: function (messages) {
-            messages.forEach(msg => {
-                appendMessage(msg.sender, msg.content);
-            });
-        }
-    });
-}
-
-function showPreviewOrBadge(fromId, content) {
-    const userElement = document.querySelector(`.user-item[data-id="${fromId}"]`);
-
-    if (userElement) {
-        // 간단히 뱃지 표시
-        let badge = userElement.querySelector(".new-badge");
-        if (badge) {
-            badge.style.display = "inline"; // 숨겨진 뱃지를 보여줌
-        }
-
-        // 또는 미리보기 업데이트
-        /*const preview = userElement.querySelector(".preview");
-        if (preview) {
-            preview.textContent = content;
-        }*/
-    } else {
-        console.warn("해당 유저 요소를 찾을 수 없습니다:", fromId);
-    }
-}
+$(document).ready(syncSidebarCollapseBtn);

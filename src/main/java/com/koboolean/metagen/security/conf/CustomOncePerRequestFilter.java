@@ -1,13 +1,13 @@
 package com.koboolean.metagen.security.conf;
 
 import com.koboolean.metagen.security.domain.dto.AccountDto;
+import com.koboolean.metagen.user.service.LoginUserCache;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -16,13 +16,12 @@ import org.springframework.web.util.ContentCachingResponseWrapper;
 import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
-import java.time.Duration;
 
 @Component
 @RequiredArgsConstructor
 public class CustomOncePerRequestFilter extends OncePerRequestFilter {
 
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final LoginUserCache loginUserCache;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -33,7 +32,7 @@ public class CustomOncePerRequestFilter extends OncePerRequestFilter {
             Cookie cookie = WebUtils.getCookie(request, "XSRF-TOKEN");
             String token = csrfToken.getToken();
             if (cookie == null || (token != null && !token.equals(cookie.getValue()))) {
-                updateSessionCookie(response, "XSRF-TOKEN", token, false);
+                updateSessionCookie(request, response, "XSRF-TOKEN", token, false);
             }
         }
 
@@ -56,12 +55,8 @@ public class CustomOncePerRequestFilter extends OncePerRequestFilter {
         AccountDto accountDto = (AccountDto) request.getSession().getAttribute("account");
 
         if (accountDto != null && accountDto.getId() != null) {
-            String key = "login:user:" + accountDto.getId();
-            Boolean exists = redisTemplate.hasKey(key);
-            if (exists) {
-                // TTL 연장
-                redisTemplate.expire(key, Duration.ofMinutes(30));
-            }
+            // 로그인 사용자 만료시간 연장
+            loginUserCache.extend(accountDto.getId());
         }
 
         // 필터 체인 실행 (중요: 감싼 요청과 응답을 사용해야 함)
@@ -73,10 +68,11 @@ public class CustomOncePerRequestFilter extends OncePerRequestFilter {
         }
     }
 
-    private static void updateSessionCookie(HttpServletResponse response, String type, String token, boolean httpOnly) {
+    private static void updateSessionCookie(HttpServletRequest request, HttpServletResponse response, String type, String token, boolean httpOnly) {
         Cookie cookie = new Cookie(type, token);
         cookie.setPath("/");
         cookie.setHttpOnly(httpOnly);
+        cookie.setSecure(request.isSecure()); // HTTPS 요청(프록시 X-Forwarded-Proto 포함)인 경우에만 Secure
         cookie.setMaxAge(1800); // 요청 시마다 만료 시간 갱신
         response.addCookie(cookie);
     }
