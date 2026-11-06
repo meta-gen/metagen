@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}"
+>
+<head>
+    <script type="module" th:src="@{/js/data/dictionary/data_dictionary.js}"></script>
+</head>
+
+<body>
+<section layout:fragment="content">
+    <div th:replace="~{fragments/page_header :: pageHeader('데이터 관리', '데이터 사전')}"></div>
+    <!-- 상단 버튼 : 활성 탭 그리드의 버튼 그룹으로 이동 (data_dictionary.js) -->
+    <div class="grid-extra-actions" data-grid-actions="standardDomains">
+        <button class="btn btn-primary" onclick="openCustomDialog()">템플릿 다운로드</button>
+        <button id="download-dictionary" class="btn btn-primary">등록 항목 다운로드</button>
+        <button id="excel-upload" class="btn btn-primary">데이터사전 업로드</button>
+    </div>
+
+    <input type="file" id="upload-file" style="display: none" accept=".xlsx, .xls"/>
+
+    <!-- 탭 네비게이션 -->
+    <ul class="nav nav-tabs mt-3">
+        <li class="nav-item">
+            <a class="nav-link active" id="standard-domains-tab" data-bs-toggle="tab" data-bs-target="#standard-domains">표준 도메인</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="standard-words-tab" data-bs-toggle="tab" data-bs-target="#standard-words">표준 단어</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="standard-terms-tab" data-bs-toggle="tab" data-bs-target="#standard-terms">표준 용어</a>
+        </li>
+    </ul>
+
+    <!-- 탭 콘텐츠 -->
+    <div class="tab-content mt-3">
+        <div class="tab-pane fade show active" id="standard-domains" th:insert="~{fragments/standard_domains}"></div>
+        <div class="tab-pane fade" id="standard-words" th:insert="~{fragments/standard_words}"></div>
+        <div class="tab-pane fade" id="standard-terms" th:insert="~{fragments/standard_terms}"></div>
+    </div>
+
+</section>
+</body>
+</html>

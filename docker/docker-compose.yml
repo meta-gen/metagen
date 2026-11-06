@@ -1,6 +1,6 @@
 services:
   meta-gen-postgres:
-    image: postgres:16.3
+    image: postgres:18.6
     restart: always
     environment:
       POSTGRES_PASSWORD: meta-gen
@@ -9,7 +9,7 @@ services:
     ports:
       - 15439:5432
     volumes:
-      - ./volume/metagen:/var/lib/postgresql/data
+      - ./volume/metagen:/var/lib/postgresql
     container_name: meta-gen-postgres
     networks:
       - meta-network

@@ -1,84 +1,60 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
 plugins {
-    id 'java'
-    id 'org.springframework.boot' version '3.4.1'
-    id 'io.spring.dependency-management' version '1.1.7'
+    alias(libs.plugins.spring.boot) apply false
+    alias(libs.plugins.spring.dependency.management) apply false
 }
 
-group = 'com.koboolean'
-version = '0.0.1-SNAPSHOT'
+// 모든 모듈 공통 설정
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'io.spring.dependency-management'
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(21)
+        }
     }
-    
-    /* Java version을 Gradle에서 하기 위한 설정.
-     *  프로젝트가 Gradle로 관리 중이라 Eclipse가 설정을 강제로 못 바꾸는 중
-     *  Gradle 프로젝트는 컴파일러 옵션을 build.gradle에서 관리하기 때문에,
-     *  STS (Eclipse)에서는 해당 옵션을 비활성화시켜버리는 경우가 있어
-     */
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
-}
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
+    repositories {
+        mavenCentral()
+    }
+
+    // Boot 플러그인은 app 모듈에만 적용하고, 나머지 모듈은 Boot BOM 으로 버전만 맞춘다
+    dependencyManagement {
+        imports {
+            mavenBom SpringBootPlugin.BOM_COORDINATES
+        }
+    }
+
+    dependencies {
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+
+        // 엔티티가 있는 모듈마다 자기 Q클래스를 생성한다 (다른 모듈의 Q클래스는 의존 jar 에서 참조)
+        annotationProcessor variantOf(libs.querydsl.apt) { classifier('jpa') }
+        annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
+        annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs << '-Xlint:deprecation'
+    }
+
+    tasks.named('test') {
+        useJUnitPlatform()
+        // 루트에서 --tests 로 단일 테스트를 지정해도 해당 테스트가 없는 모듈이 실패하지 않도록
+        filter.failOnNoMatchingTests = false
     }
 }
 
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.1'
-    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5'
-    implementation 'org.springframework.boot:spring-boot-starter-batch'
-    implementation 'org.modelmapper:modelmapper:3.1.0'
-    implementation 'org.apache.poi:poi:5.3.0'
-    implementation 'org.apache.poi:poi-ooxml:5.3.0'
-    implementation 'com.github.ben-manes.caffeine:caffeine'
-    implementation 'org.flywaydb:flyway-core'
-    implementation 'org.flywaydb:flyway-database-postgresql'
-
-    implementation 'org.springframework.boot:spring-boot-starter-websocket'
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
-    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-
-    implementation 'org.apache.xmlbeans:xmlbeans:5.1.1'
-    implementation 'org.apache.commons:commons-collections4:4.4'
-    compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'org.postgresql:postgresql'
-    runtimeOnly 'com.h2database:h2'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
-    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
-def querydslSrcDir = 'src/main/generated'
-
-clean {
-    delete file(querydslSrcDir)
-}
-
-tasks.withType(JavaCompile) {
-    options.annotationProcessorGeneratedSourcesDirectory = file('src/main/generated')
+// 메뉴 모듈 공통 : core(인증/프로젝트) 위에 올라가고, 테스트는 core 픽스처를 사용한다
+configure(subprojects.findAll { it.name in ['metagen-system', 'metagen-operation', 'metagen-data', 'metagen-design', 'metagen-chat'] }) {
+    dependencies {
+        api project(':metagen-core')
+        testImplementation testFixtures(project(':metagen-core'))
+    }
 }

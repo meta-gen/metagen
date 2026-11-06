@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:21-jdk
 
 WORKDIR /app
 
@@ -6,4 +6,4 @@ COPY . .
 
 RUN ./gradlew clean build -x test --no-daemon
 
-CMD ["java", "-jar", "build/libs/metagen-0.0.1-SNAPSHOT.jar", "--spring.profiles.active=docker"]
+CMD ["java", "-jar", "metagen-app/build/libs/metagen.jar", "--spring.profiles.active=docker"]
