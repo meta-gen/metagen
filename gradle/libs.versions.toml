@@ -1,0 +1,21 @@
+# Spring Boot BOM 이 관리하지 않는 라이브러리/플러그인 버전만 둔다.
+# (Boot 관리 대상은 build.gradle 에서 버전 없이 선언)
+[versions]
+spring-boot = "4.1.2"
+spring-dependency-management = "1.1.7"
+# OpenFeign 포크 (원본 com.querydsl 5.x 는 2021년 이후 릴리스 없음, 패키지명은 com.querydsl 동일)
+querydsl = "7.7"
+springdoc = "3.2.0"
+modelmapper = "3.1.0"
+poi = "5.3.0"
+
+[libraries]
+querydsl-jpa = { module = "io.github.openfeign.querydsl:querydsl-jpa", version.ref = "querydsl" }
+querydsl-apt = { module = "io.github.openfeign.querydsl:querydsl-apt", version.ref = "querydsl" }
+springdoc-webmvc-ui = { module = "org.springdoc:springdoc-openapi-starter-webmvc-ui", version.ref = "springdoc" }
+modelmapper = { module = "org.modelmapper:modelmapper", version.ref = "modelmapper" }
+poi-ooxml = { module = "org.apache.poi:poi-ooxml", version.ref = "poi" }
+
+[plugins]
+spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
+spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }

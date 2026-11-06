@@ -1,0 +1,9 @@
+// 공통 기반 - 모든 모듈이 쓰는 웹/JPA/보안/QueryDSL/엑셀 스택을 api 로 노출한다
+dependencies {
+    api 'org.springframework.boot:spring-boot-starter-webmvc'
+    api 'org.springframework.boot:spring-boot-starter-data-jpa'
+    api 'org.springframework.boot:spring-boot-starter-security'
+    api libs.springdoc.webmvc.ui
+    api libs.querydsl.jpa
+    api libs.poi.ooxml
+}

@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "idea": {
+      "url": "http://127.0.0.1:64342/stream",
+      "type": "http",
+      "headers": {
+        "IJ_MCP_LAUNCH_ORIGIN": "${IJ_MCP_LAUNCH_ORIGIN:-}"
+      }
+    }
+  }
+}

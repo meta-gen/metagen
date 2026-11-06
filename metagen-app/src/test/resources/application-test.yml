@@ -1,0 +1,12 @@
+# 스모크 테스트 전용 (H2 In-Memory) : 기동 시마다 Flyway로 스키마/초기 데이터 새로 생성
+spring:
+  datasource:
+    url: jdbc:h2:mem:meta-gen-test;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: meta-gen
+    password: meta-gen
+
+# API 문서 생성도 회귀 확인 대상에 포함 (springdoc 업그레이드 대비)
+springdoc:
+  api-docs:
+    enabled: true

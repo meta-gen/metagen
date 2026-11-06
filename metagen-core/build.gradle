@@ -1,0 +1,11 @@
+// 인증/로그인, 프로젝트 테넌시, 요청 로그
+apply plugin: 'java-test-fixtures'
+
+dependencies {
+    api project(':metagen-common')
+    api libs.modelmapper
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+
+    // 다른 모듈 테스트에서 공용으로 쓰는 픽스처 (src/testFixtures)
+    testFixturesApi 'org.mockito:mockito-core'
+}
