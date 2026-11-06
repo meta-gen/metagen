@@ -56,7 +56,7 @@ public class SecurityConfig {
                                         , "/signup", "/login", "/fragments/grid", "/isApprovalAvailable","/jsons/**").permitAll()
 
                         // 로그인 화면에서 호출 (익명 허용, 컨트롤러에서 @PreAuthorize로 제어)
-                        .requestMatchers(HttpMethod.POST, "/api/login/projects").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/login/projects", "/api/login/password").permitAll()
 
                         // 그 외 권한은 각 컨트롤러의 @PreAuthorize로 제어
                         .anyRequest().authenticated())

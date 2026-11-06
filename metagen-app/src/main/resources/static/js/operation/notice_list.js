@@ -1,4 +1,35 @@
 import { setupAjaxCsrf } from "../common/csrf.js";
+import { registerRowDecorator, setLabel, setUser } from "../common/grid_cells.js";
+
+/**
+ * 공지사항 행 꾸미기 : 안 읽은 글은 파란 점 + 굵은 제목 (GitHub 알림 목록 형태)
+ */
+registerRowDecorator("noticeList", (row, data, cellOf) => {
+	const isUnread = data.isHit !== "확인";
+	row.classList.toggle("notice-unread", isUnread);
+
+	const titleCell = cellOf("title");
+	if (titleCell) {
+		const wrap = document.createElement("span");
+		wrap.className = "notice-title";
+
+		const dot = document.createElement("span");
+		dot.className = "notice-dot";
+		dot.title = isUnread ? "미확인" : "확인";
+
+		const text = document.createElement("span");
+		text.className = "notice-title-text";
+		text.textContent = data.title ?? "";
+
+		wrap.append(dot, text);
+		titleCell.replaceChildren(wrap);
+	}
+
+	setUser(cellOf("username"), data.username);
+
+	if (isUnread) setLabel(cellOf("isHit"), "새 글", "accent");
+	else setLabel(cellOf("isHit"), "읽음");
+});
 
 $(document).ready(function() {
 

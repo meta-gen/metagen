@@ -4,12 +4,14 @@
       layout:decorate="~{layout}"
 >
 	<head>
+	    <link rel="stylesheet" th:href="@{/css/operation/notice_list.css}">
 	    <script type="module" th:src="@{/js/operation/notice_list.js}"></script>
 	</head>
 	
 	<body>
 		<section layout:fragment="content">
 			<div th:replace="~{fragments/page_header :: pageHeader('운영 관리', '공지사항')}"></div>
+			<p class="page-desc">프로젝트 공지사항을 확인합니다. 제목을 누르면 상세 내용을 볼 수 있습니다.</p>
 
 		    <div th:replace="~{fragments/grid :: grid('noticeList', '/api/selectNotice', ${isProjectManager} ? 'cd' : '', 'noticeList_selectRow')}"></div>
 		</section>

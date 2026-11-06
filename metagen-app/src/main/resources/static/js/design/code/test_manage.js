@@ -1,5 +1,8 @@
 import {setupAjaxCsrf} from "../../common/csrf.js";
 import {downloadFile} from "../../common/common.js";
+import {createPrintOptions, registerCodeRuleDecorator} from "./code_rule_cells.js";
+
+registerCodeRuleDecorator();
 
 setupAjaxCsrf();
 
@@ -10,36 +13,14 @@ $(document).ready(() => {
     $("#grd-print-codeRuleGrid").on("click", () => {
         const checkedData = getCheckedData(tableId);
 
-        const dialogContent = $("<div></div>");
-        const form = $("<form></form>").attr("id", `edit-${tableId}`);
+        const message = checkedData.length === 0
+            ? "검색조건의 <b>전체 데이터</b>가 출력됩니다. 출력 형식을 선택해주세요."
+            : `<b>체크된 데이터 ${checkedData.length}건</b>이 출력됩니다. 출력 형식을 선택해주세요.`;
 
-        const message = checkedData.length === 0 ? "검색조건의 <b>전체 데이터</b>가 출력됩니다." : "<b>체크된 데이터</b>가 출력됩니다.";
-
-        const p = $("<p></p>").html(`${message}<br/>아래의 출력 형식을 선택해주세요.`);
-        form.append(p);
-
-        [
-            { id: "unitTest", text: "단위테스트 시나리오" }
+        const dialogContent = createPrintOptions(message, [
+            { id: "unitTest", text: "단위테스트 시나리오", desc: "메소드별 단위테스트 케이스" }
             /*, { id: "integrationTest", text: "통합테스트 시나리오" }*/
-        ].forEach(option => {
-            const btn = $("<button></button>")
-                .attr({
-                    type: "button",
-                    id: option.id
-                }).css("margin-top", "20px")
-                .addClass("btn btn-primary")
-                .text(option.text)
-                .on("click", () => {
-                    // 여기에 각 버튼 클릭 시 동작 처리
-                    console.log("선택된 출력 형식:", option.id);
-                    handlePrintFormat(option.id, option.text, checkedData);
-                });
-
-            form.append(btn);
-        });
-
-
-        dialogContent.append(form);
+        ], option => handlePrintFormat(option.id, option.text, checkedData));
 
 
         openDialog("div", {title: "테스트 시나리오 출력", content: dialogContent});

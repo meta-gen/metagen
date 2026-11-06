@@ -42,6 +42,11 @@
             window.gridCallbacks = {};
         }
 
+        /* 행 렌더링 후 셀을 꾸미는 화면별 훅 : window.gridRowDecorators[tableId] = (row, data, cellOf) => {} */
+        if(!window.gridRowDecorators){
+            window.gridRowDecorators = {};
+        }
+
         // CRUD 코드 매핑 (C = Create(Add), U = Update(Save), D = Delete)
         if (!window.crudActionMap) {
             window.crudActionMap = {
@@ -187,11 +192,22 @@
 
                     // DataTables 초기화
                     window.tableInstances[tableId] = $("#" + tableId).DataTable({
-                        "processing": true,
+                        "processing": false, // 조회 중 로딩 표시 사용 안 함
                         "serverSide": true,
                         "searching": false,
                         "info": false,
                         "destroy": true,
+                        "createdRow": function (row, data, dataIndex, cells) {
+                            const decorator = window.gridRowDecorators[tableId];
+                            if (typeof decorator !== "function") return;
+
+                            // 컬럼 필드명으로 셀(td)을 찾는다.
+                            const cellOf = (field) => {
+                                const index = columns.findIndex(c => c.column === field);
+                                return index >= 0 && cells ? cells[index] : null;
+                            };
+                            decorator(row, data, cellOf);
+                        },
                         "headerCallback": function (thead, data, start, end, display) {
                             $(thead).find("th").each(function (index) {
                                 const col = columns[index];

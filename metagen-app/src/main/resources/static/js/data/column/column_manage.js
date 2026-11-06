@@ -1,5 +1,16 @@
 import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
 import {downloadFile} from "../../common/common.js";
+import {applyAll, registerRowDecorator, setApproval, setMono, setYN} from "../../common/grid_cells.js";
+
+/**
+ * 컬럼 행 꾸미기 : 테이블/컬럼명·데이터 타입은 코드 글꼴, Y/N 은 라벨, 승인여부는 상태 라벨
+ */
+registerRowDecorator("columnManageGrid", (row, data, cellOf) => {
+    applyAll(cellOf, data, ["tableName", "columnName", "dataType", "refTableName"], setMono);
+    setYN(cellOf("isPk"), data.isPk, "PK");
+    applyAll(cellOf, data, ["isNullable", "isMasterData", "isRequired", "isSensitive", "isUnique", "isIndex", "isEncrypted"], setYN);
+    setApproval(cellOf("isApproval"), data.isApproval);
+});
 
 const tableId = "columnManageGrid";
 
@@ -132,7 +143,7 @@ function createForm(rowData, type) {
     `;
 
     const tableSelectButton = type === "C"
-        ? `<button type="button" class="btn btn-secondary" id="open-table-select">🔍</button>`
+        ? `<button type="button" class="btn" id="open-table-select" aria-label="테이블 검색" title="테이블 검색"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg></button>`
         : "";
 
     return `<form id="editTableForm" class="edit-form">
@@ -190,10 +201,10 @@ function createForm(rowData, type) {
 
         <!-- 부가 정보 펼치기 -->
         <div class="form-group mt-3">
-            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="toggleExtraInfo()">부가 정보 보기 ▼</button>
+            <button type="button" class="btn btn-sm" onclick="toggleExtraInfo()">부가 정보 보기 ▼</button>
         </div>
 
-        <div id="extra-info-section" style="display: none; margin-top: 10px; border-top: 1px solid #ccc; padding-top: 10px;">
+        <div id="extra-info-section" style="display: none; margin-top: 12px; border-top: 1px solid #d1d9e0b3; padding-top: 16px;">
             
             <div class="form-group">
                 <label for="precision">정밀도</label>
@@ -247,7 +258,7 @@ function createForm(rowData, type) {
             `).join("")}
         </div>
 
-        <button type="submit" class="btn btn-primary mt-3" id="btn-save-column">저장</button>
+        <button type="submit" class="btn btn-primary" id="btn-save-column">저장</button>
     </form>`;
 }
 

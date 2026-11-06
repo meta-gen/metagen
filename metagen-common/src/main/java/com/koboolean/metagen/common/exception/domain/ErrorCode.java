@@ -133,7 +133,17 @@ public enum ErrorCode {
     /**
      * 로그인 가능한 프로젝트가 없습니다.
      */
-    NO_ACCESSIBLE_PROJECT(HttpStatus.FORBIDDEN, "NO_ACCESSIBLE_PROJECT", "해당 아이디로 접근 가능한 프로젝트가 없습니다.");
+    NO_ACCESSIBLE_PROJECT(HttpStatus.FORBIDDEN, "NO_ACCESSIBLE_PROJECT", "해당 아이디로 접근 가능한 프로젝트가 없습니다."),
+
+    /**
+     * 초기 비밀번호(관리자 초기화 포함) 사용 중 : 비밀번호를 변경하기 전에는 로그인할 수 없습니다.
+     */
+    PASSWORD_CHANGE_REQUIRED(HttpStatus.FORBIDDEN, "PASSWORD_CHANGE_REQUIRED", "초기 비밀번호를 사용 중입니다. 비밀번호를 변경한 뒤 로그인해주세요."),
+
+    /**
+     * 새 비밀번호가 현재 비밀번호 또는 아이디와 같습니다.
+     */
+    PASSWORD_NOT_CHANGED(HttpStatus.BAD_REQUEST, "PASSWORD_NOT_CHANGED", "새 비밀번호는 현재 비밀번호 및 아이디와 달라야 합니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

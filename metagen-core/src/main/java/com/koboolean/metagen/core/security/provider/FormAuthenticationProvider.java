@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -39,6 +40,11 @@ public class FormAuthenticationProvider implements AuthenticationProvider {
 
         if (!passwordEncoder.matches(password, accountContext.getPassword())) {
             throw new BadCredentialsException("패스워드가 일치하지 않습니다.");
+        }
+
+        // 초기 비밀번호 사용 중이면 로그인 차단 (로그인 화면에서 비밀번호 변경 후 로그인)
+        if (!accountContext.getAccountDto().isPasswdCheck()) {
+            throw new CredentialsExpiredException("초기 비밀번호를 사용 중입니다. 비밀번호를 변경한 뒤 로그인해주세요.");
         }
 
         // 선택한 프로젝트가 접근 가능한 프로젝트인지 확인 (요청 값을 그대로 신뢰하지 않음)

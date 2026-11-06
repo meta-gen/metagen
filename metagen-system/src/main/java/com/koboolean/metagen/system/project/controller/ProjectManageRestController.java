@@ -31,14 +31,14 @@ public class ProjectManageRestController {
     private final ProjectMemberRepository projectMemberRepository;
 
     @Operation(summary = "프로젝트 Member 컬럼 조회", description = "프로젝트 Member 테이블의 컬럼 목록을 조회합니다.")
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('DBA')")
     @GetMapping("/getProject/{projectId}/column")
     public ResponseEntity<List<ColumnDto>> getProjectColumn(@PathVariable(value = "projectId") Long projectId) {
         return ResponseEntity.ok(projectManageService.getProjectColumn(projectId));
     }
 
     @Operation(summary = "프로젝트 Member 데이터 조회", description = "프로젝트 Member 데이터를 조회합니다.")
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('DBA')")
     @GetMapping("/getProject/{projectId}/data")
     public ResponseEntity<Map<String,Object>> getProjectData(
             @Parameter(description = "페이지 번호 (0부터 시작)", example = "0")
@@ -60,7 +60,7 @@ public class ProjectManageRestController {
     }
 
     @Operation(summary = "프로젝트 데이터 조회", description = "프로젝트 데이터를 조회합니다.")
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('DBA')")
     @GetMapping("/getProject/{projectId}/getEditProjectData")
     public ResponseEntity<Map<String,Object>> getEditProjectData(
             @Parameter(description = "프로젝트 ID", example = "0")
@@ -114,7 +114,7 @@ public class ProjectManageRestController {
     }
 
     @Operation(summary = "프로젝트 멤버 조회", description = "추가를위한 프로젝트 멤버를 조회합니다.")
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('DBA')")
     @GetMapping("/getProject/projectMember/{selectedId}")
     public ResponseEntity<Map<String, Object>> selectProjectMember(@PathVariable(value = "selectedId") Long selectedId, @AuthenticationPrincipal AccountDto accountDto) {
         List<AccountDto> addProjectMember = projectManageService.selectProjectMember(selectedId, accountDto);

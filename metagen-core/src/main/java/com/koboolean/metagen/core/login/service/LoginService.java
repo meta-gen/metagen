@@ -10,6 +10,8 @@ public interface LoginService {
 
     List<ProjectDto> selectLoginProjects(String username, String password);
 
+    void changeInitialPassword(String username, String password, String newPassword);
+
     void updatePwd(AccountDto accountDto, AccountDto accountData);
 
     void updateName(AccountDto accountDto, String name);

@@ -1,0 +1,237 @@
+/* =========================================================
+   공지사항 팝업 (상세 / 등록·수정) : GitHub 이슈 화면 형태
+   ========================================================= */
+body {
+    background-color: var(--gh-canvas);
+    color: var(--gh-fg);
+    font-size: 14px;
+}
+
+.notice-view,
+.notice-edit {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+/* ---------- 헤더 ---------- */
+.notice-view-header,
+.notice-edit-header {
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--gh-border);
+}
+
+.notice-view-title {
+    margin: 0 0 8px;
+    color: var(--gh-fg);
+    font-size: 26px;
+    font-weight: 400;
+    line-height: 1.25;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+}
+
+.notice-edit-header p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.notice-view-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    color: var(--gh-fg-muted);
+}
+
+.notice-view-meta strong {
+    color: var(--gh-fg);
+    font-weight: 600;
+}
+
+.notice-view-sep {
+    color: #818b98;
+}
+
+/* ---------- 본문 + 조회자 ---------- */
+.notice-view-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+}
+
+@media (min-width: 760px) {
+    .notice-view-layout {
+        grid-template-columns: minmax(0, 1fr) 220px;
+    }
+}
+
+/* 본문 박스 (이슈 코멘트 형태) */
+.notice-box {
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas);
+    overflow: hidden;
+}
+
+.notice-box-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--gh-border);
+    background-color: var(--gh-canvas-subtle);
+}
+
+.notice-box-body {
+    min-height: 160px;
+    padding: 16px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* 조회자 사이드 */
+.notice-side-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--gh-border-muted);
+    color: var(--gh-fg-muted);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.notice-counter {
+    display: inline-block;
+    min-width: 20px;
+    padding: 0 6px;
+    border-radius: 2em;
+    background-color: var(--gh-neutral-muted);
+    color: var(--gh-fg);
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 18px;
+    text-align: center;
+}
+
+.notice-readers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 360px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    overflow-y: auto;
+}
+
+.notice-readers .gh-user {
+    display: flex;
+}
+
+.notice-reader-name {
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notice-readers .gh-muted {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.notice-side-empty {
+    margin: 0;
+    color: var(--gh-fg-muted);
+    font-size: 12px;
+}
+
+/* ---------- 등록 / 수정 폼 ---------- */
+.notice-field {
+    margin-bottom: 16px;
+}
+
+.notice-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--gh-fg);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.notice-required {
+    color: var(--gh-danger);
+}
+
+.notice-form .form-control {
+    width: 100%;
+}
+
+.notice-form .form-control[readonly] {
+    background-color: var(--gh-canvas-subtle);
+    color: var(--gh-fg);
+    cursor: default;
+}
+
+.notice-form .form-control[readonly]:focus {
+    border-color: var(--gh-border);
+    box-shadow: none;
+}
+
+.notice-textarea {
+    min-height: 320px;
+    padding: 12px !important;
+    line-height: 1.6 !important;
+    resize: vertical;
+}
+
+/* 대상 프로젝트 체크 목록 (Box) */
+.notice-project-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    padding: 12px 16px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas-subtle);
+}
+
+.notice-project-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 28px;
+    margin: 0;
+    cursor: pointer;
+}
+
+.notice-project-item .form-check-input {
+    margin: 0;
+    float: none;
+}
+
+.notice-project-item:has(input:disabled) {
+    color: var(--gh-fg-muted);
+    cursor: default;
+}
+
+.notice-project-empty {
+    margin: 0;
+    font-size: 12px;
+}
+
+/* 하단 버튼 */
+.notice-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid var(--gh-border-muted);
+}

@@ -128,22 +128,20 @@ function addTableSelector(tableInfos) {
                     const columns = response.columnInfos || [];
 
                     if (columns.length === 0) {
-                        $descBox.append(`<p style="color: red;">표시할 컬럼 정보가 없습니다.</p>`);
+                        $descBox.append(`<p class="gh-result-empty">표시할 컬럼 정보가 없습니다.</p>`);
                         return;
                     }
 
                     columns.forEach(col => {
-                        const $block = $("<div>").css({
-                            marginBottom: "15px",
-                            borderBottom: "1px solid #ddd",
-                            paddingBottom: "10px"
-                        });
+                        const $block = $("<div class='gh-result-item'>");
 
-                        $block.append(`<p><strong>컬럼명:</strong> ${col.columnName}</p>`);
-                        $block.append(`<p><strong>설명:</strong> ${col.columnDesc || '-'}</p>`);
-                        $block.append(`<p><strong>데이터 타입:</strong> ${col.dataType}</p>`);
-                        $block.append(`<p><strong>PK 여부:</strong> ${col.isPk === 'Y' ? '✔️' : ''}</p>`);
-                        $block.append(`<p><strong>NULL 허용 여부:</strong> ${col.isNullable === 'Y' ? '허용' : '불가'}</p>`);
+                        $block.append(`<p class="gh-result-title">
+                            <code class="gh-result-code">${col.columnName}</code>
+                            ${col.isPk === 'Y' ? '<span class="gh-label gh-label-accent">PK</span>' : ''}
+                            <span class="gh-label">${col.dataType ?? '-'}</span>
+                        </p>`);
+                        $block.append(`<p class="gh-result-desc">${col.columnDesc || '-'}</p>`);
+                        $block.append(`<p class="gh-result-meta">NULL ${col.isNullable === 'Y' ? '허용' : '불가'}</p>`);
 
                         $descBox.append($block);
                     });

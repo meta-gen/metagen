@@ -1,56 +1,90 @@
+/* =========================================================
+   테이블 컬럼 상세 팝업 : 컬럼별 카드 (Primer Box)
+   ========================================================= */
+#table-name {
+    font-family: var(--app-font);
+}
+
+#table-name strong {
+    font-weight: 600;
+}
+
 .column-card-list {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin-top: 20px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas);
+    overflow: hidden;
 }
 
 .column-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 16px 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    padding: 12px 16px;
 }
 
+.column-card + .column-card {
+    border-top: 1px solid var(--gh-border);
+}
+
+.column-card:hover {
+    background-color: var(--gh-canvas-subtle);
+}
+
+/* 컬럼명 + 정렬 버튼 */
 .column-row.full {
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    gap: 12px;
     margin-bottom: 10px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 6px;
+}
+
+.column-row.full > .label {
+    padding: 1px 8px;
+    border-radius: 6px;
+    background-color: var(--gh-neutral-muted);
+    color: var(--gh-fg);
+    font-family: var(--app-font);
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .column-grid-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 6px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 4px 24px;
+    margin-bottom: 4px;
 }
 
 .column-grid-row .pair {
-    flex: 1 1 22%; /* 4개씩 한 줄에 꽉 차도록 */
     display: flex;
     justify-content: space-between;
-    font-size: 14px;
-    color: #333;
+    gap: 8px;
+    min-width: 0;
+    font-size: 12px;
 }
 
-.label {
-    font-weight: 600;
-    color: #555;
+.column-grid-row .label {
+    flex: none;
+    color: var(--gh-fg-muted);
+    font-weight: 400;
 }
 
-.value {
-    color: #222;
+.column-grid-row .value {
+    min-width: 0;
+    color: var(--gh-fg);
     text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .value.highlight {
-    font-weight: bold;
-    color: #d6336c;
+    color: var(--gh-accent);
+    font-weight: 600;
 }
 
+/* 위/아래 이동 버튼 (Primer IconButton) */
 .sort-buttons {
     display: flex;
     gap: 4px;
@@ -58,26 +92,26 @@
 }
 
 .sort-buttons button {
-    background: #e9ecef;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    padding: 2px 6px;
-    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas-subtle);
+    color: var(--gh-fg-muted);
     cursor: pointer;
-    transition: background-color 0.2s;
-    height: 24px;
 }
 
 .sort-buttons button:hover {
-    background-color: #ced4da;
+    background-color: #eff2f5;
+    color: var(--gh-fg);
 }
 
-/* 정렬 버튼이 컬럼명 라인 옆으로 잘 붙도록 조정 */
-.column-row.full {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 6px;
+@media (max-width: 640px) {
+    .column-grid-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }

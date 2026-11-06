@@ -24,21 +24,18 @@ $(document).ready(function () {
                 let hasUnmatched = false;
 
                 $("#description-box").remove();
-                const $descBox = $("<div id='description-box'>").css({ marginTop: "20px" });
+                const $descBox = $("<div id='description-box' class='gh-result-list'>");
 
                 words.forEach((word, index) => {
                     const matched = standardWords.find(w => w.commonStandardWordName === word);
 
-                    const $block = $("<div>").css({
-                        marginBottom: "15px",
-                        borderBottom: "1px solid #ddd",
-                        paddingBottom: "10px"
-                    });
+                    const $block = $("<div class='gh-result-item'>");
 
                     if (!matched) {
                         hasUnmatched = true;
-                        $block.append(`<p><strong>${word}</strong></p>`);
-                        $block.append(`<p style="color: red; font-size: 0.9rem;">X 해당 단어는 매핑된 표준 단어를 찾을 수 없습니다.</p>`);
+                        $block.addClass("is-error");
+                        $block.append(`<p class="gh-result-title"><strong>${word}</strong></p>`);
+                        $block.append(`<p class="gh-result-error">해당 단어는 매핑된 표준 단어를 찾을 수 없습니다.</p>`);
                         $descBox.append($block);
                         return;
                     }
@@ -77,17 +74,17 @@ $(document).ready(function () {
                     }
 
                     const title = isDomain
-                        ? `<strong>[도메인]</strong> ${matched.commonStandardWordName}`
+                        ? `<span class="gh-label gh-label-done">도메인</span> <strong>${matched.commonStandardWordName}</strong>`
                         : `<strong>${matched.commonStandardWordName}</strong>`;
-                    $block.append(`<p>${title}</p>`);
+                    $block.append(`<p class="gh-result-title">${title} <code class="gh-result-code">${abbr ?? ""}</code></p>`);
 
                     if (matched.commonStandardWordDescription && matched.commonStandardWordDescription !== "-") {
-                        $block.append(`<p style="font-size: 0.9rem; color: #333;">${matched.commonStandardWordDescription}</p>`);
+                        $block.append(`<p class="gh-result-desc">${matched.commonStandardWordDescription}</p>`);
                     }
 
                     if (matched.synonyms && matched.synonyms !== "-") {
-                        $block.append(`<p style="font-size: 0.85rem; color: #555;">
-                            <strong>이음동의어:</strong> ${matched.synonyms}
+                        $block.append(`<p class="gh-result-meta">
+                            이음동의어 · ${matched.synonyms}
                         </p>`);
                     }
 

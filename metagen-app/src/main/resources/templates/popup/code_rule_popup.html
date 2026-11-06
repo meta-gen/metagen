@@ -1,21 +1,19 @@
-<!-- 예: public/popup/add-code-rule.html -->
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>MetaGen</title>
+    <!-- 폰트 미리 받기 : 첫 렌더링 전에 Pretendard 를 준비해 폰트 교체로 인한 화면 흔들림 방지 -->
+    <link rel="preload" th:href="@{/fonts/pretendard/PretendardVariable.woff2}" href="/fonts/pretendard/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="icon" type="image/x-icon" href="/images/favicon.png">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
-    <link rel="stylesheet" th:href="@{/css/dataTables.dataTables.min.css}">
-    <link rel="stylesheet" th:href="@{/js/jquery-ui-1.14.1.custom/jquery-ui.css}">
     <link rel="stylesheet" th:href="@{/css/popup.css}">
 
     <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
     <script th:src="@{/js/bootstrap.bundle.js}"></script>
-    <script th:src="@{/js/dataTables.min.js}"></script>
-    <script th:src="@{/js/jquery-ui-1.14.1.custom/jquery-ui.js}"></script>
     <script type="module" th:src="@{/js/popup/code_rule_popup.js}"></script>
 
-    <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
+    <link th:href="@{/fonts/pretendard.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/primer.css}">
 </head>
 
 <body>
@@ -26,11 +24,6 @@
                 코드규칙을 등록/수정합니다.
             </p>
         </div>
-
-        <div class="button-container" style="justify-content:flex-end; display: flex;">
-            <button class="btn btn-primary" id="save-button">저장</button>
-        </div>
-
 
         <form class="popup-form">
             <input type="hidden" id="type" />
@@ -80,7 +73,7 @@
 
             <div class="form-group">
                 <label for="methodForm">메소드 형식 예시</label>
-                <textarea id="methodForm" class="form-control" style="height: 400px"
+                <textarea id="methodForm" class="form-control gh-code-area" style="height: 400px"
                           placeholder='▶ **\${0}** : 메소드 또는 함수 이름이 들어가는 부분입니다.
 ▶ **\${1}** : 코드 규칙에 따라 작성된 메소드의 간단한 명칭입니다.
 ▶ **\${2}** : 메소드의 기능 또는 목적에 대한 설명이 들어갑니다.
@@ -98,6 +91,12 @@
 public ResponseEntity<Map<String, Boolean>> \${0}() {
     return ResponseEntity.ok(Map.of("result", true));
 }'></textarea>
+            </div>
+
+            <!-- 하단 버튼 -->
+            <div class="popup-actions">
+                <button type="button" class="btn" onclick="window.close()">닫기</button>
+                <button type="button" class="btn btn-primary" id="save-button">저장</button>
             </div>
         </form>
     </div>

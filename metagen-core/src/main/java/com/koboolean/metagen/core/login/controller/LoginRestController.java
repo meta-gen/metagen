@@ -85,4 +85,22 @@ public class LoginRestController {
                 .map(project -> Map.<String, Object>of("id", project.getId(), "projectName", project.getProjectName()))
                 .toList());
     }
+
+    @Operation(summary = "초기 비밀번호 변경 (로그인 전)", description = "초기 비밀번호를 사용 중인 계정은 로그인 전에 비밀번호를 변경해야 합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "변경 성공"),
+            @ApiResponse(responseCode = "400", description = "새 비밀번호 규칙 위반 또는 기존 비밀번호와 동일"),
+            @ApiResponse(responseCode = "401", description = "아이디 또는 비밀번호 불일치 / 변경 대상 계정이 아님"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
+    @PreAuthorize("hasRole('ANONYMOUS')")
+    @PostMapping(value="/login/password")
+    public ResponseEntity<Map<String, Boolean>> changeInitialPassword(
+            @Parameter(description = "아이디, 현재 비밀번호, 새 비밀번호", required = true,
+                    example = "{\"username\": \"admin\", \"password\": \"admin\", \"newPassword\": \"NewPass!234\"}")
+            @RequestBody Map<String, String> passwordData) {
+
+        loginService.changeInitialPassword(passwordData.get("username"), passwordData.get("password"), passwordData.get("newPassword"));
+        return ResponseEntity.ok(Map.of("result", true));
+    }
 }

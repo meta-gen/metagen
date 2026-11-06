@@ -1,4 +1,15 @@
 import {setupAjaxCsrf} from "../../common/csrf.js";
+import {registerRowDecorator, setLabel, setMono} from "../../common/grid_cells.js";
+
+/**
+ * 코드규칙 관리 행 꾸미기 : 템플릿 명은 라벨, 접두사/접미사·입출력값은 코드 글꼴
+ */
+registerRowDecorator("codeRuleManageGrid", (row, data, cellOf) => {
+    if (data.templateName) setLabel(cellOf("templateName"), data.templateName);
+    ["prefix", "suffix", "input", "output", "exception"].forEach(field => {
+        if (data[field]) setMono(cellOf(field), data[field]);
+    });
+});
 
 const tableId = 'codeRuleManageGrid';
 
@@ -35,7 +46,6 @@ $(document).ready(function () {
             .attr("id", "approvalSubmit")
             .attr("name", "approvalSubmit")
             .addClass("btn btn-primary")
-            .css("margin-top", "20px")
             .on("click", codeRuleSubmitClick);
 
         form.append(saveBtn);
@@ -168,9 +178,7 @@ function deleteTemplate(response){
     const deleteBtn = $("<button></button>")
         .attr("type", "submit")
         .text("삭제")
-        .addClass("btn btn-secondary")
-        .css("margin-top", "20px")
-        .css("width", "100%")
+        .addClass("btn btn-danger")
         .on("click", codeRuleSelectorDelete);
 
     form.append(selectBox).append(deleteBtn);

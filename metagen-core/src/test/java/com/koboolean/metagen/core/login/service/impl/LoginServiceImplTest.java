@@ -92,6 +92,82 @@ class LoginServiceImplTest {
     }
 
     @Nested
+    @DisplayName("초기 비밀번호 : 변경 전에는 로그인 차단")
+    class InitialPassword {
+
+        private Account initialAccount() {
+            Account account = CoreFixtures.account(0L, "admin");
+            account.setPasswdCheck(false); // admin/admin 또는 관리자 초기화 계정
+            when(userRepository.findByUsernameAndIsActive("admin", true)).thenReturn(account);
+            return account;
+        }
+
+        @Test
+        @DisplayName("초기 비밀번호 계정은 프로젝트를 조회하지 않고 PASSWORD_CHANGE_REQUIRED")
+        void loginBlocked() {
+            initialAccount();
+            when(passwordEncoder.matches("admin", "encoded")).thenReturn(true);
+
+            assertThatThrownBy(() -> loginService.selectLoginProjects("admin", "admin"))
+                    .extracting("errorCode").isEqualTo(ErrorCode.PASSWORD_CHANGE_REQUIRED);
+        }
+
+        @Test
+        @DisplayName("비밀번호가 틀리면 변경 필요 여부를 알려주지 않고 LOGIN_FAILED")
+        void wrongPasswordHidesState() {
+            initialAccount();
+            when(passwordEncoder.matches("wrong", "encoded")).thenReturn(false);
+
+            assertThatThrownBy(() -> loginService.selectLoginProjects("admin", "wrong"))
+                    .extracting("errorCode").isEqualTo(ErrorCode.LOGIN_FAILED);
+            assertThatThrownBy(() -> loginService.changeInitialPassword("admin", "wrong", "NewPassw0rd!"))
+                    .extracting("errorCode").isEqualTo(ErrorCode.LOGIN_FAILED);
+        }
+
+        @Test
+        @DisplayName("새 비밀번호가 현재 비밀번호·아이디와 같으면 PASSWORD_NOT_CHANGED, 규칙 위반이면 PASSWORD_IS_NON_VALIDATOR")
+        void invalidNewPassword() {
+            initialAccount();
+            when(passwordEncoder.matches("admin", "encoded")).thenReturn(true);
+
+            assertThatThrownBy(() -> loginService.changeInitialPassword("admin", "admin", "admin"))
+                    .extracting("errorCode").isEqualTo(ErrorCode.PASSWORD_NOT_CHANGED);
+            assertThatThrownBy(() -> loginService.changeInitialPassword("admin", "admin", null))
+                    .extracting("errorCode").isEqualTo(ErrorCode.PASSWORD_NOT_CHANGED);
+            assertThatThrownBy(() -> loginService.changeInitialPassword("admin", "admin", "weakpass"))
+                    .extracting("errorCode").isEqualTo(ErrorCode.PASSWORD_IS_NON_VALIDATOR);
+        }
+
+        @Test
+        @DisplayName("변경에 성공하면 새 비밀번호로 저장되고 이후 로그인할 수 있다")
+        void changeThenLogin() {
+            Account account = initialAccount();
+            when(passwordEncoder.matches("admin", "encoded")).thenReturn(true);
+            when(passwordEncoder.encode("NewPassw0rd!")).thenReturn("new-encoded");
+
+            loginService.changeInitialPassword("admin", "admin", "NewPassw0rd!");
+
+            assertThat(account.getPassword()).isEqualTo("new-encoded");
+            assertThat(account.isPasswdCheck()).isTrue();
+
+            when(passwordEncoder.matches("NewPassw0rd!", "new-encoded")).thenReturn(true);
+            when(projectRepository.findProjectsByUsername("admin")).thenReturn(List.of(CoreFixtures.project(0L, account)));
+            assertThat(loginService.selectLoginProjects("admin", "NewPassw0rd!")).hasSize(1);
+        }
+
+        @Test
+        @DisplayName("이미 비밀번호를 변경한 계정은 로그인 전 변경 API 를 사용할 수 없다")
+        void normalAccountRejected() {
+            Account account = CoreFixtures.account(1L, "user1");
+            when(userRepository.findByUsernameAndIsActive("user1", true)).thenReturn(account);
+            when(passwordEncoder.matches("pw", "encoded")).thenReturn(true);
+
+            assertThatThrownBy(() -> loginService.changeInitialPassword("user1", "pw", "NewPassw0rd!"))
+                    .extracting("errorCode").isEqualTo(ErrorCode.LOGIN_FAILED);
+        }
+    }
+
+    @Nested
     @DisplayName("비밀번호 변경")
     class UpdatePwd {
 

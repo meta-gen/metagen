@@ -1,0 +1,49 @@
+/* =========================================================
+   Pretendard (SIL Open Font License 1.1 - ./pretendard/LICENSE.txt)
+   https://github.com/orioncactus/pretendard  v1.3.9 / Variable (weight 45~920)
+   - 화면 전체(그리드, 입력창, 코드성 값, 라이브러리 위젯 포함)를 Pretendard 하나로 통일한다.
+   ========================================================= */
+@font-face {
+    font-family: 'Pretendard Variable';
+    font-style: normal;
+    font-weight: 45 920;
+    font-display: swap;
+    src: url('./pretendard/PretendardVariable.woff2') format('woff2-variations'),
+         url('./pretendard/PretendardVariable.woff2') format('woff2');
+}
+
+:root {
+    --app-font: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Segoe UI",
+                "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", Roboto, "Helvetica Neue", Arial, sans-serif;
+    /* 코드용 글꼴도 동일하게 사용 (화면 전체 글꼴 통일) */
+    --app-mono: var(--app-font);
+
+    /* Bootstrap 기본 글꼴 변수 */
+    --bs-body-font-family: var(--app-font);
+    --bs-font-sans-serif: var(--app-font);
+    --bs-font-monospace: var(--app-font);
+}
+
+/* bootstrap(body) 보다 우선 적용 */
+html body {
+    font-family: var(--app-font);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 폼 요소 · 코드 요소는 브라우저 기본 글꼴(굴림/Consolas 등)을 쓰므로 상속 */
+button, input, select, textarea, optgroup,
+code, kbd, pre, samp, tt {
+    font-family: inherit;
+}
+
+/* 라이브러리 위젯 (jQuery UI : Arial / DataTables) */
+html body .ui-widget,
+html body .ui-widget input,
+html body .ui-widget select,
+html body .ui-widget textarea,
+html body .ui-widget button,
+html body div.dt-container,
+html body table.dataTable {
+    font-family: var(--app-font);
+}

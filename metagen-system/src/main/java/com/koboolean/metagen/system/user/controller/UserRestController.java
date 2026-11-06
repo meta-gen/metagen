@@ -29,14 +29,14 @@ public class UserRestController {
     private final UserManageService userManageService;
 
     @Operation(summary = "사용자 관리 컬럼 조회", description = "사용자 관리 컬럼 목록을 조회합니다.")
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/selectUser/column")
     public ResponseEntity<List<ColumnDto>> selectUserColumn() {
         return ResponseEntity.ok(userManageService.selectUserColumn());
     }
 
     @Operation(summary = "사용자 관리 데이터 조회", description = "사용자 관리 그리드 데이터를 조회합니다.")
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/selectUser/data")
     public ResponseEntity<Map<String,Object>> selectUserData(
             @Parameter(description = "사용자 인증 정보", hidden = true)

@@ -1,3 +1,13 @@
+import {registerRowDecorator, setApproval, setMono} from "../../common/grid_cells.js";
+
+/**
+ * 표준 도메인 행 꾸미기 : 데이터타입은 코드 글꼴, 승인여부는 상태 라벨
+ */
+registerRowDecorator("standardDomains", (row, data, cellOf) => {
+    setMono(cellOf("dataType"), data.dataType);
+    setApproval(cellOf("isApprovalYn"), data.isApprovalYn);
+});
+
 /**
  * 표준 도메인 승인 버튼
  *

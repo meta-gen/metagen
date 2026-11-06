@@ -1,4 +1,16 @@
 import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
+import {registerRowDecorator, setLabel, setMono, setMuted, setUser} from "../../common/grid_cells.js";
+
+registerRowDecorator("projectMemberGrid", (row, data, cellOf) => {
+    setMono(cellOf("username"), data.username);
+    setUser(cellOf("name"), data.name);
+
+    if (data.isActive === "Y") setLabel(cellOf("isActive"), "승인", "success", true);
+    else if (data.isActive === "N") setLabel(cellOf("isActive"), "승인 대기", "attention", true);
+
+    if (data.projectManagerYn === "O") setLabel(cellOf("projectManagerYn"), "관리자", "accent");
+    else setMuted(cellOf("projectManagerYn"), "-");
+});
 
 $(document).ready(function () {
     setupAjaxCsrf();
@@ -24,6 +36,16 @@ $(document).ready(function () {
         } else {
             $selectedOption.text(text.replace(' (비활성)', ''));
         }
+
+        // 프로젝트 상태 라벨 (활성 / 비활성, 사용자 자동 승인)
+        const isInactive = isActive === false || isActive === "false";
+        $('#projectStatusLabel')
+            .text(isInactive ? '비활성' : '활성')
+            .toggleClass('gh-label-success', !isInactive)
+            .toggleClass('gh-label-danger', isInactive);
+
+        const isAutoActive = $selectedOption.data('autoactive');
+        $('#projectAutoActiveLabel').toggle(isAutoActive === true || isAutoActive === "true");
 
         return isActive;
     }
@@ -70,7 +92,7 @@ $(document).ready(function () {
                     });
 
                     // 저장 버튼 생성
-                    const $saveBtn = $('<button type="button" class="btn btn-primary mt-3">저장</button>');
+                    const $saveBtn = $('<button type="button" class="btn btn-primary">저장</button>');
 
                     // 저장 버튼 이벤트
                     $saveBtn.on('click', function () {
@@ -79,8 +101,9 @@ $(document).ready(function () {
                     });
 
                     const $container = $('<div>')
+                        .append($('<label class="gh-form-label" for="addProjectMemberSelect">사용자</label>'))
                         .append($select)
-                        .append($saveBtn);
+                        .append($('<div class="gh-dialog-actions">').append($saveBtn));
 
                     window.openDialog("div", {
                         title: "프로젝트 멤버 추가",
@@ -246,6 +269,7 @@ $(document).ready(function () {
 
             ${managerSelectHtml}
             
+            <div class="gh-form-label">설정</div>
             <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
                 <input type="checkbox" id="project-active" name="isActive" class="form-check-input" ${projectData.isActive ? 'checked' : ''} />
                 <label class="form-check-label" for="project-active">활성화 여부</label>
@@ -263,7 +287,7 @@ $(document).ready(function () {
 
             ${templateTypeHtml}
 
-            ${type === 'C' || projectData.isModified ? '<input type="submit" id="btn-save-project" class="btn btn-primary"/>' : ''}
+            ${type === 'C' || projectData.isModified ? '<div class="gh-dialog-actions"><button type="submit" id="btn-save-project" class="btn btn-primary">저장</button></div>' : ''}
         </form>
     `;
 

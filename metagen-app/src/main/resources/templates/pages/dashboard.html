@@ -5,101 +5,136 @@
 >
 
 <head>
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
     <script type="module" th:src="@{/js/dashboard.js}"></script>
 </head>
 
 <body>
-<section layout:fragment="content">
-    <h2 class="mb-4">대시보드</h2>
+<section layout:fragment="content" class="dash">
 
-    <div class="row">
+    <!-- 상단 인사 영역 -->
+    <div class="dash-hero"
+         th:with="displayName=${#strings.isEmpty(#authentication.principal.name) ? #authentication.principal.username : #authentication.principal.name}">
+        <div class="dash-avatar dash-avatar-lg"
+             th:text="${#strings.isEmpty(displayName) ? '?' : #strings.substring(displayName, 0, 1)}">A</div>
+        <div>
+            <h1 class="dash-hero-title">
+                <span th:text="${displayName}">관리자</span>님, 안녕하세요
+            </h1>
+            <p class="dash-hero-sub">프로젝트의 승인 대기 현황과 최근 활동을 한눈에 확인하세요.</p>
+        </div>
+    </div>
 
-        <!-- 승인 대기 목록 -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <strong>승인 대기 목록</strong>
-                </div>
-                <div class="card-body p-2">
-                    <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            표준 도메인/단어/용어
-                            <div>
-                                <span class="badge bg-danger rounded-pill" th:text="${pendingStandardCount}">0</span>
-                                <a href="/dataDictionary" class="btn btn-sm btn-link p-0 ps-2">More</a>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            테이블 관리
-                            <div>
-                                <span class="badge bg-danger rounded-pill" th:text="${pendingTableCount}">0</span>
-                                <a href="/tableManage" class="btn btn-sm btn-link p-0 ps-2">More</a>
-                            </div>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            컬럼 관리
-                            <div>
-                                <span class="badge bg-danger rounded-pill" th:text="${pendingColumnCount}">0</span>
-                                <a href="/columnManage" class="btn btn-sm btn-link p-0 ps-2">More</a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+    <!-- 승인 대기 현황 : 볼 수 있는 화면(메뉴 권한)만 표시 -->
+    <th:block th:if="${@menuAuth.canView('data-management')}">
+    <div class="dash-section-head">
+        <h2 class="dash-section-title">승인 대기</h2>
+        <span class="dash-counter"
+              th:text="${pendingStandardCount + pendingTableCount + pendingColumnCount}">0</span>
+    </div>
+
+    <div class="dash-stats">
+        <a th:if="${@menuAuth.canView('data-dictionary')}" th:href="@{/dataDictionary}" class="dash-stat">
+            <div class="dash-stat-head">
+                <span class="dash-stat-icon icon-blue">
+                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M2 2.75C2 1.78 2.78 1 3.75 1h8.5c.97 0 1.75.78 1.75 1.75v10.5A1.75 1.75 0 0 1 12.25 15h-8.5A1.75 1.75 0 0 1 2 13.25Zm1.75-.25a.25.25 0 0 0-.25.25v10.5c0 .14.11.25.25.25h8.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25ZM5 5h6v1.5H5Zm0 3h6v1.5H5Zm0 3h4v1.5H5Z"/></svg>
+                </span>
+                <span class="dash-stat-label">표준 도메인/단어/용어</span>
+            </div>
+            <div class="dash-stat-value" th:classappend="${pendingStandardCount > 0} ? 'is-pending'"
+                 th:text="${pendingStandardCount}">0</div>
+            <div class="dash-stat-foot">데이터사전 바로가기 <span aria-hidden="true">→</span></div>
+        </a>
+
+        <a th:if="${@menuAuth.canView('table-manage')}" th:href="@{/tableManage}" class="dash-stat">
+            <div class="dash-stat-head">
+                <span class="dash-stat-icon icon-green">
+                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M1 2.75C1 1.78 1.78 1 2.75 1h10.5c.97 0 1.75.78 1.75 1.75v10.5A1.75 1.75 0 0 1 13.25 15H2.75A1.75 1.75 0 0 1 1 13.25ZM2.5 6v7.25c0 .14.11.25.25.25H5.5V6Zm4.5 0v7.5h6.25a.25.25 0 0 0 .25-.25V6Zm6.5-1.5V2.75a.25.25 0 0 0-.25-.25H2.75a.25.25 0 0 0-.25.25V4.5Z"/></svg>
+                </span>
+                <span class="dash-stat-label">테이블 관리</span>
+            </div>
+            <div class="dash-stat-value" th:classappend="${pendingTableCount > 0} ? 'is-pending'"
+                 th:text="${pendingTableCount}">0</div>
+            <div class="dash-stat-foot">테이블 관리 바로가기 <span aria-hidden="true">→</span></div>
+        </a>
+
+        <a th:if="${@menuAuth.canView('column-manage')}" th:href="@{/columnManage}" class="dash-stat">
+            <div class="dash-stat-head">
+                <span class="dash-stat-icon icon-purple">
+                    <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M2.75 1h2.5c.97 0 1.75.78 1.75 1.75v10.5A1.75 1.75 0 0 1 5.25 15h-2.5A1.75 1.75 0 0 1 1 13.25V2.75C1 1.78 1.78 1 2.75 1Zm0 1.5a.25.25 0 0 0-.25.25v10.5c0 .14.11.25.25.25h2.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25Zm8-1.5h2.5c.97 0 1.75.78 1.75 1.75v10.5A1.75 1.75 0 0 1 13.25 15h-2.5A1.75 1.75 0 0 1 9 13.25V2.75C9 1.78 9.78 1 10.75 1Zm0 1.5a.25.25 0 0 0-.25.25v10.5c0 .14.11.25.25.25h2.5a.25.25 0 0 0 .25-.25V2.75a.25.25 0 0 0-.25-.25Z"/></svg>
+                </span>
+                <span class="dash-stat-label">컬럼 관리</span>
+            </div>
+            <div class="dash-stat-value" th:classappend="${pendingColumnCount > 0} ? 'is-pending'"
+                 th:text="${pendingColumnCount}">0</div>
+            <div class="dash-stat-foot">컬럼 관리 바로가기 <span aria-hidden="true">→</span></div>
+        </a>
+    </div>
+
+    </th:block>
+
+    <div class="dash-grid">
+
+        <!-- 최근 활동 -->
+        <div class="dash-box">
+            <div class="dash-box-header">
+                <h2 class="dash-box-title">최근 활동</h2>
+            </div>
+            <ul class="dash-timeline" th:unless="${recentChanges.isEmpty()}">
+                <li class="dash-timeline-item" th:each="item : ${recentChanges}">
+                    <div class="dash-avatar"
+                         th:text="${#strings.isEmpty(item.modifiedBy) ? '?' : #strings.substring(item.modifiedBy, 0, 1)}">a</div>
+                    <div class="dash-timeline-body">
+                        <div class="dash-timeline-text">
+                            <strong th:text="${item.modifiedBy ?: '알 수 없음'}">admin</strong>
+                            님이
+                            <span class="dash-label" th:data-type="${item.type}" th:text="${item.type}">테이블관리</span>
+                            <code class="dash-name" th:text="${item.name}">회원정보</code>
+                            을(를) 수정했습니다.
+                        </div>
+                        <time class="dash-time js-relative-time"
+                              th:if="${item.modifiedAt != null}"
+                              th:datetime="${#temporals.format(item.modifiedAt, 'yyyy-MM-dd''T''HH:mm:ss')}"
+                              th:title="${#temporals.format(item.modifiedAt, 'yyyy-MM-dd HH:mm')}"
+                              th:text="${#temporals.format(item.modifiedAt, 'yyyy-MM-dd HH:mm')}">2025-04-29 15:30</time>
+                    </div>
+                </li>
+            </ul>
+            <div class="dash-blank" th:if="${recentChanges.isEmpty()}">
+                <svg viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0ZM1.5 8a6.5 6.5 0 1 0 13 0 6.5 6.5 0 0 0-13 0Zm7-3.25v2.99l2.03 1.18a.75.75 0 1 1-.76 1.3l-2.4-1.4A.75.75 0 0 1 7 8.17V4.75a.75.75 0 0 1 1.5 0Z"/></svg>
+                <p>최근 변경된 항목이 없습니다.</p>
             </div>
         </div>
 
         <!-- 공지사항 -->
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <strong>프로젝트 공지사항</strong>
-                    <a href="/notice" class="btn btn-sm btn-outline-primary">More</a>
-                </div>
-                <div class="card-body p-2">
-                    <table class="table table-sm table-hover"  id="noticeTable">
-                        <thead>
-                        <tr><th>제목</th><th>작성자</th><th>작성일</th><th>조회수</th></tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="notice : ${notices}" th:data-id="${notice.id}" style="cursor: pointer;">
-                            <td th:text="${notice.title}">확인여부</td>
-                            <td th:text="${notice.createdBy}">ADMIN</td>
-                            <td th:text="${#temporals.format(notice.created, 'yyyy-MM-dd HH:mm')}">2025-04-29</td>
-                            <td th:text="${notice.isHit}">미확인</td>
-                        </tr>
-                        <tr th:if="${notices.size() == 0}">
-                            <td colspan="4" class="text-center text-muted">공지사항이 없습니다.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="dash-box">
+            <div class="dash-box-header">
+                <h2 class="dash-box-title">프로젝트 공지사항</h2>
+                <a th:href="@{/notice}" class="dash-btn">전체 보기</a>
             </div>
-        </div>
-
-        <!-- 최근 변경된 항목 -->
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <strong>최근 변경된 항목</strong>
-                </div>
-                <div class="card-body p-2">
-                    <table class="table table-bordered table-sm">
-                        <thead class="table-light">
-                        <tr><th>구분</th><th>이름</th><th>수정자</th><th>수정일</th></tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="item : ${recentChanges}">
-                            <td th:text="${item.type}">테이블</td>
-                            <td th:text="${item.name}">회원정보</td>
-                            <td th:text="${item.modifiedBy}">admin</td>
-                            <td th:text="${#temporals.format(item.modifiedAt, 'yyyy-MM-dd HH:mm')}">2025-04-29 15:30</td>
-                        </tr>
-                        <tr th:if="${recentChanges.size() == 0}">
-                            <td colspan="4" class="text-center text-muted">최근 변경된 항목이 없습니다.</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <ul class="dash-list" id="noticeList" th:unless="${notices.isEmpty()}">
+                <li class="dash-list-item notice-item" th:each="notice : ${notices}" th:data-id="${notice.id}"
+                    tabindex="0" role="button">
+                    <span class="dash-unread-dot" th:classappend="${notice.isHit == '확인'} ? 'is-read'"
+                          th:title="${notice.isHit}"></span>
+                    <div class="dash-list-body">
+                        <div class="dash-list-title" th:text="${notice.title}">공지 제목</div>
+                        <div class="dash-list-meta">
+                            <span th:text="${notice.createdBy}">admin</span>
+                            <span aria-hidden="true">·</span>
+                            <time class="js-relative-time"
+                                  th:datetime="${#temporals.format(notice.created, 'yyyy-MM-dd''T''HH:mm:ss')}"
+                                  th:title="${#temporals.format(notice.created, 'yyyy-MM-dd HH:mm')}"
+                                  th:text="${#temporals.format(notice.created, 'yyyy-MM-dd HH:mm')}">2025-04-29</time>
+                        </div>
+                    </div>
+                    <span class="dash-state" th:classappend="${notice.isHit == '확인'} ? 'is-read' : 'is-new'"
+                          th:text="${notice.isHit == '확인'} ? '읽음' : '새 글'">새 글</span>
+                </li>
+            </ul>
+            <div class="dash-blank" th:if="${notices.isEmpty()}">
+                <svg viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M8 16a2 2 0 0 0 1.98-1.75.25.25 0 0 0-.25-.25h-3.46a.25.25 0 0 0-.25.25A2 2 0 0 0 8 16ZM3 5a5 5 0 0 1 10 0v2.95c0 .05.02.1.05.14l1.6 2.4A1.62 1.62 0 0 1 13.3 13H2.7a1.62 1.62 0 0 1-1.35-2.51l1.6-2.4A.25.25 0 0 0 3 7.95Zm5-3.5A3.5 3.5 0 0 0 4.5 5v2.95c0 .35-.1.69-.3.97l-1.6 2.4a.13.13 0 0 0 .1.18h10.6a.13.13 0 0 0 .1-.18l-1.6-2.4a1.75 1.75 0 0 1-.3-.97V5A3.5 3.5 0 0 0 8 1.5Z"/></svg>
+                <p>공지사항이 없습니다.</p>
             </div>
         </div>
 

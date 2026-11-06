@@ -65,13 +65,13 @@ public class HomeController {
         return "pages/data/table-manage";
     }
 
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('USER')") // 화면의 그리드 API 권한(USER)과 동일 (MenuAuthorization 참고)
     @GetMapping("/columnManage")
     public String columnManage() {
         return "pages/data/column_manage";
     }
 
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('USER')") // 화면의 그리드 API 권한(USER)과 동일 (MenuAuthorization 참고)
     @GetMapping("/codeRule")
     public String codeRule() {
         return "pages/design/code_rule";
@@ -88,19 +88,19 @@ public class HomeController {
         return "pages/design/code_rule_manage";
     }
 
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('USER')") // 화면의 그리드 API 권한(USER)과 동일 (MenuAuthorization 참고)
     @GetMapping("/designManage")
     public String designTestManage() {
         return "pages/design/design_manage";
     }
 
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('USER')") // 화면의 그리드 API 권한(USER)과 동일 (MenuAuthorization 참고)
     @GetMapping("/testManage")
     public String testManage() {
         return "pages/design/test_manage";
     }
 
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/userManage")
     public String manage() {
         return "pages/system/user_manage";
@@ -123,7 +123,7 @@ public class HomeController {
         return "pages/operation/help";
     }
 
-    @PreAuthorize("hasRole('VIEWER')")
+    @PreAuthorize("hasRole('DBA')")
     @GetMapping("/projectManage")
     public String projectManage(Model model, @AuthenticationPrincipal AccountDto accountDto) {
 

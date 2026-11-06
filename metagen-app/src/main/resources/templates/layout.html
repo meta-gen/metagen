@@ -4,6 +4,8 @@
 
 <head>
     <title>MetaGen</title>
+    <!-- 폰트 미리 받기 : 첫 렌더링 전에 Pretendard 를 준비해 폰트 교체로 인한 화면 흔들림 방지 -->
+    <link rel="preload" th:href="@{/fonts/pretendard/PretendardVariable.woff2}" href="/fonts/pretendard/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="MetaGen은 메타데이터를 관리하고 표준화하는 시스템입니다.">
@@ -29,8 +31,10 @@
     <script th:src="@{/js/sockjs.min.js}"></script>
     <script th:src="@{/js/stomp.min.js}"></script>
 
-    <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
+    <link th:href="@{/fonts/pretendard.css}" rel="stylesheet">
     <link th:href="@{/css/bootstrap-grid.css}" rel="stylesheet">
+    <!-- GitHub Primer 스타일 공통 컴포넌트 (bootstrap / dataTables 기본 스타일 덮어쓰기) -->
+    <link th:href="@{/css/primer.css}" rel="stylesheet">
 
     <!-- 사이드바 접힘 상태를 렌더링 전에 반영 (페이지 이동 시 깜빡임 방지) -->
     <script>
@@ -89,6 +93,9 @@
         <!-- Main Section -->
         <div class="content">
             <section layout:fragment="content"></section>
+
+            <!-- Footer : GitHub 처럼 콘텐츠 영역 최하단에 위치 -->
+            <footer th:replace="~{fragments/footer::footer}"></footer>
         </div>
     </div>
 
@@ -99,7 +106,7 @@
         <!-- 접힌 상태 : 스낵바 (새 메시지가 있으면 빨간 표시) -->
         <button type="button" id="messenger-snackbar" class="messenger-snackbar">
             <span class="status-dot online"></span>
-            <span>현재 로그인 사용자</span>
+            <span>로그인 사용자</span>
             <span id="messenger-active-count" class="messenger-count">0</span>
             <span id="messenger-unread" class="messenger-unread" style="display: none;" aria-label="새 메시지"></span>
         </button>
@@ -108,7 +115,7 @@
             <!-- 로그인 사용자 목록 -->
             <div id="messenger-users" class="messenger-view">
                 <div class="messenger-header">
-                    <span class="messenger-title">현재 로그인 사용자</span>
+                    <span class="messenger-title">로그인 사용자</span>
                     <button type="button" class="messenger-icon-btn messenger-minimize" aria-label="접기">&minus;</button>
                 </div>
                 <div class="messenger-body">
@@ -136,9 +143,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer th:replace="~{fragments/footer::footer}"></footer>
 </div>
 </body>
 </html>

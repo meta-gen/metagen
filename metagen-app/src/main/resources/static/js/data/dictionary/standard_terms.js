@@ -1,3 +1,13 @@
+import {registerRowDecorator, setApproval, setMono} from "../../common/grid_cells.js";
+
+/**
+ * 표준 용어 행 꾸미기 : 영문약어는 코드 글꼴, 승인여부는 상태 라벨
+ */
+registerRowDecorator("standardTerms", (row, data, cellOf) => {
+    setMono(cellOf("commonStandardTermAbbreviation"), data.commonStandardTermAbbreviation);
+    setApproval(cellOf("isApprovalYn"), data.isApprovalYn);
+});
+
 /**
  * 표준 용어 승인 버튼
  *

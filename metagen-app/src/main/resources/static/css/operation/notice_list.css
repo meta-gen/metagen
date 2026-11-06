@@ -1,0 +1,41 @@
+/* =========================================================
+   공지사항 목록 : GitHub 알림(Notifications) 목록 형태
+   ========================================================= */
+#noticeList > tbody > tr {
+    cursor: pointer;
+}
+
+.notice-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.notice-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: transparent;
+}
+
+.notice-title-text {
+    color: var(--gh-fg);
+    overflow-wrap: anywhere;
+}
+
+/* 안 읽은 글 */
+#noticeList tr.notice-unread .notice-dot {
+    background-color: var(--gh-accent);
+}
+
+#noticeList tr.notice-unread .notice-title-text {
+    font-weight: 600;
+}
+
+/* 행에 마우스를 올리면 제목을 링크처럼 표시 */
+#noticeList > tbody > tr:hover .notice-title-text {
+    color: var(--gh-accent);
+    text-decoration: underline;
+}

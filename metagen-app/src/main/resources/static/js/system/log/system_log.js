@@ -1,3 +1,35 @@
+import {registerRowDecorator, setDateTime, setLabel, setMono, setMuted, setUser} from "../../common/grid_cells.js";
+
+const METHOD_VARIANT = {GET: "accent", POST: "success", PUT: "attention", PATCH: "attention", DELETE: "danger"};
+
+/**
+ * HTTP 상태코드 → 라벨 색상 (2xx 초록, 3xx 파랑, 4xx 노랑, 5xx 빨강)
+ */
+function statusVariant(code) {
+    const n = Number(code);
+    if (n >= 500) return "danger";
+    if (n >= 400) return "attention";
+    if (n >= 300) return "accent";
+    if (n >= 200) return "success";
+    return "";
+}
+
+registerRowDecorator("logTable", (row, data, cellOf) => {
+    const method = String(data.method ?? "").toUpperCase();
+    if (method) setLabel(cellOf("method"), method, METHOD_VARIANT[method] ?? "");
+
+    if (data.statusCode !== null && data.statusCode !== undefined && data.statusCode !== "") {
+        setLabel(cellOf("statusCode"), String(data.statusCode), statusVariant(data.statusCode), true);
+    }
+
+    setMono(cellOf("logUrl"), data.logUrl);
+    setMono(cellOf("ip"), data.ip);
+    setUser(cellOf("username"), data.username);
+    if (data.roleName) setLabel(cellOf("roleName"), data.roleName);
+    else setMuted(cellOf("roleName"), "-");
+    setDateTime(cellOf("timestamp"), data.timestamp);
+});
+
 $(document).ready(function () {
 
     const tableId = 'logTable';

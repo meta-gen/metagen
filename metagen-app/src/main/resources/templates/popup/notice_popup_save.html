@@ -1,71 +1,75 @@
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>MetaGen</title>
+    <!-- 폰트 미리 받기 : 첫 렌더링 전에 Pretendard 를 준비해 폰트 교체로 인한 화면 흔들림 방지 -->
+    <link rel="preload" th:href="@{/fonts/pretendard/PretendardVariable.woff2}" href="/fonts/pretendard/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="/images/favicon.png">
     <link rel="stylesheet" th:href="@{/css/layout.css}">
     <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
-    <link rel="stylesheet" th:href="@{/css/dataTables.dataTables.min.css}">
-    <link rel="stylesheet" th:href="@{/js/jquery-ui-1.14.1.custom/jquery-ui.css}">
     <link rel="stylesheet" th:href="@{/css/popup.css}">
+    <link th:href="@{/fonts/pretendard.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/primer.css}">
+    <link rel="stylesheet" th:href="@{/css/operation/notice.css}">
 
     <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
     <script th:src="@{/js/bootstrap.bundle.js}"></script>
-    <script th:src="@{/js/dataTables.min.js}"></script>
-    <script th:src="@{/js/jquery-ui-1.14.1.custom/jquery-ui.js}"></script>
     <script type="module" th:src="@{/js/popup/notice_popup_save.js}"></script>
-
-    <link th:href="@{/fonts/roboto.css}" rel="stylesheet">
 </head>
 
 <body>
-    <div class="popup-container">
-        <div class="popup-header">
-            <h1 id="notice_title">공지사항 등록</h1>
-            <p>
-                공지사항을 등록합니다.
-            </p>
-        </div>
+    <!-- 공지사항 등록/수정 (GitHub 새 이슈 작성 화면 형태) -->
+    <div class="popup-container notice-edit">
+        <header class="notice-edit-header">
+            <h1 id="notice_title" class="notice-view-title">공지사항 등록</h1>
+            <p class="gh-muted">프로젝트 멤버에게 공지할 내용을 작성합니다.</p>
+        </header>
 
-        <div class="button-container" style="justify-content:flex-end; display: flex;">
-			<button class="btn btn-secondary" id="edit-button">편집</button>
-            <button class="btn btn-primary" id="save-button" hidden>저장</button>
-        </div>
-
-        <form id="editNoticeForm" class="popup-form">
+        <form id="editNoticeForm" class="notice-form">
             <input type="hidden" id="type" name="type"/>
             <input type="hidden" id="id" name="id"/>
 
-            <div class="form-group" th:if="${projects != null}">
-                <label>공지 등록 대상 프로젝트</label>
-                <div id="notice-project" class="form-check-group" style="display: flex; flex-wrap: wrap; gap: 16px;">
-                    <div th:each="project : ${projects}" class="form-check" style="display: flex; align-items: center; gap: 6px;">
+            <div class="notice-field" th:if="${projects != null}">
+                <span class="notice-label">공지 대상 프로젝트</span>
+                <div id="notice-project" class="notice-project-list">
+                    <label th:each="project : ${projects}" class="notice-project-item"
+                           th:for="'project_' + ${project.id}">
                         <input class="form-check-input"
                                type="checkbox"
                                th:id="'project_' + ${project.id}"
                                th:name="projectIds"
                                th:value="${project.id}"
                                th:checked="${project.isSelected}"/>
-                        <label class="form-check-label"
-                               th:for="'project_' + ${project.id}"
-                               th:text="${project.projectName}"
-                               style="margin-bottom: 0; font-weight: 500;"></label>
-                    </div>
+                        <span th:text="${project.projectName}">프로젝트</span>
+                    </label>
+                    <p class="notice-project-empty gh-muted" th:if="${projects.isEmpty()}">관리 중인 프로젝트가 없습니다.</p>
                 </div>
             </div>
 
-			<div class="form-group">
-	            <label for="title">공지사항 제목</label>
-	            <input type="text" id="title" class="form-control" name="title" required readonly/>
-	        </div>
-			<div class="form-group">
-	            <label for="content">공지사항 내용</label>
-	            <textarea id="content" class="form-control" name="content" style="height: 300px;" readonly></textarea>
-	        </div>
-			<!--<div class="form-group">
+            <div class="notice-field">
+                <label class="notice-label" for="title">제목 <span class="notice-required" aria-hidden="true">*</span></label>
+                <input type="text" id="title" class="form-control" name="title" placeholder="제목을 입력하세요" required readonly/>
+            </div>
+
+            <div class="notice-field">
+                <label class="notice-label" for="content">내용 <span class="notice-required" aria-hidden="true">*</span></label>
+                <textarea id="content" class="form-control notice-textarea" name="content" placeholder="공지 내용을 입력하세요" readonly></textarea>
+            </div>
+            <!--<div class="form-group">
 	            <label for="noticeFile">파일 등록</label>
 	            <input type="file" class="form-control" name="file" id="noticeFile" disabled/>
 	        </div>-->
         </form>
+
+        <!-- 하단 버튼 (오른쪽 정렬) -->
+        <div class="notice-actions">
+            <button type="button" class="btn" onclick="window.close()">닫기</button>
+            <button type="button" class="btn" id="edit-button">
+                <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+                편집
+            </button>
+            <button type="button" class="btn btn-primary" id="save-button" hidden>저장</button>
+        </div>
     </div>
 </body>
 </html>
