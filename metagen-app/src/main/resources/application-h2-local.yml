@@ -1,0 +1,24 @@
+# 로컬 개발 (H2 In-Memory DB, Postgres 불필요) : 기동 시마다 Flyway로 스키마/초기 데이터 새로 생성
+spring:
+  datasource:
+    url: jdbc:h2:mem:meta-gen;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: meta-gen
+    password: meta-gen
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true

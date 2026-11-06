@@ -1,0 +1,80 @@
+package com.koboolean.metagen.core.security.conf;
+
+import com.koboolean.metagen.core.security.domain.dto.AccountDto;
+import com.koboolean.metagen.core.login.service.LoginUserCache;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
+import org.springframework.web.util.WebUtils;
+
+import java.io.IOException;
+
+@Component
+@RequiredArgsConstructor
+public class CustomOncePerRequestFilter extends OncePerRequestFilter {
+
+    private final LoginUserCache loginUserCache;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        // CSRF 토큰 갱신 (기존 로직 유지)
+        CsrfToken csrfToken = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
+        if (csrfToken != null) {
+            Cookie cookie = WebUtils.getCookie(request, "XSRF-TOKEN");
+            String token = csrfToken.getToken();
+            if (cookie == null || (token != null && !token.equals(cookie.getValue()))) {
+                updateSessionCookie(request, response, "XSRF-TOKEN", token, false);
+            }
+        }
+
+        // Only wrap if not already wrapped
+        HttpServletRequest requestToUse = request;
+        HttpServletResponse responseToUse = response;
+
+        if (!(requestToUse instanceof ContentCachingRequestWrapper)) {
+            // 캐시 크기 제한 없는 생성자는 deprecated(삭제 예정) : 기존 동작(제한 없음)을 유지하도록 최대값 지정
+            requestToUse = new ContentCachingRequestWrapper(request, Integer.MAX_VALUE);
+        }
+
+        if (!(responseToUse instanceof ContentCachingResponseWrapper)) {
+            responseToUse = new ContentCachingResponseWrapper(response);
+        }
+
+        // 요청 본문을 강제적으로 캐싱하지 않고 그대로 유지
+        request.setAttribute("CACHED_REQUEST", requestToUse);
+        request.setAttribute("CACHED_RESPONSE", responseToUse);
+
+        AccountDto accountDto = (AccountDto) request.getSession().getAttribute("account");
+
+        if (accountDto != null && accountDto.getId() != null) {
+            // 로그인 사용자 만료시간 연장
+            loginUserCache.extend(accountDto.getId());
+        }
+
+        // 필터 체인 실행 (중요: 감싼 요청과 응답을 사용해야 함)
+        filterChain.doFilter(requestToUse, responseToUse);
+
+        // 응답을 클라이언트로 다시 전달
+        if (responseToUse instanceof ContentCachingResponseWrapper) {
+            ((ContentCachingResponseWrapper) responseToUse).copyBodyToResponse();
+        }
+    }
+
+    private static void updateSessionCookie(HttpServletRequest request, HttpServletResponse response, String type, String token, boolean httpOnly) {
+        Cookie cookie = new Cookie(type, token);
+        cookie.setPath("/");
+        cookie.setHttpOnly(httpOnly);
+        cookie.setSecure(request.isSecure()); // HTTPS 요청(프록시 X-Forwarded-Proto 포함)인 경우에만 Secure
+        cookie.setMaxAge(1800); // 요청 시마다 만료 시간 갱신
+        response.addCookie(cookie);
+    }
+}

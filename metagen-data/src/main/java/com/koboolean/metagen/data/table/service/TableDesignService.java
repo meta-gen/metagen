@@ -1,0 +1,28 @@
+package com.koboolean.metagen.data.table.service;
+
+import com.koboolean.metagen.data.table.domain.dto.TableInfoDto;
+import com.koboolean.metagen.common.grid.domain.dto.ColumnDto;
+import com.koboolean.metagen.core.security.domain.dto.AccountDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+
+public interface TableDesignService {
+
+    List<ColumnDto> selectTableInfoColumn();
+
+    Page<TableInfoDto> selectTableInfoData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery);
+
+    void saveTable(TableInfoDto tableInfoDto, AccountDto accountDto);
+
+    void updateTable(TableInfoDto tableInfoDto, AccountDto accountDto);
+
+    void updateTableIsApproval(boolean isApproval, AccountDto accountDto, List<TableInfoDto> tableInfoDtos);
+
+    void deleteTable(List<TableInfoDto> tableInfoDtos, AccountDto accountDto);
+
+    void uploadTableExcelFile(MultipartFile file, AccountDto accountDto) throws IOException;
+}
