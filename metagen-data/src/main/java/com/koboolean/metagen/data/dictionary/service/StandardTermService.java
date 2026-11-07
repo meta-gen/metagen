@@ -173,17 +173,18 @@ public class StandardTermService {
     private StandardTerm buildUploadedTerm(Long projectId, boolean isApprovalAvailable, Map<String, String> standardTermEntry,
                                            Map<String, List<StandardWord>> wordsByAbbreviation, Map<String, Long> domainIdByName) {
         String standardTermName = standardTermEntry.get("standardTermName");
-        String[] split = standardTermEntry.get("standardTermAbbreviation").split("_");
+        String abbreviation = standardTermEntry.get("standardTermAbbreviation");
+
+        // 용어명과 영문약어명의 단어 수가 다르면 업로드 전체를 취소한다. (사용자_이름 / USER_NM)
+        validateWordCount(standardTermName, abbreviation);
+
+        String[] split = abbreviation.split("_");
+        String[] nameWords = standardTermName.split("_");
 
         List<StandardTermWordMapping> mappings = new ArrayList<>();
         for (int i = 0; i < split.length; i++) {
-            // 같은 약어의 단어 중 용어명에 포함된 단어를 쓴다. (여러 개면 마지막 단어 - 기존 규칙)
-            StandardWord word = null;
-            for (StandardWord candidate : wordsByAbbreviation.getOrDefault(split[i], List.of())) {
-                if (standardTermName.contains(candidate.getCommonStandardWordName())) {
-                    word = candidate;
-                }
-            }
+            // 같은 순번의 단어명과 정확히 같은 단어를 쓴다.
+            StandardWord word = findWord(wordsByAbbreviation.getOrDefault(split[i], List.of()), nameWords[i]);
 
             if (word == null) {
                 throw new CustomException(ErrorCode.NOT_FOUND_WORD_DATA, "누락된 문자열 : " + split[i]);
@@ -219,18 +220,14 @@ public class StandardTermService {
     }
 
     private void getStandardTermDomain(Long projectId, String[] split, List<StandardTermWordMapping> mappings, String standardTermName) {
+        String[] nameWords = standardTermName.split("_", -1);
+
         for (int i = 0; i < split.length; i++) {
             String s = split[i];
             List<StandardWord> words = standardWordService.findByCommonStandardWordAbbreviation(s, projectId);
 
-            StandardWord word = null;
-
-            // standardWord에 포함된 형식의 값만 불러온다.
-            for (StandardWord standardWord : words) {
-                if(standardTermName.contains(standardWord.getCommonStandardWordName())){
-                    word = standardWord;
-                }
-            }
+            // 같은 순번의 단어명과 정확히 같은 단어를 쓴다. (사용자_이름 / USER_NM → 사용자=USER, 이름=NM)
+            StandardWord word = findWord(words, nameWords[i]);
 
             if (word != null) {
                 // 일단 매핑 객체는 나중에 StandardTerm set
@@ -246,6 +243,35 @@ public class StandardTermService {
     }
 
     /**
+     * 표준용어명과 영문약어명은 '_' 로 나눈 단어 수가 같아야 한다. (빈 단어 / 공백 구분 불가)
+     * 예) 사용자_이름 / USER_NM  (O),  사용자이름 / USER_NM  (X),  사용자 이름 / USER_NM  (X)
+     */
+    public static void validateWordCount(String termName, String abbreviation) {
+        String name = termName == null ? "" : termName.trim();
+        String abbr = abbreviation == null ? "" : abbreviation.trim();
+
+        String[] nameWords = name.split("_", -1);
+        String[] abbrWords = abbr.split("_", -1);
+
+        boolean hasBlank = Arrays.stream(nameWords).anyMatch(String::isBlank) || Arrays.stream(abbrWords).anyMatch(String::isBlank)
+                || name.chars().anyMatch(Character::isWhitespace);
+
+        if (name.isEmpty() || abbr.isEmpty() || hasBlank || nameWords.length != abbrWords.length) {
+            throw new CustomException(ErrorCode.TERM_WORD_COUNT_MISMATCH, termName + " / " + abbreviation);
+        }
+    }
+
+    /**
+     * 같은 영문약어의 단어 중 이름이 정확히 같은 단어 (없으면 null)
+     */
+    private static StandardWord findWord(List<StandardWord> candidates, String wordName) {
+        return candidates.stream()
+                .filter(candidate -> Objects.equals(candidate.getCommonStandardWordName(), wordName))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
      * 같은 영문약어명 + 도메인으로 이미 등록된 용어 (등록 시 중복 기준)
      */
     public List<StandardTerm> findDuplicateTerms(String abbreviation, String domainName, Long projectId) {
@@ -253,6 +279,8 @@ public class StandardTermService {
     }
 
     public void saveStandardTerms(Long projectId, boolean isApprovalAvailable, StandardTermDto standardTermDto, String[] split) {
+
+        validateWordCount(standardTermDto.getCommonStandardTermName(), standardTermDto.getCommonStandardTermAbbreviation());
 
         List<StandardTerm> byCommonStandardTermAbbreviationAndProjectId = findDuplicateTerms(standardTermDto.getCommonStandardTermAbbreviation(), standardTermDto.getCommonStandardDomainName(), projectId);
 
@@ -304,6 +332,11 @@ public class StandardTermService {
         StandardTerm existingTerm = standardTermRepository.findByIdAndProjectId(dto.getId(), projectId);
         if (existingTerm == null) {
             throw new CustomException(ErrorCode.NOT_FOUND_TERM_DATA);
+        }
+
+        if (!Objects.equals(existingTerm.getCommonStandardTermName(), dto.getCommonStandardTermName())
+                || !Objects.equals(existingTerm.getCommonStandardTermAbbreviation(), dto.getCommonStandardTermAbbreviation())) {
+            validateWordCount(dto.getCommonStandardTermName(), dto.getCommonStandardTermAbbreviation());
         }
 
         StandardDomain standardDomain = standardDomainService.findByCommonStandardDomainNameAndProjectId(

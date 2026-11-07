@@ -74,7 +74,7 @@ class UploadPerformanceTest {
         byte[] dictionary = workbook(
                 sheet(TERMS, i -> {
                     int d = i % DOMAINS;
-                    return new String[]{"", "1", p + "단어" + i + " " + p + "단어" + d, "용어 설명",
+                    return new String[]{"", "1", p + "단어" + i + "_" + p + "단어" + d, "용어 설명",
                             p + "W" + i + "_" + p + "W" + d, p + "도메인" + d, "", "", "", "", "", ""};
                 }),
                 sheet(WORDS, i -> new String[]{"", "1", p + "단어" + i, p + "W" + i, "Word " + i, "단어 설명", "N",

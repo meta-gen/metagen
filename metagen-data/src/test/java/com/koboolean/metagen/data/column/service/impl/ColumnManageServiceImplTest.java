@@ -68,7 +68,7 @@ class ColumnManageServiceImplTest {
     }
 
     private static StandardTerm term() {
-        return StandardTerm.builder().id(20L).projectId(1L).commonStandardTermName("사용자 이름").columnInfos(new ArrayList<>()).build();
+        return StandardTerm.builder().id(20L).projectId(1L).commonStandardTermName("사용자_이름").columnInfos(new ArrayList<>()).build();
     }
 
     private static ColumnInfoDto newColumn() {

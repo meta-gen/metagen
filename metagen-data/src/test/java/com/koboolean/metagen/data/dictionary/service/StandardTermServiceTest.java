@@ -41,10 +41,10 @@ class StandardTermServiceTest {
 
     private static final Long PROJECT_ID = 1L;
 
-    /** 표준용어 '사용자 이름' = 단어(사용자: USER, 이름: NM) + 도메인(명칭V100) */
+    /** 표준용어 '사용자_이름' = 단어(사용자: USER, 이름: NM) + 도메인(명칭V100) */
     private static StandardTermDto termDto() {
         return StandardTermDto.builder()
-                .commonStandardTermName("사용자 이름")
+                .commonStandardTermName("사용자_이름")
                 .commonStandardTermAbbreviation("USER_NM")
                 .commonStandardDomainName("명칭V100")
                 .synonyms("회원명,유저명")
@@ -75,15 +75,47 @@ class StandardTermServiceTest {
         }
 
         @Test
-        @DisplayName("약어에 해당하는 표준단어가 용어명에 없으면 NOT_FOUND_WORD_DATA")
+        @DisplayName("약어에 해당하는 표준단어가 같은 순번의 용어명 단어와 다르면 NOT_FOUND_WORD_DATA")
         void wordMissing() {
             when(standardWordService.findByCommonStandardWordAbbreviation("USER", PROJECT_ID)).thenReturn(List.of(word("사용자", "USER")));
-            // NM 약어의 단어는 '번호' 라서 용어명 '사용자 이름' 에 포함되지 않는다
+            // NM 약어의 단어는 '번호' 라서 용어명 두 번째 단어 '이름' 과 다르다
             when(standardWordService.findByCommonStandardWordAbbreviation("NM", PROJECT_ID)).thenReturn(List.of(word("번호", "NM")));
 
             assertThatThrownBy(() -> service.saveStandardTerms(PROJECT_ID, true, termDto(), new String[]{"USER", "NM"}))
                     .extracting("errorCode").isEqualTo(ErrorCode.NOT_FOUND_WORD_DATA);
             verify(standardTermRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("용어명과 영문약어명의 '_' 단어 수가 다르면 TERM_WORD_COUNT_MISMATCH (저장/조회하지 않음)")
+        void wordCountMismatch() {
+            for (String name : List.of("사용자이름", "사용자 이름", "사용자_이름_정보", "사용자__이름", "_사용자_이름")) {
+                StandardTermDto dto = termDto();
+                dto.setCommonStandardTermName(name);
+
+                assertThatThrownBy(() -> service.saveStandardTerms(PROJECT_ID, true, dto, new String[]{"USER", "NM"}))
+                        .as(name)
+                        .extracting("errorCode").isEqualTo(ErrorCode.TERM_WORD_COUNT_MISMATCH);
+            }
+            verify(standardTermRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("단어 매핑은 같은 순번의 단어명과 정확히 같은 단어를 쓴다 (포함 관계가 아니다)")
+        void exactWordMatch() {
+            StandardWord user = word("사용자", "USER");
+            // '이름' 의 일부 글자를 포함하는 단어가 있어도 정확히 같은 '이름' 을 고른다
+            StandardWord name = word("이름", "NM");
+            when(standardWordService.findByCommonStandardWordAbbreviation("USER", PROJECT_ID)).thenReturn(List.of(word("사용", "USER"), user));
+            when(standardWordService.findByCommonStandardWordAbbreviation("NM", PROJECT_ID)).thenReturn(List.of(name, word("름", "NM")));
+            when(standardDomainService.findByCommonStandardDomainNameAndProjectId("명칭V100", PROJECT_ID)).thenReturn(domain());
+
+            service.saveStandardTerms(PROJECT_ID, true, termDto(), new String[]{"USER", "NM"});
+
+            ArgumentCaptor<StandardTerm> saved = ArgumentCaptor.forClass(StandardTerm.class);
+            verify(standardTermRepository).save(saved.capture());
+            assertThat(saved.getValue().getTermWordMappings()).extracting(StandardTermWordMapping::getStandardWord)
+                    .containsExactly(user, name);
         }
 
         @Test
@@ -144,7 +176,8 @@ class StandardTermServiceTest {
             StandardTermDto dto = termDto();
             dto.setId(9L);
             dto.setCommonStandardTermDescription("변경된 설명");
-            StandardTerm existing = StandardTerm.builder().id(9L).projectId(PROJECT_ID).isApproval(false).build();
+            StandardTerm existing = StandardTerm.builder().id(9L).projectId(PROJECT_ID).isApproval(false)
+                    .commonStandardTermName("사용자_이름").commonStandardTermAbbreviation("USER_NM").build();
             StandardDomain domain = domain();
             when(standardTermRepository.findByIdAndProjectId(9L, PROJECT_ID)).thenReturn(existing);
             when(standardDomainService.findByCommonStandardDomainNameAndProjectId("명칭V100", PROJECT_ID)).thenReturn(domain);
@@ -154,6 +187,37 @@ class StandardTermServiceTest {
             assertThat(existing.getCommonStandardTermDescription()).isEqualTo("변경된 설명");
             assertThat(existing.getStandardDomain()).isSameAs(domain);
             assertThat(existing.getIsApproval()).isTrue();
+        }
+
+        @Test
+        @DisplayName("용어명/약어명을 바꾸지 않으면 이전 형식(공백 구분) 용어도 수정할 수 있다")
+        void legacyNameUnchanged() {
+            StandardTermDto dto = termDto();
+            dto.setId(9L);
+            dto.setCommonStandardTermName("사용자 이름");
+            StandardTerm existing = StandardTerm.builder().id(9L).projectId(PROJECT_ID).isApproval(false)
+                    .commonStandardTermName("사용자 이름").commonStandardTermAbbreviation("USER_NM").build();
+            when(standardTermRepository.findByIdAndProjectId(9L, PROJECT_ID)).thenReturn(existing);
+            when(standardDomainService.findByCommonStandardDomainNameAndProjectId("명칭V100", PROJECT_ID)).thenReturn(domain());
+
+            service.updateStandardTerms(PROJECT_ID, true, dto, new String[]{});
+
+            assertThat(existing.getIsApproval()).isTrue();
+        }
+
+        @Test
+        @DisplayName("용어명을 바꿀 때 영문약어명과 단어 수가 다르면 TERM_WORD_COUNT_MISMATCH")
+        void changedNameMismatch() {
+            StandardTermDto dto = termDto();
+            dto.setId(9L);
+            dto.setCommonStandardTermName("사용자이름");
+            StandardTerm existing = StandardTerm.builder().id(9L).projectId(PROJECT_ID)
+                    .commonStandardTermName("사용자_이름").commonStandardTermAbbreviation("USER_NM").build();
+            when(standardTermRepository.findByIdAndProjectId(9L, PROJECT_ID)).thenReturn(existing);
+
+            assertThatThrownBy(() -> service.updateStandardTerms(PROJECT_ID, true, dto, new String[]{}))
+                    .extracting("errorCode").isEqualTo(ErrorCode.TERM_WORD_COUNT_MISMATCH);
+            assertThat(existing.getCommonStandardTermName()).isEqualTo("사용자_이름");
         }
     }
 }

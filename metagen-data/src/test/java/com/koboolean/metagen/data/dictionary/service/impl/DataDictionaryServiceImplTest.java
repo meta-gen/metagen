@@ -126,6 +126,10 @@ class DataDictionaryServiceImplTest {
                 .extracting(StandardWordDto::getCommonStandardWordName).containsExactly("사용자", "이름");
         assertThat((List<StandardDomainDto>) result.get("standardDomains"))
                 .extracting(StandardDomainDto::getCommonStandardDomainName).containsExactly("명칭V100");
+
+        // 표준용어명 형식("_" 구분)으로 조회해도 같은 단어를 찾는다
+        assertThat((List<StandardWordDto>) service.getStandardTermList("사용자_이름", login).get("list"))
+                .extracting(StandardWordDto::getCommonStandardWordName).containsExactly("사용자", "이름");
     }
 
     @Test
@@ -133,14 +137,14 @@ class DataDictionaryServiceImplTest {
     @SuppressWarnings("unchecked")
     void duplicateTerm() {
         AccountDto login = AccountDto.builder().projectId(1L).build();
-        StandardTerm term = StandardTerm.builder().commonStandardTermName("사용자 이름").isApproval(false).build();
+        StandardTerm term = StandardTerm.builder().commonStandardTermName("사용자_이름").isApproval(false).build();
         when(standardTermService.findDuplicateTerms("USER_NM", "명칭V100", 1L)).thenReturn(List.of(term));
 
         Map<String, Object> result = service.checkStandardTermDuplicate("USER_NM", "명칭V100", login);
 
         assertThat(result.get("duplicated")).isEqualTo(true);
         assertThat((List<Map<String, String>>) result.get("terms")).singleElement().satisfies(t -> {
-            assertThat(t.get("commonStandardTermName")).isEqualTo("사용자 이름");
+            assertThat(t.get("commonStandardTermName")).isEqualTo("사용자_이름");
             assertThat(t.get("isApprovalYn")).isEqualTo("N");
         });
     }

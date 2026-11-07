@@ -170,7 +170,8 @@ public class DataDictionaryServiceImpl implements DataDictionaryService {
 
         List<StandardWordDto> list = new ArrayList<>();
 
-        String[] splitData = termNm.split(" ");
+        // 단어 구분 : "_" 또는 공백 (사용자_이름 / 사용자 이름)
+        String[] splitData = termNm.trim().split("[_\\s]+");
 
         for (int i = 0; i < splitData.length; i++) {
             StandardWord standardWord = standardWordService.commonStandardWordName(splitData[i], projectId);

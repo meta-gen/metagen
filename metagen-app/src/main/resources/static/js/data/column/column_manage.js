@@ -559,7 +559,7 @@ function selectTerm(term) {
 
     $("#termId").val(term.id);
     $("#columnName").val(term.commonStandardTermAbbreviation);
-    $("#columnDesc").val(term.commonStandardTermName);
+    $("#columnDesc").val(String(term.commonStandardTermName ?? "").replaceAll("_", " ")); // 설명은 읽기 쉽게 공백으로
 
     // 데이터 타입은 "VARCHAR(100)" 형태 : 타입과 길이를 나눠 넣는다.
     const match = String(term.dataType ?? "").match(/^\s*([^(]+?)\s*(?:\((\d+)\))?\s*$/);

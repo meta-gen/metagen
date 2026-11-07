@@ -169,7 +169,8 @@ public class ColumnManageServiceImpl implements ColumnManageService {
     public List<StandardTermDto> selectTermData(AccountDto accountDto, String type, String data) {
 
         List<StandardTerm> terms = switch(type){
-            case "termName" -> standardTermRepository.findAllByProjectIdAndCommonStandardTermNameContaining(accountDto.getProjectId(), data);
+            // 표준용어명은 단어를 "_" 로 잇는다 : "사용자 이름" 으로 검색해도 "사용자_이름" 을 찾도록
+            case "termName" -> standardTermRepository.findAllByProjectIdAndCommonStandardTermNameContaining(accountDto.getProjectId(), data.trim().replaceAll("\\s+", "_"));
             case "termAbbreviation" -> standardTermRepository.findAllByProjectIdAndCommonStandardTermAbbreviationContaining(accountDto.getProjectId(), data);
             default -> null;
         };

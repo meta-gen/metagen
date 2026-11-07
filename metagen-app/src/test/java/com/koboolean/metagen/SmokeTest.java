@@ -350,7 +350,7 @@ class SmokeTest {
                  "commonStandardDomainCategory":"%s","synonyms":"","restrictedWords":""}
                 """.formatted(suffix, suffix, category)).statusCode()).isEqualTo(200);
         assertThat(postJson("/api/insertDataDictionary/standardTerms", """
-                {"revisionNumber":1,"commonStandardTermName":"스모크%s 명칭%s","commonStandardTermDescription":"스모크",
+                {"revisionNumber":1,"commonStandardTermName":"스모크%s_명칭%s","commonStandardTermDescription":"스모크",
                  "commonStandardTermAbbreviation":"SMK%s_NM%s","commonStandardDomainName":"%s","synonyms":""}
                 """.formatted(suffix, suffix, suffix, suffix, domainName)).statusCode()).isEqualTo(200);
 
@@ -363,7 +363,7 @@ class SmokeTest {
                 0, List.of("id", "revision", "termName", "description", "abbreviation", "domainName"), 1, terms::add);
 
         assertThat(terms).anySatisfy(row -> {
-            assertThat(row.get("termName")).isEqualTo("스모크" + suffix + " 명칭" + suffix);
+            assertThat(row.get("termName")).isEqualTo("스모크" + suffix + "_명칭" + suffix);
             assertThat(row.get("abbreviation")).isEqualTo("SMK" + suffix + "_NM" + suffix);
             assertThat(row.get("domainName")).isEqualTo(domainName);
         });

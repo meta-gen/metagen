@@ -341,7 +341,8 @@ function clearTermResult() {
 
 function lookupTermWords(words) {
     const seq = ++termState.requestSeq;
-    const termName = words.join(" ");
+    // 표준용어명은 단어를 "_" 로 잇는다 : 영문약어명(USER_NM)과 단어 수가 같아야 한다 (서버에서도 검증)
+    const termName = words.join("_");
 
     $.ajax({
         url: `/api/getStandardTerms/popup/${encodeURIComponent(termName)}`,
@@ -424,16 +425,16 @@ function renderTermWords(results, valid, domains) {
 }
 
 /**
- * 마지막(도메인) 단어의 이음동의어로 용어 이음동의어를 만든다. (예: 사용자 명 → 사용자 이름, 사용자 성명)
+ * 마지막(도메인) 단어의 이음동의어로 용어 이음동의어를 만든다. (예: 사용자_명 → 사용자_이름, 사용자_성명)
  */
 function buildSynonyms(results) {
     const last = results[results.length - 1].matched;
     const synonyms = String(last.synonyms ?? "").trim();
     if (!synonyms || synonyms === "-") return "";
 
-    const prefix = results.slice(0, -1).map(r => r.word).join(" ");
+    const prefix = results.slice(0, -1).map(r => r.word).join("_");
     return synonyms.split(",").map(s => s.trim()).filter(Boolean)
-        .map(s => (prefix ? `${prefix} ${s}` : s)).join(",");
+        .map(s => (prefix ? `${prefix}_${s}` : s)).join(",");
 }
 
 function populateTermDomains(domains) {
