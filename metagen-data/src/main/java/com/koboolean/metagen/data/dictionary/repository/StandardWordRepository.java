@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -41,5 +42,10 @@ public interface StandardWordRepository extends JpaRepository<StandardWord, Long
 
     List<StandardWord> findAllByCommonStandardWordAbbreviationAndProjectId(String s, Long projectId);
 
-    List<StandardWord> findAllByProjectIdAndIsApproval(Long projectId, boolean b);
+
+    /** 엑셀 업로드 : 청크의 단어명을 한 번에 조회 (중복 확인) */
+    List<StandardWord> findAllByProjectIdAndCommonStandardWordNameIn(Long projectId, Collection<String> commonStandardWordNames);
+
+    /** 엑셀 업로드 : 청크의 영문약어를 한 번에 조회 (용어 ↔ 단어 매핑) */
+    List<StandardWord> findAllByProjectIdAndCommonStandardWordAbbreviationIn(Long projectId, Collection<String> commonStandardWordAbbreviations);
 }

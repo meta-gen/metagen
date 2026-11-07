@@ -26,33 +26,21 @@ public class PopupController {
     private final NoticeService noticeService;
 
     @PreAuthorize("hasRole('VIEWER')")
-    @GetMapping("/standardTermSearch")
-    public String standardTermSearch(){
-        return "popup/standard_term_search";
-    }
-
-    @PreAuthorize("hasRole('VIEWER')")
-    @GetMapping("/columTableSearch")
-    public String columTableSearch(){
-        return "popup/column_table_search";
-    }
-
-    @PreAuthorize("hasRole('VIEWER')")
     @GetMapping("/columTableSearch/detail")
     public String columTableSearchDetail(){
-        return "popup/column_table_detail";
+        return "popup/column_table_detail :: content"; // 팝업 다이얼로그 화면 조각
     }
 
     @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/codeRulePopup")
     public String codeRulePopup(){
-        return "popup/code_rule_popup";
+        return "popup/code_rule_popup :: content"; // 팝업 다이얼로그 화면 조각
     }
 
     @PreAuthorize("hasRole('USER')")
     @GetMapping("/codeRuleDetailPopup")
     public String codeRuleDetailPopup(){
-        return "popup/code_rule_detail_popup";
+        return "popup/code_rule_detail_popup :: content"; // 팝업 다이얼로그 화면 조각
     }
     
     /**
@@ -63,7 +51,7 @@ public class PopupController {
     @GetMapping("/noticePopupDetail/{id}")
     public String noticePopupDetail(@PathVariable(name="id") Long id, Model model, @AuthenticationPrincipal AccountDto accountDto){
         model.addAttribute("notice", noticeService.noticePopupMain(id, accountDto));
-        return "popup/notice_popup_detail";
+        return "popup/notice_popup_detail :: content"; // 팝업 다이얼로그 화면 조각
     }
 
     
@@ -85,6 +73,6 @@ public class PopupController {
                     : noticeService.selectAllProjectsByUsernameProjectManagerChecked(id, Long.parseLong(accountDto.getId()), managedProjects));
         }
 
-        return "popup/notice_popup_save";
+        return "popup/notice_popup_save :: content"; // 팝업 다이얼로그 화면 조각
     }
 }

@@ -901,6 +901,137 @@ dialog .dialog-detail-value {
     line-height: 1.5;
 }
 
+/* 테이블 등록 : 표준 단어 기준 테이블명 */
+dialog .table-name-help,
+dialog .form-help {
+    margin: 4px 0 0;
+    color: var(--gh-fg-muted);
+    font-size: 12px;
+}
+
+dialog .table-name-words {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+dialog .table-name-words:empty {
+    display: none;
+}
+
+dialog .table-name-words .gh-label {
+    gap: 6px;
+}
+
+dialog .table-name-abbr {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 600;
+}
+
+dialog .table-name-error {
+    flex-basis: 100%;
+    margin: 2px 0 0;
+    color: var(--gh-danger);
+    font-size: 12px;
+}
+
+dialog .table-name-warning {
+    flex-basis: 100%;
+    margin: 2px 0 0;
+    color: var(--gh-attention);
+    font-size: 12px;
+}
+
+/* 컬럼 등록 : 테이블 / 표준용어 실시간 조회 */
+dialog .lookup-search-row {
+    display: flex;
+    gap: 8px;
+}
+
+dialog .lookup-search-row select {
+    flex: none;
+    width: 130px;
+}
+
+dialog .lookup-search-row input {
+    flex: 1;
+    min-width: 0;
+}
+
+dialog select.lookup-select {
+    height: auto;
+    margin-top: 6px;
+    padding: 4px;
+}
+
+dialog select.lookup-select option {
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+dialog .lookup-columns {
+    flex-basis: 100%;
+    word-break: break-all;
+}
+
+dialog #columnName {
+    margin-top: 6px;
+}
+
+/* 표준용어 등록 : 표준용어명 입력 + 도메인 선택 */
+dialog .term-word-group {
+    margin: 10px 0;
+}
+
+dialog .term-word-group > label {
+    display: block;
+    margin-top: 10px;
+}
+
+/* 데이터 사전 상세보기 (항목명 : 값) */
+dialog .dict-detail-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+}
+
+dialog .dict-detail {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    margin: 0;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+dialog .dict-detail dt,
+dialog .dict-detail dd {
+    margin: 0;
+    padding: 8px 12px;
+    border-top: 1px solid var(--gh-border-muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+dialog .dict-detail dt:first-of-type,
+dialog .dict-detail dt:first-of-type + dd {
+    border-top: 0;
+}
+
+dialog .dict-detail dt {
+    background-color: var(--gh-canvas-subtle);
+    color: var(--gh-fg-muted);
+    font-weight: 600;
+}
+
+dialog .dict-detail dd {
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
 /* =========================================================
    반응형
    ========================================================= */

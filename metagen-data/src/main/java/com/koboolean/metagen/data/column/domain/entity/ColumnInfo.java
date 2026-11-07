@@ -20,7 +20,9 @@ import java.util.List;
 public class ColumnInfo extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // 시퀀스(pooled, 50개씩 할당) : IDENTITY 는 JDBC 배치 INSERT 가 꺼지므로 사용하지 않는다 (V6 마이그레이션)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "column_info_seq")
+    @SequenceGenerator(name = "column_info_seq", sequenceName = "column_info_seq", allocationSize = 50)
     @Column(name = "column_info_id", nullable = false, unique = true)
     private Long id;
 

@@ -35,6 +35,10 @@
     <link th:href="@{/css/bootstrap-grid.css}" rel="stylesheet">
     <!-- GitHub Primer 스타일 공통 컴포넌트 (bootstrap / dataTables 기본 스타일 덮어쓰기) -->
     <link th:href="@{/css/primer.css}" rel="stylesheet">
+    <!-- 팝업 다이얼로그(#popupDialog) 안의 화면 스타일 -->
+    <link th:href="@{/css/popup.css}" rel="stylesheet">
+    <link th:href="@{/css/operation/notice.css}" rel="stylesheet">
+    <link th:href="@{/css/data/column_table_detail.css}" rel="stylesheet">
 
     <!-- 사이드바 접힘 상태를 렌더링 전에 반영 (페이지 이동 시 깜빡임 방지) -->
     <script>
@@ -88,6 +92,15 @@
                 <button onclick="closeDialog('div', true)" class="close-btn" aria-label="닫기">&times;</button>
             </div>
             <div id="mainDialogContent"></div>
+        </dialog>
+
+        <!-- 팝업 다이얼로그 : 서버에서 그린 팝업 화면 조각(/popup/...)을 띄운다 (js/common/popup_dialog.js) -->
+        <dialog id="popupDialog" class="popup-dialog" aria-labelledby="popupDialogTitle">
+            <div class="dialog-header">
+                <h3 id="popupDialogTitle" class="popup-dialog-title"></h3>
+                <button type="button" data-popup-close class="close-btn" aria-label="닫기">&times;</button>
+            </div>
+            <div class="popup-dialog-body"></div>
         </dialog>
 
         <!-- Main Section -->

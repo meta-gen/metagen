@@ -1,5 +1,6 @@
 import {setupAjaxCsrf} from "../../common/csrf.js";
 import {registerRowDecorator, setLabel, setMono} from "../../common/grid_cells.js";
+import {openCodeRuleManagePopup} from "../../popup/code_rule_popup.js";
 
 /**
  * 코드규칙 관리 행 꾸미기 : 템플릿 명은 라벨, 접두사/접미사·입출력값은 코드 글꼴
@@ -74,12 +75,7 @@ $(document).ready(function () {
     });
 
     $("#grd-add-codeRuleManageGrid").on("click", () => {
-        // 팝업 열기
-        const popup = window.open(
-            `/popup/codeRulePopup?type=add`,  // 전달 파라미터
-            "코드규칙관리 등록/수정",
-            "width=800,height=900,resizable=yes,scrollbars=yes"
-        );
+        openCodeRuleManagePopup({type: "add", onSuccess: codeRuleManageSuccess});
     });
 
     $("#grd-delete-codeRuleManageGrid").on("click", () => {
@@ -222,9 +218,6 @@ function codeRuleManageSuccess(){
     });
 }
 
-window.popupFunction = window.popupFunction || {}; // 혹시 없을 경우 방지
-window.popupFunction['codeRuleManageSuccess'] = codeRuleManageSuccess;
-
 
 /**
  *
@@ -235,14 +228,7 @@ window.popupFunction['codeRuleManageSuccess'] = codeRuleManageSuccess;
  * @param tableId
  */
 export function codeRuleManageDetail(rowData, columnList, isManager, tableId){
-    const codeRuleId = rowData.id;
-
-    // 팝업 열기
-    const popup = window.open(
-        `/popup/codeRulePopup?type=modified&id=${codeRuleId}`,  // 전달 파라미터
-        "코드규칙관리 등록/수정",
-        "width=800,height=900,resizable=yes,scrollbars=yes"
-    );
+    openCodeRuleManagePopup({type: "modified", id: rowData.id, onSuccess: codeRuleManageSuccess});
 }
 
 window.gridCallbacks["codeRuleManageGrid_selectRow"] = codeRuleManageDetail;

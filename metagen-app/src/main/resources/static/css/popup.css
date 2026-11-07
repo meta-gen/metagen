@@ -1,23 +1,25 @@
 /* =========================================================
-   팝업 공통 (GitHub Primer 스타일)
-   - primer.css 의 변수(--gh-*)를 사용한다. primer.css 를 함께 로드하지 않는 팝업을 위해 기본값을 둔다.
+   팝업 다이얼로그 (GitHub Primer 스타일)
+   - 예전 window.open 팝업 화면을 layout.html 의 #popupDialog 안에 띄운다. (js/common/popup_dialog.js)
+   - 메인 화면에 항상 로드되므로 body/html 등 전역 요소 스타일은 두지 않는다.
    ========================================================= */
-body, html {
-    height: 100%;
-    margin: 0;
-    font-family: var(--app-font);
+dialog.popup-dialog {
+    width: min(720px, calc(100vw - 32px));
 }
 
-body {
-    background-color: #ffffff;
-    color: var(--gh-fg, #1f2328);
-    font-size: 14px;
+dialog.popup-dialog.popup-dialog-large {
+    width: min(960px, calc(100vw - 32px));
+}
+
+dialog.popup-dialog .popup-dialog-body {
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
 }
 
 .popup-container {
     max-width: 960px;
     margin: 0 auto;
-    padding: 24px;
+    padding: 16px 20px 20px;
 }
 
 /* 팝업 타이틀 (GitHub Subhead) */

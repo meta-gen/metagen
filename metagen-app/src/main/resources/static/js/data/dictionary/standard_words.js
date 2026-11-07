@@ -1,3 +1,4 @@
+import {openDictionaryDetail} from "./dictionary_detail.js";
 import {applyAll, registerRowDecorator, setApproval, setMono, setYN} from "../../common/grid_cells.js";
 
 /**
@@ -240,8 +241,19 @@ function addStandardWords(){
  * 그리드 선택 callback Function
  */
 export function selectRow(rowData, columnList, isManager, tableId) {
+    // 그리드에서 숨긴 항목까지 상세보기로 보여주고, 승인 전 항목만 수정 팝업으로 이동한다.
+    openDictionaryDetail({
+        title: "표준단어 상세",
+        rowData,
+        columnList,
+        onEdit: rowData.isApprovalYn === 'Y' ? null : () => openEditDialog(rowData, columnList, isManager, tableId)
+    });
+}
 
-    if(rowData.isApprovalYn === 'Y') return;
+/**
+ * 표준단어 수정 팝업
+ */
+function openEditDialog(rowData, columnList, isManager, tableId) {
 
     const dialog = $("#mainConfirm")[0];
     const dialogTitle = $("#mainDialogTitle");

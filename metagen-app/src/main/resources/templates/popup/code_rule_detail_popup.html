@@ -1,25 +1,9 @@
+<!DOCTYPE html>
+<!-- 팝업 다이얼로그(#popupDialog) 화면 조각 : PopupController 가 "popup/code_rule_detail_popup :: content" 로 반환한다. -->
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>MetaGen</title>
-    <!-- 폰트 미리 받기 : 첫 렌더링 전에 Pretendard 를 준비해 폰트 교체로 인한 화면 흔들림 방지 -->
-    <link rel="preload" th:href="@{/fonts/pretendard/PretendardVariable.woff2}" href="/fonts/pretendard/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
-    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
-    <link rel="stylesheet" th:href="@{/css/layout.css}">
-    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
-    <link rel="stylesheet" th:href="@{/css/popup.css}">
-
-    <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
-    <script th:src="@{/js/bootstrap.bundle.js}"></script>
-    <script type="module" th:src="@{/js/popup/code_rule_detail_popup.js}"></script>
-
-    <link th:href="@{/fonts/pretendard.css}" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/primer.css}">
-</head>
-
 <body>
-<div class="popup-container">
+<div th:fragment="content" class="popup-container">
     <div class="popup-header">
-        <h1>코드규칙</h1>
         <p>
             코드규칙을 등록/수정합니다.
         </p>
@@ -108,7 +92,7 @@
 
         <!-- 하단 버튼 (저장은 변환 후 노출) -->
         <div class="popup-actions">
-            <button type="button" class="btn" onclick="window.close()">닫기</button>
+            <button type="button" class="btn" data-popup-close>닫기</button>
             <button type="button" class="btn btn-primary" id="save-button" style="display: none">저장</button>
         </div>
     </form>

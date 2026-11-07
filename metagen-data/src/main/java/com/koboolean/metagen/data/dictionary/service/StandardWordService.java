@@ -9,6 +9,7 @@ import com.koboolean.metagen.core.security.domain.dto.AccountDto;
 import com.koboolean.metagen.common.exception.CustomException;
 import com.koboolean.metagen.common.exception.domain.ErrorCode;
 import com.koboolean.metagen.common.utils.ExcelUtils;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +21,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +35,7 @@ public class StandardWordService {
     private static final int FIRST_ROW = 1;
     private final StandardWordRepository standardWordRepository;
     private final StandardDomainRepository standardDomainRepository;
+    private final EntityManager entityManager;
 
     public Page<StandardWordDto> getStandardWordsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery) {
         if (searchQuery == null || searchQuery.trim().isEmpty()) {
@@ -112,34 +118,63 @@ public class StandardWordService {
                 "synonyms",
                 "prohibitedWords"
         );
-        List<Map<String, String>> standardWordData = ExcelUtils.parseExcelFile(file, 1, standardWordHeaders, false, FIRST_ROW);
+        // 파일 안 중복 확인용 / 도메인 분류 등록 여부 캐시 (분류 수만큼만 조회)
+        Set<String> uploadedWordNames = new HashSet<>();
+        Map<String, Boolean> domainCategoryExists = new HashMap<>();
 
-        standardWordData.forEach(standardWordEntry -> {
-            StandardWord standardWord = StandardWord.builder()
-                    .revisionNumber(standardWordEntry.get("revisionNumber") == null || standardWordEntry.get("revisionNumber").isEmpty() ? 0 : Integer.parseInt(standardWordEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
-                    .commonStandardWordName(standardWordEntry.get("standardWordName"))
-                    .commonStandardWordAbbreviation(standardWordEntry.get("standardWordAbbreviation"))
-                    .commonStandardWordEnglishName(standardWordEntry.get("standardWordEnglishName"))
-                    .commonStandardWordDescription(standardWordEntry.get("standardWordDescription"))
-                    .isFormatWord(standardWordEntry.containsKey("isFormatWord"))
-                    .commonStandardDomainCategory(standardWordEntry.get("standardDomainCategoryName"))
-                    .synonymList(List.of(standardWordEntry.get("synonyms").split(",")))
-                    .restrictedWords(List.of(standardWordEntry.get("prohibitedWords").split(",")))
-                    .projectId(projectId)
-                    .isApproval(isApprovalAvailable)
-                    .useAbbreviation(standardWordEntry.get("standardWordEnglishName").split(" ").length > 1)
-                    .build();
+        // 청크(500행) 단위 : 중복 단어명은 청크당 IN 조회 한 번, 저장은 JDBC 배치, 저장 후 영속성 컨텍스트 비우기
+        ExcelUtils.readExcelRowsInChunks(file, 1, standardWordHeaders, FIRST_ROW, ExcelUtils.UPLOAD_CHUNK_SIZE, rows -> {
+            Set<String> chunkWordNames = rows.stream()
+                    .map(row -> row.get("standardWordName"))
+                    .filter(name -> name != null && !name.isEmpty())
+                    .collect(Collectors.toSet());
 
-            List<StandardWord> nameIsDupl = standardWordRepository.findAllByProjectIdAndCommonStandardWordName(standardWord.getProjectId(), standardWord.getCommonStandardWordName());
+            Set<String> existingWordNames = chunkWordNames.isEmpty() ? Set.of()
+                    : standardWordRepository.findAllByProjectIdAndCommonStandardWordNameIn(projectId, chunkWordNames).stream()
+                        .map(StandardWord::getCommonStandardWordName)
+                        .collect(Collectors.toSet());
 
-            if(!nameIsDupl.isEmpty()){
-                throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, standardWord.getCommonStandardWordName());
+            List<StandardWord> standardWords = new ArrayList<>();
+
+            for (Map<String, String> standardWordEntry : rows) {
+                String wordName = standardWordEntry.get("standardWordName");
+                if (wordName == null || wordName.isEmpty()) {
+                    continue;
+                }
+
+                StandardWord standardWord = StandardWord.builder()
+                        .revisionNumber(standardWordEntry.get("revisionNumber") == null || standardWordEntry.get("revisionNumber").isEmpty() ? 0 : Integer.parseInt(standardWordEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
+                        .commonStandardWordName(standardWordEntry.get("standardWordName"))
+                        .commonStandardWordAbbreviation(standardWordEntry.get("standardWordAbbreviation"))
+                        .commonStandardWordEnglishName(standardWordEntry.get("standardWordEnglishName"))
+                        .commonStandardWordDescription(standardWordEntry.get("standardWordDescription"))
+                        .isFormatWord(standardWordEntry.containsKey("isFormatWord"))
+                        .commonStandardDomainCategory(standardWordEntry.get("standardDomainCategoryName"))
+                        .synonymList(List.of(standardWordEntry.get("synonyms").split(",")))
+                        .restrictedWords(List.of(standardWordEntry.get("prohibitedWords").split(",")))
+                        .projectId(projectId)
+                        .isApproval(isApprovalAvailable)
+                        .useAbbreviation(standardWordEntry.get("standardWordEnglishName").split(" ").length > 1)
+                        .build();
+
+                // 이미 등록된 단어이거나 파일 안에서 중복되면 업로드 전체를 취소한다.
+                if (existingWordNames.contains(wordName) || !uploadedWordNames.add(wordName)) {
+                    throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, wordName);
+                }
+
+                String domainCategory = standardWord.getCommonStandardDomainCategory();
+                if (domainCategory != null && !domainCategory.isEmpty() && !domainCategory.equals("-")
+                        && !domainCategoryExists.computeIfAbsent(domainCategory,
+                            category -> standardDomainRepository.existsByProjectIdAndCommonStandardDomainCategory(projectId, category))) {
+                    throw new CustomException(ErrorCode.DOMAIN_IS_NOT_DEFINED, domainCategory);
+                }
+
+                standardWords.add(standardWord);
             }
 
-            if(standardWord.getCommonStandardWordName() != null && !standardWord.getCommonStandardWordName().isEmpty()){
-                domainIsNotDefinedCheck(standardWord);
-                standardWordRepository.save(standardWord);
-            }
+            standardWordRepository.saveAll(standardWords);
+            entityManager.flush();
+            entityManager.clear();
         });
     }
 

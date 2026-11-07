@@ -214,6 +214,18 @@ public class DataDictionaryRestController {
         return ResponseEntity.ok(dataDictionaryService.getStandardTermList(termNm, accountDto));
     }
 
+    @Operation(summary = "용어 중복 확인", description = "같은 영문약어명 + 도메인의 표준용어가 이미 있는지 확인한다.")
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping(value = "/getStandardTerms/duplicate")
+    public ResponseEntity<Map<String, Object>> checkStandardTermDuplicate(
+            @Parameter(description = "표준용어 영문약어명", example = "USER_NM")
+            @RequestParam(value = "abbreviation") String abbreviation,
+            @Parameter(description = "표준도메인명", example = "명V100")
+            @RequestParam(value = "domainName") String domainName,
+            @AuthenticationPrincipal AccountDto accountDto) {
+        return ResponseEntity.ok(dataDictionaryService.checkStandardTermDuplicate(abbreviation, domainName, accountDto));
+    }
+
     @Operation(summary = "용어 등록", description = "표준용어를 등록한다.")
     @PreAuthorize("hasRole('USER')")
     @PostMapping(value = "/insertDataDictionary/standardTerms")

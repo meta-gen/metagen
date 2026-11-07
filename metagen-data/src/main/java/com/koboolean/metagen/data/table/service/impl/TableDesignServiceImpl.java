@@ -1,6 +1,10 @@
 package com.koboolean.metagen.data.table.service.impl;
 
+import com.koboolean.metagen.data.column.repository.ColumnInfoRepository;
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
+import com.koboolean.metagen.data.dictionary.repository.StandardWordRepository;
 import com.koboolean.metagen.data.table.domain.dto.TableInfoDto;
+import com.koboolean.metagen.data.table.domain.dto.TableNameDto;
 import com.koboolean.metagen.data.table.domain.entity.TableInfo;
 import com.koboolean.metagen.data.table.repository.TableInfoRepository;
 import com.koboolean.metagen.data.table.service.TableDesignService;
@@ -11,9 +15,12 @@ import com.koboolean.metagen.core.security.domain.dto.AccountDto;
 import com.koboolean.metagen.common.exception.CustomException;
 import com.koboolean.metagen.common.exception.domain.ErrorCode;
 import com.koboolean.metagen.core.project.domain.dto.ProjectMemberDto;
+import com.koboolean.metagen.core.project.domain.entity.Project;
+import com.koboolean.metagen.core.project.repository.ProjectRepository;
 import com.koboolean.metagen.core.project.domain.entity.ProjectMember;
 import com.koboolean.metagen.core.util.AuthUtil;
 import com.koboolean.metagen.common.utils.ExcelUtils;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,14 +29,24 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TableDesignServiceImpl implements TableDesignService {
 
     private final TableInfoRepository tableInfoRepository;
+    private final ColumnInfoRepository columnInfoRepository;
+    private final StandardWordRepository standardWordRepository;
+    private final ProjectRepository projectRepository;
+    private final EntityManager entityManager;
     private static final int FIRST_ROW = 1;
 
     @Override
@@ -37,6 +54,7 @@ public class TableDesignServiceImpl implements TableDesignService {
         return List.of(
                 new ColumnDto("", "id", ColumnType.NUMBER, RowType.CHECKBOX),
                 new ColumnDto("테이블명", "tableName", ColumnType.STRING, RowType.TEXT, true, true),
+                new ColumnDto("테이블 한글명", "tableKorName", ColumnType.STRING, RowType.TEXT, true, true),
                 new ColumnDto("테이블 설명", "tableDescription", ColumnType.STRING, RowType.TEXT, true, true),
                 new ColumnDto("마스터 테이블 여부", "isMasterTable", ColumnType.STRING, RowType.TEXT, false, false),
                 new ColumnDto("정렬 순서", "sortOrder", ColumnType.NUMBER, RowType.TEXT, false, true),
@@ -62,6 +80,8 @@ public class TableDesignServiceImpl implements TableDesignService {
                     tableInfoRepository.findAllByProjectIdAndTableNameLike(projectId, searchQuery, pageable);
             case "tableDescription" ->
                     tableInfoRepository.findAllByProjectIdAndTableDescriptionLike(projectId, searchQuery, pageable);
+            case "tableKorName" ->
+                    tableInfoRepository.findAllByProjectIdAndTableKorNameLike(projectId, searchQuery, pageable);
             default -> null;
         };
 
@@ -73,10 +93,16 @@ public class TableDesignServiceImpl implements TableDesignService {
     public void saveTable(TableInfoDto tableInfoDto, AccountDto accountDto) {
         Long projectId = accountDto.getProjectId();
 
-        List<TableInfo> allByTableNameAndProjectId = tableInfoRepository.findAllByTableNameAndProjectId(tableInfoDto.getTableName(), projectId);
+        // 신규 테이블은 한글명(예: 사용_내역_관리)을 표준 단어로 변환한 이름으로만 등록한다.
+        if(tableInfoDto.getTableKorName() == null || tableInfoDto.getTableKorName().isBlank()){
+            throw new CustomException(ErrorCode.TABLE_KOR_NAME_REQUIRED);
+        }
+        applyStandardTableName(tableInfoDto, accountDto);
 
-        if(!allByTableNameAndProjectId.isEmpty() && allByTableNameAndProjectId.get(0).getTableName().equals(tableInfoDto.getTableName())){
-            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, tableInfoDto.getTableName());
+        String tableName = tableInfoDto.getTableName();
+
+        if(!tableInfoRepository.findAllByTableNameAndProjectId(tableName, projectId).isEmpty()){
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, tableName);
         }
 
         TableInfo tableInfo = tableInfoDto.toEntity();
@@ -92,6 +118,78 @@ public class TableDesignServiceImpl implements TableDesignService {
     }
 
     @Override
+    public TableNameDto generateTableName(String tableKorName, AccountDto accountDto) {
+        Long projectId = accountDto.getProjectId();
+
+        // "사용_내역_관리", "사용 내역 관리" 모두 허용
+        List<String> inputWords = Arrays.stream((tableKorName == null ? "" : tableKorName).trim().split("[_\\s]+"))
+                .filter(word -> !word.isBlank())
+                .toList();
+
+        List<TableNameDto.Word> words = inputWords.stream()
+                .map(word -> toTableNameWord(word, projectId))
+                .toList();
+
+        boolean isValid = !words.isEmpty() && words.stream().allMatch(word -> word.status() == TableNameDto.Status.APPROVED);
+
+        // 프로젝트 설정의 접두어 (예: TB_) - 저장 시 정규화되어 있으므로 그대로 붙인다.
+        String tablePrefix = projectRepository.findById(projectId)
+                .map(Project::getTablePrefix)
+                .filter(prefix -> !prefix.isBlank())
+                .orElse(null);
+
+        String tableName = isValid
+                ? (tablePrefix == null ? "" : tablePrefix)
+                    + words.stream().map(word -> word.abbreviation().toUpperCase()).collect(Collectors.joining("_"))
+                : null;
+
+        return new TableNameDto(tableName, String.join(" ", inputWords), tablePrefix, words, isValid);
+    }
+
+    /**
+     * 단어 하나를 표준 단어로 찾는다. 같은 이름이 여러 건이면 승인된 단어를 우선한다.
+     */
+    private TableNameDto.Word toTableNameWord(String word, Long projectId) {
+        List<StandardWord> standardWords = standardWordRepository.findAllByProjectIdAndCommonStandardWordName(projectId, word);
+
+        Optional<StandardWord> approved = standardWords.stream()
+                .filter(standardWord -> Boolean.TRUE.equals(standardWord.getIsApproval()))
+                .findFirst();
+
+        if(approved.isPresent()){
+            StandardWord standardWord = approved.get();
+            return new TableNameDto.Word(word, standardWord.getCommonStandardWordAbbreviation(),
+                    standardWord.getCommonStandardWordEnglishName(), TableNameDto.Status.APPROVED);
+        }
+
+        if(!standardWords.isEmpty()){
+            StandardWord standardWord = standardWords.get(0);
+            return new TableNameDto.Word(word, standardWord.getCommonStandardWordAbbreviation(),
+                    standardWord.getCommonStandardWordEnglishName(), TableNameDto.Status.NOT_APPROVED);
+        }
+
+        return new TableNameDto.Word(word, null, null, TableNameDto.Status.NOT_FOUND);
+    }
+
+    /**
+     * 한글명을 표준 단어로 변환해 테이블명/한글명에 반영한다. 테이블 설명이 비어있으면 한글명으로 채운다.
+     */
+    private void applyStandardTableName(TableInfoDto tableInfoDto, AccountDto accountDto) {
+        TableNameDto tableNameDto = generateTableName(tableInfoDto.getTableKorName(), accountDto);
+
+        if(!tableNameDto.valid()){
+            throw new CustomException(ErrorCode.TABLE_WORD_NOT_STANDARD, String.join(", ", tableNameDto.invalidWords()));
+        }
+
+        tableInfoDto.setTableName(tableNameDto.tableName());
+        tableInfoDto.setTableKorName(tableNameDto.tableKorName());
+
+        if(tableInfoDto.getTableDescription() == null || tableInfoDto.getTableDescription().isBlank()){
+            tableInfoDto.setTableDescription(tableNameDto.tableKorName());
+        }
+    }
+
+    @Override
     @Transactional
     public void updateTable(TableInfoDto tableInfoDto, AccountDto accountDto) {
 
@@ -99,12 +197,30 @@ public class TableDesignServiceImpl implements TableDesignService {
 
         TableInfo tableInfo = tableInfoRepository.findByIdAndProjectId(tableInfoDto.getId(), projectId);
 
+        // 한글명을 입력(변경)한 경우에만 표준 단어 기준으로 테이블명을 다시 만든다. 비어있으면 기존 테이블명/한글명을 유지한다.
+        boolean isKorNameChanged = tableInfoDto.getTableKorName() != null && !tableInfoDto.getTableKorName().isBlank();
+        if(isKorNameChanged){
+            applyStandardTableName(tableInfoDto, accountDto);
+            tableInfo.setTableKorName(tableInfoDto.getTableKorName());
+        }
+
         String tableName = tableInfoDto.getTableName().toUpperCase();
 
-        List<TableInfo> allByTableNameAndProjectId = tableInfoRepository.findAllByTableNameAndProjectId(tableName, projectId);
+        // 수정 중인 테이블 자신은 중복 대상에서 제외한다 (테이블명을 바꾸지 않고 저장하는 경우)
+        boolean isDuplicated = tableInfoRepository.findAllByTableNameAndProjectId(tableName, projectId).stream()
+                .anyMatch(other -> !other.getId().equals(tableInfo.getId()));
 
-        if(!allByTableNameAndProjectId.isEmpty() && allByTableNameAndProjectId.get(0).getTableName().equals(tableName)){
-            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, tableInfoDto.getTableName());
+        if(isDuplicated){
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, tableName);
+        }
+
+        String oldTableName = tableInfo.getTableName();
+
+        if(!tableName.equals(oldTableName)){
+            // 컬럼은 테이블명을 따로 저장하므로 소속 컬럼과 참조 테이블명도 함께 변경한다.
+            tableInfo.getColumns().forEach(column -> column.setTableName(tableName));
+            columnInfoRepository.findAllByProjectIdAndRefTableName(projectId, oldTableName)
+                    .forEach(column -> column.setRefTableName(tableName));
         }
 
         tableInfo.setTableName(tableName);
@@ -166,34 +282,52 @@ public class TableDesignServiceImpl implements TableDesignService {
                 "sortOrder"
         );
 
-        List<Map<String, String>> tableExcelData = ExcelUtils.parseExcelFile(file, 0, tableExcelHeaders, false, FIRST_ROW);
+        // 파일 안 중복 확인용 (같은 테이블명은 처음 행만 등록)
+        Set<String> uploadedTableNames = new HashSet<>();
 
-        tableExcelData.forEach(map -> {
+        // 청크(500행) 단위 : 기존 테이블명은 청크당 IN 조회 한 번, 저장은 JDBC 배치, 저장 후 영속성 컨텍스트 비우기
+        ExcelUtils.readExcelRowsInChunks(file, 0, tableExcelHeaders, FIRST_ROW, ExcelUtils.UPLOAD_CHUNK_SIZE, rows -> {
 
-            String s = map.get("sortOrder").replaceAll("[^0-9]", "");
+            Set<String> chunkTableNames = rows.stream()
+                    .map(map -> map.get("tableName").toUpperCase())
+                    .filter(tableName -> !tableName.isEmpty())
+                    .collect(Collectors.toSet());
 
-            // 값이 입력되어있지 않으면 0을 입력한다.
-            if(s.isEmpty()){
-                s = "0";
+            Set<String> existingTableNames = chunkTableNames.isEmpty() ? Set.of()
+                    : tableInfoRepository.findAllByProjectIdAndTableNameIn(projectId, chunkTableNames).stream()
+                        .map(TableInfo::getTableName)
+                        .collect(Collectors.toSet());
+
+            List<TableInfo> tableInfos = new ArrayList<>();
+
+            for (Map<String, String> map : rows) {
+                String s = map.get("sortOrder").replaceAll("[^0-9]", "");
+
+                // 값이 입력되어있지 않으면 0을 입력한다.
+                if(s.isEmpty()){
+                    s = "0";
+                }
+
+                String tableName = map.get("tableName").toUpperCase();
+
+                // 빈 테이블명 / 이미 등록된 테이블 / 파일 안에서 앞에 나온 테이블은 건너뛴다.
+                if(tableName.isEmpty() || existingTableNames.contains(tableName) || !uploadedTableNames.add(tableName)){
+                    continue;
+                }
+
+                tableInfos.add(TableInfo.builder()
+                        .projectId(projectId)
+                        .tableName(tableName)
+                        .tableDescription(map.get("tableDescription"))
+                        .isMasterTable(map.get("isMasterTable").equals("Y"))
+                        .sortOrder(Integer.parseInt(s))
+                        .isApproval(isApprovalAvailable)
+                        .build());
             }
 
-            String tableName = map.get("tableName").toUpperCase();
-
-            TableInfo tableInfo = TableInfo.builder()
-                    .projectId(projectId)
-                    .tableName(tableName)
-                    .tableDescription(map.get("tableDescription"))
-                    .isMasterTable(map.get("isMasterTable").equals("Y"))
-                    .sortOrder(Integer.parseInt(s))
-                    .isApproval(isApprovalAvailable)
-                    .build();
-
-            List<TableInfo> allByTableNameAndProjectId = tableInfoRepository.findAllByTableNameAndProjectId(tableName, projectId);
-
-            if(!tableName.isEmpty() && (allByTableNameAndProjectId == null || allByTableNameAndProjectId.isEmpty())){
-                tableInfoRepository.save(tableInfo);
-            }
-
+            tableInfoRepository.saveAll(tableInfos);
+            entityManager.flush();
+            entityManager.clear();
         });
     }
 }

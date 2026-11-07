@@ -1,5 +1,6 @@
 import {setupAjaxCsrf} from "../../common/csrf.js";
 import {registerCodeRuleDecorator} from "./code_rule_cells.js";
+import {openCodeRuleDetailPopup} from "../../popup/code_rule_detail_popup.js";
 
 registerCodeRuleDecorator();
 
@@ -12,11 +13,7 @@ $(document).ready(() => {
      * 추가버튼 클릭 시
      */
     $("#grd-add-codeRuleGrid").on("click", () => {
-        const popup = window.open(
-            `/popup/codeRuleDetailPopup?type=add`,  // 전달 파라미터
-            "코드규칙 등록/수정",
-            "width=800,height=900,resizable=yes,scrollbars=yes"
-        );
+        openCodeRuleDetailPopup({type: "add", onSuccess: codeRuleSuccess});
     });
 
     /**
@@ -53,14 +50,7 @@ $(document).ready(() => {
  * @param tableId
  */
 export function codeRuleGridClick(rowData, columnList, isManager, tableId){
-    const codeRuleDetailId = rowData.id;
-
-    // 팝업 열기
-    const popup = window.open(
-        `/popup/codeRuleDetailPopup?type=modified&id=${codeRuleDetailId}`,  // 전달 파라미터
-        "코드규칙 등록/수정",
-        "width=800,height=900,resizable=yes,scrollbars=yes"
-    );
+    openCodeRuleDetailPopup({type: "modified", id: rowData.id, onSuccess: codeRuleSuccess});
 }
 
 window.gridCallbacks["codeRuleTable_selectRow"] = codeRuleGridClick;
@@ -71,6 +61,3 @@ function codeRuleSuccess(){
         window.searchGrid(tableId);
     });
 }
-
-window.popupFunction = window.popupFunction || {}; // 혹시 없을 경우 방지
-window.popupFunction['codeRuleSuccess'] = codeRuleSuccess;

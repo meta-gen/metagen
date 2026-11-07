@@ -81,6 +81,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
                 .account(account)
                 .isAutoActive(projectDto.getIsAutoActive())
                 .isDicAbbrUsed(projectDto.getIsDicAbbrUsed())
+                .tablePrefix(Project.normalizeTablePrefix(projectDto.getTablePrefix()))
                 .build();
 
         ProjectMember projectMember = ProjectMember.builder()
@@ -108,6 +109,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
         project.setIsActive(projectDto.getIsActive());
         project.setIsAutoActive(projectDto.getIsAutoActive());
         project.setIsDicAbbrUsed(projectDto.getIsDicAbbrUsed());
+        project.setTablePrefix(Project.normalizeTablePrefix(projectDto.getTablePrefix()));
 
     }
 

@@ -7,6 +7,7 @@ import com.koboolean.metagen.core.security.domain.dto.AccountDto;
 import com.koboolean.metagen.common.exception.CustomException;
 import com.koboolean.metagen.common.exception.domain.ErrorCode;
 import com.koboolean.metagen.common.utils.ExcelUtils;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ import java.util.Map;
 public class StandardDomainService {
 
     private final StandardDomainRepository standardDomainRepository;
+    private final EntityManager entityManager;
     private static final int FIRST_ROW = 1;
 
     public Page<StandardDomainDto> getStandardDomainsData(Pageable pageable, AccountDto accountDto, String searchColumn, String searchQuery) {
@@ -121,29 +124,36 @@ public class StandardDomainService {
                 "allowedValues"
         );
 
-        List<Map<String, String>> standardDomainData = ExcelUtils.parseExcelFile(file, 2, standardDomainHeaders, false, FIRST_ROW);
+        // 청크(500행) 단위로 모아 JDBC 배치로 저장하고, 저장 후 영속성 컨텍스트를 비운다.
+        ExcelUtils.readExcelRowsInChunks(file, 2, standardDomainHeaders, FIRST_ROW, ExcelUtils.UPLOAD_CHUNK_SIZE, rows -> {
+            List<StandardDomain> standardDomains = new ArrayList<>();
 
-        standardDomainData.forEach(standardDomainEntry -> {
-            StandardDomain standardDomain = StandardDomain.builder()
-                    .revisionNumber(standardDomainEntry.get("revisionNumber") == null || standardDomainEntry.get("revisionNumber").isEmpty() ? 0 : Integer.parseInt(standardDomainEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
-                    .commonStandardDomainGroupName(standardDomainEntry.get("standardDomainGroupName"))
-                    .commonStandardDomainCategory(standardDomainEntry.get("standardDomainCategoryName"))
-                    .commonStandardDomainName(standardDomainEntry.get("standardDomainName"))
-                    .commonStandardDomainDescription(standardDomainEntry.get("standardDomainDescription"))
-                    .dataType(standardDomainEntry.get("dataType"))
-                    .dataLength(standardDomainEntry.get("dataLength").equals("-") || standardDomainEntry.get("dataLength").isEmpty()  ? 0 : Integer.parseInt(standardDomainEntry.get("dataLength")))
-                    .dataDecimalLength(standardDomainEntry.get("dataDecimalLength").equals("-")  || standardDomainEntry.get("dataDecimalLength").isEmpty() ? 0 : Integer.parseInt(standardDomainEntry.get("dataDecimalLength")))
-                    .storageFormat(standardDomainEntry.get("storageFormat"))
-                    .displayFormat(standardDomainEntry.get("displayFormat"))
-                    .unit(standardDomainEntry.get("unit"))
-                    .allowedValues(standardDomainEntry.get("allowedValues"))
-                    .projectId(projectId)
-                    .isApproval(isApprovalAvailable)
-                    .build();
+            for (Map<String, String> standardDomainEntry : rows) {
+                StandardDomain standardDomain = StandardDomain.builder()
+                        .revisionNumber(standardDomainEntry.get("revisionNumber") == null || standardDomainEntry.get("revisionNumber").isEmpty() ? 0 : Integer.parseInt(standardDomainEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
+                        .commonStandardDomainGroupName(standardDomainEntry.get("standardDomainGroupName"))
+                        .commonStandardDomainCategory(standardDomainEntry.get("standardDomainCategoryName"))
+                        .commonStandardDomainName(standardDomainEntry.get("standardDomainName"))
+                        .commonStandardDomainDescription(standardDomainEntry.get("standardDomainDescription"))
+                        .dataType(standardDomainEntry.get("dataType"))
+                        .dataLength(standardDomainEntry.get("dataLength").equals("-") || standardDomainEntry.get("dataLength").isEmpty()  ? 0 : Integer.parseInt(standardDomainEntry.get("dataLength")))
+                        .dataDecimalLength(standardDomainEntry.get("dataDecimalLength").equals("-")  || standardDomainEntry.get("dataDecimalLength").isEmpty() ? 0 : Integer.parseInt(standardDomainEntry.get("dataDecimalLength")))
+                        .storageFormat(standardDomainEntry.get("storageFormat"))
+                        .displayFormat(standardDomainEntry.get("displayFormat"))
+                        .unit(standardDomainEntry.get("unit"))
+                        .allowedValues(standardDomainEntry.get("allowedValues"))
+                        .projectId(projectId)
+                        .isApproval(isApprovalAvailable)
+                        .build();
 
-            if(standardDomain.getCommonStandardDomainName() != null && !standardDomain.getCommonStandardDomainName().isEmpty()){
-                standardDomainRepository.save(standardDomain);
+                if(standardDomain.getCommonStandardDomainName() != null && !standardDomain.getCommonStandardDomainName().isEmpty()){
+                    standardDomains.add(standardDomain);
+                }
             }
+
+            standardDomainRepository.saveAll(standardDomains);
+            entityManager.flush();
+            entityManager.clear();
         });
     }
 

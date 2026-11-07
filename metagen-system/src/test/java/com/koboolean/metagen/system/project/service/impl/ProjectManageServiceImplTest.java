@@ -123,11 +123,12 @@ class ProjectManageServiceImplTest {
         Account creator = CoreFixtures.account(1L, "creator");
         when(accountRepository.findById(1L)).thenReturn(Optional.of(creator));
 
-        service.createProject(ProjectDto.builder().projectName("신규").isActive(true).isAutoActive(true).isDicAbbrUsed(false).build(), login("1"));
+        service.createProject(ProjectDto.builder().projectName("신규").isActive(true).isAutoActive(true).isDicAbbrUsed(false).tablePrefix("tb").build(), login("1"));
 
         ArgumentCaptor<Project> project = ArgumentCaptor.forClass(Project.class);
         verify(projectRepository).save(project.capture());
         assertThat(project.getValue().getProjectName()).isEqualTo("신규");
+        assertThat(project.getValue().getTablePrefix()).as("접두어는 대문자 + _ 로 정규화해 저장").isEqualTo("TB_");
         assertThat(project.getValue().getAccount()).isSameAs(creator);
         assertThat(project.getValue().getProjectMember()).singleElement().satisfies(member -> {
             assertThat(member.getAccount()).isSameAs(creator);

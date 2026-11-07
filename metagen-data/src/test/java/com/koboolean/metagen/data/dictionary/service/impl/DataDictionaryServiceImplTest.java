@@ -6,6 +6,7 @@ import com.koboolean.metagen.data.dictionary.domain.dto.StandardDomainDto;
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardWordDto;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardDomain;
+import com.koboolean.metagen.data.dictionary.domain.entity.StandardTerm;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
 import com.koboolean.metagen.data.dictionary.service.StandardDomainService;
 import com.koboolean.metagen.data.dictionary.service.StandardTermService;
@@ -125,5 +126,31 @@ class DataDictionaryServiceImplTest {
                 .extracting(StandardWordDto::getCommonStandardWordName).containsExactly("사용자", "이름");
         assertThat((List<StandardDomainDto>) result.get("standardDomains"))
                 .extracting(StandardDomainDto::getCommonStandardDomainName).containsExactly("명칭V100");
+    }
+
+    @Test
+    @DisplayName("같은 영문약어명 + 도메인의 용어가 있으면 중복으로 알려주고 용어명/승인여부를 함께 준다")
+    @SuppressWarnings("unchecked")
+    void duplicateTerm() {
+        AccountDto login = AccountDto.builder().projectId(1L).build();
+        StandardTerm term = StandardTerm.builder().commonStandardTermName("사용자 이름").isApproval(false).build();
+        when(standardTermService.findDuplicateTerms("USER_NM", "명칭V100", 1L)).thenReturn(List.of(term));
+
+        Map<String, Object> result = service.checkStandardTermDuplicate("USER_NM", "명칭V100", login);
+
+        assertThat(result.get("duplicated")).isEqualTo(true);
+        assertThat((List<Map<String, String>>) result.get("terms")).singleElement().satisfies(t -> {
+            assertThat(t.get("commonStandardTermName")).isEqualTo("사용자 이름");
+            assertThat(t.get("isApprovalYn")).isEqualTo("N");
+        });
+    }
+
+    @Test
+    @DisplayName("같은 영문약어명 + 도메인의 용어가 없으면 중복 아님")
+    void notDuplicateTerm() {
+        AccountDto login = AccountDto.builder().projectId(1L).build();
+        when(standardTermService.findDuplicateTerms("USER_NM", "명칭V100", 1L)).thenReturn(List.of());
+
+        assertThat(service.checkStandardTermDuplicate("USER_NM", "명칭V100", login).get("duplicated")).isEqualTo(false);
     }
 }

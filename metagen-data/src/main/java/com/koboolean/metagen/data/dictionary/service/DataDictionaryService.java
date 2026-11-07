@@ -38,6 +38,12 @@ public interface DataDictionaryService {
 
     Map<String, Object> getStandardTermList(String termNm, AccountDto accountDto);
 
+    /**
+     * 같은 영문약어명 + 도메인의 표준용어가 이미 있는지 확인한다. (등록 화면 실시간 중복 확인)
+     * @return duplicated(중복 여부), terms(중복된 용어명/승인여부 목록)
+     */
+    Map<String, Object> checkStandardTermDuplicate(String abbreviation, String domainName, AccountDto accountDto);
+
     void insertStandardTerms(AccountDto accountDto, StandardTermDto standardTermDto);
     void updateStandardTerms(AccountDto accountDto, StandardTermDto standardTermDto);
 

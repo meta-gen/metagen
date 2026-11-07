@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -21,9 +22,14 @@ public interface TableInfoRepository extends JpaRepository<TableInfo, Long> {
 
     Page<TableInfo> findAllByProjectIdAndTableDescriptionLike(Long projectId, String tableDescription, Pageable pageable);
 
+    Page<TableInfo> findAllByProjectIdAndTableKorNameLike(Long projectId, String tableKorName, Pageable pageable);
+
     List<TableInfo> findAllByProjectIdAndTableNameLikeAndIsApproval(Long projectId, String tableName, Boolean isApproval);
 
     TableInfo findALlByProjectIdAndId(Long projectId, Long tableId);
 
     TableInfo findByTableNameAndProjectId(String tableName, Long projectId);
+
+    /** 엑셀 업로드 : 청크의 테이블명을 한 번에 조회 */
+    List<TableInfo> findAllByProjectIdAndTableNameIn(Long projectId, Collection<String> tableNames);
 }

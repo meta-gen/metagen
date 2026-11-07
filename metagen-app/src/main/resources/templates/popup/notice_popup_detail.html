@@ -1,21 +1,9 @@
+<!DOCTYPE html>
+<!-- 팝업 다이얼로그(#popupDialog) 화면 조각 : PopupController 가 "popup/notice_popup_detail :: content" 로 반환한다. -->
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>MetaGen</title>
-    <!-- 폰트 미리 받기 : 첫 렌더링 전에 Pretendard 를 준비해 폰트 교체로 인한 화면 흔들림 방지 -->
-    <link rel="preload" th:href="@{/fonts/pretendard/PretendardVariable.woff2}" href="/fonts/pretendard/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
-    <link rel="stylesheet" th:href="@{/css/layout.css}">
-    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
-    <link rel="stylesheet" th:href="@{/css/popup.css}">
-    <link th:href="@{/fonts/pretendard.css}" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/primer.css}">
-    <link rel="stylesheet" th:href="@{/css/operation/notice.css}">
-</head>
-
 <body>
 <!-- 공지사항 상세 (GitHub 이슈 화면 형태) -->
-<div class="popup-container notice-view">
+<div th:fragment="content" class="popup-container notice-view">
     <header class="notice-view-header">
         <h1 class="notice-view-title" th:text="${notice.title}">공지사항 제목</h1>
         <div class="notice-view-meta">

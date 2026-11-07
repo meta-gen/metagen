@@ -18,7 +18,9 @@ import java.util.List;
 public class StandardDomain extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // 시퀀스(pooled, 50개씩 할당) : IDENTITY 는 JDBC 배치 INSERT 가 꺼지므로 사용하지 않는다 (V6 마이그레이션)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "standard_domains_seq")
+    @SequenceGenerator(name = "standard_domains_seq", sequenceName = "standard_domains_seq", allocationSize = 50)
     @Column(name = "standard_domain_id")
     private Long id; // 번호
 

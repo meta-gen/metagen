@@ -1,6 +1,7 @@
 package com.koboolean.metagen.data.table.controller;
 
 import com.koboolean.metagen.data.table.domain.dto.TableInfoDto;
+import com.koboolean.metagen.data.table.domain.dto.TableNameDto;
 import com.koboolean.metagen.data.table.service.TableDesignService;
 import com.koboolean.metagen.common.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.core.security.domain.dto.AccountDto;
@@ -61,7 +62,17 @@ public class TableDesignRestController {
         return PageableUtil.getGridPageableMap(tableDesigns);
     }
 
-    @Operation(summary = "테이블 관리 테이블 등록", description = "테이블 관리 테이블 데이터를 등록합니다.")
+    @Operation(summary = "표준 단어 기준 테이블명 생성", description = "테이블 한글명(예: 사용_내역_관리)을 승인된 표준 단어의 영문약어로 변환합니다.")
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/selectTable/tableName")
+    public ResponseEntity<TableNameDto> generateTableName(
+            @Parameter(description = "테이블 한글명 (단어는 _ 또는 공백으로 구분)", example = "사용_내역_관리")
+            @RequestParam(value = "tableKorName") String tableKorName,
+            @AuthenticationPrincipal AccountDto accountDto) {
+        return ResponseEntity.ok(tableDesignService.generateTableName(tableKorName, accountDto));
+    }
+
+    @Operation(summary = "테이블 관리 테이블 등록", description = "테이블 관리 테이블 데이터를 등록합니다. 테이블명은 한글명(tableKorName)을 표준 단어로 변환해 생성합니다.")
     @PreAuthorize("hasRole('USER')")
     @PostMapping("/saveTable")
     public ResponseEntity<Map<String, Boolean>> saveTable(@RequestBody TableInfoDto tableInfoDto, @AuthenticationPrincipal AccountDto accountDto) {

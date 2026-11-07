@@ -34,6 +34,9 @@ public class ProjectDto {
 
     private Boolean isSelected;
 
+    /** 테이블명 접두어 (예: TB_) */
+    private String tablePrefix;
+
     public static ProjectDto fromEntity(Project project) {
 
         List<ProjectMemberDto> projectMembers = project.getProjectMember().stream().map(ProjectMemberDto::fromEntity).toList();
@@ -48,7 +51,8 @@ public class ProjectDto {
                 projectMembers,
                 false,
                 project.getIsDicAbbrUsed(),
-                false
+                false,
+                project.getTablePrefix()
         );
     }
 
@@ -68,7 +72,8 @@ public class ProjectDto {
                 projectMembers,
                 isModified,
                 project.getIsDicAbbrUsed(),
-                false
+                false,
+                project.getTablePrefix()
         );
     }
 }
