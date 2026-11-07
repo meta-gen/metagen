@@ -157,7 +157,9 @@ public class StandardWordService {
                         .useAbbreviation(standardWordEntry.get("standardWordEnglishName").split(" ").length > 1)
                         .build();
 
-                // 이미 등록된 단어이거나 파일 안에서 중복되면 업로드 전체를 취소한다.
+                // '_' 가 들어간 단어 / 이미 등록된 단어 / 파일 안에서 중복된 단어는 업로드 전체를 취소한다.
+                validateNoUnderscore(wordName, standardWord.getCommonStandardWordAbbreviation());
+
                 if (existingWordNames.contains(wordName) || !uploadedWordNames.add(wordName)) {
                     throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, wordName);
                 }
@@ -186,8 +188,19 @@ public class StandardWordService {
         return standardWordRepository.findByCommonStandardWordNameAndProjectId(s, projectId);
     }
 
+    /**
+     * 표준단어명/영문약어명에는 '_' 를 쓸 수 없다. '_' 는 표준용어에서 단어를 나누는 구분자다. (사용자_이름 / USER_NM)
+     */
+    public static void validateNoUnderscore(String wordName, String abbreviation) {
+        if ((wordName != null && wordName.contains("_")) || (abbreviation != null && abbreviation.contains("_"))) {
+            throw new CustomException(ErrorCode.WORD_UNDERSCORE_NOT_ALLOWED, wordName + " / " + abbreviation);
+        }
+    }
+
     @Transactional
     public void insertStandardWords(StandardWord standardWord) {
+        validateNoUnderscore(standardWord.getCommonStandardWordName(), standardWord.getCommonStandardWordAbbreviation());
+
         List<StandardWord> nameIsDupl = standardWordRepository.findAllByProjectIdAndCommonStandardWordName(standardWord.getProjectId(), standardWord.getCommonStandardWordName());
 
         if(nameIsDupl.isEmpty()){

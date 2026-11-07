@@ -56,6 +56,11 @@ public enum ErrorCode {
     NOT_FOUND_WORD_DATA(HttpStatus.BAD_REQUEST, "NOT_FOUND_WORD_DATA", "등록 용어중 매핑되지 않는 단어가 존재합니다."),
 
     /**
+     * 표준단어명/영문약어명에는 '_' 를 쓸 수 없습니다. ('_' 는 표준용어의 단어 구분자)
+     */
+    WORD_UNDERSCORE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "WORD_UNDERSCORE_NOT_ALLOWED", "표준단어명과 표준단어영문약어명에는 '_' 를 쓸 수 없습니다. ('_' 는 표준용어의 단어 구분자입니다)"),
+
+    /**
      * 표준용어명과 영문약어명의 단어 수('_' 기준)가 다릅니다.
      */
     TERM_WORD_COUNT_MISMATCH(HttpStatus.BAD_REQUEST, "TERM_WORD_COUNT_MISMATCH", "표준용어명과 표준용어영문약어명의 단어 수('_' 기준)가 다릅니다. (예: 사용자_이름 / USER_NM)"),

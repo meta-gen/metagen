@@ -172,4 +172,55 @@ class StandardWordServiceTest {
         assertThat(word.getIsFormatWord()).isFalse();
         assertThat(word.getRevisionNumber()).isEqualTo(2);
     }
+
+    @Nested
+    @DisplayName("표준단어명/영문약어명에는 '_' 를 쓸 수 없다 (표준용어의 단어 구분자)")
+    class Underscore {
+
+        @ParameterizedTest(name = "{0}")
+        @ValueSource(strings = {"사용자_정보|USER", "사용자|USER_ID", "_사용자|USER"})
+        @DisplayName("화면 등록 : 단어명 또는 영문약어명에 '_' 가 있으면 WORD_UNDERSCORE_NOT_ALLOWED (저장하지 않음)")
+        void insert(String value) {
+            String[] parts = value.split("\\|");
+            StandardWord word = StandardWord.builder().projectId(1L)
+                    .commonStandardWordName(parts[0]).commonStandardWordAbbreviation(parts[1]).commonStandardDomainCategory("-").build();
+
+            assertThatThrownBy(() -> service.insertStandardWords(word))
+                    .extracting("errorCode").isEqualTo(ErrorCode.WORD_UNDERSCORE_NOT_ALLOWED);
+            verify(standardWordRepository, never()).save(any());
+        }
+
+        @Test
+        @DisplayName("엑셀 업로드 : '_' 가 들어간 단어가 있으면 업로드 전체를 취소한다")
+        void upload() throws java.io.IOException {
+            byte[] bytes;
+            try (org.apache.poi.ss.usermodel.Workbook workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
+                 java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream()) {
+                workbook.createSheet("용어");
+                org.apache.poi.ss.usermodel.Sheet words = workbook.createSheet("단어");
+                words.createRow(0).createCell(0).setCellValue("헤더");
+                String[][] rows = {
+                        {"", "1", "사용자", "USER", "User", "설명", "N", "-", "", ""},
+                        {"", "1", "사용자_정보", "USERINFO", "User Info", "설명", "N", "-", "", ""}};
+                for (int i = 0; i < rows.length; i++) {
+                    org.apache.poi.ss.usermodel.Row row = words.createRow(i + 1);
+                    for (int c = 0; c < rows[i].length; c++) row.createCell(c).setCellValue(rows[i][c]);
+                }
+                workbook.write(out);
+                bytes = out.toByteArray();
+            }
+
+            assertThatThrownBy(() -> service.setStandardWord(
+                    new org.springframework.mock.web.MockMultipartFile("file", "dictionary.xlsx", null, bytes), 1L, true))
+                    .extracting("errorCode").isEqualTo(ErrorCode.WORD_UNDERSCORE_NOT_ALLOWED);
+            verify(standardWordRepository, never()).saveAll(any());
+        }
+
+        @Test
+        @DisplayName("'_' 가 없으면 통과한다")
+        void allowed() {
+            org.assertj.core.api.Assertions.assertThatCode(() -> StandardWordService.validateNoUnderscore("사용자", "USER"))
+                    .doesNotThrowAnyException();
+        }
+    }
 }

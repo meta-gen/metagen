@@ -410,7 +410,11 @@ function saveStandardWords(e){
 
     if (!isValid) return;
 
-    console.log(formData);
+    // '_' 는 표준용어의 단어 구분자라 단어명/영문약어명에 쓸 수 없다. (서버에서도 검증)
+    if (type === "C" && ["commonStandardWordName", "commonStandardWordAbbreviation"].some(key => String(formData[key] ?? "").includes("_"))) {
+        window.openAlert("표준단어명과 표준단어영문약어명에는 '_' 를 쓸 수 없습니다.\n'_' 는 표준용어에서 단어를 나누는 구분자입니다. (예: 사용자_이름 / USER_NM)");
+        return;
+    }
 
     const url = "/api/" + (type === "C" ? `insertDataDictionary/${tableId}` : `updateDataDictionary/${tableId}`);
     const ajaxType = type === "C" ? "POST" : "PUT"
