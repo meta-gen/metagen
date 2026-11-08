@@ -25,6 +25,35 @@
                 <span class="sidebar-label">대시보드</span>
             </a>
 
+            <!-- 1뎁스: 운영 관리 -->
+            <th:block th:if="${@menuAuth.canView('operation-management')}">
+                <a href="#operation-management" class="sidebar-link has-children" title="운영 관리"
+                   onclick="toggleMenu(event, 'operation-management', this)"
+                   data-menu-id="operation-management">
+                    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
+                    </svg>
+                    <span class="sidebar-label">운영 관리</span>
+                    <svg class="sidebar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+                </a>
+                <div id="operation-management" class="collapse sidebar-submenu">
+
+                    <!-- 2뎁스: 공지사항 -->
+                    <a th:if="${@menuAuth.canView('notice')}" href="/notice" class="sidebar-sublink"
+                       onclick="setActiveSubmenu(event, 'notice')"
+                       data-submenu-id="notice">
+                        공지사항
+                    </a>
+
+                    <!-- 2뎁스: 도움말 - 작업 안함 -->
+    <!--                <a href="/help" class="sidebar-sublink"-->
+    <!--                    onclick="setActiveSubmenu(event, 'help')"-->
+    <!--                    data-submenu-id="help">-->
+    <!--                    도움말-->
+    <!--                </a>-->
+                </div>
+            </th:block>
+
             <!-- 1뎁스: 시스템 관리 -->
             <th:block th:if="${@menuAuth.canView('system-management')}">
                 <a href="#system-management" class="sidebar-link has-children" title="시스템 관리"
@@ -53,35 +82,6 @@
                        data-submenu-id="system-log">
                         시스템 로그
                     </a>
-                </div>
-            </th:block>
-
-            <!-- 1뎁스: 운영 관리 -->
-            <th:block th:if="${@menuAuth.canView('operation-management')}">
-                <a href="#operation-management" class="sidebar-link has-children" title="운영 관리"
-                   onclick="toggleMenu(event, 'operation-management', this)"
-                   data-menu-id="operation-management">
-                    <svg class="sidebar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>
-                    </svg>
-                    <span class="sidebar-label">운영 관리</span>
-                    <svg class="sidebar-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
-                </a>
-                <div id="operation-management" class="collapse sidebar-submenu">
-
-                    <!-- 2뎁스: 공지사항 -->
-                    <a th:if="${@menuAuth.canView('notice')}" href="/notice" class="sidebar-sublink"
-                       onclick="setActiveSubmenu(event, 'notice')"
-                       data-submenu-id="notice">
-                        공지사항
-                    </a>
-
-                    <!-- 2뎁스: 도움말 - 작업 안함 -->
-    <!--                <a href="/help" class="sidebar-sublink"-->
-    <!--                    onclick="setActiveSubmenu(event, 'help')"-->
-    <!--                    data-submenu-id="help">-->
-    <!--                    도움말-->
-    <!--                </a>-->
                 </div>
             </th:block>
 

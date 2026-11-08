@@ -1,8 +1,10 @@
-# 개발용 상세 로그 : local / h2-local / dev 프로필에 그룹으로 함께 적용된다 (application.yml spring.profiles.group)
+# 개발용 로그 : local / h2-local / dev 프로필에 그룹으로 함께 적용된다 (application.yml spring.profiles.group)
+# 프레임워크 전체 DEBUG는 로그가 과도하므로 실행 SQL과 애플리케이션 로그만 상세히 본다.
+# 필요 시 일시적으로 올려서 확인 (예: --logging.level.org.springframework.security=DEBUG)
 logging:
   level:
-    org.springframework: DEBUG
-    com.koboolean.metagen: TRACE
+    com.koboolean.metagen: DEBUG
+    # 실행 SQL (format_sql 적용)
     org.hibernate.SQL: DEBUG
-    org.springframework.jdbc: DEBUG
-    org.springframework.security: DEBUG
+    # 바인딩 파라미터까지 보려면 주석 해제
+    # org.hibernate.orm.jdbc.bind: TRACE

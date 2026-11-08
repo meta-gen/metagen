@@ -1,27 +1,10 @@
+<!DOCTYPE html>
+<!-- 팝업 다이얼로그(#popupDialog) 화면 조각 : PopupController 가 "popup/notice_popup_save :: content" 로 반환한다. -->
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>MetaGen</title>
-    <!-- 폰트 미리 받기 : 첫 렌더링 전에 Pretendard 를 준비해 폰트 교체로 인한 화면 흔들림 방지 -->
-    <link rel="preload" th:href="@{/fonts/pretendard/PretendardVariable.woff2}" href="/fonts/pretendard/PretendardVariable.woff2" as="font" type="font/woff2" crossorigin>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="/images/favicon.png">
-    <link rel="stylesheet" th:href="@{/css/layout.css}">
-    <link rel="stylesheet" th:href="@{/css/bootstrap.css}">
-    <link rel="stylesheet" th:href="@{/css/popup.css}">
-    <link th:href="@{/fonts/pretendard.css}" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/primer.css}">
-    <link rel="stylesheet" th:href="@{/css/operation/notice.css}">
-
-    <script th:src="@{/js/jquery-3.6.0.min.js}"></script>
-    <script th:src="@{/js/bootstrap.bundle.js}"></script>
-    <script type="module" th:src="@{/js/popup/notice_popup_save.js}"></script>
-</head>
-
 <body>
-    <!-- 공지사항 등록/수정 (GitHub 새 이슈 작성 화면 형태) -->
-    <div class="popup-container notice-edit">
+<!-- 공지사항 등록/수정 (GitHub 새 이슈 작성 화면 형태) -->
+    <div th:fragment="content" class="popup-container notice-edit">
         <header class="notice-edit-header">
-            <h1 id="notice_title" class="notice-view-title">공지사항 등록</h1>
             <p class="gh-muted">프로젝트 멤버에게 공지할 내용을 작성합니다.</p>
         </header>
 
@@ -63,7 +46,7 @@
 
         <!-- 하단 버튼 (오른쪽 정렬) -->
         <div class="notice-actions">
-            <button type="button" class="btn" onclick="window.close()">닫기</button>
+            <button type="button" class="btn" data-popup-close>닫기</button>
             <button type="button" class="btn" id="edit-button">
                 <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
                 편집

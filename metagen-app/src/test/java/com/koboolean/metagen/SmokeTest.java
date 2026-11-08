@@ -37,6 +37,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
@@ -71,6 +73,9 @@ class SmokeTest {
 
     @Autowired
     private LogsRepository logsRepository;
+
+    @Autowired
+    private jakarta.persistence.EntityManagerFactory entityManagerFactory;
 
     private CookieManager cookieManager;
     private HttpClient client;
@@ -181,9 +186,7 @@ class SmokeTest {
     @ValueSource(strings = {
             "/", "/account", "/notice", "/dataDictionary", "/tableManage", "/columnManage",
             "/codeRule", "/codeRuleManage", "/designManage", "/testManage",
-            "/userManage", "/systemLog", "/projectManage", "/help", "/denied",
-            "/popup/standardTermSearch", "/popup/columTableSearch", "/popup/columTableSearch/detail",
-            "/popup/codeRulePopup", "/popup/codeRuleDetailPopup"
+            "/userManage", "/systemLog", "/projectManage", "/help", "/denied"
     })
     @Order(10)
     @DisplayName("주요 화면 렌더링")
@@ -191,12 +194,31 @@ class SmokeTest {
         HttpResponse<String> response = get(path, false);
 
         assertThat(response.statusCode()).as(path).isEqualTo(200);
-        assertThat(response.body()).as(path).contains("</html>");
+        assertThat(response.body()).as(path).contains("</html>").contains("id=\"popupDialog\"");
+    }
+
+    @ParameterizedTest(name = "팝업 다이얼로그 조각 {0}")
+    @ValueSource(strings = {
+            "/popup/columTableSearch/detail",
+            "/popup/codeRulePopup", "/popup/codeRuleDetailPopup"
+    })
+    @Order(10)
+    @DisplayName("팝업은 다이얼로그에 넣을 화면 조각만 반환한다 (html/head 없음)")
+    void popupFragments(String path) throws Exception {
+        assertPopupFragment(path, get(path, true));
+    }
+
+    private static void assertPopupFragment(String path, HttpResponse<String> response) {
+        assertThat(response.statusCode()).as(path).isEqualTo(200);
+        assertThat(response.body()).as(path)
+                .contains("popup-container")
+                .doesNotContain("<html")
+                .doesNotContain("<head>");
     }
 
     @Test
     @Order(11)
-    @DisplayName("공지사항 등록 → 상세/등록/수정 팝업 렌더링")
+    @DisplayName("공지사항 등록 → 상세/등록/수정 팝업 다이얼로그 조각 렌더링")
     void noticePopups() throws Exception {
         String title = "smoke-notice-" + UUID.randomUUID();
         HttpResponse<String> save = postJson("/api/saveNotice",
@@ -217,12 +239,10 @@ class SmokeTest {
                 "/popup/noticePopupDetail/" + noticeId,
                 "/popup/noticePopupSave?type=add",
                 "/popup/noticePopupSave?type=modify&id=" + noticeId}) {
-            HttpResponse<String> response = get(path, false);
-            assertThat(response.statusCode()).as(path).isEqualTo(200);
-            assertThat(response.body()).as(path).contains("</html>");
+            assertPopupFragment(path, get(path, true));
         }
 
-        assertThat(get("/popup/noticePopupDetail/" + noticeId, false).body()).contains(title);
+        assertThat(get("/popup/noticePopupDetail/" + noticeId, true).body()).contains(title);
     }
 
     @Test
@@ -282,6 +302,109 @@ class SmokeTest {
     @DisplayName("기타 주요 API")
     void apis(String path) throws Exception {
         assertThat(get(path, true).statusCode()).as(path).isEqualTo(200);
+    }
+
+    @Test
+    @Order(22)
+    @DisplayName("표준 단어 기준 테이블명 생성 API : 단어별 상태와 valid 를 JSON 으로 반환")
+    void generateTableName() throws Exception {
+        String korName = java.net.URLEncoder.encode("없는단어_테스트", java.nio.charset.StandardCharsets.UTF_8);
+        HttpResponse<String> response = get("/api/selectTable/tableName?tableKorName=" + korName, true);
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.body())
+                .contains("\"valid\":false")
+                .contains("\"tableKorName\":\"없는단어 테스트\"")
+                .contains("\"status\":\"NOT_FOUND\"");
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName("JPA : 지연 로딩 연관을 묶어 조회하도록 default_batch_fetch_size(100) 가 적용된다")
+    void batchFetchSize() {
+        assertThat(entityManagerFactory.getProperties().get("hibernate.default_batch_fetch_size"))
+                .hasToString("100");
+    }
+
+    @Test
+    @Order(24)
+    @DisplayName("데이터사전 엑셀 출력 : 페이지 단위 조회 + 스트리밍 쓰기로 등록한 용어(도메인/약어 지연 로딩 포함)가 들어간다")
+    void exportDictionary() throws Exception {
+        String suffix = UUID.randomUUID().toString().substring(0, 6).toUpperCase().replaceAll("[^A-Z]", "X");
+        String category = "스모크분류" + suffix;
+        String domainName = "스모크도메인" + suffix;
+
+        assertThat(postJson("/api/insertDataDictionary/standardDomains", """
+                {"revisionNumber":1,"commonStandardDomainGroupName":"문자","commonStandardDomainCategory":"%s",
+                 "commonStandardDomainName":"%s","commonStandardDomainDescription":"스모크","dataType":"VARCHAR",
+                 "dataLength":100,"dataDecimalLength":0,"storageFormat":"","displayFormat":"","unit":"","allowedValues":""}
+                """.formatted(category, domainName)).statusCode()).isEqualTo(200);
+        assertThat(postJson("/api/insertDataDictionary/standardWords", """
+                {"revisionNumber":1,"commonStandardWordName":"스모크%s","commonStandardWordAbbreviation":"SMK%s",
+                 "commonStandardWordEnglishName":"Smoke","commonStandardWordDescription":"스모크","isFormatWord":"N",
+                 "commonStandardDomainCategory":"-","synonyms":"","restrictedWords":""}
+                """.formatted(suffix, suffix)).statusCode()).isEqualTo(200);
+        assertThat(postJson("/api/insertDataDictionary/standardWords", """
+                {"revisionNumber":1,"commonStandardWordName":"명칭%s","commonStandardWordAbbreviation":"NM%s",
+                 "commonStandardWordEnglishName":"Name","commonStandardWordDescription":"스모크","isFormatWord":"N",
+                 "commonStandardDomainCategory":"%s","synonyms":"","restrictedWords":""}
+                """.formatted(suffix, suffix, category)).statusCode()).isEqualTo(200);
+        assertThat(postJson("/api/insertDataDictionary/standardTerms", """
+                {"revisionNumber":1,"commonStandardTermName":"스모크%s_명칭%s","commonStandardTermDescription":"스모크",
+                 "commonStandardTermAbbreviation":"SMK%s_NM%s","commonStandardDomainName":"%s","synonyms":""}
+                """.formatted(suffix, suffix, suffix, suffix, domainName)).statusCode()).isEqualTo(200);
+
+        HttpResponse<byte[]> response = getBytes("/api/downloadTemplate/dictionary");
+        assertThat(response.statusCode()).isEqualTo(200);
+
+        List<Map<String, String>> terms = new java.util.ArrayList<>();
+        com.koboolean.metagen.common.utils.ExcelUtils.readExcelRows(
+                new org.springframework.mock.web.MockMultipartFile("file", "dictionary.xlsx", null, response.body()),
+                0, List.of("id", "revision", "termName", "description", "abbreviation", "domainName"), 1, terms::add);
+
+        assertThat(terms).anySatisfy(row -> {
+            assertThat(row.get("termName")).isEqualTo("스모크" + suffix + "_명칭" + suffix);
+            assertThat(row.get("abbreviation")).isEqualTo("SMK" + suffix + "_NM" + suffix);
+            assertThat(row.get("domainName")).isEqualTo(domainName);
+        });
+    }
+
+    @Test
+    @Order(24)
+    @DisplayName("설계서 엑셀 출력(전체) : 페이지 단위 조회로 정상 xlsx 를 내려준다")
+    void exportDesignAll() throws Exception {
+        HttpResponse<byte[]> response = client.send(HttpRequest.newBuilder(uri("/api/printDesign"))
+                .header("Content-Type", "application/json")
+                .header("X-Requested-With", "XMLHttpRequest")
+                .header("X-XSRF-TOKEN", csrfToken())
+                .POST(HttpRequest.BodyPublishers.ofString(
+                        "{\"formatType\":\"functionSpec\",\"formatText\":\"기능 정의서\",\"type\":\"all\",\"column\":\"functionGroup\",\"searchValue\":\"\"}",
+                        StandardCharsets.UTF_8))
+                .build(), HttpResponse.BodyHandlers.ofByteArray());
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(new String(response.body(), 0, 2, StandardCharsets.US_ASCII)).as("xlsx(zip) 시그니처").isEqualTo("PK");
+    }
+
+    @Test
+    @Order(23)
+    @DisplayName("컬럼명 중복 확인 API : 없는 컬럼명이면 duplicated=false")
+    void checkColumnDuplicate() throws Exception {
+        HttpResponse<String> response = get("/api/selectColumn/duplicate?tableInfoId=0&columnName=NOT_EXISTS_COLUMN", true);
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.body()).contains("\"duplicated\":false");
+    }
+
+    @Test
+    @Order(23)
+    @DisplayName("표준용어 중복 확인 API : 없는 약어/도메인이면 duplicated=false")
+    void checkStandardTermDuplicate() throws Exception {
+        String domain = java.net.URLEncoder.encode("없는도메인", java.nio.charset.StandardCharsets.UTF_8);
+        HttpResponse<String> response = get("/api/getStandardTerms/duplicate?abbreviation=NOT_EXISTS_ABBR&domainName=" + domain, true);
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.body()).contains("\"duplicated\":false");
     }
 
     @Test
@@ -381,6 +504,11 @@ class SmokeTest {
             builder.header("X-Requested-With", "XMLHttpRequest");
         }
         return client.send(builder.build(), HttpResponse.BodyHandlers.ofString());
+    }
+
+    private HttpResponse<byte[]> getBytes(String path) throws IOException, InterruptedException {
+        return client.send(HttpRequest.newBuilder(uri(path)).header("X-Requested-With", "XMLHttpRequest").GET().build(),
+                HttpResponse.BodyHandlers.ofByteArray());
     }
 
     private HttpResponse<String> postJson(String path, String json) throws IOException, InterruptedException {

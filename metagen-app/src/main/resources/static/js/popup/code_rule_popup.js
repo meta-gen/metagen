@@ -1,139 +1,126 @@
-import {setupAjaxCsrf} from "../common/csrf.js";
+import {closePopupDialog, openPopupDialog} from "../common/popup_dialog.js";
 
-setupAjaxCsrf();
-
-$(document).ready(function () {
-    // 저장 버튼 클릭 시
-    $("#save-button").on("click", function (e) {
-        e.preventDefault(); // 폼 기본 제출 막기
-        submitForm();
+/**
+ * 코드규칙 관리 등록/수정 다이얼로그 (설계기반 관리 > 코드규칙 관리)
+ * @param type      "add" | "modified"
+ * @param id        수정할 코드규칙 관리 ID
+ * @param onSuccess 저장 성공 시 호출 (다이얼로그는 닫힌 뒤 호출)
+ */
+export function openCodeRuleManagePopup({type, id, onSuccess}) {
+    openPopupDialog({
+        url: "/popup/codeRulePopup",
+        title: type === "modified" ? "코드규칙 관리 수정" : "코드규칙 관리 등록",
+        onLoad: ($root) => initCodeRuleManage($root, type, id, onSuccess)
     });
+}
 
-    // 페이지 로드 시 파라미터로 데이터 조회
-    const params = new URLSearchParams(window.location.search);
-    const type = params.get("type");
+function initCodeRuleManage($root, type, id, onSuccess) {
+    const q = (selector) => $root.find(selector);
+
+    q("#type").val(type);
+
+    q("#save-button").on("click", (e) => {
+        e.preventDefault();
+        submitForm($root, onSuccess);
+    });
 
     $.ajax({
         url: `/api/selectCodeRuleManage/template`,
         type: "GET",
-        success: function (response) {
-            if (response.result) {
-                setCodeRuleTemplates(response.templates || [], type);
+        success: (response) => {
+            if (!response.result) return;
 
-                if (type === "modified") {
-                    const id = params.get("id");
+            setCodeRuleTemplates($root, response.templates || []);
 
-                    $.ajax({
+            if (type !== "modified") return;
 
-                        url: `/api/selectCodeRuleManage/detail/${id}`,
-                        type: "GET",
-                        success: (response) => {
-                            if(response.result){
-                                const codeRule = response.codeRuleDto;
+            $.ajax({
+                url: `/api/selectCodeRuleManage/detail/${encodeURIComponent(id)}`,
+                type: "GET",
+                success: (response) => {
+                    if (!response.result) return;
 
-                                $("#id").val(codeRule.id);
-                                $("#codeRuleName").val(codeRule.codeRuleName);
-                                $("#codeRuleDescription").val(codeRule.codeRuleDescription);
-                                $("#prefix").val(codeRule.prefix);
-                                $("#suffix").val(codeRule.suffix);
-                                $("#methodForm").val(codeRule.methodForm);
-                                $("#input").val(codeRule.input);
-                                $("#output").val(codeRule.output);
-                                $("#exception").val(codeRule.exception);
-                                $("#templateSelect").val(String(codeRule.templateId)).prop("disabled", true);
-                            }
-                        }
-                    });
+                    const codeRule = response.codeRuleDto;
+                    q("#id").val(codeRule.id);
+                    q("#codeRuleName").val(codeRule.codeRuleName);
+                    q("#codeRuleDescription").val(codeRule.codeRuleDescription);
+                    q("#prefix").val(codeRule.prefix);
+                    q("#suffix").val(codeRule.suffix);
+                    q("#methodForm").val(codeRule.methodForm);
+                    q("#input").val(codeRule.input);
+                    q("#output").val(codeRule.output);
+                    q("#exception").val(codeRule.exception);
+                    q("#templateSelect").val(String(codeRule.templateId)).prop("disabled", true);
                 }
-            }
-        }
-    });
-
-    $("#methodForm").on("keydown", function(e) {
-        if (e.key === "Tab") {
-            e.preventDefault();
-
-            const start = this.selectionStart;
-            const end = this.selectionEnd;
-
-            $(this).val(function(i, val) {
-                return val.substring(0, start) + "\t" + val.substring(end);
             });
-
-            this.selectionStart = this.selectionEnd = start + 1;
         }
     });
-});
 
-function setCodeRuleTemplates(templateList, type) {
-    const $select = $("#templateSelect");
+    // 메소드 형식 입력 시 Tab 키로 들여쓰기
+    q("#methodForm").on("keydown", function (e) {
+        if (e.key !== "Tab") return;
+        e.preventDefault();
+
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + "\t" + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 1;
+    });
+}
+
+function setCodeRuleTemplates($root, templateList) {
+    const $select = $root.find("#templateSelect");
     $select.empty().append(`<option value="">템플릿을 선택하세요</option>`);
 
     templateList.forEach(template => {
-        const $option = $("<option></option>")
-            .val(template.id)
-            .text(template.templateName);
-        $select.append($option);
+        $select.append($("<option></option>").val(template.id).text(template.templateName));
     });
-
-    $("#type").val(type);
 }
 
-function submitForm() {
+function submitForm($root, onSuccess) {
+    const q = (selector) => $root.find(selector);
+
     const data = {
-        templateId: $("#templateSelect").val(),
-        codeRuleName: $("#codeRuleName").val(),
-        codeRuleDescription: $("#codeRuleDescription").val(),
-        prefix: $("#prefix").val(),
-        suffix: $("#suffix").val(),
-        input: $("#input").val(),
-        output: $("#output").val(),
-        exception: $("#exception").val(),
-        methodForm: $("#methodForm").val()
+        templateId: q("#templateSelect").val(),
+        codeRuleName: q("#codeRuleName").val(),
+        codeRuleDescription: q("#codeRuleDescription").val(),
+        prefix: q("#prefix").val(),
+        suffix: q("#suffix").val(),
+        input: q("#input").val(),
+        output: q("#output").val(),
+        exception: q("#exception").val(),
+        methodForm: q("#methodForm").val()
     };
 
-    // 필수 항목 유효성 검사
-    for (const [key, value] of Object.entries(data)) {
+    const requiredLabels = {
+        templateId: "템플릿",
+        codeRuleName: "코드규칙 명",
+        codeRuleDescription: "코드규칙 내용",
+        exception: "기본 예외처리값",
+        methodForm: "메소드 형식"
+    };
 
-        if(key === "prefix" || key === "suffix" || key === "input" || key === "output"){
-            continue;
-        }
-
+    // 필수 항목 유효성 검사 (접두사/접미사/입력값/출력값은 선택)
+    for (const [key, label] of Object.entries(requiredLabels)) {
+        const value = data[key];
         if (!value || value.trim() === "") {
-            let label = {
-                templateId: "템플릿",
-                codeRuleName: "코드규칙 명",
-                codeRuleDescription: "코드규칙 내용",
-                methodForm: "메소드 형식"
-            }[key];
-
-            alert(`"${label}" 항목을 입력해주세요.`);
-            $(`#${key}`).focus();
+            window.openAlert(`"${label}" 항목을 입력해주세요.`);
+            q(`#${key === "templateId" ? "templateSelect" : key}`).trigger("focus");
             return;
         }
     }
 
-    let type = "PUT";
-    if($("#type").val() === "add"){
-        type = "POST";
-    }else{
-        data.id = $("#id").val();
-    }
+    const isAdd = q("#type").val() === "add";
+    if (!isAdd) data.id = q("#id").val();
 
     $.ajax({
         url: "/api/saveCodeRuleManage",
-        type: type,
+        type: isAdd ? "POST" : "PUT",
         data: JSON.stringify(data),
         success: (response) => {
-            if(response.result){
-                // 부모로 데이터 전달
-                if (window.opener && typeof window.opener.popupFunction?.codeRuleManageSuccess === 'function') {
-                    window.opener.popupFunction.codeRuleManageSuccess();
-                } else {
-                    alert("부모 창과의 통신이 불가능합니다.");
-                }
-
-                window.close();
+            if (response.result) {
+                closePopupDialog();
+                if (typeof onSuccess === "function") onSuccess();
             }
         }
     });

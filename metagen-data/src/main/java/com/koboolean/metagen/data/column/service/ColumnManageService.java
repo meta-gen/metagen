@@ -26,6 +26,12 @@ public interface ColumnManageService {
 
     List<StandardTermDto> selectTermData(AccountDto accountDto, String type, String data);
 
+    /**
+     * 같은 테이블에 같은 컬럼명이 이미 등록되어 있는지 확인한다. (등록 화면 실시간 중복 확인 - 등록 시 서버 중복 기준과 동일)
+     * @return 같은 테이블에 같은 컬럼명으로 등록된 컬럼 목록 (없으면 빈 목록)
+     */
+    List<ColumnInfoDto> selectDuplicateColumns(AccountDto accountDto, Long tableInfoId, String columnName);
+
     void updateColumnApproval(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos, String type);
 
     void deleteColumn(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos);

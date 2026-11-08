@@ -1,3 +1,4 @@
+import {openDictionaryDetail} from "./dictionary_detail.js";
 import {applyAll, registerRowDecorator, setApproval, setMono, setYN} from "../../common/grid_cells.js";
 
 /**
@@ -240,8 +241,19 @@ function addStandardWords(){
  * 그리드 선택 callback Function
  */
 export function selectRow(rowData, columnList, isManager, tableId) {
+    // 그리드에서 숨긴 항목까지 상세보기로 보여주고, 승인 전 항목만 수정 팝업으로 이동한다.
+    openDictionaryDetail({
+        title: "표준단어 상세",
+        rowData,
+        columnList,
+        onEdit: rowData.isApprovalYn === 'Y' ? null : () => openEditDialog(rowData, columnList, isManager, tableId)
+    });
+}
 
-    if(rowData.isApprovalYn === 'Y') return;
+/**
+ * 표준단어 수정 팝업
+ */
+function openEditDialog(rowData, columnList, isManager, tableId) {
 
     const dialog = $("#mainConfirm")[0];
     const dialogTitle = $("#mainDialogTitle");
@@ -398,7 +410,11 @@ function saveStandardWords(e){
 
     if (!isValid) return;
 
-    console.log(formData);
+    // '_' 는 표준용어의 단어 구분자라 단어명/영문약어명에 쓸 수 없다. (서버에서도 검증)
+    if (type === "C" && ["commonStandardWordName", "commonStandardWordAbbreviation"].some(key => String(formData[key] ?? "").includes("_"))) {
+        window.openAlert("표준단어명과 표준단어영문약어명에는 '_' 를 쓸 수 없습니다.\n'_' 는 표준용어에서 단어를 나누는 구분자입니다. (예: 사용자_이름 / USER_NM)");
+        return;
+    }
 
     const url = "/api/" + (type === "C" ? `insertDataDictionary/${tableId}` : `updateDataDictionary/${tableId}`);
     const ajaxType = type === "C" ? "POST" : "PUT"

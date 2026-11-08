@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -43,5 +44,10 @@ public interface StandardDomainRepository extends JpaRepository<StandardDomain, 
 
     List<StandardDomain> findAllByProjectId(Long projectId);
 
-    List<StandardDomain> findAllByProjectIdAndIsApproval(Long projectId, boolean b);
+
+    /** 엑셀 업로드 : 단어의 도메인 분류가 등록되어 있는지 */
+    boolean existsByProjectIdAndCommonStandardDomainCategory(Long projectId, String commonStandardDomainCategory);
+
+    /** 엑셀 업로드 : 청크의 도메인명을 한 번에 조회 (용어 ↔ 도메인) */
+    List<StandardDomain> findAllByProjectIdAndCommonStandardDomainNameIn(Long projectId, Collection<String> commonStandardDomainNames);
 }

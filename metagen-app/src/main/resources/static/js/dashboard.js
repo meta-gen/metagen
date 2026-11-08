@@ -1,4 +1,5 @@
 import {setupAjaxCsrf} from "./common/csrf.js";
+import {openNoticeDetail} from "./popup/notice_popup.js";
 
 setupAjaxCsrf();
 
@@ -19,14 +20,7 @@ function toRelativeTime(date) {
 }
 
 function openNoticePopup(noticeId) {
-    if (!noticeId) return;
-
-    const popup = window.open(
-        `/popup/noticePopupDetail/${noticeId}`,
-        "공지사항 상세보기",
-        "width=700,height=800,resizable=yes,scrollbars=yes"
-    );
-    if (popup) popup.focus();
+    openNoticeDetail(noticeId);
 }
 
 $(document).ready(() => {

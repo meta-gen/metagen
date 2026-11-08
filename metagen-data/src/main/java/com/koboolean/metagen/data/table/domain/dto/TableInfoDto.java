@@ -22,6 +22,9 @@ public class TableInfoDto {
     /** 테이블 설명 */
     private String tableDescription;
 
+    /** 테이블 한글명 (예: 사용 내역 관리) - 입력 시 _ 또는 공백 구분, 표준 단어 기준 테이블명 생성에 사용 */
+    private String tableKorName;
+
     /** 마스터 테이블 여부 */
     private String isMasterTable;
 
@@ -37,6 +40,7 @@ public class TableInfoDto {
                 .projectId(entity.getProjectId())
                 .tableName(entity.getTableName())
                 .tableDescription(entity.getTableDescription())
+                .tableKorName(entity.getTableKorName())
                 .isMasterTable(toYN(entity.getIsMasterTable()))
                 .sortOrder(entity.getSortOrder())
                 .isApproval(toYN(entity.getIsApproval()))
@@ -48,6 +52,7 @@ public class TableInfoDto {
                 .projectId(this.projectId)
                 .tableName(this.tableName.toUpperCase())
                 .tableDescription(this.tableDescription)
+                .tableKorName(this.tableKorName)
                 .isMasterTable(fromYN(this.isMasterTable))
                 .sortOrder(this.sortOrder)
                 .isApproval(fromYN(this.isApproval))

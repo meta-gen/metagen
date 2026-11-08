@@ -159,6 +159,7 @@ $(document).ready(function () {
             isActive: $form.find('[name="isActive"]').is(':checked'),
             isAutoActive: $form.find('[name="isAutoActive"]').is(':checked'),
             isDicAbbrUsed : $form.find('[name="isDicAbbrUsed"]').is(':checked'),
+            tablePrefix: ($form.find('[name="tablePrefix"]').val() ?? '').trim(),
             templateType: $('#templateTypes').val()
         };
 
@@ -283,6 +284,13 @@ $(document).ready(function () {
             <div class="form-check" style="margin-top: 10px; margin-bottom: 10px;">
                 <input type="checkbox" id="project-dicAbbrUsed" name="isDicAbbrUsed" class="form-check-input" ${projectData.isDicAbbrUsed ? 'checked' : ''} />
                 <label class="form-check-label" for="project-dicAbbrUsed">데이터 사전 약어 사용 여부</label>
+            </div>
+
+            <div class="form-group">
+                <label for="project-tablePrefix">테이블명 접두어</label>
+                <input type="text" id="project-tablePrefix" name="tablePrefix" class="form-control gh-mono" maxlength="20"
+                       placeholder="예) TB_" value="${escapeAttr(projectData.tablePrefix)}" autocomplete="off"/>
+                <p class="form-help">테이블 등록 시 표준 단어로 만든 테이블명 앞에 붙습니다. (예: TB_ + USE_HIST_MGMT) 비워두면 붙이지 않습니다.</p>
             </div>
 
             ${templateTypeHtml}
@@ -419,3 +427,12 @@ $(document).ready(function () {
 });
 
 
+
+/**
+ * input value 속성에 넣을 값을 이스케이프한다.
+ */
+function escapeAttr(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+}

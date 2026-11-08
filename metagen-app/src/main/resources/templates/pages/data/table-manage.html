@@ -9,7 +9,7 @@
 <body>
 <section layout:fragment="content">
     <div th:replace="~{fragments/page_header :: pageHeader('데이터 관리', '테이블 관리')}"></div>
-    <p class="page-desc">테이블 설계 정보를 등록하고 승인합니다. 행을 누르면 테이블 정보를 수정할 수 있습니다.</p>
+    <p class="page-desc">테이블 설계 정보를 등록하고 승인합니다. 테이블명은 한글명(예: 사용_내역_관리)을 승인된 표준 단어의 영문약어로 바꿔 만듭니다. 행을 누르면 테이블 정보를 수정할 수 있습니다.</p>
 
     <input type="file" id="upload-file" style="display: none" accept=".xlsx, .xls"/>
 

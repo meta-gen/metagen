@@ -18,6 +18,7 @@ import com.koboolean.metagen.common.exception.CustomException;
 import com.koboolean.metagen.common.exception.domain.ErrorCode;
 import com.koboolean.metagen.core.util.AuthUtil;
 import com.koboolean.metagen.common.utils.ExcelUtils;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,9 +29,14 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +45,7 @@ public class ColumnManageServiceImpl implements ColumnManageService {
     private final ColumnInfoRepository columnInfoRepository;
     private final TableInfoRepository tableInfoRepository;
     private final StandardTermRepository standardTermRepository;
+    private final EntityManager entityManager;
     private static final int FIRST_ROW = 1;
 
     @Override
@@ -123,14 +130,23 @@ public class ColumnManageServiceImpl implements ColumnManageService {
     public void insertColumn(AccountDto accountDto, ColumnInfoDto columnInfoDto) {
         Long projectId = accountDto.getProjectId();
 
-        List<ColumnInfo> allByProjectIdAndColumnName = columnInfoRepository.findAllByProjectIdAndColumnName(projectId, columnInfoDto.getColumnName());
-
-        if(!allByProjectIdAndColumnName.isEmpty()){
-            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, allByProjectIdAndColumnName.get(0).getColumnName());
-        }
-
         TableInfo tableInfo = tableInfoRepository.findByIdAndProjectId(columnInfoDto.getTableInfoId(), projectId);
         StandardTerm standardTerm = standardTermRepository.findByIdAndProjectId(columnInfoDto.getTermId(), projectId);
+
+        // 테이블/표준용어를 선택하지 않았거나 다른 프로젝트의 정보면 등록할 수 없다.
+        if(tableInfo == null){
+            throw new CustomException(ErrorCode.TABLE_IS_NOT_DEFINED);
+        }
+        if(standardTerm == null){
+            throw new CustomException(ErrorCode.NOT_FOUND_TERM_DATA);
+        }
+
+        // 같은 테이블 안에서만 컬럼명 중복을 막는다. (다른 테이블에는 같은 표준 컬럼을 쓸 수 있다)
+        List<ColumnInfo> duplicates = columnInfoRepository.findAllByProjectIdAndTableInfo_IdAndColumnName(projectId, tableInfo.getId(), columnInfoDto.getColumnName());
+
+        if(!duplicates.isEmpty()){
+            throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, tableInfo.getTableName() + "." + columnInfoDto.getColumnName());
+        }
 
         ColumnInfo columnInfo = columnInfoDto.toEntity();
         columnInfo.setTableInfo(tableInfo);
@@ -153,12 +169,20 @@ public class ColumnManageServiceImpl implements ColumnManageService {
     public List<StandardTermDto> selectTermData(AccountDto accountDto, String type, String data) {
 
         List<StandardTerm> terms = switch(type){
-            case "termName" -> standardTermRepository.findAllByProjectIdAndCommonStandardTermNameContaining(accountDto.getProjectId(), data);
+            // 표준용어명은 단어를 "_" 로 잇는다 : "사용자 이름" 으로 검색해도 "사용자_이름" 을 찾도록
+            case "termName" -> standardTermRepository.findAllByProjectIdAndCommonStandardTermNameContaining(accountDto.getProjectId(), data.trim().replaceAll("\\s+", "_"));
             case "termAbbreviation" -> standardTermRepository.findAllByProjectIdAndCommonStandardTermAbbreviationContaining(accountDto.getProjectId(), data);
             default -> null;
         };
 
         return terms.stream().map(StandardTermDto::fromEntity).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ColumnInfoDto> selectDuplicateColumns(AccountDto accountDto, Long tableInfoId, String columnName) {
+        return columnInfoRepository.findAllByProjectIdAndTableInfo_IdAndColumnName(accountDto.getProjectId(), tableInfoId, columnName).stream()
+                .map(ColumnInfoDto::fromEntity)
+                .toList();
     }
 
     @Override
@@ -194,12 +218,15 @@ public class ColumnManageServiceImpl implements ColumnManageService {
                 throw new CustomException(ErrorCode.APPROVED_DATA_CANNOT_BE_DELETED);
             }
 
-            TableInfo tableInfo = tableInfoRepository.findByTableNameAndProjectId(columnInfoDto.getTableName(), projectId);
+            // 테이블명은 변경될 수 있으므로 이름이 아닌 연관관계(table_info_id)로 소속 테이블을 찾는다.
+            TableInfo tableInfo = columnInfo.getTableInfo();
             StandardTerm standardTerm = standardTermRepository.findByIdAndProjectId(columnInfoDto.getTermId(), projectId);
 
             columnInfoRepository.delete(columnInfo);
 
-            tableInfo.getColumns().remove(columnInfo);
+            if(tableInfo != null){
+                tableInfo.getColumns().remove(columnInfo);
+            }
             standardTerm.getColumnInfos().remove(columnInfo);
         });
 
@@ -235,95 +262,157 @@ public class ColumnManageServiceImpl implements ColumnManageService {
                 "example"
         );
 
-        List<Map<String, String>> tableExcelData = ExcelUtils.parseExcelFile(file, 0, tableExcelHeaders, false, FIRST_ROW);
+        // 파일 안 중복 확인용 : "테이블ID|컬럼명"
+        Set<String> uploadedColumns = new HashSet<>();
 
-        tableExcelData.forEach(map -> {
+        // 업로드 중에는 테이블/표준용어가 바뀌지 않으므로 조회 결과(ID)를 캐시한다. (없으면 null 로 기록)
+        Map<String, Long> tableIdByName = new HashMap<>();
+        Map<String, Long> termIdByAbbreviation = new HashMap<>();
 
-            if(map.get("tableName").isEmpty()){
-                return;
-            }
+        // 청크(500행) 단위 : 테이블/용어/중복은 청크당 IN 조회 한 번씩, 저장은 JDBC 배치, 저장 후 영속성 컨텍스트 비우기
+        ExcelUtils.readExcelRowsInChunks(file, 0, tableExcelHeaders, FIRST_ROW, ExcelUtils.UPLOAD_CHUNK_SIZE, rows -> {
+            List<Map<String, String>> columnRows = rows.stream().filter(map -> !map.get("tableName").isEmpty()).toList();
 
-            // 검증수행
-            String[] numberData = {"maxLength", "precision", "scale", "sortOrder"};
+            loadColumnUploadReferences(projectId, columnRows, tableIdByName, termIdByAbbreviation);
+            Set<String> existingColumns = findExistingColumns(projectId, columnRows, tableIdByName);
 
-            for(int i = 0; i < numberData.length; i++) {
-                String trim = map.get(numberData[i]).replaceAll("[^0-9]", "").trim();
+            List<ColumnInfo> columnInfos = new ArrayList<>();
 
-                if(trim.isEmpty()){
-                    trim = "0";
+            // 행마다 기존과 같은 순서로 검증한다 : 숫자/Y·N 형식 → 테이블 → 표준용어 → 파일 안 중복 → 등록된 컬럼 중복
+            for (Map<String, String> map : columnRows) {
+                String[] numberData = {"maxLength", "precision", "scale", "sortOrder"};
+
+                for (String key : numberData) {
+                    String trim = map.get(key).replaceAll("[^0-9]", "").trim();
+                    map.put(key, trim.isEmpty() ? "0" : trim);
                 }
 
-                map.put(numberData[i], trim);
-            }
+                String[] booleanData = {"isNullable", "isMasterData", "isRequired", "isSensitive", "isPk", "isUnique", "isIndex", "isEncrypted"};
 
-            String[] booleanData = {"isNullable", "isMasterData", "isRequired", "isSensitive", "isPk", "isUnique", "isIndex", "isEncrypted"};
+                for (String key : booleanData) {
+                    if (map.get(key).isEmpty()) {
+                        map.put(key, "N");
+                    }
 
-            for(int i = 0; i < booleanData.length; i++) {
-                if(map.get(booleanData[i]).isEmpty()){
-                    map.put(booleanData[i], "N");
+                    if (!map.get(key).equals("Y") && !map.get(key).equals("N")) {
+                        throw new CustomException(ErrorCode.COLUMN_BOOLEAN_TYPE_DEF);
+                    }
                 }
 
-                if(!map.get(booleanData[i]).equals("Y") && !map.get(booleanData[i]).equals("N")){
-                    throw new CustomException(ErrorCode.COLUMN_BOOLEAN_TYPE_DEF);
+                String tableName = map.get("tableName").toUpperCase();
+                Long tableInfoId = tableIdByName.get(tableName);
+
+                if (tableInfoId == null) {
+                    throw new CustomException(ErrorCode.TABLE_IS_NOT_DEFINED, tableName);
                 }
+
+                // 표준용어 : 영문약어(대문자) 우선, 없으면 입력값 그대로
+                String columnName = map.get("columnName");
+                Long termId = termIdByAbbreviation.get(columnName.toUpperCase());
+                if (termId == null) {
+                    termId = termIdByAbbreviation.get(columnName);
+                }
+
+                if (termId == null) {
+                    throw new CustomException(ErrorCode.TERM_IS_NOT_DEFINED, columnName);
+                }
+
+                // 같은 테이블 안에서만 컬럼명 중복을 막는다. (화면 등록과 같은 기준) - 하나라도 있으면 업로드 전체 취소
+                String columnKey = tableInfoId + "|" + columnName;
+
+                if (!uploadedColumns.add(columnKey)) {
+                    throw new CustomException(ErrorCode.COLUMN_DUPLICATE_IN_FILE, tableName + "." + columnName);
+                }
+
+                if (existingColumns.contains(columnKey)) {
+                    throw new CustomException(ErrorCode.SAVED_DATA_EXISTS, tableName + "." + columnName);
+                }
+
+                // 연관은 조회 없이 ID 참조로 연결한다. (테이블/용어의 컬럼 목록 컬렉션은 건드리지 않는다 - FK 가 기준)
+                columnInfos.add(ColumnInfo.builder()
+                        .projectId(projectId)
+                        .tableName(tableName)
+                        .columnName(columnName)
+                        .columnDesc(map.get("columnDesc"))
+                        .dataType(map.get("dataType"))
+                        .maxLength(Integer.parseInt(map.get("maxLength")))
+                        .precision(new BigDecimal(map.get("precision")))
+                        .scale(Integer.parseInt(map.get("scale")))
+                        .isNullable(map.get("isNullable").equals("Y"))
+                        .defaultValue(map.get("defaultValue"))
+                        .sortOrder(Integer.parseInt(map.get("sortOrder")))
+                        .isMasterData(map.get("isMasterData").equals("Y"))
+                        .refTableName(map.get("refTableName"))
+                        .isRequired(map.get("isPk").equals("Y") || map.get("isRequired").equals("Y"))
+                        .isSensitive(map.get("isSensitive").equals("Y"))
+                        .isPk(map.get("isPk").equals("Y"))
+                        .isUnique(map.get("isPk").equals("Y") || map.get("isUnique").equals("Y"))
+                        .isIndex(map.get("isIndex").equals("Y"))
+                        .isEncrypted(map.get("isEncrypted").equals("Y"))
+                        .example(map.get("example"))
+                        .standardTerms(entityManager.getReference(StandardTerm.class, termId))
+                        .tableInfo(entityManager.getReference(TableInfo.class, tableInfoId))
+                        .isApproval(isApprovalAvailable)
+                        .build());
             }
 
-            String tableName = map.get("tableName").toUpperCase();
-
-            // 테이블 정보 확인 및 테이블 정보 조회
-            List<TableInfo> allByTableNameAndProjectId = tableInfoRepository.findAllByTableNameAndProjectId(tableName, projectId);
-
-            if(allByTableNameAndProjectId.isEmpty()){
-                throw new CustomException(ErrorCode.TABLE_IS_NOT_DEFINED, tableName);
-            }
-
-            TableInfo tableInfo = allByTableNameAndProjectId.get(0);
-
-            // 표준용어 등록여부 확인 및 표준용어 정보 조회
-            String columnName = map.get("columnName");
-            List<StandardTerm> terms = standardTermRepository.findALlByProjectIdAndCommonStandardTermAbbreviation(projectId, columnName.toUpperCase());
-
-            if(terms.isEmpty()){
-                terms = standardTermRepository.findALlByProjectIdAndCommonStandardTermAbbreviation(projectId, columnName);
-            }
-
-            if(terms.isEmpty()){
-                throw new CustomException(ErrorCode.TERM_IS_NOT_DEFINED, columnName);
-            }
-
-            StandardTerm standardTerm = terms.get(0);
-
-            ColumnInfo columnInfo = ColumnInfo.builder()
-                    .projectId(projectId)
-                    .tableName(tableName)
-                    .columnName(columnName)
-                    .columnDesc(map.get("columnDesc"))
-                    .dataType(map.get("dataType"))
-                    .maxLength(Integer.parseInt(map.get("maxLength")))
-                    .precision(new BigDecimal(map.get("precision")))
-                    .scale(Integer.parseInt(map.get("scale")))
-                    .isNullable(map.get("isNullable").equals("Y"))
-                    .defaultValue(map.get("defaultValue"))
-                    .sortOrder(Integer.parseInt(map.get("sortOrder")))
-                    .isMasterData(map.get("isMasterData").equals("Y"))
-                    .refTableName(map.get("refTableName"))
-                    .isRequired(map.get("isPk").equals("Y") || map.get("isRequired").equals("Y"))
-                    .isSensitive(map.get("isSensitive").equals("Y"))
-                    .isPk(map.get("isPk").equals("Y"))
-                    .isUnique(map.get("isPk").equals("Y") || map.get("isUnique").equals("Y"))
-                    .isIndex(map.get("isIndex").equals("Y"))
-                    .isEncrypted(map.get("isEncrypted").equals("Y"))
-                    .example(map.get("example"))
-                    .standardTerms(standardTerm)
-                    .tableInfo(tableInfo)
-                    .isApproval(isApprovalAvailable)
-                    .build();
-
-            columnInfoRepository.save(columnInfo);
-
-            tableInfo.getColumns().add(columnInfo);
-            standardTerm.getColumnInfos().add(columnInfo);
+            columnInfoRepository.saveAll(columnInfos);
+            entityManager.flush();
+            entityManager.clear();
         });
+    }
+
+    /**
+     * 청크에서 쓰는 테이블명/표준용어(영문약어) 중 캐시에 없는 것을 IN 조회 한 번씩으로 불러온다.
+     */
+    private void loadColumnUploadReferences(Long projectId, List<Map<String, String>> columnRows,
+                                            Map<String, Long> tableIdByName, Map<String, Long> termIdByAbbreviation) {
+        Set<String> tableNames = columnRows.stream()
+                .map(map -> map.get("tableName").toUpperCase())
+                .filter(name -> !tableIdByName.containsKey(name))
+                .collect(Collectors.toSet());
+
+        if (!tableNames.isEmpty()) {
+            tableNames.forEach(name -> tableIdByName.put(name, null));
+            tableInfoRepository.findAllByProjectIdAndTableNameIn(projectId, tableNames)
+                    .forEach(table -> {
+                        if (tableIdByName.get(table.getTableName()) == null) tableIdByName.put(table.getTableName(), table.getId());
+                    });
+        }
+
+        Set<String> abbreviations = columnRows.stream()
+                .flatMap(map -> Stream.of(map.get("columnName").toUpperCase(), map.get("columnName")))
+                .filter(abbreviation -> !termIdByAbbreviation.containsKey(abbreviation))
+                .collect(Collectors.toSet());
+
+        if (!abbreviations.isEmpty()) {
+            abbreviations.forEach(abbreviation -> termIdByAbbreviation.put(abbreviation, null));
+            standardTermRepository.findAllByProjectIdAndCommonStandardTermAbbreviationIn(projectId, abbreviations)
+                    .forEach(term -> {
+                        if (termIdByAbbreviation.get(term.getCommonStandardTermAbbreviation()) == null) {
+                            termIdByAbbreviation.put(term.getCommonStandardTermAbbreviation(), term.getId());
+                        }
+                    });
+        }
+    }
+
+    /**
+     * 청크의 (테이블, 컬럼명) 중 이미 등록된 조합 → "테이블ID|컬럼명"
+     */
+    private Set<String> findExistingColumns(Long projectId, List<Map<String, String>> columnRows, Map<String, Long> tableIdByName) {
+        Set<Long> tableIds = columnRows.stream()
+                .map(map -> tableIdByName.get(map.get("tableName").toUpperCase()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        Set<String> columnNames = columnRows.stream().map(map -> map.get("columnName")).collect(Collectors.toSet());
+
+        if (tableIds.isEmpty() || columnNames.isEmpty()) {
+            return Set.of();
+        }
+
+        return columnInfoRepository.findTableColumnKeys(projectId, tableIds, columnNames).stream()
+                .map(key -> key[0] + "|" + key[1])
+                .collect(Collectors.toSet());
     }
 
     @Override

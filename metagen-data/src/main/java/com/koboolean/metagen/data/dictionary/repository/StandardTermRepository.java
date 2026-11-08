@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -48,5 +49,7 @@ public interface StandardTermRepository extends JpaRepository<StandardTerm, Long
 
     List<StandardTerm> findALlByProjectIdAndCommonStandardTermAbbreviation(Long projectId, String commonStandardTermAbbreviation);
 
-    List<StandardTerm> findAllByProjectIdAndIsApproval(Long projectId, boolean b);
+
+    /** 엑셀 업로드 : 청크의 영문약어(컬럼명)를 한 번에 조회 */
+    List<StandardTerm> findAllByProjectIdAndCommonStandardTermAbbreviationIn(Long projectId, Collection<String> commonStandardTermAbbreviations);
 }

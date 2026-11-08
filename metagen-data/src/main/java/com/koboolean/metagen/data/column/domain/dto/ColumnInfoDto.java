@@ -104,13 +104,14 @@ public class ColumnInfoDto {
                 .isMasterData(toYN(entity.getIsMasterData()))
                 .refTableName(entity.getRefTableName())
                 .isPk(toYN(entity.getIsPk()))
-                .isRequired(toYN(entity.getIsPk() || entity.getIsRequired()))
+                // PK 는 필수/고유값이다. (값이 비어있는 기존 데이터는 false 로 본다)
+                .isRequired(toYN(isTrue(entity.getIsPk()) || isTrue(entity.getIsRequired())))
                 .isSensitive(toYN(entity.getIsSensitive()))
-                .isUnique(toYN(entity.getIsPk() || entity.getIsUnique()))
+                .isUnique(toYN(isTrue(entity.getIsPk()) || isTrue(entity.getIsUnique())))
                 .isIndex(toYN(entity.getIsIndex()))
                 .isEncrypted(toYN(entity.getIsEncrypted()))
                 .example(entity.getExample())
-                .standardTerms(StandardTermDto.fromEntity(entity.getStandardTerms()))
+                .standardTerms(entity.getStandardTerms() != null ? StandardTermDto.fromEntity(entity.getStandardTerms()) : null)
                 .isApproval(toYN(entity.getIsApproval()))
                 .build();
     }
@@ -139,6 +140,10 @@ public class ColumnInfoDto {
                 .example(this.example)
                 .isApproval(fromYN(this.isApproval))
                 .build();
+    }
+
+    private static boolean isTrue(Boolean value) {
+        return Boolean.TRUE.equals(value);
     }
 
     private static String toYN(Boolean bool) {

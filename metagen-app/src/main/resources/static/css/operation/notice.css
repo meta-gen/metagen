@@ -1,17 +1,11 @@
 /* =========================================================
    공지사항 팝업 (상세 / 등록·수정) : GitHub 이슈 화면 형태
    ========================================================= */
-body {
-    background-color: var(--gh-canvas);
-    color: var(--gh-fg);
-    font-size: 14px;
-}
-
 .notice-view,
 .notice-edit {
     max-width: 960px;
     margin: 0 auto;
-    padding: 24px;
+    padding: 16px 20px 20px;
 }
 
 /* ---------- 헤더 ---------- */

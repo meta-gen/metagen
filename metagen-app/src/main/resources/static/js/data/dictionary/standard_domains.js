@@ -1,3 +1,4 @@
+import {openDictionaryDetail} from "./dictionary_detail.js";
 import {registerRowDecorator, setApproval, setMono} from "../../common/grid_cells.js";
 
 /**
@@ -247,9 +248,20 @@ function addStandardDomains(){
 /**
  * 그리드 선택 callback Function
  */
-export function selectRow(rowData, columnList, isManager, tableId){
+export function selectRow(rowData, columnList, isManager, tableId) {
+    // 그리드에서 숨긴 항목까지 상세보기로 보여주고, 승인 전 항목만 수정 팝업으로 이동한다.
+    openDictionaryDetail({
+        title: "표준도메인 상세",
+        rowData,
+        columnList,
+        onEdit: rowData.isApprovalYn === 'Y' ? null : () => openEditDialog(rowData, columnList, isManager, tableId)
+    });
+}
 
-    if(rowData.isApprovalYn === 'Y') return;
+/**
+ * 표준도메인 수정 팝업
+ */
+function openEditDialog(rowData, columnList, isManager, tableId) {
 
     const dialogContent = $("<div></div>");
 

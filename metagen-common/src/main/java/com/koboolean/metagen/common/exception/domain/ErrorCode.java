@@ -56,6 +56,31 @@ public enum ErrorCode {
     NOT_FOUND_WORD_DATA(HttpStatus.BAD_REQUEST, "NOT_FOUND_WORD_DATA", "등록 용어중 매핑되지 않는 단어가 존재합니다."),
 
     /**
+     * 표준단어명/영문약어명에는 '_' 를 쓸 수 없습니다. ('_' 는 표준용어의 단어 구분자)
+     */
+    WORD_UNDERSCORE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "WORD_UNDERSCORE_NOT_ALLOWED", "표준단어명과 표준단어영문약어명에는 '_' 를 쓸 수 없습니다. ('_' 는 표준용어의 단어 구분자입니다)"),
+
+    /**
+     * 표준용어명과 영문약어명의 단어 수('_' 기준)가 다릅니다.
+     */
+    TERM_WORD_COUNT_MISMATCH(HttpStatus.BAD_REQUEST, "TERM_WORD_COUNT_MISMATCH", "표준용어명과 표준용어영문약어명의 단어 수('_' 기준)가 다릅니다. (예: 사용자_이름 / USER_NM)"),
+
+    /**
+     * 테이블 한글명 중 승인된 표준 단어가 아닌 단어가 존재합니다.
+     */
+    TABLE_WORD_NOT_STANDARD(HttpStatus.BAD_REQUEST, "TABLE_WORD_NOT_STANDARD", "테이블 한글명 중 승인된 표준 단어가 아닌 단어가 존재합니다."),
+
+    /**
+     * 테이블 한글명을 입력해주세요.
+     */
+    TABLE_KOR_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "TABLE_KOR_NAME_REQUIRED", "테이블 한글명을 입력해주세요."),
+
+    /**
+     * 테이블명 접두어 형식 오류
+     */
+    INVALID_TABLE_PREFIX(HttpStatus.BAD_REQUEST, "INVALID_TABLE_PREFIX", "테이블명 접두어는 영문으로 시작하고 영문/숫자/_ 만 사용할 수 있습니다. (최대 20자)"),
+
+    /**
      * 승인된 정보는 삭제할 수 없습니다.
      */
     APPROVED_DATA_CANNOT_BE_DELETED(HttpStatus.BAD_REQUEST, "APPROVED_DATA_CANNOT_BE_DELETED", "승인된 정보는 삭제할 수 없습니다."),
@@ -79,6 +104,11 @@ public enum ErrorCode {
      * 저장된 데이터가 존재합니다.
      */
     SAVED_DATA_EXISTS(HttpStatus.BAD_REQUEST, "SAVED_DATA_EXISTS", "저장된 데이터가 존재합니다."),
+
+    /**
+     * 업로드한 엑셀 안에 같은 테이블의 같은 컬럼명이 두 번 이상 있습니다.
+     */
+    COLUMN_DUPLICATE_IN_FILE(HttpStatus.BAD_REQUEST, "COLUMN_DUPLICATE_IN_FILE", "업로드한 엑셀에 같은 테이블의 같은 컬럼명이 중복되어 있습니다."),
 
     /**
      * 컬럼으로 등록된 정보가 존재하기 때문에 삭제가 불가능합니다.

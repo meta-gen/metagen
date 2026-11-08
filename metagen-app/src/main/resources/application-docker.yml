@@ -1,7 +1,7 @@
 # Docker 이미지 (Postgres) : DB_* 환경변수로 접속 정보 지정
 spring:
   datasource:
-    url: jdbc:postgresql://${DB_HOST:meta-gen-postgres}:${DB_PORT:5432}/${DB_NAME:meta-gen}?charSet=UTF-8
+    url: jdbc:postgresql://${DB_HOST:meta-gen-postgres}:${DB_PORT:5432}/${DB_NAME:meta-gen}?charSet=UTF-8&reWriteBatchedInserts=true
     username: ${DB_USERNAME:meta-gen}
     password: ${DB_PASSWORD:meta-gen}
   jpa:

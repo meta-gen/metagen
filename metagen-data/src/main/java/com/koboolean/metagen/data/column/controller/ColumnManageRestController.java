@@ -91,6 +91,16 @@ public class ColumnManageRestController {
         return ResponseEntity.ok(Map.of("result", true));
     }
 
+    @Operation(summary = "컬럼명 중복 확인", description = "같은 테이블에 같은 컬럼명이 이미 등록되어 있는지 확인합니다. (등록 시 중복 기준과 동일)")
+    @GetMapping("/selectColumn/duplicate")
+    public ResponseEntity<Map<String, Object>> selectDuplicateColumns(@AuthenticationPrincipal AccountDto accountDto,
+            @RequestParam(value = "tableInfoId") Long tableInfoId,
+            @RequestParam(value = "columnName") String columnName) {
+        List<ColumnInfoDto> duplicates = columnManageService.selectDuplicateColumns(accountDto, tableInfoId, columnName);
+
+        return ResponseEntity.ok(Map.of("result", true, "duplicated", !duplicates.isEmpty(), "columns", duplicates));
+    }
+
     @Operation(summary = "등록 가능 용어 조회", description = "등록가능 용어를 조회합니다.")
     @GetMapping("/selectColumn/term/{type}/{data}")
     public ResponseEntity<Map<String, Object>> selectTermData(@AuthenticationPrincipal AccountDto accountDto, @PathVariable(value = "type") String type, @PathVariable(value = "data") String data) {

@@ -1,5 +1,7 @@
 package com.koboolean.metagen.core.project.domain.entity;
 
+import com.koboolean.metagen.common.exception.CustomException;
+import com.koboolean.metagen.common.exception.domain.ErrorCode;
 import com.koboolean.metagen.common.jpa.BaseEntity;
 import com.koboolean.metagen.core.security.domain.entity.Account;
 import jakarta.persistence.*;
@@ -8,6 +10,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Entity
 @Builder
@@ -38,4 +41,30 @@ public class Project extends BaseEntity implements Serializable {
 
     @Column(name = "is_dic_abbr_used")
     private Boolean isDicAbbrUsed; // 데이터 사전 약어 사용 여부
+
+    @Column(name = "table_prefix", length = 20)
+    private String tablePrefix; // 테이블명 접두어 (예: TB_) - 표준 단어 기준 테이블명 생성 시 사용
+
+    private static final Pattern TABLE_PREFIX_PATTERN = Pattern.compile("^[A-Z][A-Z0-9_]*$");
+
+    /**
+     * 테이블명 접두어를 정규화한다 : 공백 제거, 대문자, 끝에 '_' 보장 (tb → TB_). 빈 값이면 접두어를 사용하지 않는다(null).
+     * 영문으로 시작하고 영문/숫자/'_'만 허용하며 '_' 포함 20자까지 가능하다.
+     */
+    public static String normalizeTablePrefix(String tablePrefix) {
+        if (tablePrefix == null || tablePrefix.isBlank()) {
+            return null;
+        }
+
+        String prefix = tablePrefix.trim().toUpperCase();
+        if (!prefix.endsWith("_")) {
+            prefix = prefix + "_";
+        }
+
+        if (!TABLE_PREFIX_PATTERN.matcher(prefix).matches() || prefix.length() > 20) {
+            throw new CustomException(ErrorCode.INVALID_TABLE_PREFIX, tablePrefix);
+        }
+
+        return prefix;
+    }
 }
