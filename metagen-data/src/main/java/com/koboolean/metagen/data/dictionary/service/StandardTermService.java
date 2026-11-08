@@ -54,7 +54,7 @@ public class StandardTermService {
             case "commonStandardTermDescription" ->
                     standardTermRepository.findByCommonStandardTermDescriptionContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "commonStandardTermAbbreviation" ->
-                    standardTermRepository.findByCommonStandardTermAbbreviationContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
+                    standardTermRepository.findByCommonStandardTermAbbreviationContainingIgnoreCaseAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "commonStandardDomainName" ->
                     standardTermRepository.findByStandardDomain_CommonStandardDomainNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "allowedValues" ->
@@ -172,26 +172,19 @@ public class StandardTermService {
      */
     private StandardTerm buildUploadedTerm(Long projectId, boolean isApprovalAvailable, Map<String, String> standardTermEntry,
                                            Map<String, List<StandardWord>> wordsByAbbreviation, Map<String, Long> domainIdByName) {
-        String standardTermName = standardTermEntry.get("standardTermName");
         String abbreviation = standardTermEntry.get("standardTermAbbreviation");
 
-        // 용어명과 영문약어명의 단어 수가 다르면 업로드 전체를 취소한다. (사용자_이름 / USER_NM)
-        validateWordCount(standardTermName, abbreviation);
-
-        String[] split = abbreviation.split("_");
-        String[] nameWords = standardTermName.split("_");
+        // 용어명이 영문약어명과 맞지 않으면 영문약어명의 표준 단어로 용어명을 다시 만들고, 설명에 그 사실을 남긴다.
+        ResolvedTermName resolved = resolveUploadedTermName(standardTermEntry.get("standardTermName"), abbreviation, wordsByAbbreviation);
+        String standardTermName = resolved.termName();
+        String description = resolved.generated()
+                ? appendGeneratedNote(standardTermEntry.get("standardTermDescription"), abbreviation, standardTermEntry.get("standardTermName"))
+                : standardTermEntry.get("standardTermDescription");
 
         List<StandardTermWordMapping> mappings = new ArrayList<>();
-        for (int i = 0; i < split.length; i++) {
-            // 같은 순번의 단어명과 정확히 같은 단어를 쓴다.
-            StandardWord word = findWord(wordsByAbbreviation.getOrDefault(split[i], List.of()), nameWords[i]);
-
-            if (word == null) {
-                throw new CustomException(ErrorCode.NOT_FOUND_WORD_DATA, "누락된 문자열 : " + split[i]);
-            }
-
+        for (int i = 0; i < resolved.words().size(); i++) {
             StandardTermWordMapping mapping = new StandardTermWordMapping();
-            mapping.setStandardWord(entityManager.getReference(StandardWord.class, word.getId()));
+            mapping.setStandardWord(entityManager.getReference(StandardWord.class, resolved.words().get(i).getId()));
             mapping.setOrderIndex(i);
             mappings.add(mapping);
         }
@@ -204,7 +197,7 @@ public class StandardTermService {
         StandardTerm standardTerm = StandardTerm.builder()
                 .revisionNumber(standardTermEntry.get("revisionNumber") == null || standardTermEntry.get("revisionNumber").isEmpty() ? 0 : Integer.parseInt(standardTermEntry.get("revisionNumber").replaceAll("[^0-9]", "")))
                 .commonStandardTermName(standardTermName)
-                .commonStandardTermDescription(standardTermEntry.get("standardTermDescription"))
+                .commonStandardTermDescription(description)
                 .termWordMappings(mappings)
                 .commonStandardTermAbbreviation(standardTermEntry.get("standardTermAbbreviation"))
                 .administrativeStandardCodeName(standardTermEntry.get("administrativeStandardCodeName"))
@@ -260,6 +253,89 @@ public class StandardTermService {
             throw new CustomException(ErrorCode.TERM_WORD_COUNT_MISMATCH, termName + " / " + abbreviation);
         }
     }
+
+    /**
+     * 업로드 용어명 결정 결과
+     * @param termName  저장할 표준용어명 ('_' 구분)
+     * @param words     영문약어 순서대로 매핑할 표준 단어
+     * @param generated 영문약어명 기준으로 용어명을 새로 만들었는지 (원본 용어명이 맞지 않음)
+     */
+    public record ResolvedTermName(String termName, List<StandardWord> words, boolean generated) {}
+
+    public static final String GENERATED_NOTE_PREFIX = "[영문약어명 기준 자동 생성]";
+
+    /**
+     * 엑셀 업로드 용어명 결정
+     * - 용어명과 영문약어명의 단어 수가 같고 같은 순번 단어가 모두 표준 단어와 정확히 일치하면 그대로 쓴다.
+     * - 아니면(단어 수 다름, 공백/구분자 없음, 단어명 불일치) 영문약어명의 각 약어에 해당하는 표준 단어로 용어명을 만든다.
+     *   같은 약어의 단어가 여러 개면 원본 용어명에 들어 있는 단어(긴 것 우선) → 승인된 단어 → 첫 단어 순으로 고른다.
+     * - 영문약어명이 비었거나(빈 단어 포함) 약어에 해당하는 표준 단어가 없으면 기존과 같이 업로드를 취소한다.
+     */
+    public static ResolvedTermName resolveUploadedTermName(String termName, String abbreviation, Map<String, List<StandardWord>> wordsByAbbreviation) {
+        String abbr = abbreviation == null ? "" : abbreviation.trim();
+        String[] abbrWords = abbr.split("_", -1);
+        if (abbr.isEmpty() || Arrays.stream(abbrWords).anyMatch(String::isBlank)) {
+            throw new CustomException(ErrorCode.TERM_WORD_COUNT_MISMATCH, termName + " / " + abbreviation);
+        }
+
+        String name = termName == null ? "" : termName.trim();
+        String[] nameWords = name.split("_", -1);
+
+        // 1) 원본 용어명이 영문약어명과 정확히 맞는 경우
+        if (nameWords.length == abbrWords.length && name.chars().noneMatch(Character::isWhitespace)) {
+            List<StandardWord> exact = new ArrayList<>();
+            for (int i = 0; i < abbrWords.length; i++) {
+                StandardWord word = findWord(wordsByAbbreviation.getOrDefault(abbrWords[i], List.of()), nameWords[i]);
+                if (word == null) break;
+                exact.add(word);
+            }
+            if (exact.size() == abbrWords.length) {
+                return new ResolvedTermName(name, exact, false);
+            }
+        }
+
+        // 2) 영문약어명의 표준 단어로 용어명을 만든다.
+        String compactName = name.replaceAll("[_\\s]", "");
+        List<StandardWord> words = new ArrayList<>();
+        for (String part : abbrWords) {
+            List<StandardWord> candidates = wordsByAbbreviation.getOrDefault(part, List.of());
+            if (candidates.isEmpty()) {
+                throw new CustomException(ErrorCode.NOT_FOUND_WORD_DATA, "누락된 문자열 : " + part);
+            }
+            words.add(pickWord(candidates, compactName));
+        }
+
+        String generatedName = words.stream().map(StandardWord::getCommonStandardWordName).collect(Collectors.joining("_"));
+        return new ResolvedTermName(generatedName, words, !generatedName.equals(name));
+    }
+
+    private static StandardWord pickWord(List<StandardWord> candidates, String compactName) {
+        return candidates.stream()
+                .filter(word -> word.getCommonStandardWordName() != null && !compactName.isEmpty()
+                        && compactName.contains(word.getCommonStandardWordName().replaceAll("[_\\s]", "")))
+                .max(Comparator.comparingInt(word -> word.getCommonStandardWordName().length()))
+                .or(() -> candidates.stream().filter(word -> Boolean.TRUE.equals(word.getIsApproval())).findFirst())
+                .orElse(candidates.get(0));
+    }
+
+    /**
+     * 자동 생성한 용어의 설명 끝에 생성 근거를 남긴다. (예: 원본 설명 + [영문약어명 기준 자동 생성] USER_NM … 원본 표준용어명: 사용자이름)
+     */
+    public static String appendGeneratedNote(String description, String abbreviation, String originalTermName) {
+        String original = originalTermName == null || originalTermName.isBlank() ? "-" : originalTermName.trim();
+        String note = GENERATED_NOTE_PREFIX + " 영문약어명(" + abbreviation.trim() + ")의 표준 단어로 표준용어명을 생성했습니다. (원본 표준용어명: " + original + ")";
+        if (note.length() > DESCRIPTION_MAX_LENGTH) note = note.substring(0, DESCRIPTION_MAX_LENGTH);
+        if (description == null || description.isBlank()) return note;
+
+        // 설명 컬럼(1000자)을 넘지 않도록 원본 설명을 줄인다. (생성 근거는 항상 남긴다)
+        String body = description.trim();
+        int room = DESCRIPTION_MAX_LENGTH - note.length() - 1;
+        if (room <= 0) return note;
+        if (body.length() > room) body = body.substring(0, room);
+        return body + "\n" + note;
+    }
+
+    private static final int DESCRIPTION_MAX_LENGTH = 1000; // standard_term.common_standard_term_description
 
     /**
      * 같은 영문약어의 단어 중 이름이 정확히 같은 단어 (없으면 null)

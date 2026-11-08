@@ -1,6 +1,16 @@
 import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
 import {registerRowDecorator, setLabel, setMono, setMuted, setUser} from "../../common/grid_cells.js";
 
+/**
+ * 대상 DB 선택지 (서버 core/project/domain/enums/DbType 과 같은 값)
+ */
+const DB_TYPES = [
+    {value: "POSTGRESQL", label: "PostgreSQL"},
+    {value: "ORACLE", label: "Oracle"},
+    {value: "MYSQL", label: "MySQL"},
+    {value: "MARIADB", label: "MariaDB"}
+];
+
 registerRowDecorator("projectMemberGrid", (row, data, cellOf) => {
     setMono(cellOf("username"), data.username);
     setUser(cellOf("name"), data.name);
@@ -160,6 +170,7 @@ $(document).ready(function () {
             isAutoActive: $form.find('[name="isAutoActive"]').is(':checked'),
             isDicAbbrUsed : $form.find('[name="isDicAbbrUsed"]').is(':checked'),
             tablePrefix: ($form.find('[name="tablePrefix"]').val() ?? '').trim(),
+            dbType: $form.find('[name="dbType"]').val(),
             templateType: $('#templateTypes').val()
         };
 
@@ -291,6 +302,14 @@ $(document).ready(function () {
                 <input type="text" id="project-tablePrefix" name="tablePrefix" class="form-control gh-mono" maxlength="20"
                        placeholder="예) TB_" value="${escapeAttr(projectData.tablePrefix)}" autocomplete="off"/>
                 <p class="form-help">테이블 등록 시 표준 단어로 만든 테이블명 앞에 붙습니다. (예: TB_ + USE_HIST_MGMT) 비워두면 붙이지 않습니다.</p>
+            </div>
+
+            <div class="form-group">
+                <label for="project-dbType">대상 DB</label>
+                <select id="project-dbType" name="dbType" class="form-control">
+                    ${DB_TYPES.map(db => `<option value="${db.value}" ${(projectData.dbType || 'POSTGRESQL') === db.value ? 'selected' : ''}>${db.label}</option>`).join('')}
+                </select>
+                <p class="form-help">테이블 관리 &gt; 테이블 상세의 DDL 을 이 DB 문법으로 생성합니다.</p>
             </div>
 
             ${templateTypeHtml}

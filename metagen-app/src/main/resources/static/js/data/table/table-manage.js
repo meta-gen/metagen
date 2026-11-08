@@ -1,6 +1,8 @@
 import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
-import {downloadFile} from "../../common/common.js";
+import {downloadFile, setMainDialogSize} from "../../common/common.js";
 import {registerRowDecorator, setApproval, setMono, setYN} from "../../common/grid_cells.js";
+import {openPopupDialog} from "../../common/popup_dialog.js";
+import {openColumnBulkEditor} from "../column/column_bulk_editor.js";
 
 /**
  * 테이블 행 꾸미기 : 테이블명은 코드 글꼴, 마스터 여부/승인 여부는 라벨
@@ -428,13 +430,217 @@ function saveTable(type){
     });
 }
 
+/**
+ * 테이블관리 행 선택 : 그리드에서 숨긴 항목과 테이블에 등록된 컬럼 목록을 상세 팝업으로 보여주고,
+ * 승인 전 테이블은 [수정] 버튼으로 수정 팝업을 연다.
+ * 모든 값은 textContent 로 넣어 HTML 이 해석되지 않도록 한다.
+ */
 export function tableSelectRow(rowData, columnList, isManager, tableId){
-    if(rowData.isApproval === "Y") return;
+    const approved = rowData.isApproval === "Y";
+    const $content = $("<div></div>");
 
+    $content.append($("<div></div>").addClass("dict-detail-status").append(
+        $("<span></span>")
+            .addClass(`gh-label gh-label-dot ${approved ? "gh-label-success" : "gh-label-attention"}`)
+            .text(approved ? "승인" : "승인 대기"),
+        $("<span></span>").addClass("gh-muted").text(approved ? "승인된 테이블은 수정할 수 없습니다." : "")
+    ));
+
+    const $list = $("<dl></dl>").addClass("dict-detail");
+    [
+        ["테이블명", rowData.tableName, true],
+        ["테이블 한글명", rowData.tableKorName],
+        ["테이블 설명", rowData.tableDescription],
+        ["마스터 테이블", rowData.isMasterTable === "Y" ? "Y" : "N"],
+        ["정렬 순서", rowData.sortOrder]
+    ].forEach(([label, value, mono]) => {
+        const isEmpty = value === null || value === undefined || String(value).trim() === "";
+        $list.append($("<dt></dt>").text(label));
+        $list.append($("<dd></dd>")
+            .toggleClass("gh-muted", isEmpty)
+            .toggleClass("gh-mono", !isEmpty && !!mono)
+            .text(isEmpty ? "-" : String(value)));
+    });
+    $content.append($list);
+
+    // 테이블에 등록된 컬럼 목록 (비동기로 채운다)
+    const $columns = $("<div></div>").addClass("dict-detail-columns")
+        .append($("<h4></h4>").text("컬럼 목록"))
+        .append($("<p></p>").addClass("gh-muted").text("컬럼을 조회하고 있습니다."));
+    $content.append($columns);
+    loadTableColumns(rowData.id, $columns);
+
+    const $actions = $("<div></div>").addClass("gh-dialog-actions");
+
+    // 컬럼 일괄 편집 : 승인된 테이블에만 컬럼을 등록할 수 있다. (같은 다이얼로그를 넓혀 쓰므로 상세는 닫힌다)
+    $actions.append($("<button></button>")
+        .attr({type: "button", title: approved ? "표준용어로 컬럼을 한 번에 추가/수정/삭제합니다." : "승인된 테이블에만 컬럼을 등록할 수 있습니다."})
+        .addClass("btn")
+        .text("컬럼 편집")
+        .prop("disabled", !approved)
+        .on("click", () => {
+            window.closeDialog("div");
+            openColumnBulkEditor(rowData, {
+                onSaved: () => {
+                    window.searchGrid(tableId);
+                    tableSelectRow(rowData, columnList, isManager, tableId); // 저장한 컬럼으로 상세를 다시 연다
+                }
+            });
+        }));
+
+    // DDL 은 테이블 상세 위에 별도 다이얼로그(#popupDialog)로 띄운다. (승인 여부와 관계없이 볼 수 있다)
+    $actions.append($("<button></button>")
+        .attr("type", "button")
+        .addClass("btn")
+        .text("DDL 보기")
+        .on("click", () => openTableDdl(rowData)));
+
+    if (!approved) {
+        const $editBtn = $("<button></button>")
+            .attr("type", "button")
+            .addClass("btn btn-primary")
+            .text("수정")
+            .on("click", () => {
+                // 같은 다이얼로그(#mainConfirm)를 다시 열기 때문에 먼저 닫는다.
+                window.closeDialog("div");
+                openEditDialog(rowData);
+            });
+        $actions.append($editBtn);
+    }
+    $content.append($actions);
+
+    window.openDialog("div", {title: `테이블 상세 · ${rowData.tableName ?? ""}`, content: $content});
+    // 컬럼 목록 표가 들어가므로 넓게 연다. 같은 다이얼로그를 다른 화면도 쓰므로 닫힐 때 되돌린다.
+    setMainDialogSize("dialog-table-detail");
+}
+
+/**
+ * 테이블 DDL 다이얼로그 : 프로젝트 대상 DB(시스템 관리 > 프로젝트 관리) 기준으로 서버에서 생성한 DDL 을 보여준다.
+ */
+function openTableDdl(rowData) {
+    openPopupDialog({
+        url: "/popup/tableDdl",
+        title: `DDL · ${rowData.tableName ?? ""}`,
+        size: "large",
+        onLoad: ($root) => {
+            const $code = $root.find("[data-ddl-code]");
+            const $copy = $root.find("[data-ddl-copy]").prop("disabled", true);
+
+            $.ajax({
+                url: `/api/selectTable/ddl/${encodeURIComponent(rowData.id)}`,
+                type: "GET",
+                success: (response) => {
+                    $root.find("[data-ddl-db]").text(response.dbTypeLabel ?? response.dbType ?? "-");
+                    $code.text(response.ddl ?? "");
+
+                    const warnings = response.warnings || [];
+                    const $warnings = $root.find("[data-ddl-warnings]").empty().attr("hidden", warnings.length === 0);
+                    warnings.forEach(w => $warnings.append($("<li></li>").text(w)));
+
+                    $copy.prop("disabled", false).on("click", () => copyText(response.ddl ?? "", $copy));
+                },
+                error: (xhr) => {
+                    $code.text(xhr.responseJSON?.message || "DDL 을 생성하지 못했습니다.");
+                }
+            });
+        }
+    });
+}
+
+function copyText(text, $button) {
+    const done = () => {
+        const label = $button.text();
+        $button.text("복사됨");
+        setTimeout(() => $button.text(label), 1500);
+    };
+
+    if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).then(done, () => fallbackCopy(text) && done());
+    } else if (fallbackCopy(text)) {
+        done();
+    }
+}
+
+/**
+ * http(비보안) 환경 등 Clipboard API 를 쓸 수 없을 때
+ */
+function fallbackCopy(text) {
+    const $temp = $("<textarea></textarea>").val(text).css({position: "fixed", opacity: 0}).appendTo(document.querySelector("#popupDialog") ?? document.body);
+    $temp[0].select();
+    let ok = false;
+    try {
+        ok = document.execCommand("copy");
+    } catch (e) {
+        ok = false;
+    }
+    $temp.remove();
+    if (!ok) window.openAlert("복사하지 못했습니다. DDL 을 직접 선택해 복사해주세요.");
+    return ok;
+}
+
+/**
+ * 테이블의 컬럼 목록을 조회해 상세 팝업에 표로 보여준다.
+ */
+function loadTableColumns(id, $target) {
+    const showMessage = (text) => {
+        $target.find("p").remove();
+        $target.append($("<p></p>").addClass("gh-muted").text(text));
+    };
+
+    $.ajax({
+        url: `/api/selectColumn/tableColumn/${encodeURIComponent(id)}`,
+        type: "GET",
+        success: (response) => {
+            const order = (v) => v ?? Number.MAX_SAFE_INTEGER;
+            const columns = (response.columnInfos || []).slice().sort((a, b) => order(a.sortOrder) - order(b.sortOrder));
+
+            if (columns.length === 0) {
+                showMessage("등록된 컬럼이 없습니다.");
+                return;
+            }
+
+            const $tbody = $("<tbody></tbody>");
+            columns.forEach((col, idx) => {
+                const dataType = col.dataType ? `${col.dataType}${col.maxLength ? `(${col.maxLength})` : ""}` : "-";
+                $tbody.append($("<tr></tr>").append(
+                    $("<td></td>").addClass("text-center").text(idx + 1),
+                    $("<td></td>").addClass("gh-mono").text(col.columnName ?? "-"),
+                    $("<td></td>").text(col.columnDesc ?? "-"),
+                    $("<td></td>").addClass("gh-mono").text(dataType),
+                    $("<td></td>").addClass("text-center").append(ynLabel(col.isPk, "PK")),
+                    $("<td></td>").addClass("text-center").append(ynLabel(col.isNullable, "Y")),
+                    $("<td></td>").addClass("text-center").append(ynLabel(col.isApproval, "승인", "success"))
+                ));
+            });
+
+            const $thead = $("<thead></thead>").append($("<tr></tr>").append(
+                ["#", "컬럼명", "컬럼 설명", "데이터 타입", "PK", "NULL", "승인"].map(h => $("<th></th>").text(h))
+            ));
+
+            $target.find("h4").text(`컬럼 목록 (${columns.length})`);
+            $target.find("p").remove();
+            $target.append($("<div></div>").addClass("table-wrap").append($("<table></table>").append($thead, $tbody)));
+        },
+        error: (xhr) => {
+            showMessage(xhr.status === 403 ? "컬럼 목록을 조회할 권한이 없습니다." : "컬럼 목록을 불러오지 못했습니다.");
+        }
+    });
+}
+
+function ynLabel(value, text, variant = "accent") {
+    return value === "Y"
+        ? $("<span></span>").addClass(`gh-label gh-label-${variant}`).text(text)
+        : $("<span></span>").addClass("gh-muted").text("-");
+}
+
+/**
+ * 테이블 수정 팝업
+ */
+function openEditDialog(rowData) {
     const type = "U";
     const form = createForm(rowData, type);
 
-    window.openDialog('div', { title: type === 'C' ? '테이블 등록' : '테이블 수정', content: form });
+    window.openDialog('div', { title: '테이블 수정', content: form });
     bindTableNameLookup(rowData, type);
 
     /**

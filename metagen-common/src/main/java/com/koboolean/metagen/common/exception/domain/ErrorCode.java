@@ -166,6 +166,21 @@ public enum ErrorCode {
     NO_ACCESSIBLE_PROJECT(HttpStatus.FORBIDDEN, "NO_ACCESSIBLE_PROJECT", "해당 아이디로 접근 가능한 프로젝트가 없습니다."),
 
     /**
+     * 공통 컬럼 세트는 프로젝트 관리자(또는 ADMIN/MANAGER)만 바꿀 수 있습니다.
+     */
+    COMMON_COLUMN_PERMISSION_DENIED(HttpStatus.BAD_REQUEST, "COMMON_COLUMN_PERMISSION_DENIED", "공통 컬럼 세트는 프로젝트 관리자만 변경할 수 있습니다."),
+
+    /**
+     * 공통 컬럼 세트에 같은 컬럼명(표준용어)이 두 번 들어 있습니다.
+     */
+    COMMON_COLUMN_DUPLICATED(HttpStatus.BAD_REQUEST, "COMMON_COLUMN_DUPLICATED", "공통 컬럼 세트에 같은 컬럼명이 중복되어 있습니다."),
+
+    /**
+     * 공통 컬럼 세트에 등록할 수 있는 개수를 넘었습니다.
+     */
+    COMMON_COLUMN_TOO_MANY(HttpStatus.BAD_REQUEST, "COMMON_COLUMN_TOO_MANY", "공통 컬럼 세트에 등록할 수 있는 개수를 넘었습니다."),
+
+    /**
      * 초기 비밀번호(관리자 초기화 포함) 사용 중 : 비밀번호를 변경하기 전에는 로그인할 수 없습니다.
      */
     PASSWORD_CHANGE_REQUIRED(HttpStatus.FORBIDDEN, "PASSWORD_CHANGE_REQUIRED", "초기 비밀번호를 사용 중입니다. 비밀번호를 변경한 뒤 로그인해주세요."),

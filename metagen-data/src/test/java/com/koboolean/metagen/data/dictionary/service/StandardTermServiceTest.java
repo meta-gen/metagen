@@ -156,6 +156,77 @@ class StandardTermServiceTest {
     }
 
     @Nested
+    @DisplayName("엑셀 업로드 용어명 결정")
+    class UploadTermName {
+
+        private final StandardWord user = word("사용자", "USER");
+        private final StandardWord name = word("이름", "NM");
+        private final java.util.Map<String, List<StandardWord>> words = java.util.Map.of(
+                "USER", List.of(user),
+                "NM", List.of(word("번호", "NM"), name));
+
+        @Test
+        @DisplayName("용어명이 영문약어명과 맞으면 그대로 쓰고 자동 생성 표시를 하지 않는다")
+        void keepWhenMatched() {
+            StandardTermService.ResolvedTermName resolved = StandardTermService.resolveUploadedTermName("사용자_이름", "USER_NM", words);
+
+            assertThat(resolved.termName()).isEqualTo("사용자_이름");
+            assertThat(resolved.words()).containsExactly(user, name);
+            assertThat(resolved.generated()).isFalse();
+        }
+
+        @Test
+        @DisplayName("단어 수가 다르거나 구분자가 없으면 영문약어명의 표준 단어로 용어명을 만든다 (원본에 든 단어 우선)")
+        void generateWhenMismatched() {
+            for (String original : List.of("사용자이름", "사용자 이름", "사용자_이름_정보", "고객명")) {
+                StandardTermService.ResolvedTermName resolved = StandardTermService.resolveUploadedTermName(original, "USER_NM", words);
+
+                assertThat(resolved.generated()).as(original).isTrue();
+                assertThat(resolved.words()).as(original).hasSize(2).first().isSameAs(user);
+            }
+            // 원본에 '이름' 이 있으면 같은 NM 약어의 '번호' 대신 '이름' 을 고른다
+            assertThat(StandardTermService.resolveUploadedTermName("사용자이름", "USER_NM", words).termName()).isEqualTo("사용자_이름");
+            // 원본에 단서가 없으면 첫 단어
+            assertThat(StandardTermService.resolveUploadedTermName("고객명", "USER_NM", words).termName()).isEqualTo("사용자_번호");
+        }
+
+        @Test
+        @DisplayName("단어 수는 같아도 단어명이 다르면 영문약어명 기준으로 바꾼다")
+        void generateWhenWordNameDiffers() {
+            StandardTermService.ResolvedTermName resolved = StandardTermService.resolveUploadedTermName("회원_이름", "USER_NM", words);
+
+            assertThat(resolved.termName()).isEqualTo("사용자_이름");
+            assertThat(resolved.generated()).isTrue();
+        }
+
+        @Test
+        @DisplayName("약어에 해당하는 표준 단어가 없으면 NOT_FOUND_WORD_DATA, 영문약어명이 비었으면 TERM_WORD_COUNT_MISMATCH")
+        void failWhenNoWord() {
+            assertThatThrownBy(() -> StandardTermService.resolveUploadedTermName("사용자_나이", "USER_AGE", words))
+                    .extracting("errorCode").isEqualTo(ErrorCode.NOT_FOUND_WORD_DATA);
+            for (String abbr : new String[]{"", "USER__NM", "_NM", null}) {
+                assertThatThrownBy(() -> StandardTermService.resolveUploadedTermName("사용자_이름", abbr, words))
+                        .as(String.valueOf(abbr))
+                        .extracting("errorCode").isEqualTo(ErrorCode.TERM_WORD_COUNT_MISMATCH);
+            }
+        }
+
+        @Test
+        @DisplayName("자동 생성 용어의 설명 끝에 생성 근거를 남기고 1000자를 넘지 않는다")
+        void generatedNote() {
+            String note = StandardTermService.appendGeneratedNote("사용자의 이름", "USER_NM", "사용자이름");
+            assertThat(note).startsWith("사용자의 이름\n" + StandardTermService.GENERATED_NOTE_PREFIX)
+                    .contains("USER_NM").contains("원본 표준용어명: 사용자이름");
+
+            assertThat(StandardTermService.appendGeneratedNote(null, "USER_NM", "사용자이름"))
+                    .startsWith(StandardTermService.GENERATED_NOTE_PREFIX);
+
+            String longNote = StandardTermService.appendGeneratedNote("가".repeat(1000), "USER_NM", "사용자이름");
+            assertThat(longNote).hasSizeLessThanOrEqualTo(1000).contains(StandardTermService.GENERATED_NOTE_PREFIX);
+        }
+    }
+
+    @Nested
     @DisplayName("표준용어 수정")
     class Update {
 

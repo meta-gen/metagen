@@ -1,5 +1,6 @@
 package com.koboolean.metagen.data.table.service;
 
+import com.koboolean.metagen.data.table.domain.dto.TableDdlDto;
 import com.koboolean.metagen.data.table.domain.dto.TableInfoDto;
 import com.koboolean.metagen.data.table.domain.dto.TableNameDto;
 import com.koboolean.metagen.common.grid.domain.dto.ColumnDto;
@@ -31,4 +32,9 @@ public interface TableDesignService {
     void deleteTable(List<TableInfoDto> tableInfoDtos, AccountDto accountDto);
 
     void uploadTableExcelFile(MultipartFile file, AccountDto accountDto) throws IOException;
+
+    /**
+     * 테이블과 연결된 컬럼으로 프로젝트 대상 DB 기준 DDL 을 만든다.
+     */
+    TableDdlDto generateTableDdl(Long tableId, AccountDto accountDto);
 }

@@ -3,6 +3,7 @@ package com.koboolean.metagen.core.project.domain.entity;
 import com.koboolean.metagen.common.exception.CustomException;
 import com.koboolean.metagen.common.exception.domain.ErrorCode;
 import com.koboolean.metagen.common.jpa.BaseEntity;
+import com.koboolean.metagen.core.project.domain.enums.DbType;
 import com.koboolean.metagen.core.security.domain.entity.Account;
 import jakarta.persistence.*;
 import lombok.*;
@@ -44,6 +45,19 @@ public class Project extends BaseEntity implements Serializable {
 
     @Column(name = "table_prefix", length = 20)
     private String tablePrefix; // 테이블명 접두어 (예: TB_) - 표준 단어 기준 테이블명 생성 시 사용
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "db_type", length = 20, nullable = false)
+    private DbType dbType; // 대상 DB - 테이블 DDL 생성 기준 (없으면 DbType.DEFAULT)
+
+    /**
+     * 대상 DB 를 지정하지 않고 저장하면 기본값(PostgreSQL)으로 저장한다. (Builder 는 필드 초기값을 쓰지 않는다)
+     */
+    @PrePersist
+    @PreUpdate
+    void applyDefaults() {
+        if (dbType == null) dbType = DbType.DEFAULT;
+    }
 
     private static final Pattern TABLE_PREFIX_PATTERN = Pattern.compile("^[A-Z][A-Z0-9_]*$");
 

@@ -1,5 +1,6 @@
 package com.koboolean.metagen.system.project.service.impl;
 
+import com.koboolean.metagen.core.project.domain.enums.DbType;
 import com.koboolean.metagen.common.grid.domain.dto.ColumnDto;
 import com.koboolean.metagen.common.grid.enums.ColumnType;
 import com.koboolean.metagen.common.grid.enums.RowType;
@@ -82,6 +83,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
                 .isAutoActive(projectDto.getIsAutoActive())
                 .isDicAbbrUsed(projectDto.getIsDicAbbrUsed())
                 .tablePrefix(Project.normalizeTablePrefix(projectDto.getTablePrefix()))
+                .dbType(DbType.fromOrDefault(projectDto.getDbType()))
                 .build();
 
         ProjectMember projectMember = ProjectMember.builder()
@@ -110,6 +112,7 @@ public class ProjectManageServiceImpl implements ProjectManageService {
         project.setIsAutoActive(projectDto.getIsAutoActive());
         project.setIsDicAbbrUsed(projectDto.getIsDicAbbrUsed());
         project.setTablePrefix(Project.normalizeTablePrefix(projectDto.getTablePrefix()));
+        project.setDbType(DbType.fromOrDefault(projectDto.getDbType()));
 
     }
 

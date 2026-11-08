@@ -1,5 +1,6 @@
 package com.koboolean.metagen.data.column.controller;
 
+import com.koboolean.metagen.data.column.domain.dto.ColumnBulkSaveDto;
 import com.koboolean.metagen.data.column.domain.dto.ColumnInfoDto;
 import com.koboolean.metagen.data.column.repository.ColumnInfoRepository;
 import com.koboolean.metagen.data.column.service.ColumnManageService;
@@ -154,4 +155,15 @@ public class ColumnManageRestController {
         return ResponseEntity.ok(Map.of("result", true));
     }
 
+    @Operation(summary = "컬럼 일괄 저장", description = "테이블의 컬럼을 한 번에 추가/수정/삭제하고 화면 순서대로 정렬 순서를 저장합니다. 검증 오류가 있으면 아무것도 저장하지 않고 행별 오류를 돌려줍니다.")
+    @PutMapping(value = "/saveColumn/bulk")
+    public ResponseEntity<ColumnBulkSaveDto.Result> saveColumnsBulk(@RequestBody ColumnBulkSaveDto request, @AuthenticationPrincipal AccountDto accountDto) {
+        return ResponseEntity.ok(columnManageService.saveColumnsBulk(accountDto, request));
+    }
+
+    @Operation(summary = "표준용어 일괄 찾기", description = "붙여넣은 용어명/영문약어명 목록을 표준용어로 찾습니다. 줄마다 MATCHED / AMBIGUOUS / NOT_FOUND 와 찾은 용어를 돌려줍니다. (최대 300줄)")
+    @PostMapping(value = "/selectColumn/term/resolve")
+    public ResponseEntity<Map<String, Object>> resolveTerms(@RequestBody List<String> inputs, @AuthenticationPrincipal AccountDto accountDto) {
+        return ResponseEntity.ok(Map.of("result", true, "items", columnManageService.resolveTerms(accountDto, inputs)));
+    }
 }
