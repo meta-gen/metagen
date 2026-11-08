@@ -2,14 +2,17 @@ import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
 import {downloadFile} from "../../common/common.js";
 import {applyAll, registerRowDecorator, setApproval, setMono, setYN} from "../../common/grid_cells.js";
 import {openColumnTableDetail} from "../../popup/column_table_detail.js";
+import {closePopupDialog, openPopupDialog} from "../../common/popup_dialog.js";
+import {createTermForm} from "../dictionary/term_create_form.js";
 
 /**
  * 컬럼 행 꾸미기 : 테이블/컬럼명·데이터 타입은 코드 글꼴, Y/N 은 라벨, 승인여부는 상태 라벨
+ * (그리드에서 숨긴 항목은 상세 팝업에서 보여준다.)
  */
 registerRowDecorator("columnManageGrid", (row, data, cellOf) => {
-    applyAll(cellOf, data, ["tableName", "columnName", "dataType", "refTableName"], setMono);
+    applyAll(cellOf, data, ["tableName", "columnName", "dataType"], setMono);
     setYN(cellOf("isPk"), data.isPk, "PK");
-    applyAll(cellOf, data, ["isNullable", "isMasterData", "isRequired", "isSensitive", "isUnique", "isIndex", "isEncrypted"], setYN);
+    setYN(cellOf("isNullable"), data.isNullable);
     setApproval(cellOf("isApproval"), data.isApproval);
 });
 
@@ -156,9 +159,12 @@ function createForm(rowData, type) {
             <div id="tableLookupResult" class="table-name-words" aria-live="polite"></div>
         </div>
 
-        <!-- 필수 정보 : 컬럼명 (표준용어에서 선택) -->
+        <!-- 필수 정보 : 컬럼명 (표준용어에서 선택, 없으면 바로 등록) -->
         <div class="form-group">
-            <label for="termSearchInput">컬럼명 (표준용어)</label>
+            <div class="lookup-label-row">
+                <label for="termSearchInput">컬럼명 (표준용어)</label>
+                <button type="button" class="btn btn-sm" id="btn-create-term">+ 새 표준용어 등록</button>
+            </div>
             <div class="lookup-search-row">
                 <select class="form-control" id="termSearchType" aria-label="표준용어 검색 기준">
                     <option value="termName">표준용어명</option>
@@ -194,7 +200,7 @@ function createForm(rowData, type) {
         </div>
 
         <div class="form-check">
-            <input type="checkbox" class="form-check-input" name="isNullable" id="isPk"
+            <input type="checkbox" class="form-check-input" name="isPk" id="isPk"
                    ${rowData.isPk === 'Y' ? 'checked' : ''} />
             <label class="form-check-label" for="isPk">PK 여부</label>
         </div>
@@ -423,6 +429,56 @@ function bindColumnLookup() {
         const term = columnLookup.terms.find(t => String(t.id) === $(this).val());
         selectTerm(term);
     });
+
+    $("#btn-create-term").on("click", openTermCreate);
+}
+
+/**
+ * 새 표준용어 등록 팝업 : 컬럼 등록 다이얼로그 위에 띄우고, 저장하면 등록한 용어를 컬럼명으로 바로 선택한다.
+ * 승인/미승인은 기존 용어 등록과 같이 서버에서 권한에 따라 정한다.
+ */
+function openTermCreate() {
+    // 표준용어명으로 검색하던 값이 있으면 그대로 넘긴다.
+    const keyword = $("#termSearchType").val() === "termName" ? $("#termSearchInput").val().trim() : "";
+
+    openPopupDialog({
+        url: "/popup/standardTermCreate",
+        title: "새 표준용어 등록",
+        onLoad: ($root) => {
+            const form = createTermForm({
+                initialTermName: keyword,
+                submitText: "등록 후 선택",
+                onSaved: (saved) => {
+                    closePopupDialog();
+                    findAndSelectTerm(saved);
+                }
+            });
+            $root.find("[data-term-form]").append(form);
+            form.find(".term-word-input").trigger("focus");
+        }
+    });
+}
+
+/**
+ * 방금 등록한 용어를 영문약어명으로 다시 조회해 선택한다. (같은 약어가 여러 건이면 용어명이 같은 것)
+ */
+function findAndSelectTerm(saved) {
+    const abbreviation = saved.commonStandardTermAbbreviation;
+
+    $("#termSearchType").val("termAbbreviation");
+    $("#termSearchInput").val(abbreviation);
+    clearSelectedTerm();
+    columnLookup.pending = true;
+
+    lookupTerms("termAbbreviation", abbreviation, (terms) =>
+        terms.find(t => t.commonStandardTermAbbreviation === abbreviation && t.commonStandardTermName === saved.commonStandardTermName)
+        ?? terms.find(t => t.commonStandardTermAbbreviation === abbreviation),
+        (term) => {
+            const msg = term?.isApprovalYn === "Y"
+                ? `표준용어 ${abbreviation} 이(가) 승인 상태로 등록되어 컬럼명으로 선택되었습니다.`
+                : `표준용어 ${abbreviation} 이(가) 승인 대기 상태로 등록되어 컬럼명으로 선택되었습니다. 용어 승인이 필요합니다.`;
+            window.openAlert(msg);
+        });
 }
 
 function lookupTables(keyword) {
@@ -505,7 +561,11 @@ function selectTable(table) {
     });
 }
 
-function lookupTerms(type, keyword) {
+/**
+ * @param prefer     (terms) => term : 결과가 여러 건일 때 바로 선택할 용어 (없으면 1건일 때만 자동 선택)
+ * @param onSelected (term) => void : 자동 선택 후 호출
+ */
+function lookupTerms(type, keyword, prefer, onSelected) {
     const seq = ++columnLookup.termSeq;
 
     $.ajax({
@@ -527,13 +587,15 @@ function lookupTerms(type, keyword) {
             $select.attr("hidden", terms.length === 0);
 
             if (terms.length === 0) {
-                showLookupMessage("#termLookupResult", "table-name-error", "조건에 맞는 표준용어가 없습니다. 데이터 사전에서 먼저 등록해주세요.");
+                showLookupMessage("#termLookupResult", "table-name-error", "조건에 맞는 표준용어가 없습니다. [+ 새 표준용어 등록]으로 바로 등록할 수 있습니다.");
                 return;
             }
 
-            if (terms.length === 1) {
-                $select.val(String(terms[0].id));
-                selectTerm(terms[0]);
+            const auto = (typeof prefer === "function" ? prefer(terms) : null) ?? (terms.length === 1 ? terms[0] : null);
+            if (auto) {
+                $select.val(String(auto.id));
+                selectTerm(auto);
+                if (typeof onSelected === "function") onSelected(auto);
             } else {
                 showLookupMessage("#termLookupResult", "form-help", `표준용어 ${terms.length}건 · 목록에서 선택하세요.`);
             }
@@ -702,16 +764,93 @@ function deleteColumns(){
 }
 
 /**
- *
- * 컬럼관리 목록 조회
- * @param rowData
- * @param columnList
- * @param isManager
- * @param tableId
+ * 컬럼 상세 팝업 구성
+ * 값 항목은 [라벨, 키, 코드글꼴 여부], 속성 항목(Y/N)은 라벨 목록으로 한 줄에 보여준다.
  */
-export function columnSelectRow(rowData, columnList, isManager, tableId){
-    if(rowData.isApproval === "Y") return;
+const DETAIL_FIELDS = [
+    ["테이블명", "tableName", true],
+    ["컬럼명", "columnName", true],
+    ["컬럼 설명", "columnDesc"],
+    ["데이터 타입", "dataType", true],
+    ["최대 길이", "maxLength"],
+    ["정밀도", "precision"],
+    ["소수 자릿수", "scale"],
+    ["기본값", "defaultValue", true],
+    ["정렬 순서", "sortOrder"],
+    ["참조 테이블명", "refTableName", true],
+    ["데이터 예시", "example"]
+];
 
+const DETAIL_FLAGS = [
+    ["PK", "isPk"],
+    ["NULL 허용", "isNullable"],
+    ["필수 입력", "isRequired"],
+    ["고유값", "isUnique"],
+    ["인덱스", "isIndex"],
+    ["마스터 데이터", "isMasterData"],
+    ["민감정보", "isSensitive"],
+    ["암호화", "isEncrypted"]
+];
+
+/**
+ * 컬럼관리 행 선택 : 그리드에서 숨긴 항목까지 상세 팝업으로 보여주고,
+ * 승인 전 컬럼은 [컬럼 순서 변경] 버튼으로 같은 테이블의 순서 변경 팝업을 연다.
+ * 모든 값은 textContent 로 넣어 HTML 이 해석되지 않도록 한다.
+ */
+export function columnSelectRow(rowData, columnList, isManager, tableId) {
+    const approved = rowData.isApproval === "Y";
+    const $content = $("<div></div>");
+
+    $content.append($("<div></div>").addClass("dict-detail-status").append(
+        $("<span></span>")
+            .addClass(`gh-label gh-label-dot ${approved ? "gh-label-success" : "gh-label-attention"}`)
+            .text(approved ? "승인" : "승인 대기"),
+        $("<span></span>").addClass("gh-muted").text(approved ? "승인된 컬럼은 수정할 수 없습니다." : "")
+    ));
+
+    const $list = $("<dl></dl>").addClass("dict-detail");
+    DETAIL_FIELDS.forEach(([label, key, mono]) => {
+        const value = rowData[key];
+        const isEmpty = value === null || value === undefined || String(value).trim() === "";
+        $list.append($("<dt></dt>").text(label));
+        $list.append($("<dd></dd>")
+            .toggleClass("gh-muted", isEmpty)
+            .toggleClass("gh-mono", !isEmpty && !!mono)
+            .text(isEmpty ? "-" : String(value)));
+    });
+
+    const $flags = $("<div></div>").addClass("dict-detail-flags");
+    DETAIL_FLAGS.forEach(([label, key]) => {
+        const on = rowData[key] === "Y";
+        $flags.append($("<span></span>")
+            .addClass(`gh-label ${on ? "gh-label-accent" : "dict-detail-flag-off"}`)
+            .attr("title", `${label} : ${on ? "Y" : "N"}`)
+            .text(label));
+    });
+    $list.append($("<dt></dt>").text("속성"), $("<dd></dd>").append($flags));
+
+    $content.append($list);
+
+    if (!approved) {
+        const $orderBtn = $("<button></button>")
+            .attr("type", "button")
+            .addClass("btn")
+            .text("컬럼 순서 변경")
+            .on("click", () => {
+                // 같은 다이얼로그(#mainConfirm)를 다시 쓰지 않도록 먼저 닫는다.
+                window.closeDialog("div");
+                openColumnOrder(rowData);
+            });
+        $content.append($("<div></div>").addClass("gh-dialog-actions").append($orderBtn));
+    }
+
+    window.openDialog("div", {title: `컬럼 상세 · ${rowData.tableName ?? ""}.${rowData.columnName ?? ""}`, content: $content});
+}
+
+/**
+ * 같은 테이블의 승인 전 컬럼 순서 변경 팝업
+ */
+function openColumnOrder(rowData) {
     $.ajax({
         url: `/api/selectColumn/detail/${rowData.id}`,
         type: "GET",

@@ -24,7 +24,7 @@ public interface StandardTermRepository extends JpaRepository<StandardTerm, Long
     Page<StandardTerm> findByRevisionNumberAndProjectId(int revisionNumber, Long projectId, Pageable pageable);
     Page<StandardTerm> findByCommonStandardTermNameContainingAndProjectId(String name, Long projectId, Pageable pageable);
     Page<StandardTerm> findByCommonStandardTermDescriptionContainingAndProjectId(String desc, Long projectId, Pageable pageable);
-    Page<StandardTerm> findByCommonStandardTermAbbreviationContainingAndProjectId(String abbr, Long projectId, Pageable pageable);
+    Page<StandardTerm> findByCommonStandardTermAbbreviationContainingIgnoreCaseAndProjectId(String abbr, Long projectId, Pageable pageable);
     Page<StandardTerm> findByStandardDomain_CommonStandardDomainNameContainingAndProjectId(String domainName, Long projectId, Pageable pageable);
     Page<StandardTerm> findByStandardDomain_StorageFormatContainingAndProjectId(String storageFormat, Long projectId, Pageable pageable);
     Page<StandardTerm> findByAdministrativeStandardCodeNameContainingAndProjectId(String code, Long projectId, Pageable pageable);
@@ -41,7 +41,7 @@ public interface StandardTermRepository extends JpaRepository<StandardTerm, Long
     List<StandardTerm> findByCommonStandardTermAbbreviationAndStandardDomain_CommonStandardDomainNameAndProjectId(String abbr, String domainName, Long projectId);
 
 
-    List<StandardTerm> findAllByProjectIdAndCommonStandardTermAbbreviationContaining(Long projectId, String commonStandardTermAbbreviation);
+    List<StandardTerm> findAllByProjectIdAndCommonStandardTermAbbreviationContainingIgnoreCase(Long projectId, String commonStandardTermAbbreviation);
 
     List<StandardTerm> findAllByProjectIdAndCommonStandardTermNameContaining(Long projectId, String commonStandardTermName);
 
@@ -52,4 +52,7 @@ public interface StandardTermRepository extends JpaRepository<StandardTerm, Long
 
     /** 엑셀 업로드 : 청크의 영문약어(컬럼명)를 한 번에 조회 */
     List<StandardTerm> findAllByProjectIdAndCommonStandardTermAbbreviationIn(Long projectId, Collection<String> commonStandardTermAbbreviations);
+
+    // 컬럼 일괄 편집 붙여넣기 : 용어명 여러 개를 한 번에 찾는다
+    List<StandardTerm> findAllByProjectIdAndCommonStandardTermNameIn(Long projectId, Collection<String> commonStandardTermNames);
 }

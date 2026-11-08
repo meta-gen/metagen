@@ -1,5 +1,7 @@
 package com.koboolean.metagen.data.column.service;
 
+import com.koboolean.metagen.data.column.domain.dto.TermResolveDto;
+import com.koboolean.metagen.data.column.domain.dto.ColumnBulkSaveDto;
 import com.koboolean.metagen.data.column.domain.dto.ColumnInfoDto;
 import com.koboolean.metagen.data.dictionary.domain.dto.StandardTermDto;
 import com.koboolean.metagen.data.table.domain.dto.TableInfoDto;
@@ -41,4 +43,14 @@ public interface ColumnManageService {
     List<ColumnInfoDto> selectColumnDetail(AccountDto accountDto, Long id);
 
     void updateSortOrder(AccountDto accountDto, List<ColumnInfoDto> columnInfoDtos);
+
+    /**
+     * 테이블 컬럼 일괄 저장 (추가 / 승인 전 컬럼 수정 / 삭제 / 정렬 순서). 검증 오류가 하나라도 있으면 아무것도 저장하지 않는다.
+     */
+    ColumnBulkSaveDto.Result saveColumnsBulk(AccountDto accountDto, ColumnBulkSaveDto request);
+
+    /**
+     * 붙여넣은 용어명/영문약어명 목록을 표준용어로 찾는다. (입력 순서대로, 줄마다 결과 하나)
+     */
+    List<TermResolveDto> resolveTerms(AccountDto accountDto, List<String> inputs);
 }

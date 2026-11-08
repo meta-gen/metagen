@@ -4,6 +4,7 @@ import com.koboolean.metagen.common.exception.CustomException;
 import com.koboolean.metagen.common.exception.domain.ErrorCode;
 import com.koboolean.metagen.core.security.domain.dto.AccountDto;
 import com.koboolean.metagen.core.support.SecurityTestSupport;
+import com.koboolean.metagen.data.column.domain.dto.ColumnBulkSaveDto;
 import com.koboolean.metagen.data.column.domain.dto.ColumnInfoDto;
 import com.koboolean.metagen.data.column.domain.entity.ColumnInfo;
 import com.koboolean.metagen.data.column.repository.ColumnInfoRepository;
@@ -369,6 +370,217 @@ class ColumnManageServiceImplTest {
             verify(entityManager).clear();
             // 테이블의 컬럼 목록 컬렉션은 건드리지 않는다 (FK 기준)
             assertThat(order.getColumns()).isEmpty();
+        }
+    }
+
+    @Nested
+    @DisplayName("붙여넣은 용어 일괄 찾기")
+    class ResolveTerms {
+
+        private StandardTerm term(long id, String name, String abbreviation, boolean approved) {
+            return StandardTerm.builder().id(id).projectId(1L).commonStandardTermName(name).commonStandardTermAbbreviation(abbreviation)
+                    .isApproval(approved).columnInfos(new ArrayList<>()).termWordMappings(new ArrayList<>()).synonymList(new ArrayList<>()).build();
+        }
+
+        @Test
+        @DisplayName("용어명(공백/_ 구분 무관)을 먼저, 없으면 영문약어명(대소문자 무관)으로 찾고 입력 순서대로 상태를 돌려준다")
+        void resolve() {
+            AccountDto login = SecurityTestSupport.loginAsUser(1L);
+            StandardTerm userNm = term(1L, "사용자_이름", "USER_NM", true);
+            StandardTerm regDtA = term(2L, "등록_일시", "REG_DT", false);
+            StandardTerm regDtB = term(3L, "등록_일시", "REG_DTM", true);
+            StandardTerm useYn = term(4L, "사용_여부", "USE_YN", true);
+            when(standardTermRepository.findAllByProjectIdAndCommonStandardTermNameIn(eq(1L), anyCollection()))
+                    .thenReturn(List.of(userNm, regDtA, regDtB));
+            when(standardTermRepository.findAllByProjectIdAndCommonStandardTermAbbreviationIn(eq(1L), anyCollection()))
+                    .thenReturn(List.of(useYn));
+
+            List<com.koboolean.metagen.data.column.domain.dto.TermResolveDto> result = service.resolveTerms(login,
+                    List.of(" 사용자 이름 ", "", "등록_일시", "use_yn", "없는 용어"));
+
+            assertThat(result).extracting(com.koboolean.metagen.data.column.domain.dto.TermResolveDto::input,
+                            com.koboolean.metagen.data.column.domain.dto.TermResolveDto::status)
+                    .containsExactly(
+                            tuple("사용자 이름", "MATCHED"),
+                            tuple("등록_일시", "AMBIGUOUS"),
+                            tuple("use_yn", "MATCHED"),
+                            tuple("없는 용어", "NOT_FOUND"));
+            // 여러 건이면 승인된 용어를 먼저
+            assertThat(result.get(1).terms()).extracting("id").containsExactly(3L, 2L);
+        }
+
+        @Test
+        @DisplayName("빈 입력이면 조회하지 않는다")
+        void empty() {
+            AccountDto login = SecurityTestSupport.loginAsUser(1L);
+            assertThat(service.resolveTerms(login, List.of(" ", ""))).isEmpty();
+            verify(standardTermRepository, never()).findAllByProjectIdAndCommonStandardTermNameIn(any(), anyCollection());
+        }
+    }
+
+    @Nested
+    @DisplayName("컬럼 일괄 저장")
+    class BulkSave {
+
+        private TableInfo approvedTable(ColumnInfo... columns) {
+            TableInfo table = TableInfo.builder().id(10L).projectId(1L).tableName("TB_USER").isApproval(true).columns(new ArrayList<>(List.of(columns))).build();
+            for (ColumnInfo column : columns) column.setTableInfo(table);
+            return table;
+        }
+
+        private ColumnInfo column(long id, String name, boolean approved, int sortOrder) {
+            return ColumnInfo.builder().id(id).projectId(1L).tableName("TB_USER").columnName(name).columnDesc(name)
+                    .dataType("VARCHAR").isApproval(approved).sortOrder(sortOrder).build();
+        }
+
+        private StandardTerm term(long id, String abbreviation) {
+            return StandardTerm.builder().id(id).projectId(1L).commonStandardTermAbbreviation(abbreviation).columnInfos(new ArrayList<>()).build();
+        }
+
+        private ColumnBulkSaveDto.Row newRow(String key, long termId) {
+            return ColumnBulkSaveDto.Row.builder().key(key).termId(termId).columnDesc("설명").dataType("varchar").maxLength(20).isNullable("Y").build();
+        }
+
+        private ColumnBulkSaveDto.Row existingRow(long id) {
+            return ColumnBulkSaveDto.Row.builder().key(String.valueOf(id)).id(id).columnDesc("수정된 설명").dataType("VARCHAR").isNullable("N").build();
+        }
+
+        @Test
+        @DisplayName("추가/수정/삭제를 한 번에 하고, 화면 순서대로 정렬 순서를 다시 매긴다 (일반 사용자 추가는 미승인)")
+        void saveAll() {
+            AccountDto login = SecurityTestSupport.loginAsUser(1L);
+            ColumnInfo keep = column(1L, "USER_ID", false, 1);
+            ColumnInfo remove = column(2L, "OLD_COL", false, 2);
+            TableInfo table = approvedTable(keep, remove);
+            StandardTerm userNm = term(20L, "USER_NM");
+            when(tableInfoRepository.findByIdAndProjectId(10L, 1L)).thenReturn(table);
+            when(standardTermRepository.findByIdAndProjectId(20L, 1L)).thenReturn(userNm);
+
+            ColumnBulkSaveDto.Row pkRow = existingRow(1L);
+            pkRow.setIsPk("Y");
+            ColumnBulkSaveDto request = ColumnBulkSaveDto.builder().tableInfoId(10L)
+                    .rows(List.of(newRow("n1", 20L), pkRow))   // 새 컬럼을 맨 앞으로
+                    .deletedIds(List.of(2L)).build();
+
+            ColumnBulkSaveDto.Result result = service.saveColumnsBulk(login, request);
+
+            assertThat(result.result()).isTrue();
+            assertThat(result.created()).isEqualTo(1);
+            assertThat(result.updated()).isEqualTo(1);
+            assertThat(result.deleted()).isEqualTo(1);
+            verify(columnInfoRepository).delete(remove);
+
+            ArgumentCaptor<ColumnInfo> saved = ArgumentCaptor.forClass(ColumnInfo.class);
+            verify(columnInfoRepository).save(saved.capture());
+            ColumnInfo created = saved.getValue();
+            assertThat(created.getColumnName()).as("컬럼명은 용어의 영문약어명").isEqualTo("USER_NM");
+            assertThat(created.getDataType()).isEqualTo("VARCHAR");
+            assertThat(created.getSortOrder()).isEqualTo(1);
+            assertThat(created.getIsApproval()).isFalse();
+            assertThat(created.getTableInfo()).isSameAs(table);
+
+            assertThat(keep.getSortOrder()).isEqualTo(2);
+            assertThat(keep.getColumnDesc()).isEqualTo("수정된 설명");
+            assertThat(keep.getIsPk()).isTrue();
+            assertThat(keep.getIsRequired()).as("PK 는 필수/고유/NULL 비허용").isTrue();
+            assertThat(keep.getIsUnique()).isTrue();
+            assertThat(keep.getIsNullable()).isFalse();
+            assertThat(table.getColumns()).containsExactlyInAnyOrder(keep, created);
+            assertThat(userNm.getColumnInfos()).containsExactly(created);
+        }
+
+        @Test
+        @DisplayName("승인된 컬럼은 내용/순서를 바꾸지 않고, 뒤의 컬럼은 그 다음 순서부터 매긴다")
+        void approvedLocked() {
+            AccountDto login = SecurityTestSupport.loginAsAdmin(1L);
+            ColumnInfo approved = column(1L, "USER_ID", true, 5);
+            TableInfo table = approvedTable(approved);
+            when(tableInfoRepository.findByIdAndProjectId(10L, 1L)).thenReturn(table);
+            when(standardTermRepository.findByIdAndProjectId(20L, 1L)).thenReturn(term(20L, "USER_NM"));
+
+            ColumnBulkSaveDto.Row changed = existingRow(1L); // 승인된 컬럼 값을 바꿔 보내도 무시
+            ColumnBulkSaveDto.Result result = service.saveColumnsBulk(login, ColumnBulkSaveDto.builder().tableInfoId(10L)
+                    .rows(List.of(changed, newRow("n1", 20L))).build());
+
+            assertThat(result.result()).isTrue();
+            assertThat(result.updated()).isZero();
+            assertThat(approved.getColumnDesc()).isEqualTo("USER_ID");
+            assertThat(approved.getSortOrder()).isEqualTo(5);
+
+            ArgumentCaptor<ColumnInfo> saved = ArgumentCaptor.forClass(ColumnInfo.class);
+            verify(columnInfoRepository).save(saved.capture());
+            assertThat(saved.getValue().getSortOrder()).isEqualTo(6);
+            assertThat(saved.getValue().getIsApproval()).as("승인 권한자 추가는 승인").isTrue();
+        }
+
+        @Test
+        @DisplayName("정렬 순서가 비어 있는 승인 컬럼(예전 데이터)은 화면 순서로 채워, 새 컬럼이 그 뒤에 온다")
+        void approvedWithoutSortOrder() {
+            AccountDto login = SecurityTestSupport.loginAsAdmin(1L);
+            ColumnInfo id = column(1L, "ID", true, 0);
+            id.setSortOrder(null);
+            ColumnInfo pswd = column(2L, "PSWD_CN", true, 0);
+            pswd.setSortOrder(null);
+            TableInfo table = approvedTable(id, pswd);
+            when(tableInfoRepository.findByIdAndProjectId(10L, 1L)).thenReturn(table);
+            when(standardTermRepository.findByIdAndProjectId(20L, 1L)).thenReturn(term(20L, "USE_YN"));
+
+            ColumnBulkSaveDto.Result result = service.saveColumnsBulk(login, ColumnBulkSaveDto.builder().tableInfoId(10L)
+                    .rows(List.of(existingRow(1L), existingRow(2L), newRow("n1", 20L))).build());
+
+            assertThat(result.result()).isTrue();
+            assertThat(id.getSortOrder()).isEqualTo(1);
+            assertThat(pswd.getSortOrder()).isEqualTo(2);
+            assertThat(id.getColumnDesc()).as("승인 컬럼 내용은 그대로").isEqualTo("ID");
+            ArgumentCaptor<ColumnInfo> saved = ArgumentCaptor.forClass(ColumnInfo.class);
+            verify(columnInfoRepository).save(saved.capture());
+            assertThat(saved.getValue().getSortOrder()).isEqualTo(3);
+        }
+
+        @Test
+        @DisplayName("중복 컬럼명/승인 컬럼 삭제/필수값 누락/없는 용어가 있으면 아무것도 저장하지 않고 행별 오류를 돌려준다")
+        void validationErrors() {
+            AccountDto login = SecurityTestSupport.loginAsUser(1L);
+            ColumnInfo approved = column(1L, "USER_ID", true, 1);
+            TableInfo table = approvedTable(approved);
+            when(tableInfoRepository.findByIdAndProjectId(10L, 1L)).thenReturn(table);
+            when(standardTermRepository.findByIdAndProjectId(20L, 1L)).thenReturn(term(20L, "USER_NM"));
+            when(standardTermRepository.findByIdAndProjectId(21L, 1L)).thenReturn(term(21L, "USER_ID"));
+            when(standardTermRepository.findByIdAndProjectId(99L, 1L)).thenReturn(null);
+
+            ColumnBulkSaveDto.Row noDesc = newRow("n3", 20L);
+            noDesc.setColumnDesc(" ");
+            ColumnBulkSaveDto request = ColumnBulkSaveDto.builder().tableInfoId(10L)
+                    .rows(List.of(
+                            newRow("n1", 20L),
+                            noDesc,                 // 같은 USER_NM 두 번째 → 중복 (설명 누락보다 먼저 걸린다)
+                            newRow("n2", 21L),      // USER_ID : 삭제 요청한 컬럼명은 중복 대상에서 빠지므로 오류 아님
+                            newRow("n4", 99L)))     // 없는 용어
+                    .deletedIds(List.of(1L))        // 승인 컬럼 삭제
+                    .build();
+
+            ColumnBulkSaveDto.Result result = service.saveColumnsBulk(login, request);
+
+            assertThat(result.result()).isFalse();
+            assertThat(result.errors()).extracting(ColumnBulkSaveDto.RowError::key)
+                    .containsExactlyInAnyOrder("1", "n3", "n4");
+            assertThat(result.errors()).anySatisfy(e -> assertThat(e.message()).contains("승인된 컬럼은 삭제할 수 없습니다"));
+            verify(columnInfoRepository, never()).save(any());
+            verify(columnInfoRepository, never()).delete(any());
+        }
+
+        @Test
+        @DisplayName("승인 전 테이블에는 저장하지 않고, 다른 프로젝트 테이블이면 TABLE_IS_NOT_DEFINED")
+        void tableRules() {
+            AccountDto login = SecurityTestSupport.loginAsUser(1L);
+            TableInfo pending = TableInfo.builder().id(10L).projectId(1L).tableName("TB_USER").isApproval(false).columns(new ArrayList<>()).build();
+            when(tableInfoRepository.findByIdAndProjectId(10L, 1L)).thenReturn(pending);
+
+            assertThat(service.saveColumnsBulk(login, ColumnBulkSaveDto.builder().tableInfoId(10L).build()).result()).isFalse();
+
+            when(tableInfoRepository.findByIdAndProjectId(11L, 1L)).thenReturn(null);
+            assertThatThrownBy(() -> service.saveColumnsBulk(login, ColumnBulkSaveDto.builder().tableInfoId(11L).build()))
+                    .extracting("errorCode").isEqualTo(ErrorCode.TABLE_IS_NOT_DEFINED);
         }
     }
 }

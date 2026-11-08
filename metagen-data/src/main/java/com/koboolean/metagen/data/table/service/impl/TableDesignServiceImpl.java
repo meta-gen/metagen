@@ -1,5 +1,9 @@
 package com.koboolean.metagen.data.table.service.impl;
 
+import com.koboolean.metagen.core.project.domain.enums.DbType;
+import com.koboolean.metagen.data.table.ddl.TableDdlGenerator;
+import com.koboolean.metagen.data.table.domain.dto.TableDdlDto;
+import com.koboolean.metagen.data.column.domain.entity.ColumnInfo;
 import com.koboolean.metagen.data.column.repository.ColumnInfoRepository;
 import com.koboolean.metagen.data.dictionary.domain.entity.StandardWord;
 import com.koboolean.metagen.data.dictionary.repository.StandardWordRepository;
@@ -51,13 +55,14 @@ public class TableDesignServiceImpl implements TableDesignService {
 
     @Override
     public List<ColumnDto> selectTableInfoColumn() {
+        // 그리드에는 식별/구분 정보만 표시하고, 나머지(.hidden())는 행 클릭 시 상세 팝업에서 보여준다.
         return List.of(
                 new ColumnDto("", "id", ColumnType.NUMBER, RowType.CHECKBOX),
                 new ColumnDto("테이블명", "tableName", ColumnType.STRING, RowType.TEXT, true, true),
                 new ColumnDto("테이블 한글명", "tableKorName", ColumnType.STRING, RowType.TEXT, true, true),
-                new ColumnDto("테이블 설명", "tableDescription", ColumnType.STRING, RowType.TEXT, true, true),
-                new ColumnDto("마스터 테이블 여부", "isMasterTable", ColumnType.STRING, RowType.TEXT, false, false),
-                new ColumnDto("정렬 순서", "sortOrder", ColumnType.NUMBER, RowType.TEXT, false, true),
+                new ColumnDto("테이블 설명", "tableDescription", ColumnType.STRING, RowType.TEXT, true, true).hidden(),
+                new ColumnDto("마스터 테이블", "isMasterTable", ColumnType.STRING, RowType.TEXT, false, false),
+                new ColumnDto("정렬 순서", "sortOrder", ColumnType.NUMBER, RowType.TEXT, false, true).hidden(),
                 new ColumnDto("승인 여부", "isApproval", ColumnType.STRING, RowType.TEXT, false, false)
         );
     }
@@ -329,5 +334,48 @@ public class TableDesignServiceImpl implements TableDesignService {
             entityManager.flush();
             entityManager.clear();
         });
+    }
+
+    /**
+     * 컬럼의 참조 테이블명(대문자) → 참조 테이블 PK 컬럼(정렬 순서, 타입 비교용). 같은 프로젝트에 등록된 테이블만 IN 조회 한 번으로 찾는다.
+     */
+    private Map<String, List<ColumnInfo>> referencedPkColumns(Long projectId, List<ColumnInfo> columns) {
+        Set<String> refTableNames = columns.stream()
+                .map(ColumnInfo::getRefTableName)
+                .filter(name -> name != null && !name.isBlank())
+                .map(name -> name.trim().toUpperCase())
+                .collect(Collectors.toSet());
+
+        if (refTableNames.isEmpty()) return Map.of();
+
+        Map<String, List<ColumnInfo>> pkColumns = new java.util.HashMap<>();
+        for (TableInfo refTable : tableInfoRepository.findAllByProjectIdAndTableNameIn(projectId, refTableNames)) {
+            pkColumns.putIfAbsent(refTable.getTableName().toUpperCase(), refTable.getColumns().stream()
+                    .filter(column -> Boolean.TRUE.equals(column.getIsPk()))
+                    .sorted(java.util.Comparator.comparing(ColumnInfo::getSortOrder, java.util.Comparator.nullsLast(java.util.Comparator.naturalOrder())))
+                    .toList());
+        }
+        return pkColumns;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public TableDdlDto generateTableDdl(Long tableId, AccountDto accountDto) {
+        Long projectId = accountDto.getProjectId();
+
+        // 로그인 프로젝트의 테이블만 (다른 프로젝트 테이블 ID 로는 조회할 수 없다)
+        TableInfo tableInfo = tableInfoRepository.findByIdAndProjectId(tableId, projectId);
+        if (tableInfo == null) {
+            throw new CustomException(ErrorCode.TABLE_IS_NOT_DEFINED);
+        }
+
+        DbType dbType = projectRepository.findById(projectId)
+                .map(Project::getDbType)
+                .map(DbType::orDefault)
+                .orElse(DbType.DEFAULT);
+
+        TableDdlGenerator.Result result = TableDdlGenerator.generate(dbType, tableInfo, tableInfo.getColumns(),
+                referencedPkColumns(projectId, tableInfo.getColumns()));
+        return new TableDdlDto(dbType.name(), dbType.getLabel(), tableInfo.getTableName(), result.ddl(), result.warnings());
     }
 }

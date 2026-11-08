@@ -2,6 +2,7 @@ package com.koboolean.metagen.core.project.domain.dto;
 
 import com.koboolean.metagen.core.security.domain.dto.AccountDto;
 import com.koboolean.metagen.core.project.domain.entity.Project;
+import com.koboolean.metagen.core.project.domain.enums.DbType;
 import com.koboolean.metagen.core.util.AuthUtil;
 import lombok.*;
 
@@ -37,6 +38,9 @@ public class ProjectDto {
     /** 테이블명 접두어 (예: TB_) */
     private String tablePrefix;
 
+    /** 대상 DB (DbType 이름 : POSTGRESQL / ORACLE / MYSQL / MARIADB) - 테이블 DDL 생성 기준 */
+    private String dbType;
+
     public static ProjectDto fromEntity(Project project) {
 
         List<ProjectMemberDto> projectMembers = project.getProjectMember().stream().map(ProjectMemberDto::fromEntity).toList();
@@ -52,7 +56,8 @@ public class ProjectDto {
                 false,
                 project.getIsDicAbbrUsed(),
                 false,
-                project.getTablePrefix()
+                project.getTablePrefix(),
+                DbType.orDefault(project.getDbType()).name()
         );
     }
 
@@ -73,7 +78,8 @@ public class ProjectDto {
                 isModified,
                 project.getIsDicAbbrUsed(),
                 false,
-                project.getTablePrefix()
+                project.getTablePrefix(),
+                DbType.orDefault(project.getDbType()).name()
         );
     }
 }

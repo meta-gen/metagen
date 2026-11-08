@@ -944,25 +944,31 @@ dialog .table-name-warning {
 }
 
 /* 컬럼 등록 : 테이블 / 표준용어 실시간 조회 */
+/* #mainDialogContent 의 input/select 공통 규칙(width: 100%, height: 32px !important)보다 우선하도록 ID 를 함께 지정한다. */
 dialog .lookup-search-row {
     display: flex;
+    align-items: center;
     gap: 8px;
 }
 
-dialog .lookup-search-row select {
-    flex: none;
+dialog .lookup-search-row select,
+#mainDialogContent .lookup-search-row select {
+    flex: 0 0 130px;
     width: 130px;
 }
 
-dialog .lookup-search-row input {
-    flex: 1;
+dialog .lookup-search-row input,
+#mainDialogContent .lookup-search-row input:not([type="hidden"]) {
+    flex: 1 1 0; /* basis 0 : 공통 규칙의 width: 100% 와 관계없이 남은 폭을 채운다 */
     min-width: 0;
 }
 
-dialog select.lookup-select {
-    height: auto;
+dialog select.lookup-select,
+#mainDialogContent select.lookup-select {
+    height: auto !important;
     margin-top: 6px;
     padding: 4px;
+    background-image: none;
 }
 
 dialog select.lookup-select option {
@@ -987,6 +993,48 @@ dialog .term-word-group {
 dialog .term-word-group > label {
     display: block;
     margin-top: 10px;
+}
+
+/* 표준용어 등록 폼 (term_create_form.js) : 팝업 다이얼로그(#popupDialog)에서도 같은 모양으로 보이게 한다. */
+dialog .term-create-form .form-control {
+    width: 100%;
+}
+
+dialog .term-create-form textarea.form-control {
+    min-height: 60px;
+    resize: vertical;
+}
+
+dialog .term-create-form .form-control[readonly],
+dialog .term-create-form .form-control:disabled {
+    background-color: var(--gh-canvas-subtle);
+    color: var(--gh-fg-muted);
+}
+
+dialog .term-create-form > button[type="submit"] {
+    display: flex;
+    width: fit-content;
+    margin: 20px 0 0 auto;
+}
+
+dialog .term-create-popup > .form-help {
+    margin: 0 0 16px;
+}
+
+/* 컬럼 등록 : 컬럼명 라벨 + [새 표준용어 등록] 버튼 */
+dialog .lookup-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+dialog .lookup-label-row > label {
+    margin: 0;
+    color: var(--gh-fg);
+    font-size: 14px;
+    font-weight: 600;
 }
 
 /* 데이터 사전 상세보기 (항목명 : 값) */
@@ -1030,6 +1078,70 @@ dialog .dict-detail dt {
 dialog .dict-detail dd {
     white-space: pre-wrap;
     word-break: break-all;
+}
+
+/* 컬럼 상세 : Y/N 속성 라벨 (N 은 흐리게) */
+dialog .dict-detail .dict-detail-flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    white-space: normal;
+}
+
+/* 테이블 상세 : 컬럼 목록 */
+dialog .dict-detail-columns {
+    margin-top: 16px;
+}
+
+dialog .dict-detail-columns h4 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+dialog .dict-detail-columns .table-wrap {
+    max-height: 320px;
+    overflow: auto;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+}
+
+dialog .dict-detail-columns table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+dialog .dict-detail-columns th,
+dialog .dict-detail-columns td {
+    padding: 6px 8px;
+    border-top: 1px solid var(--gh-border-muted);
+    text-align: left;
+    white-space: nowrap;
+}
+
+dialog .dict-detail-columns td:nth-child(3) {
+    white-space: normal;
+}
+
+dialog .dict-detail-columns thead th {
+    position: sticky;
+    top: 0;
+    border-top: 0;
+    background-color: var(--gh-canvas-subtle);
+    color: var(--gh-fg-muted);
+    font-weight: 600;
+}
+
+dialog .dict-detail-columns .text-center {
+    text-align: center;
+}
+
+dialog .dict-detail .dict-detail-flag-off {
+    color: var(--gh-fg-muted);
+    border-style: dashed;
+    text-decoration: line-through;
+    opacity: .6;
 }
 
 /* =========================================================
@@ -1182,12 +1294,18 @@ dialog .dict-detail dd {
     box-shadow: inset 0 0 0 1px var(--gh-accent);
 }
 
-#mainDialogContent input[readonly],
+/* 체크박스/라디오는 제외 : 배경을 덮으면 잠긴(disabled) 체크 상태가 체크 안 된 것처럼 보인다 */
+#mainDialogContent input[readonly]:not([type="checkbox"]):not([type="radio"]),
 #mainDialogContent textarea[readonly],
-#mainDialogContent input:disabled,
+#mainDialogContent input:disabled:not([type="checkbox"]):not([type="radio"]),
 #mainDialogContent select:disabled {
     background-color: var(--gh-canvas-subtle) !important;
     color: var(--gh-fg-muted);
+}
+
+/* 잠긴 체크박스 : 체크 여부는 그대로 보이고 흐리게만 */
+#mainDialogContent .form-check-input:disabled {
+    opacity: .55;
 }
 
 /* 폼 마지막 저장/추가 버튼 : 오른쪽 정렬 */
@@ -1320,4 +1438,368 @@ dialog .btn[style*="inline-block"] {
 
 .gh-code-area:not([readonly]):not(:disabled):focus {
     background-color: var(--gh-canvas) !important;
+}
+
+/* =========================================================
+   컬럼 일괄 편집 (테이블 관리 > 테이블 상세 > 컬럼 편집)
+   ========================================================= */
+dialog.dialog-xl {
+    width: min(1200px, calc(100vw - 32px));
+}
+
+dialog .col-bulk-help {
+    margin: 0 0 12px;
+}
+
+dialog .col-bulk-search {
+    margin-bottom: 12px;
+    padding: 12px;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+    background-color: var(--gh-canvas-subtle);
+}
+
+dialog .col-bulk-search-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+dialog .col-bulk-search-head .gh-form-label {
+    margin: 0;
+}
+
+dialog .col-bulk-results {
+    max-height: 180px;
+    margin-top: 8px;
+    overflow-y: auto;
+}
+
+dialog .col-bulk-results:empty {
+    display: none;
+}
+
+dialog .col-bulk-result {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+dialog .col-bulk-result:hover {
+    background-color: var(--gh-canvas);
+}
+
+dialog .col-bulk-result.is-disabled {
+    cursor: default;
+    opacity: .6;
+}
+
+dialog .col-bulk-search-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+dialog .col-bulk-general-error {
+    margin-bottom: 12px;
+}
+
+dialog .col-bulk-table-wrap {
+    max-height: calc(100vh - 460px);
+    min-height: 160px;
+    overflow: auto;
+    border: 1px solid var(--gh-border);
+    border-radius: 6px;
+}
+
+dialog .col-bulk-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+dialog .col-bulk-table th,
+dialog .col-bulk-table td {
+    padding: 4px 6px;
+    border-top: 1px solid var(--gh-border-muted);
+    vertical-align: middle;
+}
+
+dialog .col-bulk-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-top: 0;
+    background-color: var(--gh-canvas-subtle);
+    color: var(--gh-fg-muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+}
+
+#mainDialogContent .col-bulk-table .form-control {
+    min-height: 28px;
+    height: 28px;
+    padding: 3px 8px;
+    font-size: 13px;
+}
+
+dialog .col-bulk-table .col-num-cell {
+    width: 32px;
+    color: var(--gh-fg-muted);
+    text-align: center;
+}
+
+dialog .col-bulk-table .col-move {
+    width: 60px;
+    white-space: nowrap;
+}
+
+dialog .col-bulk-table .col-name {
+    white-space: nowrap;
+}
+
+dialog .col-bulk-table .col-name .gh-label {
+    margin-left: 6px;
+}
+
+dialog .col-bulk-table .col-num {
+    width: 80px;
+}
+
+dialog .col-bulk-table .col-chk {
+    width: 48px;
+    text-align: center;
+}
+
+dialog .col-bulk-table .col-icon {
+    width: 36px;
+    text-align: center;
+}
+
+dialog .col-bulk-icon {
+    min-width: 26px;
+    height: 26px;
+    padding: 0 6px;
+}
+
+dialog .col-bulk-remove:not(:disabled):hover {
+    color: var(--gh-danger, #d1242f);
+}
+
+dialog .col-bulk-table tr.is-new > td {
+    background-color: #ddf4ff66;
+}
+
+dialog .col-bulk-table tr.is-locked > td {
+    color: var(--gh-fg-muted);
+}
+
+dialog .col-bulk-table tr.is-deleted > td {
+    opacity: .55;
+}
+
+dialog .col-bulk-table tr.is-deleted .col-name .gh-mono {
+    text-decoration: line-through;
+}
+
+dialog .col-bulk-table tr.has-error > td {
+    background-color: #ffebe966;
+}
+
+dialog .col-bulk-table .col-bulk-error-row > td {
+    border-top: 0;
+    padding-top: 0;
+    background-color: #ffebe966;
+}
+
+dialog .col-bulk-table .col-bulk-error-row p {
+    margin: 0 0 4px;
+}
+
+dialog .col-bulk-table .col-bulk-detail-row > td {
+    border-top: 0;
+    background-color: var(--gh-canvas-subtle);
+}
+
+dialog .col-bulk-detail {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    padding: 4px 0;
+}
+
+dialog .col-bulk-field {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    font-size: 12px;
+    color: var(--gh-fg-muted);
+}
+
+dialog .col-bulk-flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 16px;
+    padding: 6px 0 4px;
+}
+
+dialog .col-bulk-flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-size: 12px;
+}
+
+dialog .col-bulk-empty {
+    padding: 24px !important;
+    color: var(--gh-fg-muted);
+    text-align: center;
+}
+
+dialog .col-bulk-actions {
+    align-items: center;
+}
+
+dialog .col-bulk-summary {
+    margin-right: auto;
+    color: var(--gh-fg-muted);
+    font-size: 12px;
+}
+
+@media (max-width: 768px) {
+    dialog .col-bulk-detail {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* 컬럼 일괄 편집 2단계 : 검색/붙여넣기 전환, 붙여넣기 결과, 자동 추천 */
+dialog .col-bulk-modes,
+dialog .col-bulk-search-tools {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+dialog .col-bulk-modes {
+    gap: 0;
+}
+
+dialog .col-bulk-mode {
+    border-radius: 0;
+}
+
+dialog .col-bulk-mode:first-child {
+    border-radius: 6px 0 0 6px;
+}
+
+dialog .col-bulk-mode:last-child {
+    margin-left: -1px;
+    border-radius: 0 6px 6px 0;
+}
+
+dialog .col-bulk-mode.is-active {
+    position: relative;
+    z-index: 1;
+    border-color: var(--gh-accent);
+    background-color: var(--gh-accent-subtle);
+    color: var(--gh-accent);
+}
+
+#mainDialogContent .col-bulk-paste-text {
+    min-height: 96px;
+    font-family: var(--gh-mono, ui-monospace, monospace);
+    font-size: 13px;
+    resize: vertical;
+}
+
+dialog .col-bulk-paste-results .form-help {
+    margin: 8px 0 4px;
+}
+
+dialog .col-bulk-paste-list {
+    max-height: 220px;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+    border: 1px solid var(--gh-border-muted);
+    border-radius: 6px;
+    background-color: var(--gh-canvas);
+}
+
+dialog .col-bulk-paste-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 8px;
+    border-top: 1px solid var(--gh-border-muted);
+    font-size: 13px;
+}
+
+dialog .col-bulk-paste-item:first-child {
+    border-top: 0;
+}
+
+dialog .col-bulk-paste-item.is-not_found {
+    background-color: #ffebe966;
+}
+
+dialog .col-bulk-paste-item.is-disabled:not(.is-not_found) {
+    opacity: .6;
+}
+
+dialog .col-bulk-paste-input {
+    min-width: 140px;
+    font-weight: 600;
+}
+
+#mainDialogContent .col-bulk-paste-select {
+    width: auto;
+    max-width: 420px;
+    min-height: 26px;
+    height: 26px !important;
+    padding: 2px 28px 2px 8px;
+    font-size: 12px;
+}
+
+dialog .col-bulk-recommended {
+    cursor: help;
+}
+
+/* 컬럼 일괄 편집 3단계 : 공통/복사 출처 라벨 */
+dialog .col-bulk-source {
+    cursor: help;
+}
+
+dialog .col-bulk-copy-results:empty {
+    display: none;
+}
+
+/* 컬럼 일괄 편집 : 하단 버튼(닫기/일괄 저장)은 스크롤해도 항상 보이게, 길이 칸은 4자리 이상 보이게 */
+dialog .col-bulk-actions {
+    position: sticky;
+    bottom: -16px;
+    z-index: 2;
+    background-color: var(--gh-canvas);
+}
+
+dialog .col-bulk-table .col-num {
+    width: 96px;
+}
+
+/* 테이블 상세 : 컬럼 목록 표가 가로 스크롤되지 않게 넓힌다 (table-manage.js 에서 열 때만 붙인다) */
+dialog.dialog-table-detail {
+    width: min(720px, calc(100vw - 32px));
 }

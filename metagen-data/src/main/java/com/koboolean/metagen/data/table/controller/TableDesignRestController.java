@@ -1,5 +1,6 @@
 package com.koboolean.metagen.data.table.controller;
 
+import com.koboolean.metagen.data.table.domain.dto.TableDdlDto;
 import com.koboolean.metagen.data.table.domain.dto.TableInfoDto;
 import com.koboolean.metagen.data.table.domain.dto.TableNameDto;
 import com.koboolean.metagen.data.table.service.TableDesignService;
@@ -60,6 +61,14 @@ public class TableDesignRestController {
         Pageable pageable = PageableUtil.getGridPageable(page, size, sort);
         Page<TableInfoDto> tableDesigns = tableDesignService.selectTableInfoData(pageable, accountDto, searchColumn, searchQuery);
         return PageableUtil.getGridPageableMap(tableDesigns);
+    }
+
+    @Operation(summary = "테이블 DDL 생성", description = "테이블과 연결된 컬럼으로 프로젝트 대상 DB(시스템 관리 > 프로젝트 관리) 기준 DDL 을 생성합니다.")
+    @PreAuthorize("hasRole('VIEWER')")
+    @GetMapping("/selectTable/ddl/{tableId}")
+    public ResponseEntity<TableDdlDto> generateTableDdl(@PathVariable(value = "tableId") Long tableId,
+                                                        @AuthenticationPrincipal AccountDto accountDto) {
+        return ResponseEntity.ok(tableDesignService.generateTableDdl(tableId, accountDto));
     }
 
     @Operation(summary = "표준 단어 기준 테이블명 생성", description = "테이블 한글명(예: 사용_내역_관리)을 승인된 표준 단어의 영문약어로 변환합니다.")

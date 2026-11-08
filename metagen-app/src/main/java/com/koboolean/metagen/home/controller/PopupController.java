@@ -31,6 +31,33 @@ public class PopupController {
         return "popup/column_table_detail :: content"; // 팝업 다이얼로그 화면 조각
     }
 
+    /**
+     * 컬럼 등록 중 새 표준용어 등록 팝업 (등록 API 와 같은 USER 권한)
+     */
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/standardTermCreate")
+    public String standardTermCreate(){
+        return "popup/standard_term_create :: content"; // 팝업 다이얼로그 화면 조각
+    }
+
+    /**
+     * 테이블 DDL 팝업 (테이블 관리 > 테이블 상세 > DDL 보기)
+     */
+    @PreAuthorize("hasRole('VIEWER')")
+    @GetMapping("/tableDdl")
+    public String tableDdl(){
+        return "popup/table_ddl :: content"; // 팝업 다이얼로그 화면 조각
+    }
+
+    /**
+     * 공통 컬럼 세트 관리 팝업 (컬럼 일괄 편집 > 공통 컬럼 세트 관리). 저장 권한(프로젝트 관리자)은 API 에서 확인한다.
+     */
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("/commonColumnSet")
+    public String commonColumnSet(){
+        return "popup/common_column_set :: content"; // 팝업 다이얼로그 화면 조각
+    }
+
     @PreAuthorize("hasRole('MANAGER')")
     @GetMapping("/codeRulePopup")
     public String codeRulePopup(){

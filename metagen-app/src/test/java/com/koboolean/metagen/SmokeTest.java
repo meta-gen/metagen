@@ -199,7 +199,7 @@ class SmokeTest {
 
     @ParameterizedTest(name = "팝업 다이얼로그 조각 {0}")
     @ValueSource(strings = {
-            "/popup/columTableSearch/detail",
+            "/popup/columTableSearch/detail", "/popup/standardTermCreate", "/popup/tableDdl", "/popup/commonColumnSet",
             "/popup/codeRulePopup", "/popup/codeRuleDetailPopup"
     })
     @Order(10)
@@ -297,7 +297,7 @@ class SmokeTest {
     }
 
     @ParameterizedTest(name = "API {0}")
-    @ValueSource(strings = {"/isApprovalAvailable", "/api/activeUsers", "/api/selectCodeRuleManage/template", "/v3/api-docs"})
+    @ValueSource(strings = {"/isApprovalAvailable", "/api/activeUsers", "/api/selectCodeRuleManage/template", "/api/commonColumn", "/v3/api-docs"})
     @Order(21)
     @DisplayName("기타 주요 API")
     void apis(String path) throws Exception {
@@ -394,6 +394,42 @@ class SmokeTest {
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).contains("\"duplicated\":false");
+    }
+
+    @Test
+    @Order(23)
+    @DisplayName("컬럼 일괄 저장 API : JSON 요청을 받고, 없는 테이블이면 TABLE_IS_NOT_DEFINED(400)")
+    void saveColumnsBulkUnknownTable() throws Exception {
+        HttpResponse<String> response = client.send(HttpRequest.newBuilder(uri("/api/saveColumn/bulk"))
+                .header("Content-Type", "application/json")
+                .header("X-Requested-With", "XMLHttpRequest")
+                .header("X-XSRF-TOKEN", csrfToken())
+                .PUT(HttpRequest.BodyPublishers.ofString(
+                        "{\"tableInfoId\":-1,\"rows\":[{\"key\":\"new-1\",\"termId\":-1,\"columnDesc\":\"설명\",\"dataType\":\"VARCHAR\",\"isPk\":\"N\"}],\"deletedIds\":[]}",
+                        StandardCharsets.UTF_8))
+                .build(), HttpResponse.BodyHandlers.ofString());
+
+        assertThat(response.statusCode()).isEqualTo(400);
+        assertThat(response.body()).contains("TABLE_IS_NOT_DEFINED");
+    }
+
+    @Test
+    @Order(23)
+    @DisplayName("표준용어 일괄 찾기 API : 붙여넣은 줄마다 상태를 돌려준다 (없는 용어는 NOT_FOUND)")
+    void resolveTerms() throws Exception {
+        HttpResponse<String> response = client.send(HttpRequest.newBuilder(uri("/api/selectColumn/term/resolve"))
+                .header("Content-Type", "application/json")
+                .header("X-Requested-With", "XMLHttpRequest")
+                .header("X-XSRF-TOKEN", csrfToken())
+                .POST(HttpRequest.BodyPublishers.ofString("[\"없는 용어 테스트\",\"NOT_EXISTS_ABBR\",\" \"]", StandardCharsets.UTF_8))
+                .build(), HttpResponse.BodyHandlers.ofString());
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.body())
+                .contains("\"input\":\"없는 용어 테스트\"")
+                .contains("\"input\":\"NOT_EXISTS_ABBR\"")
+                .contains("\"status\":\"NOT_FOUND\"")
+                .doesNotContain("\"input\":\" \"");
     }
 
     @Test

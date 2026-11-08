@@ -22,7 +22,7 @@ public interface ColumnInfoRepository extends JpaRepository<ColumnInfo, Long> {
     List<ColumnInfo> findAllByProjectIdAndTableInfo_IdAndColumnName(Long projectId, Long tableInfoId, String columnName);
 
     Page<ColumnInfo> findAllByProjectIdAndTableNameLike(Long projectId, String tableName, Pageable pageable);
-    Page<ColumnInfo> findAllByProjectIdAndColumnNameLike(Long projectId, String columnName, Pageable pageable);
+    Page<ColumnInfo> findAllByProjectIdAndColumnNameLikeIgnoreCase(Long projectId, String columnName, Pageable pageable);
 
     Page<ColumnInfo> findAllByProjectIdAndColumnDescLike(Long projectId, String columnDesc, Pageable pageable);
 

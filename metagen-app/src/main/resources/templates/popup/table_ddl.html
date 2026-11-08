@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<!-- 팝업 다이얼로그(#popupDialog) 화면 조각 : PopupController 가 "popup/table_ddl :: content" 로 반환한다.
+     테이블 상세 다이얼로그 위에서 테이블 DDL 을 보여준다. 내용은 js/data/table/table-manage.js 가 채운다. -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" class="popup-container table-ddl-popup">
+    <div class="table-ddl-toolbar">
+        <div class="table-ddl-meta">
+            <span class="gh-label gh-label-accent" data-ddl-db>-</span>
+            <span class="gh-muted">대상 DB 는 시스템 관리 &gt; 프로젝트 관리에서 바꿀 수 있습니다.</span>
+        </div>
+        <button type="button" class="btn btn-sm" data-ddl-copy>복사</button>
+    </div>
+    <ul class="table-ddl-warnings" data-ddl-warnings hidden></ul>
+    <pre class="table-ddl-code"><code data-ddl-code>DDL 을 생성하고 있습니다.</code></pre>
+</div>
+</body>
+</html>

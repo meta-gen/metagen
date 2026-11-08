@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!-- 팝업 다이얼로그(#popupDialog) 화면 조각 : PopupController 가 "popup/common_column_set :: content" 로 반환한다.
+     컬럼 일괄 편집 위에서 프로젝트 공통 컬럼 세트를 관리한다. 내용은 js/data/column/common_column_set.js 가 채운다. -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" class="popup-container common-set-popup">
+    <p class="form-help">
+        거의 모든 테이블에 들어가는 컬럼을 표준용어로 정해 두면, 컬럼 편집에서 [공통 컬럼 추가]로 한 번에 넣을 수 있습니다.
+        컬럼명·설명·데이터 타입은 표준용어를 따르고, 여기서는 순서와 NULL 허용·기본값·인덱스를 정합니다.
+    </p>
+
+    <div class="common-set-search">
+        <div class="lookup-search-row">
+            <select class="form-control" data-set-search-type aria-label="표준용어 검색 기준">
+                <option value="termName">표준용어명</option>
+                <option value="termAbbreviation">영문약어명</option>
+            </select>
+            <input type="text" class="form-control" data-set-search autocomplete="off" placeholder="예: 등록 일시 / REG_"/>
+        </div>
+        <div class="common-set-results" data-set-results aria-live="polite"></div>
+    </div>
+
+    <div class="common-set-head">
+        <span class="gh-form-label">공통 컬럼</span>
+        <span class="gh-muted" data-set-count></span>
+    </div>
+    <div class="common-set-table-wrap">
+        <table class="common-set-table">
+            <thead>
+            <tr>
+                <th>순서</th>
+                <th>컬럼명</th>
+                <th>설명</th>
+                <th>데이터 타입</th>
+                <th>NULL 허용</th>
+                <th>기본값</th>
+                <th>인덱스</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody data-set-items></tbody>
+        </table>
+    </div>
+
+    <div class="common-set-actions">
+        <button type="button" class="btn" data-popup-close>닫기</button>
+        <button type="button" class="btn btn-primary" data-set-save>저장</button>
+    </div>
+</div>
+</body>
+</html>

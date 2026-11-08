@@ -51,7 +51,7 @@ public class StandardWordService {
             case "commonStandardWordName" ->
                     standardWordRepository.findByCommonStandardWordNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "commonStandardWordAbbreviation" ->
-                    standardWordRepository.findByCommonStandardWordAbbreviationContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
+                    standardWordRepository.findByCommonStandardWordAbbreviationContainingIgnoreCaseAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "commonStandardWordEnglishName" ->
                     standardWordRepository.findByCommonStandardWordEnglishNameContainingAndProjectId(searchQuery, accountDto.getProjectId(), pageable);
             case "commonStandardWordDescription" ->

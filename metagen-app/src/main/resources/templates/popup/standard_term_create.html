@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<!-- 팝업 다이얼로그(#popupDialog) 화면 조각 : PopupController 가 "popup/standard_term_create :: content" 로 반환한다.
+     컬럼 등록 다이얼로그 위에서 새 표준용어를 등록한다. 폼은 js/data/dictionary/term_create_form.js 가 채운다. -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="content" class="popup-container term-create-popup">
+    <p class="form-help">
+        등록한 용어는 권한에 따라 바로 승인되거나 승인 대기 상태가 됩니다. 저장하면 컬럼명으로 바로 선택됩니다.
+    </p>
+    <div data-term-form></div>
+</div>
+</body>
+</html>
