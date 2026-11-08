@@ -1,4 +1,5 @@
 import {closePopupDialog, openPopupDialog} from "../../common/popup_dialog.js";
+import {setMainDialogSize} from "../../common/common.js";
 import {createTermForm} from "../dictionary/term_create_form.js";
 import {applyRecommendation} from "./column_recommend.js";
 import {openCommonColumnSet} from "./common_column_set.js";
@@ -200,7 +201,12 @@ function render(table, columnInfos, onSaved) {
 
     // ---------------------------------------------------------------- 표준용어 검색
     let searchTimer = null;
-    $searchInput.add($searchType).on("input change", () => {
+    // 입력칸은 input 만, 셀렉트는 change 만 : 입력칸의 change 는 포커스가 빠질 때(예: 결과 체크박스 클릭) 발생해
+    // 같은 검색을 다시 하면서 방금 한 체크가 풀린다.
+    $searchInput.on("input", onSearchChanged);
+    $searchType.on("change", onSearchChanged);
+
+    function onSearchChanged() {
         clearTimeout(searchTimer);
         const keyword = $searchInput.val().trim();
         if (!keyword) {
@@ -209,7 +215,7 @@ function render(table, columnInfos, onSaved) {
             return;
         }
         searchTimer = setTimeout(() => searchTerms($searchType.val(), keyword), 300);
-    });
+    }
     $searchInput.on("keydown", (e) => {
         if (e.key === "Enter") e.preventDefault(); // 다이얼로그 안 폼 제출 방지
     });
@@ -233,6 +239,8 @@ function render(table, columnInfos, onSaved) {
     }
 
     function renderResults() {
+        // 다시 그려도 체크해 둔 용어는 그대로 둔다 (같은 결과를 다시 받거나 행 추가로 "이미 추가됨" 표시만 바뀌는 경우)
+        const checkedIds = new Set($results.find("input:checkbox:checked").map((_, el) => $(el).val()).get());
         $results.empty();
         const used = usedColumnNames();
 
@@ -245,7 +253,7 @@ function render(table, columnInfos, onSaved) {
         state.searchResults.forEach(term => {
             const already = used.has(term.commonStandardTermAbbreviation);
             const $check = $("<input>").attr({type: "checkbox"}).addClass("form-check-input")
-                .val(term.id).prop("disabled", already);
+                .val(term.id).prop({disabled: already, checked: !already && checkedIds.has(String(term.id))});
             const $label = $("<label></label>").addClass("col-bulk-result").toggleClass("is-disabled", already).append(
                 $check,
                 $("<span></span>").addClass("gh-mono").text(term.commonStandardTermAbbreviation),
@@ -1032,10 +1040,8 @@ function render(table, columnInfos, onSaved) {
     renderRows();
 
     window.openDialog("div", {title: `컬럼 편집 · ${table.tableName ?? ""}${table.tableKorName ? ` (${table.tableKorName})` : ""}`, content: $root});
-    const dialog = document.getElementById("mainConfirm");
-    dialog.classList.add("dialog-xl");
     // 같은 다이얼로그를 다른 화면도 쓰므로 닫힐 때 넓은 크기를 되돌린다.
-    dialog.addEventListener("close", () => dialog.classList.remove("dialog-xl"), {once: true});
+    setMainDialogSize("dialog-xl");
     $searchInput.trigger("focus");
 }
 

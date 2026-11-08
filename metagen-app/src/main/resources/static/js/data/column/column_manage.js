@@ -410,7 +410,12 @@ function bindColumnLookup() {
         selectTable(table);
     });
 
-    $("#termSearchInput, #termSearchType").on("input change", function () {
+    // 입력칸은 input 만, 셀렉트는 change 만 : 입력칸의 change 는 포커스가 빠질 때(예: 결과 목록 클릭) 발생해
+    // 고른 용어를 지우고 다시 검색한다.
+    $("#termSearchInput").on("input", onTermSearchChanged);
+    $("#termSearchType").on("change", onTermSearchChanged);
+
+    function onTermSearchChanged() {
         const keyword = $("#termSearchInput").val().trim();
         clearTimeout(termTimer);
         clearSelectedTerm();
@@ -423,7 +428,7 @@ function bindColumnLookup() {
 
         columnLookup.pending = true;
         termTimer = setTimeout(() => lookupTerms($("#termSearchType").val(), keyword), 300);
-    });
+    }
 
     $("#termSelect").on("change", function () {
         const term = columnLookup.terms.find(t => String(t.id) === $(this).val());

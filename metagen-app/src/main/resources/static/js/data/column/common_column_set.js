@@ -41,7 +41,11 @@ function init($root, loaded, onSaved) {
 
     // ---------------------------------------------------------------- 표준용어 검색
     let timer = null;
-    q("[data-set-search-type], [data-set-search]").on("input change", () => {
+    // 입력칸은 input 만, 셀렉트는 change 만 (입력칸의 change 는 포커스가 빠질 때 발생해 같은 검색을 다시 한다)
+    q("[data-set-search]").on("input", onSearchChanged);
+    q("[data-set-search-type]").on("change", onSearchChanged);
+
+    function onSearchChanged() {
         clearTimeout(timer);
         const keyword = q("[data-set-search]").val().trim();
         if (!keyword) {
@@ -50,7 +54,7 @@ function init($root, loaded, onSaved) {
             return;
         }
         timer = setTimeout(() => search(q("[data-set-search-type]").val(), keyword), 300);
-    });
+    }
     q("[data-set-search]").on("keydown", (e) => {
         if (e.key === "Enter") e.preventDefault();
     });

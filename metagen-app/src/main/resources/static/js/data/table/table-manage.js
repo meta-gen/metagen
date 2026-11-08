@@ -1,5 +1,5 @@
 import {getCsrfToken, setupAjaxCsrf} from "../../common/csrf.js";
-import {downloadFile} from "../../common/common.js";
+import {downloadFile, setMainDialogSize} from "../../common/common.js";
 import {registerRowDecorator, setApproval, setMono, setYN} from "../../common/grid_cells.js";
 import {openPopupDialog} from "../../common/popup_dialog.js";
 import {openColumnBulkEditor} from "../column/column_bulk_editor.js";
@@ -511,9 +511,7 @@ export function tableSelectRow(rowData, columnList, isManager, tableId){
 
     window.openDialog("div", {title: `테이블 상세 · ${rowData.tableName ?? ""}`, content: $content});
     // 컬럼 목록 표가 들어가므로 넓게 연다. 같은 다이얼로그를 다른 화면도 쓰므로 닫힐 때 되돌린다.
-    const dialog = document.getElementById("mainConfirm");
-    dialog.classList.add("dialog-table-detail");
-    dialog.addEventListener("close", () => dialog.classList.remove("dialog-table-detail"), {once: true});
+    setMainDialogSize("dialog-table-detail");
 }
 
 /**
